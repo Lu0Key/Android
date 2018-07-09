@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:background="@drawable/design_image_button_background"
     android:paddingTop="16dp"
-    android:paddingBottom="16dp">
+    android:paddingBottom="16dp"
+    android:id="@+id/linear_layout">
 
     <!--图标-->
     <ImageView
