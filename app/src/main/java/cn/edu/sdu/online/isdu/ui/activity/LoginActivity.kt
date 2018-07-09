@@ -1,0 +1,114 @@
+package cn.edu.sdu.online.isdu.ui.activity
+
+import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
+import android.support.design.widget.TextInputEditText
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
+import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.net.AccountOp
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.util.Security
+import kotlinx.android.synthetic.main.activity_login.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import java.io.IOException
+
+class LoginActivity : SlideActivity(), View.OnClickListener {
+
+    private var btnBack: ImageView? = null
+    private var txtStudentNumber: TextInputEditText? = null
+    private var txtPassword: TextInputEditText? = null
+    private var btnLogin: Button? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+
+        initView()
+    }
+
+    private fun initView() {
+        btnBack = findViewById(R.id.btn_back)
+        txtStudentNumber = findViewById(R.id.student_number)
+        txtPassword = findViewById(R.id.password)
+        btnLogin = findViewById(R.id.btn_login)
+
+        btnBack!!.setOnClickListener(this)
+        btnLogin!!.setOnClickListener(this)
+
+    }
+
+    override fun onClick(v: View?) {
+        when (v!!.id) {
+            R.id.btn_back -> {finish()}
+            R.id.btn_login -> {
+                val stuNum = txtStudentNumber!!.text.toString()
+                val stuPwd = txtPassword!!.text.toString()
+
+                if (stuNum.trim() == "" || stuPwd.trim() == "") {
+                    Toast.makeText(this, "学号和密码不能为空", Toast.LENGTH_SHORT).show()
+                } else {
+                    performLogin(stuNum, Security.encodeByMD5(stuPwd))
+                }
+            }
+        }
+    }
+
+    /**
+     * 登录操作
+     *
+     * @param num  学号
+     * @param pwd  MD5加密后密码
+     */
+    private fun performLogin(num: String, pwd: String) {
+        setEnabled(false)
+        val keys = listOf("student_number", "student_password")
+        val values = listOf(num, pwd)
+        NetworkAccess.buildRequest(ServerInfo.url, keys, values, object : Callback {
+            override fun onFailure(call: Call?, e: IOException?) {
+                runOnUiThread {
+                    e?.printStackTrace()
+                    setEnabled(true)
+                    Toast.makeText(this@LoginActivity, "网络错误", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {
+                runOnUiThread {
+                    setEnabled(true)
+
+                    if (response?.body()?.string() == "success") {
+                        Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT).show()
+                        // 初始化用户缓存
+                        User.staticUser.studentNumber = num
+                        User.staticUser.passwordMD5 = pwd
+                        AccountOp.syncUserInformation() // 同步用户信息
+
+                        finish()
+                    } else {
+                        Toast.makeText(this@LoginActivity, response?.body()?.string(), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
+    }
+
+    private fun setEnabled(b: Boolean) {
+        txtStudentNumber!!.isEnabled = b
+        txtPassword!!.isEnabled = b
+        btnLogin!!.isEnabled = b
+        if (b) {
+            btnLogin!!.text = "登录"
+        } else {
+            btnLogin!!.text = "登录中..."
+        }
+    }
+}
