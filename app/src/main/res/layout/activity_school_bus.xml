@@ -39,4 +39,94 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp">
+
+    </LinearLayout>
+    <!--六宫格Row1-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/colorWhite">
+
+        <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            android:id="@+id/btn_zhongxin"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            app:imageButtonSrc="@drawable/grey_rect"
+            app:imageButtonText="中心校区"/>
+
+        <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            android:id="@+id/btn_hongjialou"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            app:imageButtonSrc="@drawable/grey_rect"
+            app:imageButtonText="洪家楼校区"/>
+
+        <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            android:id="@+id/btn_baotuquan"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            app:imageButtonSrc="@drawable/grey_rect"
+            app:imageButtonText="趵突泉校区"/>
+
+
+    </LinearLayout>
+
+    <!--六宫格Row2-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="4dp"
+        android:background="@color/colorWhite">
+
+        <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            android:id="@+id/btn_ruanjianyuan"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            app:imageButtonSrc="@drawable/grey_rect"
+            app:imageButtonText="软件园校区"/>
+
+        <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            android:id="@+id/btn_xinglongshan"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            app:imageButtonSrc="@drawable/grey_rect"
+            app:imageButtonText="兴隆山校区"/>
+
+        <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            android:id="@+id/btn_qianfoshan"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            app:imageButtonSrc="@drawable/grey_rect"
+            app:imageButtonText="千佛山校区"/>
+
+    </LinearLayout>
+
+
 </LinearLayout>
