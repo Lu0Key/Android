@@ -14,6 +14,7 @@ import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.Security
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
@@ -77,7 +78,7 @@ class LoginActivity : SlideActivity(), View.OnClickListener {
         NetworkAccess.buildRequest(url, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 runOnUiThread {
-                    e?.printStackTrace()
+                    Logger.log(e)
                     setEnabled(true)
                     Toast.makeText(this@LoginActivity, "网络错误", Toast.LENGTH_SHORT).show()
                 }
@@ -103,7 +104,7 @@ class LoginActivity : SlideActivity(), View.OnClickListener {
                             Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT).show()
                         }
                     } catch (e: Exception) {
-                        e.printStackTrace()
+                        Logger.log(e)
                         Toast.makeText(this@LoginActivity, "网络错误\n服务器无响应", Toast.LENGTH_SHORT).show()
                     }
 

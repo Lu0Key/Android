@@ -88,6 +88,7 @@ public class User extends LitePalSupport {
      */
     public void save(Context context) {
         User user = LitePal.find(User.class, 1);
+        if (user == null) user = new User();
         user.setUid(uid);
         user.setDepart(depart);
         user.setMajor(major);

@@ -108,7 +108,11 @@ class EditProfileActivity : SlideActivity() {
     }
 
     private fun loadUserInformation() {
-        val user = User.staticUser
+        var user = User.staticUser
+        if (user == null) {
+            User.staticUser = User.load()
+            user = User.staticUser
+        }
         val bmp = ImageManager.convertStringToBitmap(user.avatarString)
         avatar!!.setImageBitmap(bmp)
         editUserName!!.setText(user.nickName)
