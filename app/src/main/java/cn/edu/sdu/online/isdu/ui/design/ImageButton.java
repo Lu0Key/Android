@@ -27,7 +27,6 @@ public class ImageButton extends LinearLayout {
 
     private ImageView btnImg; // 按钮图片
     private TextView btnTxt; // 按钮文字
-
     public ImageButton(Context context) {
         super(context);
     }
@@ -39,7 +38,6 @@ public class ImageButton extends LinearLayout {
         // Find views
         btnImg = findViewById(R.id.design_imgbtn_image);
         btnTxt = findViewById(R.id.design_imgbtn_text);
-
 
 
         // Get attributes
@@ -88,5 +86,6 @@ public class ImageButton extends LinearLayout {
     public void setText(String text) {
         btnTxt.setText(text);
     }
+
 
 }

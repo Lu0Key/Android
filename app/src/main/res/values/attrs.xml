@@ -28,7 +28,7 @@
 
     <declare-styleable name="ImageButton">
         <attr name="imageButtonSrc" />
-        <attr name="imageButtonText" />
+        <attr name="imageButtonText" />\
     </declare-styleable>
 
     <declare-styleable name="FloatCardView">

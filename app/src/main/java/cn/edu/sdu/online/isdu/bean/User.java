@@ -5,20 +5,24 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 
 import org.litepal.LitePal;
+import org.litepal.LitePalDB;
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
 import java.util.List;
 
 import cn.edu.sdu.online.isdu.app.MyApplication;
+import cn.edu.sdu.online.isdu.net.AccountOp;
 
 /**
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/6/9
+ * Last Modify Time: 2018/7/10
  *
  * 用户信息类
+ *
+ * 加入学院和专业信息
  ****************************************************
  */
 
@@ -34,6 +38,9 @@ public class User extends LitePalSupport {
     private String avatarString; // 头像字符串
     private String selfIntroduce; // 个人介绍
     private String passwordMD5; // MD5加密的教务密码
+    private String major; // 专业
+    private String depart; // 学院
+    private int uid; // ID号，非学号
 
     public static User staticUser; // 全局用户实例
 
@@ -57,7 +64,7 @@ public class User extends LitePalSupport {
 
         if (!studentNumber.equals("")) {
             List<User> users = LitePal
-                    .where("student_number = ?", studentNumber)
+                    .where("studentNumber = ?", studentNumber)
                     .find(User.class);
 
             if (!users.isEmpty())
@@ -68,6 +75,34 @@ public class User extends LitePalSupport {
             user = new User();
 
         return user;
+    }
+
+    public static void logout(Context context) {
+        AccountOp.logout(context);
+        staticUser.studentNumber = null;
+        staticUser.passwordMD5 = null;
+    }
+
+    /**
+     * 保存信息至SharedPreference
+     */
+    public void save(Context context) {
+        User user = LitePal.find(User.class, 1);
+        user.setUid(uid);
+        user.setDepart(depart);
+        user.setMajor(major);
+        user.setSelfIntroduce(selfIntroduce);
+        user.setGender(gender);
+        user.setAvatarString(avatarString);
+        user.setName(name);
+        user.setNickName(nickName);
+        user.setPasswordMD5(passwordMD5);
+        user.setStudentNumber(studentNumber);
+        user.save(); // LitePal Save
+        SharedPreferences sp = context.getSharedPreferences("login_cache", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("student_number", studentNumber);
+        editor.apply();
     }
 
     public String getNickName() {
@@ -124,5 +159,29 @@ public class User extends LitePalSupport {
 
     public void setPasswordMD5(String passwordMD5) {
         this.passwordMD5 = passwordMD5;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
+    public String getDepart() {
+        return depart;
+    }
+
+    public void setDepart(String depart) {
+        this.depart = depart;
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 }

@@ -121,6 +121,43 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"/>
 
+                <!--姓名-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="姓名"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorSecondaryText"/>
+
+                    <TextView
+                        android:id="@+id/edit_name"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:textSize="16sp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/colorWhite"
+                        android:maxLines="1"/>
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorThemeGrey"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"/>
+
+
                 <!--性别-->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -143,16 +180,12 @@
                         android:layout_weight="4"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="女"
                         android:paddingTop="8dp"
                         android:paddingBottom="8dp"
                         android:textSize="16sp"
-                        android:textColor="@color/colorPrimaryText"
                         android:layout_gravity="center_vertical"
                         android:background="@color/colorWhite"
-                        android:maxLines="1"
-                        android:clickable="true"
-                        android:focusable="true"/>
+                        android:maxLines="1"/>
                 </LinearLayout>
                 <View
                     android:layout_width="match_parent"
@@ -161,6 +194,42 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"/>
 
+
+                <!--学院-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="学院"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorSecondaryText"/>
+
+                    <TextView
+                        android:id="@+id/edit_campus"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:textSize="16sp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/colorWhite"
+                        android:maxLines="1"/>
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorThemeGrey"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"/>
 
                 <!--专业-->
                 <LinearLayout
@@ -178,7 +247,7 @@
                         android:textSize="16sp"
                         android:textColor="@color/colorSecondaryText"/>
 
-                    <EditText
+                    <TextView
                         android:id="@+id/edit_profession"
                         android:layout_width="0dp"
                         android:layout_weight="4"
@@ -192,6 +261,7 @@
                         android:background="@color/colorWhite"
                         android:maxLines="1"/>
                 </LinearLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -199,45 +269,6 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"/>
 
-                <!--年龄-->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="年龄"
-                        android:layout_gravity="center_vertical"
-                        android:textSize="16sp"
-                        android:textColor="@color/colorSecondaryText"/>
-
-                    <EditText
-                        android:id="@+id/edit_age"
-                        android:layout_width="0dp"
-                        android:layout_weight="4"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="20"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:textSize="16sp"
-                        android:inputType="number"
-                        android:layout_gravity="center_vertical"
-                        android:background="@color/colorWhite"
-                        android:maxLines="1"/>
-                </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorThemeGrey"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"/>
-
-                <!--年龄-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

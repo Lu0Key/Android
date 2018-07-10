@@ -1,10 +1,14 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.annotation.Nullable
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.Fragment
@@ -16,12 +20,18 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.net.AccountOp
 import cn.edu.sdu.online.isdu.ui.design.NoScrollViewPager
 import cn.edu.sdu.online.isdu.ui.fragments.FragmentHome
 import cn.edu.sdu.online.isdu.ui.fragments.FragmentHomeRecommend
+import cn.edu.sdu.online.isdu.ui.fragments.FragmentMe
 import cn.edu.sdu.online.isdu.ui.fragments.FragmentMeArticles
+import cn.edu.sdu.online.isdu.util.ImageManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.zhouwei.blurlibrary.EasyBlur
@@ -69,6 +79,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var miniCircleImageView: CircleImageView? = null
     private var backgroundImage: ImageView? = null
     private var btnSettings: ImageView? = null
+    private var circleImageView: CircleImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,6 +118,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         miniCircleImageView = findViewById(R.id.mini_circle_image_view)
         backgroundImage = findViewById(R.id.background_image)
         btnSettings = findViewById(R.id.btn_settings)
+        circleImageView = findViewById(R.id.circle_image_view)
 
         viewPager!!.setAppBarLayout(appBarLayout)
 
@@ -133,16 +145,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         btnEditProfile!!.setOnClickListener(this)
         btnSettings!!.setOnClickListener(this)
 
-        backgroundImage!!.tag = null
-        val bitmap = EasyBlur.with(this)
-                .bitmap(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-                .policy(EasyBlur.BlurPolicy.RS_BLUR)
-                .radius(15)
-                .scale(2)
-                .blur()
-        Glide.with(this)
-                .load(bitmap)
-                .into(backgroundImage!!)
+        loadUserInfo()
     }
 
     /**
@@ -186,6 +189,46 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         viewPager!!.adapter = mViewPagerAdapter
     }
 
+    private fun loadUserInfo() {
+        val user = User.staticUser
+        val bmp = ImageManager.convertStringToBitmap(user.avatarString)
+        userName!!.text = user.nickName
+        fillBackgroundImage(bmp)
+        fillAvatarImage(bmp)
+    }
+
+    private fun fillBackgroundImage(bmp: Bitmap?) {
+        backgroundImage!!.tag = null
+        if (bmp != null) {
+            val bitmap = EasyBlur.with(this)
+                    .bitmap(bmp)
+                    .policy(EasyBlur.BlurPolicy.RS_BLUR)
+                    .radius(15)
+                    .scale(2)
+                    .blur()
+            Glide.with(this)
+                    .load(bitmap)
+                    .into(backgroundImage!!)
+        } else {
+            backgroundImage!!.setImageBitmap(null)
+        }
+
+    }
+
+    private fun fillAvatarImage(bmp: Bitmap?) {
+        if (bmp == null) {
+            circleImageView!!.setImageBitmap(null)
+            miniCircleImageView!!.setImageBitmap(null)
+        } else {
+            Glide.with(this)
+                    .load(bmp)
+                    .into(circleImageView!!)
+            Glide.with(this)
+                    .load(bmp)
+                    .into(miniCircleImageView!!)
+        }
+    }
+
     fun getAppBar(): AppBarLayout = appBarLayout!!
 
     /**
@@ -204,5 +247,28 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         }
     }
 
+    private class UserSyncBroadcastReceiver(activity: MyHomePageActivity) :
+            BaseActivity.MyBroadcastReceiver(activity) {
+        private val activity = activity
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent!!.action == AccountOp.ACTION_USER_LOG_OUT) {
+                activity.finish()
+            }
+        }
+    }
 
+    override fun prepareBroadcastReceiver() {
+        if (myBroadcastReceiver == null) {
+            val intentFilter = IntentFilter(AccountOp.ACTION_USER_LOG_OUT)
+            myBroadcastReceiver = UserSyncBroadcastReceiver(this)
+            AccountOp.localBroadcastManager.registerReceiver(myBroadcastReceiver!!,
+                    intentFilter)
+        }
+
+    }
+
+    override fun unRegBroadcastReceiver() {
+        if (myBroadcastReceiver != null)
+            AccountOp.localBroadcastManager.unregisterReceiver(myBroadcastReceiver!!)
+    }
 }

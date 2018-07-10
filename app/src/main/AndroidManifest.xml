@@ -52,10 +52,11 @@
         <activity android:name=".ui.activity.StudyRoomActivity" />
         <activity android:name=".ui.activity.GradeActivity" />
         <activity android:name=".ui.activity.CloudActivity" />
-        <activity android:name=".ui.activity.SettingsActivity"></activity>
+        <activity android:name=".ui.activity.SettingsActivity" />
         <activity android:name=".ui.activity.LoginActivity" />
         <activity android:name=".ui.activity.ScheduleDetailActivity" />
-        <activity android:name=".ui.activity.CreateScheduleActivity"></activity>
+        <activity android:name=".ui.activity.CreateScheduleActivity" />
+        <activity android:name=".ui.activity.SchoolBusTable"></activity>
     </application>
 
 </manifest>

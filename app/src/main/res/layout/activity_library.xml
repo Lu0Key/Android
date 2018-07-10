@@ -111,11 +111,12 @@
                 android:textSize="18sp"/>
 
             <TextView
+                android:clickable="true"
                 android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:background="@drawable/purple_stroke_rect"
+                android:background="@drawable/purple_stroke_rect_colorchanged"
                 android:textSize="14sp"
                 android:textColor="@color/colorPurpleDark"
                 android:paddingTop="4dp"

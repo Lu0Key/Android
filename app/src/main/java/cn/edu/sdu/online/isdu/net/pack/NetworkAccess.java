@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -19,7 +20,11 @@ import okhttp3.Response;
 public class NetworkAccess {
 
     public static void buildRequest(String url, Callback callback) {
-        OkHttpClient okHttpClient = new OkHttpClient();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .build();
         Request request = new Request.Builder()
                     .url(url)
                     .get()
@@ -34,12 +39,20 @@ public class NetworkAccess {
                 .url(url)
                 .post(RequestBody.create(mediaType, str))
                 .build();
-        OkHttpClient okHttpClient = new OkHttpClient();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .build();
         okHttpClient.newCall(request).enqueue(callback);
     }
 
     public static void buildRequest(String url, List<String> key, List<String> value, Callback callback) {
-        OkHttpClient okHttpClient = new OkHttpClient();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .build();
 
         FormBody.Builder formBody = new FormBody.Builder();
         for (int i = 0; i < key.size(); i++) {

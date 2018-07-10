@@ -1,6 +1,7 @@
 package cn.edu.sdu.online.isdu.app;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SlidingPaneLayout;
@@ -17,7 +18,7 @@ import cn.edu.sdu.online.isdu.R;
 
 @SuppressLint("Registered")
 @EnableDragToClose
-public class SlideActivity extends AppCompatActivity {
+public class SlideActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,5 +31,15 @@ public class SlideActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(com.youngfeng.snake.R.anim.snake_slide_in_left, com.youngfeng.snake.R.anim.snake_slide_out_right);
+    }
+
+    @Override
+    protected void prepareBroadcastReceiver() {
+
+    }
+
+    @Override
+    protected void unRegBroadcastReceiver() {
+
     }
 }
