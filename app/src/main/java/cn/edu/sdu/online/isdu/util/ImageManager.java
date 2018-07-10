@@ -57,7 +57,7 @@ public class ImageManager {
         try {
             thumb.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.log(e);
         }
 
         if (Build.VERSION.SDK_INT >= 24) {
