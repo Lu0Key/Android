@@ -25,6 +25,7 @@ public class Logger {
 
         try {
             FileWriter fileWriter = new FileWriter(log);
+            fileWriter.write("**********************************\n");
             fileWriter.write(message);
             fileWriter.close();
         } catch (IOException e) {
@@ -47,6 +48,7 @@ public class Logger {
 
         try {
             PrintWriter fileWriter = new PrintWriter(log);
+            fileWriter.write("**********************************\n");
             e.printStackTrace(fileWriter);
             fileWriter.close();
         } catch (Exception e1) {
