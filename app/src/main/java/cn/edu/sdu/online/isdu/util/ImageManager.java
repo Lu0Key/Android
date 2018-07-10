@@ -30,10 +30,9 @@ import java.io.IOException;
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/7/10
+ * Last Modify Time: 2018/6/3
  *
  * 相册和摄像头选取图片管理器
- * 修复了一些bug
  ****************************************************
  */
 

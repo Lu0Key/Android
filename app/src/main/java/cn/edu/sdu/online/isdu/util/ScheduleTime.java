@@ -5,17 +5,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 
 /**
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/7/9
+ * Last Modify Time: 2018/5/28
  *
  * 日程时间类
- *
- * #添加获取当前时间功能
  ****************************************************
  */
 
@@ -36,13 +33,6 @@ public class ScheduleTime implements Parcelable {
         minute = in.readInt();
     }
 
-    public static ScheduleTime currentTime() {
-        long time = System.currentTimeMillis();
-        String sHour = new SimpleDateFormat("HH").format(time);
-        String sMinute = new SimpleDateFormat("mm").format(time);
-        return new ScheduleTime(Integer.parseInt(sHour), Integer.parseInt(sMinute));
-    }
-
     public static final Creator<ScheduleTime> CREATOR = new Creator<ScheduleTime>() {
         @Override
         public ScheduleTime createFromParcel(Parcel in) {
@@ -61,7 +51,7 @@ public class ScheduleTime implements Parcelable {
 
     public void setHour(int hour) {
         if (hour < 0 || hour >= 24) {
-            this.hour = 0;
+            hour = 0;
         } else {
             this.hour = hour;
         }

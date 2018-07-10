@@ -26,13 +26,8 @@ public class Logger {
 
         try {
             FileWriter fileWriter = new FileWriter(log);
-<<<<<<< HEAD
-            fileWriter.write("**********************************\n");
-            fileWriter.write(message);
-=======
             fileWriter.write("################################\n");
             fileWriter.write(time + ":" + message);
->>>>>>> dev
             fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,18 +49,12 @@ public class Logger {
         }
 
         try {
-<<<<<<< HEAD
-            PrintWriter fileWriter = new PrintWriter(log);
-            fileWriter.write("**********************************\n");
-            e.printStackTrace(fileWriter);
-=======
             FileWriter fileWriter = new FileWriter(log, true);
             PrintWriter printWriter = new PrintWriter(fileWriter);
             fileWriter.write("################################\n");
             fileWriter.write(time + ":");
             e.printStackTrace(printWriter);
             printWriter.close();
->>>>>>> dev
             fileWriter.close();
         } catch (Exception e1) {
             e1.printStackTrace();

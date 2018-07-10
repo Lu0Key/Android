@@ -22,20 +22,6 @@ public class WeekDialog extends Dialog {
     private Context mContext;
     private int startWeek;
     private int endWeek;
-    private TextView txtTitle;
-    private TextView btnPositive;
-    private TextView btnNegative;
-    private View blankView;
-
-    private String title;
-    private String pos;
-    private String neg;
-
-    private View.OnClickListener onPositiveButtonClickListener;
-    private View.OnClickListener onNegativeButtonClickListener;
-
-    private List<Week> weeks = new ArrayList<>();
-    private List<Day> days = new ArrayList<>();
 
     private RecyclerView weekRV, dayRV;
 
@@ -62,117 +48,43 @@ public class WeekDialog extends Dialog {
 
         weekRV = findViewById(R.id.recycler_view_weeks);
         dayRV = findViewById(R.id.recycler_view_days);
-        txtTitle = findViewById(R.id.txt_title);
-        btnPositive = findViewById(R.id.btn_positive);
-        btnNegative = findViewById(R.id.btn_negative);
-        blankView = findViewById(R.id.blank_view);
-
-        txtTitle.setText(title);
-        btnPositive.setText(pos);
-        btnPositive.setOnClickListener(onPositiveButtonClickListener);
-        btnNegative.setText(neg);
-        btnNegative.setOnClickListener(onNegativeButtonClickListener);
 
         weekRV.setLayoutManager(new GridLayoutManager(mContext, 5));
         dayRV.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
 
         weekRV.setAdapter(new WeekAdapter(startWeek, endWeek));
 
-//        days.add(new Day("一"));
-//        days.add(new Day("二"));
-//        days.add(new Day("三"));
-//        days.add(new Day("四"));
-//        days.add(new Day("五"));
-//        days.add(new Day("六"));
-//        days.add(new Day("日"));
-        dayRV.setAdapter(new DayAdapter());
-
-        setCancelOnTouchOutside(true);
+        List<Day> days = new ArrayList<>();
+        days.add(new Day("一"));
+        days.add(new Day("二"));
+        days.add(new Day("三"));
+        days.add(new Day("四"));
+        days.add(new Day("五"));
+        days.add(new Day("六"));
+        days.add(new Day("日"));
+        dayRV.setAdapter(new DayAdapter(days));
     }
 
-    private void setCancelOnTouchOutside(boolean b) {
-        if (b) {
-            blankView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-        } else {
-            blankView.setOnClickListener(null);
-        }
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-        if (txtTitle != null) {
-            txtTitle.setText(title);
-        }
-    }
-
-    public void setPositiveButton(String text, View.OnClickListener listener) {
-        pos = text;
-        onPositiveButtonClickListener = listener;
-
-        if (btnPositive != null) {
-            btnPositive.setText(pos);
-            btnPositive.setOnClickListener(onPositiveButtonClickListener);
-        }
-    }
-
-    public void setNegativeButton(String text, View.OnClickListener listener) {
-        neg = text;
-        onNegativeButtonClickListener = listener;
-
-        if (btnPositive != null) {
-            btnNegative.setText(neg);
-            btnNegative.setOnClickListener(onNegativeButtonClickListener);
-        }
-    }
-
-    public void setWeeks(List<Week> weeks) {
-        this.weeks = weeks;
-    }
-
-    public void setDays(List<Day> days) {
-        this.days = days;
-    }
-
-    public List<Integer> getWeeks() {
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i <= endWeek - startWeek; i++) {
-            if (weeks.get(i).chosen) list.add(i + 1);
-        }
-        return list;
-    }
-
-    public List<Integer> getDays() {
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            if (days.get(i).chosen) list.add(i + 1);
-        }
-
-        return list;
-    }
 
     class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.ViewHolder> {
+        private List<Week> weeks = new ArrayList<>();
 
         WeekAdapter(int start, int end) {
-//            for (int i = start; i <= end; i++) {
-//                weeks.add(new Week(i));
-//            }
+            for (int i = start; i <= end; i++) {
+                weeks.add(new Week(i));
+            }
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
             Week week = weeks.get(position);
             holder.textView.setText(week.index + "");
-            holder.textView.setBackgroundResource((week.chosen) ?
+            holder.textView.setBackgroundResource((week.choosen) ?
                     R.drawable.purple_circle : R.drawable.white_circle);
             holder.textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    weeks.get(position).chosen = !weeks.get(position).chosen;
+                    weeks.get(position).choosen = !weeks.get(position).choosen;
                     notifyDataSetChanged();
                 }
             });
@@ -182,7 +94,7 @@ public class WeekDialog extends Dialog {
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view =
-                    LayoutInflater.from(parent.getContext()).inflate(R.layout.circle_select_item, parent, false);
+                    LayoutInflater.from(parent.getContext()).inflate(R.layout.week_select_item, parent, false);
             return new ViewHolder(view);
         }
 
@@ -201,17 +113,22 @@ public class WeekDialog extends Dialog {
     }
 
     class DayAdapter extends RecyclerView.Adapter<DayAdapter.ViewHolder> {
+        private List<Day> days;
+
+        DayAdapter(List<Day> days) {
+            this.days = days;
+        }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
             Day day = days.get(position);
             holder.textView.setText(day.name);
-            holder.textView.setBackgroundResource((day.chosen) ?
+            holder.textView.setBackgroundResource((day.choosen) ?
                     R.drawable.purple_circle : R.drawable.white_circle);
             holder.textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    days.get(position).chosen = !days.get(position).chosen;
+                    days.get(position).choosen = !days.get(position).choosen;
                     notifyDataSetChanged();
                 }
             });
@@ -221,7 +138,7 @@ public class WeekDialog extends Dialog {
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view =
-                    LayoutInflater.from(parent.getContext()).inflate(R.layout.circle_select_item, parent, false);
+                    LayoutInflater.from(parent.getContext()).inflate(R.layout.week_select_item, parent, false);
             return new ViewHolder(view);
         }
 
@@ -239,15 +156,17 @@ public class WeekDialog extends Dialog {
         }
     }
 
-    public static class Week {
+    class Week {
         int index;
-        public boolean chosen = false;
-        public Week(int index) {this.index = index;}
+        boolean choosen = false;
+        Week() {}
+        Week(int index) {this.index = index;}
     }
 
-    public static class Day {
+    class Day {
         String name;
-        public boolean chosen = false;
-        public Day(String name) {this.name = name;}
+        boolean choosen = false;
+        Day() {}
+        Day(String name) {this.name = name;}
     }
 }

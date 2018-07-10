@@ -44,6 +44,7 @@
                     android:gravity="center"
                     android:text="标题"
                     android:textColor="@color/colorPurpleDark"
+                    android:textStyle="bold"
                     android:textSize="18sp"
                     android:padding="12dp"/>
 
