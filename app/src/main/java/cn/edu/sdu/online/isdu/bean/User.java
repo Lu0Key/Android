@@ -16,9 +16,11 @@ import cn.edu.sdu.online.isdu.app.MyApplication;
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/6/9
+ * Last Modify Time: 2018/7/10
  *
  * 用户信息类
+ *
+ * 加入学院和专业信息
  ****************************************************
  */
 
@@ -34,6 +36,9 @@ public class User extends LitePalSupport {
     private String avatarString; // 头像字符串
     private String selfIntroduce; // 个人介绍
     private String passwordMD5; // MD5加密的教务密码
+    private String major; // 专业
+    private String depart; // 学院
+    private int id; // ID号，非学号
 
     public static User staticUser; // 全局用户实例
 
@@ -124,5 +129,29 @@ public class User extends LitePalSupport {
 
     public void setPasswordMD5(String passwordMD5) {
         this.passwordMD5 = passwordMD5;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
+    public String getDepart() {
+        return depart;
+    }
+
+    public void setDepart(String depart) {
+        this.depart = depart;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

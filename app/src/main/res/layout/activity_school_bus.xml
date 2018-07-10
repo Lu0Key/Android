@@ -161,6 +161,7 @@
         android:layout_width="match_parent"
         android:background="@color/colorPurpleFade"
         android:layout_height="wrap_content">
+
         <TextView
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
@@ -227,7 +228,7 @@
                 android:layout_height="36dp"
                 android:text="重置"
                 style="?android:attr/borderlessButtonStyle"
-            android:background="@drawable/purple_stroke_rect"/>/>
+                android:background="@drawable/purple_stroke_rect"/>
         </LinearLayout>
         <LinearLayout
             android:layout_weight="1"
