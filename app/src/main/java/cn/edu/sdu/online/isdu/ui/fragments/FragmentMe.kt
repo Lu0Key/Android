@@ -10,6 +10,7 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,7 +78,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
 
         prepareBroadcastReceiver()
 
-        loadUserInformation()
+//        loadUserInformation()
         return view
     }
 
@@ -130,6 +131,11 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
                 startActivity(Intent(activity, ScheduleActivity::class.java))
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadUserInformation()
     }
 
     override fun onDestroy() {
@@ -197,12 +203,13 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
      * 加载用户信息
      */
     private fun loadUserInformation() {
+        Log.d("FragmentMe", "loadUserInformation")
         if (User.staticUser.studentNumber != null && User.staticUser.studentNumber != "") {
             // 加载登录后信息
             val user = User.staticUser
             circleImageView?.setImageBitmap(ImageManager.convertStringToBitmap(user.avatarString))
             userName?.text = user.nickName
-            userId?.text = user.studentNumber
+            userId?.text = "${user.studentNumber} ID:${user.uid}"
             userId?.visibility = View.VISIBLE
             imgArrowForward?.visibility = View.VISIBLE
         } else {
@@ -258,10 +265,10 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
         private val fragmentMe = fragmentMe
         override fun onReceive(context: Context?, intent: Intent?) {
             fragmentMe.loadUserInformation()
-            if (intent!!.action == AccountOp.ACTION_SYNC_USER_INFO) {
-                val data = intent.extras.getString("result")
-                Toast.makeText(context, data, Toast.LENGTH_SHORT).show()
-            }
+//            if (intent!!.action == AccountOp.ACTION_SYNC_USER_INFO) {
+//                val data = intent.extras.getString("result")
+//                Toast.makeText(context, data, Toast.LENGTH_SHORT).show()
+//            }
         }
     }
 }

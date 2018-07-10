@@ -72,8 +72,9 @@ class LoginActivity : SlideActivity(), View.OnClickListener {
     private fun performLogin(num: String, pwd: String) {
         setEnabled(false)
 
-        NetworkAccess.buildRequest(ServerInfo.url + "signIn?j_username=$num&j_password=$pwd",
-                object : Callback {
+        val url = ServerInfo.url + "signIn?j_username=$num&j_password=$pwd"
+
+        NetworkAccess.buildRequest(url, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 runOnUiThread {
                     e?.printStackTrace()
@@ -90,19 +91,19 @@ class LoginActivity : SlideActivity(), View.OnClickListener {
                     try {
                         val jsonObj = JSONObject(json)
 
-                        if (jsonObj.getString("status") == "failed") {
+                        if (!jsonObj.isNull("status") && jsonObj.getString("status") == "failed") {
                             Toast.makeText(this@LoginActivity, "学号或密码错误", Toast.LENGTH_SHORT).show()
                         } else {
                             // 初始化用户缓存
                             User.staticUser.studentNumber = num
                             User.staticUser.passwordMD5 = pwd
-                            AccountOp.syncUserInformation() // 同步用户信息
+                            AccountOp.syncUserInformation(jsonObj) // 同步用户信息
 
                             finish()
                             Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT).show()
                         }
-                        System.out.println(json)
                     } catch (e: Exception) {
+                        e.printStackTrace()
                         Toast.makeText(this@LoginActivity, "网络错误\n服务器无响应", Toast.LENGTH_SHORT).show()
                     }
 

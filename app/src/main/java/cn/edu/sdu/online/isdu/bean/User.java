@@ -11,6 +11,7 @@ import org.litepal.crud.LitePalSupport;
 import java.util.List;
 
 import cn.edu.sdu.online.isdu.app.MyApplication;
+import cn.edu.sdu.online.isdu.net.AccountOp;
 
 /**
  ****************************************************
@@ -38,7 +39,7 @@ public class User extends LitePalSupport {
     private String passwordMD5; // MD5加密的教务密码
     private String major; // 专业
     private String depart; // 学院
-    private int id; // ID号，非学号
+    private int uid; // ID号，非学号
 
     public static User staticUser; // 全局用户实例
 
@@ -62,7 +63,7 @@ public class User extends LitePalSupport {
 
         if (!studentNumber.equals("")) {
             List<User> users = LitePal
-                    .where("student_number = ?", studentNumber)
+                    .where("studentNumber = ?", studentNumber)
                     .find(User.class);
 
             if (!users.isEmpty())
@@ -73,6 +74,23 @@ public class User extends LitePalSupport {
             user = new User();
 
         return user;
+    }
+
+    public static void logout(Context context) {
+        AccountOp.logout(context);
+        staticUser.studentNumber = null;
+        staticUser.passwordMD5 = null;
+    }
+
+    /**
+     * 保存信息至SharedPreference
+     */
+    public void save(Context context) {
+        save(); // LitePal Save
+        SharedPreferences sp = context.getSharedPreferences("login_cache", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("student_number", studentNumber);
+        editor.apply();
     }
 
     public String getNickName() {
@@ -147,11 +165,11 @@ public class User extends LitePalSupport {
         this.depart = depart;
     }
 
-    public int getId() {
-        return id;
+    public int getUid() {
+        return uid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 }

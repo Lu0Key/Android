@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.ui.design.WideButton
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.util.Settings
@@ -68,7 +69,9 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
                 finish()
             }
             R.id.btn_logout -> {
-
+                User.logout(this)
+                Toast.makeText(this, "注销成功", Toast.LENGTH_SHORT).show()
+                finish()
             }
         }
     }
@@ -133,5 +136,13 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnAlarmNews!!.setOnItemSwitchListener(this)
         btnAlarmMessage!!.setOnItemSwitchListener(this)
         btnCloudSync!!.setOnItemSwitchListener(this)
+    }
+
+    override fun prepareBroadcastReceiver() {
+
+    }
+
+    override fun unRegBroadcastReceiver() {
+
     }
 }
