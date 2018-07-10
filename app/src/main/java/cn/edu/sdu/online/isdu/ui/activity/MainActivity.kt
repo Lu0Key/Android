@@ -73,20 +73,6 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        NotificationUtil.Builder(this)
-                .setTitle("Title")
-                .setMessage("Message")
-                .setChannelId("channel_id_0")
-                .setNotifyId(1)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(R.mipmap.ic_launcher)
-                .setOnGoing(true)
-                .show()
-        val v = NotificationUtil.OnClickListener { notifyId, channelId, manager ->
-            Toast.makeText(this, notifyId.toString() + "\t" + channelId, Toast.LENGTH_SHORT).show()
-        }
-        NotificationUtil.NotificationBroadcastReceiver.addOnClickListener(v)
-
         // 请求关键权限
         Permissions.requestPermission(this, Permissions.VIBRATE)
         Permissions.requestPermission(this, Permissions.INTERNET)

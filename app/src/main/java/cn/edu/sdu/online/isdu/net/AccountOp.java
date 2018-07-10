@@ -143,11 +143,17 @@ public class AccountOp {
 
                 User.staticUser.save();
                 User.staticUser.save(MyApplication.getContext());
+
+                final Intent intent = new Intent(ACTION_SYNC_USER_INFO);
+                intent.putExtra("result", "success");
+                localBroadcastManager.sendBroadcast(intent);
+            } else {
+                final Intent intent = new Intent(ACTION_SYNC_USER_INFO);
+                intent.putExtra("result", jsonObject.getString("status"));
+                localBroadcastManager.sendBroadcast(intent);
             }
 
-            final Intent intent = new Intent(ACTION_SYNC_USER_INFO);
-            intent.putExtra("result", jsonObject.getString("status"));
-            localBroadcastManager.sendBroadcast(intent);
+
 
         } catch (Exception e) {
             Logger.log(e);
