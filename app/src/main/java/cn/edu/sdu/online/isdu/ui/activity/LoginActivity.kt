@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import org.json.JSONObject
 import java.io.IOException
 
 class LoginActivity : SlideActivity(), View.OnClickListener {
@@ -70,9 +71,10 @@ class LoginActivity : SlideActivity(), View.OnClickListener {
      */
     private fun performLogin(num: String, pwd: String) {
         setEnabled(false)
-        val keys = listOf("student_number", "student_password")
-        val values = listOf(num, pwd)
-        NetworkAccess.buildRequest(ServerInfo.url, keys, values, object : Callback {
+
+        val url = ServerInfo.url + "signIn?j_username=$num&j_password=$pwd"
+
+        NetworkAccess.buildRequest(url, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 runOnUiThread {
                     e?.printStackTrace()
@@ -85,17 +87,26 @@ class LoginActivity : SlideActivity(), View.OnClickListener {
                 runOnUiThread {
                     setEnabled(true)
 
-                    if (response?.body()?.string() == "success") {
-                        Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT).show()
-                        // 初始化用户缓存
-                        User.staticUser.studentNumber = num
-                        User.staticUser.passwordMD5 = pwd
-                        AccountOp.syncUserInformation() // 同步用户信息
+                    val json = response?.body()?.string()
+                    try {
+                        val jsonObj = JSONObject(json)
 
-                        finish()
-                    } else {
-                        Toast.makeText(this@LoginActivity, response?.body()?.string(), Toast.LENGTH_SHORT).show()
+                        if (!jsonObj.isNull("status") && jsonObj.getString("status") == "failed") {
+                            Toast.makeText(this@LoginActivity, "学号或密码错误", Toast.LENGTH_SHORT).show()
+                        } else {
+                            // 初始化用户缓存
+                            User.staticUser.studentNumber = num
+                            User.staticUser.passwordMD5 = pwd
+                            AccountOp.syncUserInformation(jsonObj) // 同步用户信息
+
+                            finish()
+                            Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Toast.makeText(this@LoginActivity, "网络错误\n服务器无响应", Toast.LENGTH_SHORT).show()
                     }
+
                 }
             }
         })

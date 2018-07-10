@@ -16,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.util.ImageManager
@@ -38,8 +39,9 @@ class EditProfileActivity : SlideActivity() {
 
     private var editUserName: EditText? = null
     private var editGender: TextView? = null
-    private var editMajor: EditText? = null
-    private var editAge: EditText? = null
+    private var editMajor: TextView? = null
+    private var editDepart: TextView? = null
+    private var editName: TextView? = null
     private var editIntroduction: EditText? = null
     private var avatar: CircleImageView? = null
     private var btnBack: ImageView? = null
@@ -53,29 +55,31 @@ class EditProfileActivity : SlideActivity() {
         setContentView(R.layout.activity_edit_profile)
 
         initView()
+        loadUserInformation()
     }
 
     private fun initView() {
         editUserName = findViewById(R.id.edit_user_name)
         editGender = findViewById(R.id.edit_gender)
         editMajor = findViewById(R.id.edit_profession)
-        editAge = findViewById(R.id.edit_age)
+        editDepart = findViewById(R.id.edit_campus)
+        editName = findViewById(R.id.edit_name)
         editIntroduction = findViewById(R.id.edit_introduction)
         avatar = findViewById(R.id.circle_image_view)
         btnBack = findViewById(R.id.btn_back)
         btnDone = findViewById(R.id.btn_done)
         btnEditAvatar = findViewById(R.id.btn_edit_avatar)
 
-        editGender!!.setOnClickListener {
-            val list = listOf("男", "女", "保密")
-            val dialog = OptionDialog(this, list)
-            dialog.setMessage("选择性别")
-            dialog.setOnItemSelectListener {
-                itemName ->
-                editGender!!.text = itemName
-            }
-            dialog.show()
-        }
+//        editGender!!.setOnClickListener {
+//            val list = listOf("男", "女", "保密")
+//            val dialog = OptionDialog(this, list)
+//            dialog.setMessage("选择性别")
+//            dialog.setOnItemSelectListener {
+//                itemName ->
+//                editGender!!.text = itemName
+//            }
+//            dialog.show()
+//        }
 
         btnEditAvatar!!.setOnClickListener {
             val list = listOf("相机拍摄", "从相册选择")
@@ -98,19 +102,37 @@ class EditProfileActivity : SlideActivity() {
             val dialog = AlertDialog(this)
             dialog.setTitle("退出")
             dialog.setMessage("确定要退出吗？所做的更改将不会保存。")
-            dialog.setPositiveButton("是", {
+            dialog.setPositiveButton("是") {
                 dialog.dismiss()
                 finish()
-            })
-            dialog.setNegativeButton("否", {
+            }
+            dialog.setNegativeButton("否") {
                 dialog.dismiss()
-            })
+            }
             dialog.show()
         }
 
         btnDone!!.setOnClickListener {
 
         }
+    }
+
+    private fun loadUserInformation() {
+        val user = User.staticUser
+        val bmp = ImageManager.convertStringToBitmap(user.avatarString)
+        avatar!!.setImageBitmap(bmp)
+        editUserName!!.setText(user.nickName)
+
+        when (user.gender) {
+            User.GENDER_MALE -> editGender!!.text = "男"
+            User.GENDER_FEMALE -> editGender!!.text = "女"
+            User.GENDER_SECRET -> editGender!!.text = "保密"
+        }
+
+        editMajor!!.text = user.major
+        editDepart!!.text = user.depart
+        editName!!.text = user.name
+        editIntroduction!!.setText(user.selfIntroduce)
     }
 
     override fun onBackPressed() {
