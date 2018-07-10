@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-public abstract class BaseActivity extends AppCompatActivity {
+import cn.edu.sdu.online.isdu.util.Logger;
+
+public abstract class BaseActivity extends AppCompatActivity
+        implements Thread.UncaughtExceptionHandler {
 
     protected MyBroadcastReceiver myBroadcastReceiver;
 
@@ -20,8 +23,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Thread.setDefaultUncaughtExceptionHandler(this);
         prepareBroadcastReceiver();
+    }
+
+    @Override
+    public void uncaughtException(Thread t, Throwable e) {
+        Logger.log(e);
     }
 
     @Override

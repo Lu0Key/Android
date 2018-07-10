@@ -33,6 +33,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.Common
 import android.widget.TextView
 import android.view.LayoutInflater
 import cn.edu.sdu.online.isdu.R.id.*
+import cn.edu.sdu.online.isdu.app.BaseActivity
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
@@ -54,7 +55,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigat
  * #7/7重构主活动
  ****************************************************
  */
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : BaseActivity(), View.OnClickListener {
 
     private var fragments: MutableList<Fragment> = ArrayList() // Fragment列表
     private var fragmentTags = listOf("FragmentHome", "FragmentNews", "FragmentMe") // Fragment Tag
@@ -179,6 +180,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         override fun getPageTitle(position: Int): CharSequence? {
             return mDataList[position]
         }
+    }
+
+    override fun prepareBroadcastReceiver() {
+
+    }
+
+    override fun unRegBroadcastReceiver() {
+
     }
 
     companion object {

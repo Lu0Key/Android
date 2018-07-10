@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 
 import org.litepal.LitePal;
+import org.litepal.LitePalDB;
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
@@ -86,7 +87,18 @@ public class User extends LitePalSupport {
      * 保存信息至SharedPreference
      */
     public void save(Context context) {
-        save(); // LitePal Save
+        User user = LitePal.find(User.class, 1);
+        user.setUid(uid);
+        user.setDepart(depart);
+        user.setMajor(major);
+        user.setSelfIntroduce(selfIntroduce);
+        user.setGender(gender);
+        user.setAvatarString(avatarString);
+        user.setName(name);
+        user.setNickName(nickName);
+        user.setPasswordMD5(passwordMD5);
+        user.setStudentNumber(studentNumber);
+        user.save(); // LitePal Save
         SharedPreferences sp = context.getSharedPreferences("login_cache", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("student_number", studentNumber);
