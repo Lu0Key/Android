@@ -1,8 +1,6 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 import android.content.Context
-import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -11,10 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.bean.Book
 import cn.edu.sdu.online.isdu.bean.Bus
 import kotlinx.android.synthetic.main.activity_school_bus_table.*
 import java.util.ArrayList
@@ -54,15 +50,17 @@ class SchoolBusTable : SlideActivity() ,View.OnClickListener{
         searchNum=intent.getIntExtra("searchNum",0)
         fromP=intent.getIntExtra("fromP",0)
         toP=intent.getIntExtra("toP",0)
+        
         backBtn = btn_back
         recyclerView = recycler_view
+
         backBtn!!.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v!!.id){
             btn_back.id->{
-                finish();
+                finish()
             }
         }
     }
@@ -95,7 +93,7 @@ class SchoolBusTable : SlideActivity() ,View.OnClickListener{
             return ViewHolder(v = view)
         }
 
-        override fun getItemCount(): Int = 2//dataList?.size ?: 0
+        override fun getItemCount(): Int = dataList?.size ?: 0
 
         inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
             val busTime : TextView = v.findViewById(R.id.bus_time) // 发车时间

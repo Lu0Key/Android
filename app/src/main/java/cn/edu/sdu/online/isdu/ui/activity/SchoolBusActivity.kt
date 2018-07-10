@@ -113,7 +113,7 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
                 searchNum = 2
             }
             btn_back.id->{
-                finish();
+                finish()
             }
         /**
          * 校区选择按钮
