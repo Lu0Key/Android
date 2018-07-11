@@ -30,7 +30,7 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
     private var searchNum : Int = 1
     private var fromP : Int = 0
     private var toP : Int = 0
-    private val xqBtn : Array<cn.edu.sdu.online.isdu.ui.design.ImageButton?> = arrayOfNulls(10)
+    private val xqBtn : Array<cn.edu.sdu.online.isdu.ui.design.SchoolImageButton?> = arrayOfNulls(10)
     private val xqName = arrayOf("","中心校区","洪家楼校区","趵突泉校区","软件园校区","兴隆山校区","千佛山校区")
     private var tipText : TextView ?= null
     /*
