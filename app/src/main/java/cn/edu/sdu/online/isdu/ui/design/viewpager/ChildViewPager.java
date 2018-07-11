@@ -16,6 +16,7 @@ public class ChildViewPager extends ViewPager {
     private float mLastMotionX;
     private boolean flag = false;
 
+    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         final float x = ev.getX();
         switch (ev.getAction()) {
@@ -42,6 +43,8 @@ public class ChildViewPager extends ViewPager {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 getParent().requestDisallowInterceptTouchEvent(true);
+                break;
+            default:
                 break;
         }
         return super.dispatchTouchEvent(ev);

@@ -99,6 +99,7 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
                     tipText!!.text = "请选择终点"
                 }
                 else {
+                    tipText!!.text = ""
                     val intent : Intent = Intent(this,SchoolBusTable::class.java)
                     intent.putExtra("searchNum",searchNum)
                     intent.putExtra("fromP",fromP)

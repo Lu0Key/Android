@@ -39,4 +39,24 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
+    <net.lucode.hackware.magicindicator.MagicIndicator
+        android:id="@+id/magic_indicator"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="40dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+    </net.lucode.hackware.magicindicator.MagicIndicator>
+
+    <cn.edu.sdu.online.isdu.ui.design.viewpager.ChildViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </cn.edu.sdu.online.isdu.ui.design.viewpager.ChildViewPager>
+
 </LinearLayout>
