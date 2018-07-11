@@ -8,12 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.Bus
 import kotlinx.android.synthetic.main.activity_school_bus_table.*
-import java.util.ArrayList
+import java.util.*
 
 /**
  ****************************************************
@@ -34,6 +35,7 @@ class SchoolBusTable : SlideActivity() ,View.OnClickListener{
     private var adapter: SchoolBusTable.MyAdapter? = null
     private var recyclerView: RecyclerView ?= null
     private val dataList: MutableList<Bus> = ArrayList()
+    private var textView : TextView ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +55,7 @@ class SchoolBusTable : SlideActivity() ,View.OnClickListener{
 
         backBtn = btn_back
         recyclerView = recycler_view
+        textView = tips
 
         backBtn!!.setOnClickListener(this)
     }
@@ -69,6 +72,7 @@ class SchoolBusTable : SlideActivity() ,View.OnClickListener{
      * 初始化RecyclerView
      */
     private fun initRecyclerView() {
+
         adapter = MyAdapter(dataList, this)
         recyclerView!!.layoutManager = LinearLayoutManager(this)
         recyclerView!!.adapter = adapter
@@ -83,10 +87,14 @@ class SchoolBusTable : SlideActivity() ,View.OnClickListener{
         private val dataList = dataList
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            if (dataList?.size != 0){
+                textView!!.visibility = View.GONE
+            }
 
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+
             val view =
                     LayoutInflater.from(parent.context).inflate(
                             R.layout.bus_item, parent, false)
