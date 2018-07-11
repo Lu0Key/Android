@@ -2,11 +2,15 @@ package cn.edu.sdu.online.isdu.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import cn.edu.sdu.online.isdu.net.ServerInfo;
@@ -15,6 +19,8 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static java.util.Calendar.DAY_OF_WEEK;
 
 public class EnvVariables {
 
@@ -26,7 +32,7 @@ public class EnvVariables {
 
     public static void init(final Context context) {
         SharedPreferences sp = context.getSharedPreferences("env_variables", Context.MODE_PRIVATE);
-        if (sp.getInt("start_week", 0) == 0) {
+//        if (sp.getInt("start_week", 0) == 0) {
             // 未进行信息同步
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS)
@@ -34,15 +40,15 @@ public class EnvVariables {
                     .writeTimeout(10, TimeUnit.SECONDS)
                     .build();
             Request request = new Request.Builder()
-                    .url(ServerInfo.url + "envVariables")
+                    .url(ServerInfo.envVarUrl)
                     .get()
                     .build();
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     Logger.log(e);
-                    startWeek = 1;
-                    endWeek = 20;
+                    startWeek = 0;
+                    endWeek = 0;
                     firstWeekTimeMillis = 0;
                     save(context);
                 }
@@ -61,13 +67,14 @@ public class EnvVariables {
                     }
                 }
             });
-        } else {
-            startWeek = sp.getInt("start_week", 1);
-            endWeek = sp.getInt("end_week", 20);
-            firstWeekTimeMillis = sp.getLong("first_week_time_millis", 0);
-
-            currentWeek = calculateWeekIndex(System.currentTimeMillis());
-        }
+//        }
+//        else {
+//            startWeek = sp.getInt("start_week", 1);
+//            endWeek = sp.getInt("end_week", 20);
+//            firstWeekTimeMillis = sp.getLong("first_week_time_millis", 0);
+//
+//            currentWeek = calculateWeekIndex(System.currentTimeMillis());
+//        }
     }
 
     private static void save(Context context) {
@@ -76,14 +83,30 @@ public class EnvVariables {
         editor.putInt("start_week", startWeek);
         editor.putInt("end_week", endWeek);
         editor.putLong("first_week_time_millis", firstWeekTimeMillis);
+        Log.d("EnvVariables", "current_week" + currentWeek);
         editor.apply();
     }
 
     public static int calculateWeekIndex(long timeMillis) {
         long delta = (timeMillis - firstWeekTimeMillis) / 1000L;
+
+        if (delta < 0) return 0;
+
         int daily = 24 * 60 * 60;
-        int days = (int) (delta / daily);
+        int days = (int) Math.ceil(((double) delta) / ((double) daily));
         return (days / 7) + 1;
+    }
+
+    /**
+     * 获取当前是星期几
+     *
+     * @return 星期，范围是[1, 7]
+     */
+    public static int getCurrentDay() {
+        Calendar calendar = Calendar.getInstance();
+        int res = calendar.get(DAY_OF_WEEK) - 1;
+        if (res == 0) res = 7;
+        return res;
     }
 
 }

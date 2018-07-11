@@ -131,6 +131,11 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         }
     }
 
+    /**
+     * 在初始化日程表时
+     * 指定currentWeek
+     * 从startWeek到endWeek中选取第currentWeek - 1个列表进行绘制
+     */
     private fun initSchedule() {
         val list = ArrayList<ArrayList<Schedule>>()
         initScheduleData(list)
@@ -168,17 +173,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun initScheduleData(list: ArrayList<ArrayList<Schedule>>) {
-        for (i in 0 until 7) {
-            val l = ArrayList<Schedule>()
-            l.add(Schedule(
-                    "高级程序设计语言课程设计" + i,
-                    "五区201",
-                    ScheduleTime(9, 0),
-                    ScheduleTime(10, 50),
-                    Schedule.RepeatType.WEEKLY
-            ))
-            list.add(l)
-        }
+
     }
 
     private fun getTotalWeeks() {
@@ -192,7 +187,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
     private fun setCurrentWeek(index: Int) {
         currentWeek = index
         scheduleTable!!.setCurrentWeekIndex(currentWeek)
-        txtCurrentWeek!!.text = "第 " + index.toString() + " 周"
+        txtCurrentWeek!!.text = "第 $index 周"
     }
 
     private fun hideWeekSelect() {

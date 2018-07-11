@@ -15,5 +15,6 @@ public class ServerInfo {
     public static final String ipAddr = "202.194.15.132";
     public static final int port = 8384;
     public static final String url = "http://" + ipAddr + ":" + port + "/";
+    public static final String envVarUrl = "http://" + ipAddr + ":8380/env_variables.html";
 
 }
