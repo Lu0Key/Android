@@ -70,16 +70,6 @@ class EditProfileActivity : SlideActivity() {
         btnDone = findViewById(R.id.btn_done)
         btnEditAvatar = findViewById(R.id.btn_edit_avatar)
 
-//        editGender!!.setOnClickListener {
-//            val list = listOf("男", "女", "保密")
-//            val dialog = OptionDialog(this, list)
-//            dialog.setMessage("选择性别")
-//            dialog.setOnItemSelectListener {
-//                itemName ->
-//                editGender!!.text = itemName
-//            }
-//            dialog.show()
-//        }
 
         btnEditAvatar!!.setOnClickListener {
             val list = listOf("相机拍摄", "从相册选择")
@@ -118,7 +108,11 @@ class EditProfileActivity : SlideActivity() {
     }
 
     private fun loadUserInformation() {
-        val user = User.staticUser
+        var user = User.staticUser
+        if (user == null) {
+            User.staticUser = User.load()
+            user = User.staticUser
+        }
         val bmp = ImageManager.convertStringToBitmap(user.avatarString)
         avatar!!.setImageBitmap(bmp)
         editUserName!!.setText(user.nickName)

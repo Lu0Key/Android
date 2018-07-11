@@ -20,6 +20,7 @@ import java.io.IOException;
 import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.bean.User;
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess;
+import cn.edu.sdu.online.isdu.util.Logger;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -117,7 +118,6 @@ public class AccountOp {
      * @param jsonObject 包含用户信息的JSON对象
      */
     public static void syncUserInformation(JSONObject jsonObject) {
-        Log.d("AccountOp", "begin sync user information");
         try {
             if (jsonObject.isNull("status") || !jsonObject.getString("status").equals("failed")) {
 
@@ -141,18 +141,22 @@ public class AccountOp {
                 User.staticUser.setDepart(jsonObject.getString("depart"));
                 User.staticUser.setUid(jsonObject.getInt("id"));
 
+                User.staticUser.save();
                 User.staticUser.save(MyApplication.getContext());
+
+                final Intent intent = new Intent(ACTION_SYNC_USER_INFO);
+                intent.putExtra("result", "success");
+                localBroadcastManager.sendBroadcast(intent);
+            } else {
+                final Intent intent = new Intent(ACTION_SYNC_USER_INFO);
+                intent.putExtra("result", jsonObject.getString("status"));
+                localBroadcastManager.sendBroadcast(intent);
             }
 
-            Log.d("AccountOp", "end sync user information");
 
-            final Intent intent = new Intent(ACTION_SYNC_USER_INFO);
-            intent.putExtra("result", jsonObject.getString("status"));
-            localBroadcastManager.sendBroadcast(intent);
 
-            Log.d("AccountOp", "broadcast sent");
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.log(e);
         }
     }
 

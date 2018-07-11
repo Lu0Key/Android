@@ -12,9 +12,6 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewParent
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.RelativeLayout
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
@@ -30,9 +27,14 @@ import android.graphics.Color.LTGRAY
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView
-import android.widget.TextView
 import android.view.LayoutInflater
+import android.widget.*
 import cn.edu.sdu.online.isdu.R.id.*
+import cn.edu.sdu.online.isdu.app.BaseActivity
+import cn.edu.sdu.online.isdu.util.NotificationUtil
+import cn.edu.sdu.online.isdu.util.Permissions
+import cn.edu.sdu.online.isdu.util.Phone
+import cn.edu.sdu.online.isdu.util.NotificationUtil.NotificationBroadcastReceiver
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
@@ -40,21 +42,21 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigat
 
 
 /**
- ****************************************************
- * @author zsj
- * Last Modifier: ZSJ
- * Last Modify Time: 2018/7/8
- *
- * 主活动页面
- * 其下附属3个Fragment
- * 分别是：主页面、个人中心、资讯页面
- *
- * #修复了常驻后台进程被杀重启时的崩溃bug
- * #添加按下返回键回到桌面的功能
- * #7/7重构主活动
- ****************************************************
- */
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+****************************************************
+* @author zsj
+* Last Modifier: ZSJ
+* Last Modify Time: 2018/7/8
+*
+* 主活动页面
+* 其下附属3个Fragment
+* 分别是：主页面、个人中心、资讯页面
+*
+* #修复了常驻后台进程被杀重启时的崩溃bug
+* #添加按下返回键回到桌面的功能
+* #7/7重构主活动
+****************************************************
+*/
+class MainActivity : BaseActivity(), View.OnClickListener {
 
     private var fragments: MutableList<Fragment> = ArrayList() // Fragment列表
     private var fragmentTags = listOf("FragmentHome", "FragmentNews", "FragmentMe") // Fragment Tag
@@ -70,6 +72,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // 请求关键权限
+        Permissions.requestPermission(this, Permissions.VIBRATE)
+        Permissions.requestPermission(this, Permissions.INTERNET)
 
         /* 获取实例 */
         magicIndicator = magic_indicator
@@ -179,6 +185,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         override fun getPageTitle(position: Int): CharSequence? {
             return mDataList[position]
         }
+    }
+
+    override fun prepareBroadcastReceiver() {
+
+    }
+
+    override fun unRegBroadcastReceiver() {
+
     }
 
     companion object {

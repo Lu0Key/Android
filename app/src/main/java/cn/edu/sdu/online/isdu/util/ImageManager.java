@@ -57,7 +57,7 @@ public class ImageManager {
         try {
             thumb.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.log(e);
         }
 
         if (Build.VERSION.SDK_INT >= 24) {
@@ -96,6 +96,11 @@ public class ImageManager {
         //获取打开文件的URI
         File croppedImage = new File(Environment.getExternalStorageDirectory() + "/iSDU/thumb/" +
                 System.currentTimeMillis() + "_c.jpg");
+
+        if (!croppedImage.exists()) {
+            if (!croppedImage.getParentFile().exists()) croppedImage.getParentFile().mkdirs();
+        }
+
         if (Build.VERSION.SDK_INT >= 24) {
             destUri = FileProvider.getUriForFile(context,
                     "cn.edu.sdu.online.isdu.fileprovider", croppedImage);

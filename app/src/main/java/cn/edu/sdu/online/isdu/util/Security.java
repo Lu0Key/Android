@@ -29,7 +29,7 @@ public class Security {
             }
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Logger.log(e);
         }
         return "";
     }

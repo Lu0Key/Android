@@ -203,7 +203,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
      * 加载用户信息
      */
     private fun loadUserInformation() {
-        Log.d("FragmentMe", "loadUserInformation")
+        if (User.staticUser == null) User.staticUser = User.load()
         if (User.staticUser.studentNumber != null && User.staticUser.studentNumber != "") {
             // 加载登录后信息
             val user = User.staticUser
