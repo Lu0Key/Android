@@ -96,6 +96,7 @@
 
                 <!--消息、收藏、浏览、关注-->
                 <LinearLayout
+                    android:id="@+id/function_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"

@@ -23,13 +23,13 @@ public class SlideActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Snake.host(this);
+        overridePendingTransition(R.anim.snake_slide_in_right, R.anim.snake_slide_out_left);
     }
 
     @Override
     public void finish() {
         super.finish();
-
+        overridePendingTransition(R.anim.snake_slide_in_left, R.anim.snake_slide_out_right);
     }
 
     @Override

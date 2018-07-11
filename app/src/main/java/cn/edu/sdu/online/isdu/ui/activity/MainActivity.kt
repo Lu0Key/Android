@@ -31,6 +31,7 @@ import android.view.LayoutInflater
 import android.widget.*
 import cn.edu.sdu.online.isdu.R.id.*
 import cn.edu.sdu.online.isdu.app.BaseActivity
+import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.util.NotificationUtil
 import cn.edu.sdu.online.isdu.util.Permissions
 import cn.edu.sdu.online.isdu.util.Phone
@@ -56,7 +57,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigat
 * #7/7重构主活动
 ****************************************************
 */
-class MainActivity : BaseActivity(), View.OnClickListener {
+class MainActivity : SlideActivity(), View.OnClickListener {
 
     private var fragments: MutableList<Fragment> = ArrayList() // Fragment列表
     private var fragmentTags = listOf("FragmentHome", "FragmentNews", "FragmentMe") // Fragment Tag

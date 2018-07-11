@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
@@ -55,6 +56,8 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
     private var btnFollow: TextView? = null
     private var todayScheduleLayout: View? = null
     private var imgArrowForward: ImageView? = null
+
+    private var functionButtonLayout: LinearLayout? = null
 
     private var circleImageView: CircleImageView? = null
     private var userName: TextView? = null
@@ -167,6 +170,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
         todayScheduleLayout = view.findViewById(R.id.today_schedule)
         imgArrowForward = view.findViewById(R.id.img_arrow_forward)
         emptySymbol = view.findViewById(R.id.empty_symbol)
+        functionButtonLayout = view.findViewById(R.id.function_button)
 
         btnBus!!.setOnClickListener(this)
         btnCalender!!.setOnClickListener(this)
@@ -212,6 +216,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
             userId?.text = "${user.studentNumber} ID:${user.uid}"
             userId?.visibility = View.VISIBLE
             imgArrowForward?.visibility = View.VISIBLE
+            functionButtonLayout?.visibility = View.VISIBLE
         } else {
             // 加载未登录信息
             circleImageView?.setImageResource(R.mipmap.ic_launcher)
@@ -219,6 +224,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
             userId?.text = ""
             userId?.visibility = View.GONE
             imgArrowForward?.visibility = View.GONE
+            functionButtonLayout?.visibility = View.GONE
         }
     }
 
