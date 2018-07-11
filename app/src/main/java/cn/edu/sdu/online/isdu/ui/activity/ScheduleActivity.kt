@@ -19,6 +19,8 @@ import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.ui.design.ScheduleTable
+import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
+import cn.edu.sdu.online.isdu.util.EnvVariables
 import cn.edu.sdu.online.isdu.util.PixelUtil
 import cn.edu.sdu.online.isdu.util.ScheduleTime
 import kotlinx.android.synthetic.main.activity_schedule.*
@@ -53,9 +55,21 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_schedule)
 
-        initView()
-
-        initSchedule()
+        if (EnvVariables.currentWeek == -1) {
+            val dialog = AlertDialog(this)
+            dialog.setTitle("无数据")
+            dialog.setMessage("未获取到数据，请稍后重试")
+            dialog.setCancelOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.setPositiveButton("返回") {
+                finish()
+                dialog.dismiss()
+            }
+            dialog.show()
+        } else {
+            initView()
+            initSchedule()
+        }
     }
 
     private fun initView() {
@@ -117,6 +131,11 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         }
     }
 
+    /**
+     * 在初始化日程表时
+     * 指定currentWeek
+     * 从startWeek到endWeek中选取第currentWeek - 1个列表进行绘制
+     */
     private fun initSchedule() {
         val list = ArrayList<ArrayList<Schedule>>()
         initScheduleData(list)
@@ -132,7 +151,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
 
     private fun initRecyclerView() {
         val dataList = ArrayList<SelectableWeekIndex>()
-        for (i in 0 until totalWeeks) {
+        for (i in EnvVariables.startWeek until EnvVariables.endWeek + 1) {
             dataList.add(SelectableWeekIndex(i + 1))
         }
         dataList[currentWeek - 1].selected = true
@@ -154,31 +173,21 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun initScheduleData(list: ArrayList<ArrayList<Schedule>>) {
-        for (i in 0 until 7) {
-            val l = ArrayList<Schedule>()
-            l.add(Schedule(
-                    "高级程序设计语言课程设计" + i,
-                    "五区201",
-                    ScheduleTime(9, 0),
-                    ScheduleTime(10, 50),
-                    Schedule.RepeatType.WEEKLY
-            ))
-            list.add(l)
-        }
+
     }
 
     private fun getTotalWeeks() {
-        totalWeeks = 20
+        totalWeeks = EnvVariables.endWeek - EnvVariables.startWeek + 1
     }
 
     private fun getCurrentWeek() {
-        currentWeek = 2
+        currentWeek = EnvVariables.currentWeek
     }
 
     private fun setCurrentWeek(index: Int) {
         currentWeek = index
         scheduleTable!!.setCurrentWeekIndex(currentWeek)
-        txtCurrentWeek!!.text = "第 " + index.toString() + " 周"
+        txtCurrentWeek!!.text = "第 $index 周"
     }
 
     private fun hideWeekSelect() {

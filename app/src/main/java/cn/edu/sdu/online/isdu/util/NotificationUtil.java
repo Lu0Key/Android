@@ -159,6 +159,12 @@ public class NotificationUtil {
         }
 
         public Notification build() {
+            // 必须提供smallIcon，不然会报错
+            // 这里进行return处理
+            if (smallIconRes == 0) {
+                return null;
+            }
+
             Intent intentClick = new Intent(mContext, NotificationBroadcastReceiver.class);
             intentClick.setAction("notification_clicked");
             intentClick.putExtra("notify_id", notifyId);
@@ -243,7 +249,10 @@ public class NotificationUtil {
 
         public void show() {
             Notification notification = build();
-            manager.notify(notifyId, notification);
+            if (notification != null) {
+                if (lights) notification.flags = Notification.FLAG_SHOW_LIGHTS;
+                manager.notify(notifyId, notification);
+            }
         }
     }
 

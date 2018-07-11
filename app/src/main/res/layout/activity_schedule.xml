@@ -45,7 +45,6 @@
                     app:layout_constraintRight_toRightOf="parent"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
-                    android:text="text"
                     android:gravity="center"
                     android:clickable="true"
                     android:focusable="true"/>

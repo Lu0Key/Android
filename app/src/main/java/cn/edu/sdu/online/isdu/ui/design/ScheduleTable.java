@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.sdu.online.isdu.bean.Schedule;
+import cn.edu.sdu.online.isdu.util.EnvVariables;
 import cn.edu.sdu.online.isdu.util.ScheduleTime;
 
 /**
@@ -223,7 +224,7 @@ public class ScheduleTable extends View {
         getHourIndex();
         ordinateSchedules.clear();
         if (scheduleList != null) {
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i < 7 && !scheduleList.isEmpty(); i++) {
                 if (scheduleList.get(i) == null) continue;
 
                 for (int j = 0; j < scheduleList.get(i).size(); j++) {
@@ -246,12 +247,6 @@ public class ScheduleTable extends View {
                     ordinateSchedule.setTop(getRectTop(schedule.getStartTime()));
                     ordinateSchedule.setRight(getRectRight(i + 1));
                     ordinateSchedule.setBottom(getRectBottom(schedule.getEndTime()));
-
-//                    Log.d("ScheduleTable", "ordinate:" + ordinateSchedule.getScheduleName() +
-//                        "\n" + ordinateSchedule.getLeft() + "\t" +
-//                        ordinateSchedule.getTop() + "\t" +
-//                        ordinateSchedule.getRight() + "\t" +
-//                        ordinateSchedule.getBottom());
 
                     ordinateSchedules.add(ordinateSchedule);
 
@@ -339,10 +334,15 @@ public class ScheduleTable extends View {
     private void drawHead(Canvas canvas) {
         // 头部7天
         mPaint.setColor(backgroundColor);
-        mWordPaint.setColor(0xFF808080);
         mWordPaint.setTextSize(primaryTextSize);
         int marginTopBottom = (topRowSize - 2 * primaryTextSize - 20) / 2;
         for (int i = 0; i < 7; i++) {
+            mWordPaint.setColor(0xFF808080);
+            mWordPaint.setFakeBoldText(false);
+            if (currentWeekIndex == EnvVariables.currentWeek && i == EnvVariables.getCurrentDay() - 1) {
+                mWordPaint.setColor(0xFF717DEB);
+                mWordPaint.setFakeBoldText(true);
+            }
             canvas.drawRect(leftColumnSize + rectWidth * i - offsetX, 0, rectWidth + leftColumnSize + rectWidth * (i + 1) - offsetX, topRowSize, mPaint);
             canvas.drawText(weekDaysInEng[i], leftColumnSize + rectWidth * i + getInsideLeftSize(weekDaysInEng[i], rectWidth) - offsetX,
                     marginTopBottom + primaryTextSize, mWordPaint);

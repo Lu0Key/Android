@@ -27,6 +27,8 @@ public class ImageButton extends LinearLayout {
 
     private ImageView btnImg; // 按钮图片
     private TextView btnTxt; // 按钮文字
+    private long stickTimeMillis = 0;
+
     public ImageButton(Context context) {
         super(context);
     }

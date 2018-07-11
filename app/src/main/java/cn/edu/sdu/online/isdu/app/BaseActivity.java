@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import cn.edu.sdu.online.isdu.R;
 import cn.edu.sdu.online.isdu.util.Logger;
 
 public abstract class BaseActivity extends AppCompatActivity
@@ -23,8 +24,16 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.snake_slide_in_right, R.anim.snake_slide_out_left);
+
         Thread.setDefaultUncaughtExceptionHandler(this);
         prepareBroadcastReceiver();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.snake_slide_in_left, R.anim.snake_slide_out_right);
     }
 
     @Override

@@ -50,6 +50,7 @@ public class AccountOp {
      */
     public static void syncUserInformation() {
         /////////Network
+        if (User.staticUser == null) User.staticUser = User.load();
         String stuNum = User.staticUser.getStudentNumber();
         String stuPwd = User.staticUser.getPasswordMD5();
 
