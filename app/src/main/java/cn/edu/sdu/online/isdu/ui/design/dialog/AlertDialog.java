@@ -32,6 +32,10 @@ public class AlertDialog extends Dialog {
     private String pos;
     private String neg;
 
+    private View separateLine;
+
+    private boolean touchOnOutside = true;
+
     private View.OnClickListener onPositiveButtonClickListener;
     private View.OnClickListener onNegativeButtonClickListener;
 
@@ -58,6 +62,7 @@ public class AlertDialog extends Dialog {
         btnPositive = findViewById(R.id.btn_positive);
         btnNegative = findViewById(R.id.btn_negative);
         blankView = findViewById(R.id.blank_view);
+        separateLine = findViewById(R.id.separate_line);
 
         txtTitle.setText(title);
         txtMessage.setText(message);
@@ -66,10 +71,12 @@ public class AlertDialog extends Dialog {
         btnNegative.setText(neg);
         btnNegative.setOnClickListener(onNegativeButtonClickListener);
 
-    }
+        if (neg == null) {
+            separateLine.setVisibility(View.GONE);
+            btnNegative.setVisibility(View.GONE);
+        }
 
-    private void setCancelOnTouchOutside(boolean b) {
-        if (b) {
+        if (touchOnOutside) {
             blankView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -79,6 +86,11 @@ public class AlertDialog extends Dialog {
         } else {
             blankView.setOnClickListener(null);
         }
+
+    }
+
+    public void setCancelOnTouchOutside(boolean b) {
+        touchOnOutside = b;
     }
 
     public void setTitle(String title) {
@@ -114,4 +126,5 @@ public class AlertDialog extends Dialog {
             btnNegative.setOnClickListener(onNegativeButtonClickListener);
         }
     }
+
 }

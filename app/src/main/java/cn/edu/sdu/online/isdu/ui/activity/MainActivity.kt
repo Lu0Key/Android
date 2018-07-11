@@ -72,7 +72,6 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         // 请求关键权限
         Permissions.requestPermission(this, Permissions.VIBRATE)
         Permissions.requestPermission(this, Permissions.INTERNET)
