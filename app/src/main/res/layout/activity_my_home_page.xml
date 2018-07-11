@@ -198,7 +198,7 @@
                         android:id="@+id/btn_settings"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:src="@drawable/ic_action_settings"
+                        android:src="@drawable/ic_settings"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:layout_alignParentEnd="true"

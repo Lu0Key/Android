@@ -62,6 +62,7 @@ class MainActivity : SlideActivity(), View.OnClickListener {
     private var fragments: MutableList<Fragment> = ArrayList() // Fragment列表
     private var fragmentTags = listOf("FragmentHome", "FragmentNews", "FragmentMe") // Fragment Tag
     private val imgRes = listOf(R.drawable.home_selected, R.drawable.news_selected, R.drawable.me_selected)
+    private val imgBackRes = listOf(R.drawable.home_back, R.drawable.news_back, R.drawable.me_back)
 
     private var mDataList = listOf("主页", "资讯", "个人中心")
 
@@ -117,7 +118,7 @@ class MainActivity : SlideActivity(), View.OnClickListener {
                 val titleImg = customLayout.findViewById(R.id.title_img) as ImageView
                 val titleImgBack = customLayout.findViewById(R.id.title_img_back) as ImageView
 
-                titleImgBack.setImageResource(imgRes[index])
+                titleImgBack.setImageResource(imgBackRes[index])
                 titleImg.setImageResource(imgRes[index])
                 commonPagerTitleView.setContentView(customLayout)
 
