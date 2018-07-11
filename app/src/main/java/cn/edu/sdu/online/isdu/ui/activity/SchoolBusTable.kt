@@ -50,7 +50,7 @@ class SchoolBusTable : SlideActivity() ,View.OnClickListener{
         searchNum=intent.getIntExtra("searchNum",0)
         fromP=intent.getIntExtra("fromP",0)
         toP=intent.getIntExtra("toP",0)
-        
+
         backBtn = btn_back
         recyclerView = recycler_view
 
