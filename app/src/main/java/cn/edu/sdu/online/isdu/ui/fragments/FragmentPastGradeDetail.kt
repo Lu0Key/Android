@@ -18,7 +18,7 @@ import cn.edu.sdu.online.isdu.bean.Grade
  * Last Modifier: Cola_Mentos
  * Last Modify Time: 2018/7/11
  *
- * 本学期成绩碎片
+ * 历年成绩碎片
  ****************************************************
  */
 class FragmentPastGradeDetail : Fragment() {
@@ -31,7 +31,7 @@ class FragmentPastGradeDetail : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        val view = inflater.inflate(R.layout.fragment_fragment_grade_detail, container, false)
+        val view = inflater.inflate(R.layout.fragment_past_grade_detail, container, false)
         initView(view)
         initRecyclerView()
 
