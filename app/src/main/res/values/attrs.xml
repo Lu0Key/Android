@@ -17,6 +17,9 @@
     <attr name="wideButtonItemId" format="string" />
     <attr name="wideButtonShowArrow" format="boolean" />
 
+    <attr name="radioImageButtonSrc" format="reference|color" />
+    <attr name="radioImageButtonText" format="string|reference" />
+
     <declare-styleable name="WideButton">
         <attr name="wideButtonItemName" />
         <attr name="wideButtonComment" />
@@ -36,6 +39,11 @@
         <attr name="floatCardViewRadius" />
         <attr name="floatCardViewShadowColor" />
         <attr name="floatCardViewElevation" />
+    </declare-styleable>
+
+    <declare-styleable name="RadioImageButton">
+        <attr name="radioImageButtonSrc" />
+        <attr name="radioImageButtonText" />
     </declare-styleable>
 
     <!-- Declare custom theme attributes that allow changing which styles are
