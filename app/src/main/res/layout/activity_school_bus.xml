@@ -46,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+            <!--提示文本框-->
             <TextView
                 android:id="@+id/tips"
                 android:layout_width="match_parent"
@@ -53,9 +54,9 @@
                 android:gravity="center"
                 android:textSize="20sp"
                 android:text="">
-
             </TextView>
 
+            <!--校区选择按钮-->
             <LinearLayout
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
@@ -156,9 +157,7 @@
 
                 </LinearLayout>
             </LinearLayout>
-
-
-
+            <!--紫色提示文字-->
             <LinearLayout
                 android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
@@ -213,7 +212,7 @@
                     android:textColor="@drawable/schoolbus_radiobtn"
                     android:text="非工作日"/>
             </RadioGroup>
-
+            <!--按钮组-->
             <LinearLayout
                 android:layout_marginTop="8dp"
                 android:layout_width="match_parent"

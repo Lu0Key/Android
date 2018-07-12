@@ -1,7 +1,6 @@
 package cn.edu.sdu.online.isdu.bean;
 
 /**
- *
  * @author Cola_Mentos
  * @date 2018/7/11
  */
@@ -9,6 +8,8 @@ package cn.edu.sdu.online.isdu.bean;
 public class Grade {
 
     /**
+     * pscj:平时成绩
+     * qmcj:期末成绩
      * cj:成绩
      * jd:绩点
      * zgf:班级最高分
@@ -18,22 +19,30 @@ public class Grade {
      * dd:等地
      */
 
-    private double cj,jd,zgf,zdf;
-    private int pm,zrs;
+    private double pscj, qmcj, cj, jd, zgf, zdf;
+    private int pm, zrs;
     private String dd;
-    public Grade(){
 
+    public Grade() {
     }
 
-    public void setCj(double cj){
+    public void setPscj(double pscj) {
+        this.pscj = pscj;
+    }
+
+    public void setQmcj(double qmcj) {
+        this.qmcj = qmcj;
+    }
+
+    public void setCj(double cj) {
         this.cj = cj;
     }
 
-    public void setJd(double jd){
+    public void setJd(double jd) {
         this.jd = jd;
     }
 
-    public void setZgf(double zgf){
+    public void setZgf(double zgf) {
         this.zgf = zgf;
     }
 
@@ -41,16 +50,24 @@ public class Grade {
         this.zdf = zdf;
     }
 
-    public void setPm(int pm){
+    public void setPm(int pm) {
         this.pm = pm;
     }
 
-    public void setZrs(int zrs){
+    public void setZrs(int zrs) {
         this.zrs = zrs;
     }
 
-    public void setDd(String dd){
+    public void setDd(String dd) {
         this.dd = dd;
+    }
+
+    public double getPscj() {
+        return pscj;
+    }
+
+    public double getQmcj() {
+        return qmcj;
     }
 
     public double getCj() {
