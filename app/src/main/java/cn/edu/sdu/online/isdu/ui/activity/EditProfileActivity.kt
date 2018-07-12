@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -17,17 +18,26 @@ import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.ImageManager
+import cn.edu.sdu.online.isdu.util.Logger
 import com.yalantis.ucrop.UCrop
 import de.hdodenhof.circleimageview.CircleImageView
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Response
+import java.io.IOException
 
 /**
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/6/13
+ * Last Modify Time: 2018/7/12
  *
  * 编辑个人资料页面
  *
@@ -48,7 +58,11 @@ class EditProfileActivity : SlideActivity() {
     private var btnDone: ImageView? = null
     private var btnEditAvatar: TextView? = null
 
+    private var finalBitmap: Bitmap? = null
+
     private var imageManager: ImageManager? = ImageManager()
+
+    private var progressDialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,7 +117,7 @@ class EditProfileActivity : SlideActivity() {
         }
 
         btnDone!!.setOnClickListener {
-
+            submitChange()
         }
     }
 
@@ -113,8 +127,8 @@ class EditProfileActivity : SlideActivity() {
             User.staticUser = User.load()
             user = User.staticUser
         }
-        val bmp = ImageManager.convertStringToBitmap(user.avatarString)
-        avatar!!.setImageBitmap(bmp)
+        finalBitmap = ImageManager.convertStringToBitmap(user.avatarString)
+        avatar!!.setImageBitmap(finalBitmap)
         editUserName!!.setText(user.nickName)
 
         when (user.gender) {
@@ -127,6 +141,66 @@ class EditProfileActivity : SlideActivity() {
         editDepart!!.text = user.depart
         editName!!.text = user.name
         editIntroduction!!.setText(user.selfIntroduce)
+    }
+
+    /**
+     * 提交更新
+     */
+    private fun submitChange() {
+        if (editUserName!!.text.toString() == "") {
+            val d = AlertDialog(this)
+            d.setCancelOnTouchOutside(true)
+            d.setTitle("缺少信息")
+            d.setMessage("用户名不能为空")
+            d.setPositiveButton("取消") {d.dismiss()}
+            d.setNegativeButton(null, null)
+            d.show()
+        } else if (finalBitmap == null) {
+            val d = AlertDialog(this)
+            d.setCancelOnTouchOutside(true)
+            d.setTitle("缺少信息")
+            d.setMessage("头像不能为空")
+            d.setPositiveButton("取消") {d.dismiss()}
+            d.setNegativeButton(null, null)
+            d.show()
+        } else {
+            progressDialog = ProgressDialog(this, false)
+            progressDialog!!.setMessage("正在更新信息...")
+            progressDialog!!.setButton(null, null)
+            progressDialog!!.show()
+
+            val keys = listOf("studentNumber", "j_password", "nickname", "avatar", "sign")
+            val values = listOf(User.staticUser.studentNumber, User.staticUser.passwordMD5,
+                    editUserName!!.text.toString(), ImageManager.convertBitmapToString(finalBitmap),
+                    editIntroduction!!.text.toString())
+
+            val callback = object : Callback {
+                override fun onFailure(call: Call?, e: IOException?) {
+                    runOnUiThread {
+                        progressDialog!!.dismiss()
+                        Toast.makeText(this@EditProfileActivity,
+                                "网络出错", Toast.LENGTH_SHORT).show()
+                        Logger.log(e)
+                    }
+                }
+
+                override fun onResponse(call: Call?, response: Response?) {
+                    runOnUiThread {
+//                        Log.d("AAA", response?.body()?.string())
+//                        Log.d("AAA", ImageManager.getBitmapSize(finalBitmap).toString())
+                        progressDialog!!.dismiss()
+                        User.staticUser.nickName = editUserName!!.text.toString()
+                        User.staticUser.avatarString = ImageManager.convertBitmapToString(finalBitmap)
+                        User.staticUser.selfIntroduce = editIntroduction!!.text.toString()
+                        User.staticUser.save(this@EditProfileActivity)
+                        Toast.makeText(this@EditProfileActivity,
+                                "更新成功", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                }
+            }
+            NetworkAccess.buildRequest(ServerInfo.urlUpdate, keys, values, callback)
+        }
     }
 
     override fun onBackPressed() {
@@ -157,8 +231,9 @@ class EditProfileActivity : SlideActivity() {
             }
             UCrop.REQUEST_CROP -> {
                 if (data != null) {
-                    avatar!!.setImageBitmap(BitmapFactory.decodeStream(
-                            contentResolver.openInputStream(imageManager!!.destUri)))
+                    finalBitmap = BitmapFactory.decodeStream(
+                            contentResolver.openInputStream(imageManager!!.destUri))
+                    avatar!!.setImageBitmap(finalBitmap)
                 }
             }
             UCrop.RESULT_ERROR -> {

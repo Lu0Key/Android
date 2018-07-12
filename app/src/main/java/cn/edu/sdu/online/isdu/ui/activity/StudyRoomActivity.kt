@@ -118,6 +118,6 @@ class StudyRoomActivity : SlideActivity() {
     }
 
     private fun getDataFromNet() {
-        
+
     }
 }

@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -236,11 +237,15 @@ public class ImageManager {
      * @param bitmap The bitmap to be compressed
      * @return The compressed bitmap
      */
-    public static Bitmap compressBitmap(Bitmap bitmap) {
+    public static Bitmap compressBitmap(Bitmap bitmap, float scale) {
         Matrix matrix = new Matrix();
-        matrix.setScale(0.5f, 0.5f);
+        matrix.setScale(scale, scale);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
                 matrix, true);
+    }
+
+    public static int getBitmapSize(Bitmap bitmap) {
+        return bitmap.getAllocationByteCount();
     }
 
 }

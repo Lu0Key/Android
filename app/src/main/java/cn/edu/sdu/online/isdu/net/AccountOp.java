@@ -41,6 +41,8 @@ public class AccountOp {
             "cn.edu.sdu.online.isdu.SYNC_USER_INFO_SUCCESS";
     public static final String ACTION_USER_LOG_OUT =
             "cn.edu.sdu.online.isdu.USER_LOG_OUT";
+    public static final String ACTION_UPDATE_USER_INFO =
+            "cn.edu.sdu.online.isdu.UPDATE_USER_INFO";
 
     public static LocalBroadcastManager localBroadcastManager =
             LocalBroadcastManager.getInstance(MyApplication.getContext());
@@ -55,7 +57,7 @@ public class AccountOp {
         String stuPwd = User.staticUser.getPasswordMD5();
 
         if (stuNum != null && stuPwd != null && !stuNum.trim().equals("") && !stuPwd.trim().equals(""))
-            NetworkAccess.buildRequest(ServerInfo.url + "signIn?j_username=" + stuNum + "&j_password=" + stuPwd, new Callback() {
+            NetworkAccess.buildRequest(ServerInfo.getUrlLogin(stuNum, stuPwd), new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
@@ -69,27 +71,6 @@ public class AccountOp {
 
                         try {
                             JSONObject jsonObject = new JSONObject(jsonString);
-//                            if (!"failed".equals(jsonObject.getString("result"))) {
-//
-//                                User.staticUser.setStudentNumber(jsonObject.getString("studentNumber"));
-//                                User.staticUser.setPasswordMD5(jsonObject.getString("j_password"));
-//                                User.staticUser.setNickName(jsonObject.getString("nickname"));
-//                                User.staticUser.setName(jsonObject.getString("name"));
-//                                User.staticUser.setAvatarString(jsonObject.getString("avatar_string"));
-//
-//                                String genderString = jsonObject.getString("gender");
-//                                if (genderString.equals("男")) {
-//                                    User.staticUser.setGender(User.GENDER_MALE);
-//                                } else if (genderString.equals("女")) {
-//                                    User.staticUser.setGender(User.GENDER_FEMALE);
-//                                } else {
-//                                    User.staticUser.setGender(User.GENDER_SECRET);
-//                                }
-//
-//                                User.staticUser.setSelfIntroduce(jsonObject.getString("self_introduce"));
-//                                User.staticUser.setMajor(jsonObject.getString("major"));
-//                                User.staticUser.setDepart(jsonObject.getString("depart"));
-//                            }
 
                             if (jsonObject.isNull("status") || !jsonObject.getString("status").equals("failed")) {
                                 AccountOp.syncUserInformation(jsonObject); // 同步用户信息
@@ -169,4 +150,5 @@ public class AccountOp {
         final Intent intent = new Intent(ACTION_USER_LOG_OUT);
         localBroadcastManager.sendBroadcast(intent);
     }
+
 }

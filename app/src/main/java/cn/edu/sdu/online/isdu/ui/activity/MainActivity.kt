@@ -32,6 +32,7 @@ import android.widget.*
 import cn.edu.sdu.online.isdu.R.id.*
 import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.NotificationUtil
 import cn.edu.sdu.online.isdu.util.Permissions
 import cn.edu.sdu.online.isdu.util.Phone
@@ -77,7 +78,6 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         // 请求关键权限
         Permissions.requestPermission(this, Permissions.VIBRATE)
         Permissions.requestPermission(this, Permissions.INTERNET)
-
         /* 获取实例 */
         magicIndicator = magic_indicator
         mViewPager = view_pager

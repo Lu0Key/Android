@@ -197,6 +197,11 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         fillAvatarImage(bmp)
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadUserInfo()
+    }
+
     private fun fillBackgroundImage(bmp: Bitmap?) {
         backgroundImage!!.tag = null
         if (bmp != null) {

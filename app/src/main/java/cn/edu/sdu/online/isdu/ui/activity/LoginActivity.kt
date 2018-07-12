@@ -73,7 +73,7 @@ class LoginActivity : SlideActivity(), View.OnClickListener {
     private fun performLogin(num: String, pwd: String) {
         setEnabled(false)
 
-        val url = ServerInfo.url + "signIn?j_username=$num&j_password=$pwd"
+        val url = ServerInfo.getUrlLogin(num, pwd)
 
         NetworkAccess.buildRequest(url, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
@@ -87,27 +87,34 @@ class LoginActivity : SlideActivity(), View.OnClickListener {
             override fun onResponse(call: Call?, response: Response?) {
                 runOnUiThread {
                     setEnabled(true)
+                }
 
-                    val json = response?.body()?.string()
-                    try {
-                        val jsonObj = JSONObject(json)
+                val json = response?.body()?.string()
+                try {
+                    val jsonObj = JSONObject(json)
 
-                        if (!jsonObj.isNull("status") && jsonObj.getString("status") == "failed") {
+                    if (!jsonObj.isNull("status") && jsonObj.getString("status") == "failed") {
+                        runOnUiThread {
                             Toast.makeText(this@LoginActivity, "学号或密码错误", Toast.LENGTH_SHORT).show()
-                        } else {
-                            // 初始化用户缓存
-                            User.staticUser.studentNumber = num
-                            User.staticUser.passwordMD5 = pwd
-                            AccountOp.syncUserInformation(jsonObj) // 同步用户信息
+                        }
 
-                            finish()
+                    } else {
+                        // 初始化用户缓存
+                        User.staticUser.studentNumber = num
+                        User.staticUser.passwordMD5 = pwd
+                        AccountOp.syncUserInformation(jsonObj) // 同步用户信息
+
+                        finish()
+                        runOnUiThread {
                             Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT).show()
                         }
-                    } catch (e: Exception) {
-                        Logger.log(e)
+
+                    }
+                } catch (e: Exception) {
+                    Logger.log(e)
+                    runOnUiThread {
                         Toast.makeText(this@LoginActivity, "网络错误\n服务器无响应", Toast.LENGTH_SHORT).show()
                     }
-
                 }
             }
         })
