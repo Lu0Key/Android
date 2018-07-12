@@ -2,7 +2,9 @@ package cn.edu.sdu.online.isdu.ui.design;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
@@ -25,6 +27,7 @@ public class SchoolImageButton extends LinearLayout {
 
     private ImageView btnImg; // 按钮图片
     private TextView btnTxt; // 按钮文字
+    private LinearLayout linearLayout;//背景
     private long stickTimeMillis = 0;
 
     public SchoolImageButton(Context context) {
@@ -38,7 +41,7 @@ public class SchoolImageButton extends LinearLayout {
         // Find views
         btnImg = findViewById(R.id.design_imgbtn_image);
         btnTxt = findViewById(R.id.design_imgbtn_text);
-
+        linearLayout = findViewById(R.id.linear_layout);
 
         // Get attributes
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.ImageButton);
@@ -89,5 +92,11 @@ public class SchoolImageButton extends LinearLayout {
         btnTxt.setText(text);
     }
 
+    public void setColor(int id){
+        btnTxt.setTextColor(id);
+    }
 
+    public void setBacColor(int id){
+        linearLayout.setBackgroundColor(id);
+    }
 }

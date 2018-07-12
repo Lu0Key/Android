@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.design_image_button.view.*
  ****************************************************
  * @author zsj
  * Last Modifier: Cola_Mentos
- * Last Modify Time: 2018/7/9
+ * Last Modify Time: 2018/7/12
  *
  * 校车活动
  ****************************************************
@@ -33,13 +33,6 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
     private val xqBtn : Array<cn.edu.sdu.online.isdu.ui.design.SchoolImageButton?> = arrayOfNulls(10)
     private val xqName = arrayOf("","中心校区","洪家楼校区","趵突泉校区","软件园校区","兴隆山校区","千佛山校区")
     private var tipText : TextView ?= null
-    /*
-    private var zxBtn : cn.edu.sdu.online.isdu.ui.design.ImageButton ?= null
-    private var hjlBtn : cn.edu.sdu.online.isdu.ui.design.ImageButton ?= null
-    private var btqBtn : cn.edu.sdu.online.isdu.ui.design.ImageButton ?= null
-    private var rjyBtn : cn.edu.sdu.online.isdu.ui.design.ImageButton ?= null
-    private var xlsBtn : cn.edu.sdu.online.isdu.ui.design.ImageButton ?= null
-    private var qfsBtn : cn.edu.sdu.online.isdu.ui.design.ImageButton ?= null*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +63,6 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
         backBtn!!.setOnClickListener(this)
         for (i in 1..6){
             xqBtn[i]!!.setOnClickListener(this)
-            xqBtn[i]!!.tag = i
         }
     }
 
@@ -83,8 +75,9 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
                 fromP=0
                 toP=0
                 for (i in 1..6){
-                    xqBtn[i]!!.linear_layout.setBackgroundColor(resources.getColor(R.color.colorWhite))
+                    xqBtn[i]!!.setBacColor(resources.getColor(R.color.colorWhite))
                     xqBtn[i]!!.setText(xqName[i])
+                    xqBtn[i]!!.setColor(resources.getColor(R.color.colorPrimaryText))
                 }
                 tipText!!.text=""
             }
@@ -122,27 +115,58 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
             else ->{
                 for (i in 1..6){
                     if (v!!.id == xqBtn[i]!!.id){
-                        xqBtn[i]!!.linear_layout.setBackgroundColor(resources.getColor(R.color.colorThemeGrey))
+                        //将当前选择的校区背景变成灰色
+                        xqBtn[i]!!.setBacColor(resources.getColor(R.color.colorThemeGrey))
+                        //如果没有选择出发地，并且当前点击的校区之前没有被选中，那么久作为出发地，否则取消选中
                         if (fromP == 0) {
-                            fromP = i
-                            xqBtn[i]!!.setText("从  "+xqName[i])
+                            if (toP != i) {
+                                fromP = i
+                                xqBtn[i]!!.setText("从  " + xqName[i])
+                                xqBtn[i]!!.setColor(resources.getColor(R.color.colorPurpleDark))
+                            }
+                            else {
+                                changeAppearance(i)
+                                toP = 0
+                            }
                         }
-                        else if (i != fromP && i != toP){
+                        //如果当前校区之前被选为出发地了，那么就取消选择
+                        else if (i == fromP){
+                            changeAppearance(i)
+                            fromP=0
+                        }
+                        //如果当前校区之前被选为目的地了，那么就取消选择
+                        else if(i == toP){
+                            changeAppearance(i)
+                            toP=0
+                        }
+                        else {
                             if (toP != 0){
-                                xqBtn[fromP]!!.linear_layout.setBackgroundColor(resources.getColor(R.color.colorWhite))
-                                xqBtn[fromP]!!.setText(xqName[fromP])
+                                changeAppearance(fromP)
                                 fromP = toP
+                                xqBtn[fromP]!!.setColor(resources.getColor(R.color.colorPurpleDark))
                                 xqBtn[fromP]!!.setText("从  "+xqName[fromP])
                             }
                             toP = i
                             xqBtn[i]!!.setText("到  "+xqName[i])
-
+                            xqBtn[i]!!.setColor(resources.getColor(R.color.colorPurpleDark))
                         }
                     }
                 }
-
             }
 
         }
+
+    }
+
+    /**
+     * 将校区的按钮恢复原样
+     *
+     * @param i 校区编号
+     */
+    private fun changeAppearance(i : Int){
+        xqBtn[i]!!.setBacColor(resources.getColor(R.color.colorWhite))
+        xqBtn[i]!!.setText(xqName[i])
+        xqBtn[i]!!.setColor(resources.getColor(R.color.colorPrimaryText))
     }
 }
+
