@@ -2,6 +2,11 @@ package cn.edu.sdu.online.isdu.ui.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -30,6 +35,8 @@ class StudyRoomActivity : SlideActivity() {
     private var weeks = ArrayList<Int>()
     private var days = ArrayList<Int>()
 
+    private var recyclerView: RecyclerView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_study_room)
@@ -37,6 +44,8 @@ class StudyRoomActivity : SlideActivity() {
         initView()
         initSelection()
         updateData()
+
+        updateRecyclerView()
     }
 
     private fun initView() {
@@ -49,6 +58,7 @@ class StudyRoomActivity : SlideActivity() {
         selectLayout = findViewById(R.id.select_layout)
         selectWeek = findViewById(R.id.select_week)
         selectDay = findViewById(R.id.select_day)
+        recyclerView = findViewById(R.id.recycler_view)
 
         for (i in 0 until 6) {
             radioButtons[i].setOnClickListener {
@@ -117,7 +127,42 @@ class StudyRoomActivity : SlideActivity() {
         selectDay!!.text = dayNames[days[0] - 1]
     }
 
+    override fun onResume() {
+        super.onResume()
+        EnvVariables.init(this)
+    }
+
     private fun getDataFromNet() {
 
+    }
+
+    private fun updateRecyclerView() {
+        val adapter = MyAdapter(listOf("软件园1区", "软件园5区"))
+        recyclerView!!.layoutManager = LinearLayoutManager(this)
+        recyclerView!!.adapter = adapter
+    }
+
+    class MyAdapter(list: List<String>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+
+        private var list = list
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.study_room_item, parent, false)
+            return ViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.textView.text = list[position]
+            holder.layout.setOnClickListener {
+
+            }
+        }
+
+        override fun getItemCount(): Int = list.size
+
+        class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            var textView: TextView = view.findViewById(R.id.study_room_name)
+            var layout: View = view.findViewById(R.id.layout)
+        }
     }
 }

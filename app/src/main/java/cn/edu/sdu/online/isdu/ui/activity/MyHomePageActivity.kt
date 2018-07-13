@@ -52,7 +52,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorT
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/6/12
+ * Last Modify Time: 2018/7/13
  *
  * 主页个人主页碎片
  ****************************************************
@@ -80,6 +80,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var backgroundImage: ImageView? = null
     private var btnSettings: ImageView? = null
     private var circleImageView: CircleImageView? = null
+    private var txtSign: TextView? = null // 个人签名
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,6 +120,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         backgroundImage = findViewById(R.id.background_image)
         btnSettings = findViewById(R.id.btn_settings)
         circleImageView = findViewById(R.id.circle_image_view)
+        txtSign = findViewById(R.id.txt_sign)
 
         viewPager!!.setAppBarLayout(appBarLayout)
 
@@ -193,6 +195,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         val user = User.staticUser
         val bmp = ImageManager.convertStringToBitmap(user.avatarString)
         userName!!.text = user.nickName
+        txtSign!!.text = "个人签名：${user.selfIntroduce}"
         fillBackgroundImage(bmp)
         fillAvatarImage(bmp)
     }

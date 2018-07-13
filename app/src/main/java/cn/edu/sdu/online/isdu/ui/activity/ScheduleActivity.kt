@@ -72,6 +72,11 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        EnvVariables.init(this)
+    }
+
     private fun initView() {
         scheduleTable = findViewById(R.id.schedule_table)
         recyclerView = findViewById(R.id.recycler_view)
