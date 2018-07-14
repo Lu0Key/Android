@@ -71,7 +71,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var toolBar: Toolbar? = null
     private var appBarLayout: AppBarLayout? = null // AppBarLayout实例
 
-    private var btnEditProfile: TextView? = null // 编辑个人资料
+    private var btnEditProfile: ImageView? = null // 编辑个人资料
     private var txtMyFollower: TextView? = null // 我关注的人
     private var txtFollowMe: TextView? = null // 关注我的人
     private var userName: TextView? = null
@@ -101,6 +101,11 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
             }
             btn_settings.id -> {
                 startActivity(Intent(this, SettingsActivity::class.java))
+            }
+            background_image.id, circle_image_view.id -> {
+                startActivity(Intent(this, ViewImageActivity::class.java)
+                        .putExtra("bmp_str", User.staticUser.avatarString)
+                        .putExtra("url", ""))
             }
         }
     }
@@ -146,6 +151,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         btnBack!!.setOnClickListener(this)
         btnEditProfile!!.setOnClickListener(this)
         btnSettings!!.setOnClickListener(this)
+        circleImageView!!.setOnClickListener(this)
+        backgroundImage!!.setOnClickListener(this)
 
         loadUserInfo()
     }

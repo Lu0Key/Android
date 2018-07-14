@@ -40,6 +40,7 @@ public class OptionDialog extends Dialog {
     private Context mContext;
     private MyAdapter myAdapter;
     private View blankView;
+    private boolean cancelOnTouchOutside = true;
 
     public OptionDialog(Context context, List<String> optionList) {
         this(context);
@@ -67,7 +68,7 @@ public class OptionDialog extends Dialog {
 
         txtMsg.setText(message);
         initRecyclerView();
-        setCancelOnTouchOutside(true);
+        setCancelOnTouchOutside(cancelOnTouchOutside);
     }
 
     private void initRecyclerView() {
@@ -78,15 +79,17 @@ public class OptionDialog extends Dialog {
     }
 
     public void setCancelOnTouchOutside(boolean b) {
-        if (b) {
-            blankView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-        } else {
-            blankView.setOnClickListener(null);
+        cancelOnTouchOutside = b;
+        if (blankView != null) {
+            if (cancelOnTouchOutside)
+                blankView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dismiss();
+                    }
+                });
+             else
+                blankView.setOnClickListener(null);
         }
     }
 

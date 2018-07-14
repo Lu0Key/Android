@@ -1,0 +1,169 @@
+package cn.edu.sdu.online.isdu.ui.activity
+
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.Build
+import android.os.Bundle
+import android.os.Environment
+import android.view.View
+import android.view.Window
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
+import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.BaseActivity
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.ui.design.DraggableImageView
+import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
+import cn.edu.sdu.online.isdu.util.ImageManager
+import cn.edu.sdu.online.isdu.util.Phone
+import com.github.chrisbanes.photoview.PhotoView
+import kotlinx.android.synthetic.main.activity_view_image.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+
+/**
+ ****************************************************
+ * @author zsj
+ * Last Modifier: ZSJ
+ * Last Modify Time: 2018/7/13
+ *
+ * 图片浏览活动
+ ****************************************************
+ */
+
+class ViewImageActivity : BaseActivity() {
+
+    private var draggableImageView: DraggableImageView? = null
+    private var progressBar: ProgressBar? = null
+    private var textView: TextView? = null
+    private var loadingLayout: LinearLayout? = null
+
+    var resId: Int = 0
+    var url: String = ""
+    var bmpStr: String = ""
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_view_image)
+
+        decorateWindow()
+
+        draggableImageView = image_view
+        progressBar = progress_bar
+        textView = text
+        loadingLayout = loading_layout
+
+        loadingLayout!!.visibility = View.GONE
+
+        draggableImageView!!.setOnClickListener(DraggableImageView.OnClickListener {
+            finish()
+        })
+
+        draggableImageView!!.setOnLongClickListener(DraggableImageView.OnLongClickListener {
+            Phone.vibrate(this, Phone.VibrateType.Once)
+            val dialog = OptionDialog(this, listOf("保存图片", "取消"))
+            dialog.setCancelOnTouchOutside(true)
+            dialog.setMessage("图片")
+            dialog.setOnItemSelectListener { itemName ->
+                when (itemName) {
+                    "保存图片" -> {
+                        dialog.dismiss()
+                        val file = File(Environment.getExternalStorageDirectory().toString() +
+                                "/iSDU/Image/" + System.currentTimeMillis() + ".jpg")
+
+                        if (!file.exists()) {
+                            if (!file.parentFile.exists()) file.parentFile.mkdirs()
+                            file.createNewFile()
+                        }
+                        val fos = FileOutputStream(file)
+
+                        if (resId != 0) {
+                            val bmp = BitmapFactory.decodeResource(resources, resId)
+                            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                            fos.flush()
+                            fos.close()
+                            Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                        } else if (url != "") {
+                            NetworkAccess.cache(url) { success, cachePath ->
+                                if (success) {
+                                    val bmp = BitmapFactory.decodeFile(cachePath)
+                                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                                    fos.flush()
+                                    fos.close()
+                                    Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        } else if (bmpStr != "") {
+                            val bmp = ImageManager.convertStringToBitmap(bmpStr)
+                            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                            fos.flush()
+                            fos.close()
+                            Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                        }
+
+                    }
+                    "取消" -> {
+                        dialog.dismiss()
+                    }
+                }
+            }
+            dialog.show()
+        })
+
+        resId = intent.getIntExtra("res_id", 0)
+        url = intent.getStringExtra("url")
+        bmpStr = intent.getStringExtra("bmp_str")
+
+        if (resId != 0) {
+            draggableImageView!!.setImageResource(resId)
+        } else if (url != null && url != "") {
+            loadingLayout!!.visibility = View.VISIBLE
+            textView!!.text = "正在加载..."
+            NetworkAccess.cache(url) { success, cachePath ->
+                if (success) {
+                    val bmp = BitmapFactory.decodeFile(cachePath)
+                    draggableImageView!!.setImageBitmap(bmp)
+                    loadingLayout!!.visibility = View.GONE
+                } else {
+                    loadingLayout!!.visibility = View.VISIBLE
+                    progressBar!!.visibility = View.GONE
+                    textView!!.text = "加载失败"
+                }
+            }
+        } else if (bmpStr != null && bmpStr != "") {
+            val bmp = ImageManager.convertStringToBitmap(bmpStr)
+            draggableImageView!!.setImageBitmap(bmp)
+        }
+    }
+
+    private fun decorateWindow() {
+        val decorView = window.decorView
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        } else {
+            decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
+        }
+    }
+
+    override fun prepareBroadcastReceiver() {
+
+    }
+
+    override fun unRegBroadcastReceiver() {
+
+    }
+}

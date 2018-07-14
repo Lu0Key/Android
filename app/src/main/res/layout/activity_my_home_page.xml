@@ -64,16 +64,35 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent">
 
-                    <TextView
-                        android:id="@+id/user_name"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="User Name"
-                        android:textSize="20sp"
-                        android:layout_marginBottom="0dp"
-                        android:textColor="@color/colorPrimaryText"
-                        android:layout_gravity="center_horizontal"
-                        android:singleLine="true"/>
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_gravity="center_horizontal">
+
+                        <TextView
+                            android:id="@+id/user_name"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="User NameUser Nameser Nameser Name"
+                            android:textSize="20sp"
+                            android:textColor="@color/colorPrimaryText"
+                            android:layout_gravity="center_horizontal"
+                            android:singleLine="true"
+                            android:ellipsize="middle"/>
+
+                        <ImageView
+                            android:id="@+id/btn_edit_profile"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:src="@drawable/ic_edit"
+                            android:layout_gravity="center_vertical"
+                            android:clickable="true"
+                            android:focusable="true" />
+                    </LinearLayout>
+
 
                     <TextView
                         android:id="@+id/txt_sign"
@@ -83,22 +102,9 @@
                         android:text="123123"
                         android:singleLine="true"
                         android:textSize="12sp"
-                        android:layout_marginBottom="4dp"/>
-
-                    <TextView
-                        android:id="@+id/btn_edit_profile"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="修改个人资料"
-                        android:textColor="@color/colorSecondaryText"
-                        android:layout_gravity="center_horizontal"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
-                        android:background="@drawable/text_button_background"
-                        android:clickable="true"
-                        android:focusable="true" />
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginEnd="32dp"/>
 
                     <!--关注-->
                     <LinearLayout
