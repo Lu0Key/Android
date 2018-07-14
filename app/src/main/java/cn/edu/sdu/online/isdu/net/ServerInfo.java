@@ -21,5 +21,9 @@ public class ServerInfo {
         return url + "/user/signIn?j_username=" + num + "&j_password=" + pwd;
     }
 
+    public static String getUserInfo(String id, String key) {
+        return url + "/user/getInformation?id=" + id + "&key=" + key;
+    }
+
     public static final String urlUpdate = url + "/user/update";
 }

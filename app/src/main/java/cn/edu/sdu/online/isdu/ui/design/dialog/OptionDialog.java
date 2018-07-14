@@ -24,7 +24,7 @@ import cn.edu.sdu.online.isdu.ui.design.ScheduleTable;
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/6/5
+ * Last Modify Time: 2018/7/14
  *
  * 选项对话框
  ****************************************************

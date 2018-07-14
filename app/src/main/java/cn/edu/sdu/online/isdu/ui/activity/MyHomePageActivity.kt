@@ -19,6 +19,7 @@ import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
+import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.ui.design.viewpager.NoScrollViewPager
 import cn.edu.sdu.online.isdu.ui.fragments.FragmentMeArticles
 import cn.edu.sdu.online.isdu.util.ImageManager
@@ -50,7 +51,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 
     private var magicIndicator: MagicIndicator? = null
     private var viewPager: NoScrollViewPager? = null
-    private val mDataList = listOf("我的帖子", "我的评论", "关注的文章") // Indicator 数据
+    private val mDataList = listOf("我的帖子", "我的评论", "我的关注") // Indicator 数据
     private val mFragments = listOf(FragmentMeArticles(),
             FragmentMeArticles(), FragmentMeArticles()) // Fragment 数组
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
@@ -77,6 +78,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         initView()
         initFragments()
         initIndicator()
+
+        loadUserInfo()
     }
 
     override fun onClick(v: View?) {
@@ -92,8 +95,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
             }
             background_image.id, circle_image_view.id -> {
                 startActivity(Intent(this, ViewImageActivity::class.java)
-                        .putExtra("bmp_str", User.staticUser.avatarString)
-                        .putExtra("url", ""))
+                        .putExtra("url", ServerInfo.getUserInfo(User.staticUser.uid.toString(), "avatar")))
             }
         }
     }
@@ -142,7 +144,6 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         circleImageView!!.setOnClickListener(this)
         backgroundImage!!.setOnClickListener(this)
 
-        loadUserInfo()
     }
 
     /**
@@ -241,7 +242,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      */
     class FragAdapter(fm: FragmentManager, fragments: List<Fragment>) : FragmentPagerAdapter(fm) {
         private val mFragments = fragments
-        private val mDataList = listOf("我的帖子", "我的评论", "关注的文章") // Indicator 数据
+        private val mDataList = listOf("我的帖子", "我的评论", "我的关注") // Indicator 数据
 
         override fun getItem(position: Int): Fragment = mFragments[position]
 
@@ -269,7 +270,6 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
             AccountOp.localBroadcastManager.registerReceiver(myBroadcastReceiver!!,
                     intentFilter)
         }
-
     }
 
     override fun unRegBroadcastReceiver() {

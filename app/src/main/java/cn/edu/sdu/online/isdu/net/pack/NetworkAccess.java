@@ -87,12 +87,19 @@ public class NetworkAccess {
             cacheDir.mkdir();
         }
 
-        String s = url.substring(0, (ServerInfo.url).length() - 1);
-        while (s.contains("/")) {
-            s.replace('/', '_');
+        String s = (url.substring((ServerInfo.url).length(), url.length()));
+        char[] chars = s.toLowerCase().toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '/')
+                chars[i] = '_';
+            if (chars[i] == '?')
+                chars[i] = '.';
+            if (chars[i] == '&')
+                chars[i] = '-';
         }
 
-        final File cacheFile = new File(cacheDir.getAbsolutePath() + "/" + s);
+
+        final File cacheFile = new File(cacheDir.getAbsolutePath() + "/" + new String(chars));
 
         if (cacheFile.exists()) {
             if (listener != null)

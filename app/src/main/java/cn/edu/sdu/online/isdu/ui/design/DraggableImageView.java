@@ -28,6 +28,16 @@ import java.util.List;
 
 import cn.edu.sdu.online.isdu.util.Logger;
 
+/**
+ ****************************************************
+ * @author zsj
+ * Last Modifier: ZSJ
+ * Last Modify Time: 2018/7/14
+ *
+ * 可拖动缩放的ImageView
+ ****************************************************
+ */
+
 public class DraggableImageView extends View {
 
     public static float dragMinScale = 1f;
@@ -91,7 +101,10 @@ public class DraggableImageView extends View {
             bitmap = BitmapFactory.decodeResource(mContext.getResources(), resId);
             mImageWidth = bitmap.getWidth();
             mImageHeight = bitmap.getHeight();
+
+            initBitmap();
         }
+        postInvalidate();
     }
 
     public void setImageBitmap(Bitmap bm) {
@@ -100,7 +113,9 @@ public class DraggableImageView extends View {
             mImageWidth = bitmap.getWidth();
             mImageHeight = bitmap.getHeight();
 
+            initBitmap();
         }
+        postInvalidate();
     }
 
     public void setOnClickListener(OnClickListener onClickListener) {
@@ -430,7 +445,8 @@ public class DraggableImageView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawBitmap(bitmap, null, rectF, paint);
+        if (bitmap != null)
+            canvas.drawBitmap(bitmap, null, rectF, paint);
     }
 
     private float distance(float x1, float y1, float x2, float y2) {

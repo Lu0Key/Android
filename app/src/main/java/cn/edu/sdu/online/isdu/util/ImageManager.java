@@ -25,7 +25,9 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  ****************************************************
@@ -216,17 +218,14 @@ public class ImageManager {
     public static Bitmap convertStringToBitmap(String st) {
         // OutputStream out;
         Bitmap bitmap = null;
-        try
-        {
-            // out = new FileOutputStream("/sdcard/aa.jpg");
+        try {
             byte[] bitmapArray;
             bitmapArray = Base64.decode(st, Base64.DEFAULT);
             bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
             // bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             return bitmap;
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             return null;
         }
     }
@@ -246,6 +245,23 @@ public class ImageManager {
 
     public static int getBitmapSize(Bitmap bitmap) {
         return bitmap.getAllocationByteCount();
+    }
+
+    public static Bitmap loadStringFromFile(String filePath) {
+        File file = new File(filePath);
+        if (!file.exists()) return null;
+
+        Bitmap bitmap = null;
+        try {
+            Scanner scanner = new Scanner(file);
+            StringBuilder sb = new StringBuilder();
+            while (scanner.hasNext()) sb.append(scanner.nextLine());
+            bitmap = convertStringToBitmap(sb.toString());
+        } catch (FileNotFoundException e) {
+            Logger.log(e);
+            return null;
+        }
+        return bitmap;
     }
 
 }

@@ -2,6 +2,7 @@ package cn.edu.sdu.online.isdu.ui.activity
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -23,6 +24,7 @@ import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
 import android.graphics.Color.LTGRAY
+import android.os.Environment
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView
@@ -37,7 +39,8 @@ import cn.edu.sdu.online.isdu.util.NotificationUtil.NotificationBroadcastReceive
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
-
+import java.io.File
+import java.io.FileWriter
 
 
 /**
