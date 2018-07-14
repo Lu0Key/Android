@@ -41,6 +41,10 @@ public class Phone {
                     pattern = new long[] {1000, 500};
                     vibrator.vibrate(pattern, 0);
                     break;
+                case Once:
+                    pattern = new long[] {25, 25};
+                    vibrator.vibrate(pattern, -1);
+                    break;
             }
         }
 
@@ -57,7 +61,7 @@ public class Phone {
      * Alarm: 响铃震动，长震动
      */
     public enum VibrateType {
-        Notification, Alarm
+        Notification, Alarm, Once
     }
     /*------------------------手机振动---------------------------*/
 

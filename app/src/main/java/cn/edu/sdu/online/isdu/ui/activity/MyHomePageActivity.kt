@@ -1,42 +1,30 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.annotation.Nullable
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
-import cn.edu.sdu.online.isdu.ui.design.NoScrollViewPager
-import cn.edu.sdu.online.isdu.ui.fragments.FragmentHome
-import cn.edu.sdu.online.isdu.ui.fragments.FragmentHomeRecommend
-import cn.edu.sdu.online.isdu.ui.fragments.FragmentMe
+import cn.edu.sdu.online.isdu.ui.design.viewpager.NoScrollViewPager
 import cn.edu.sdu.online.isdu.ui.fragments.FragmentMeArticles
 import cn.edu.sdu.online.isdu.util.ImageManager
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.zhouwei.blurlibrary.EasyBlur
 import de.hdodenhof.circleimageview.CircleImageView
-import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_my_home_page.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -52,7 +40,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorT
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/6/12
+ * Last Modify Time: 2018/7/13
  *
  * 主页个人主页碎片
  ****************************************************
@@ -71,7 +59,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var toolBar: Toolbar? = null
     private var appBarLayout: AppBarLayout? = null // AppBarLayout实例
 
-    private var btnEditProfile: TextView? = null // 编辑个人资料
+    private var btnEditProfile: ImageView? = null // 编辑个人资料
     private var txtMyFollower: TextView? = null // 我关注的人
     private var txtFollowMe: TextView? = null // 关注我的人
     private var userName: TextView? = null
@@ -80,6 +68,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var backgroundImage: ImageView? = null
     private var btnSettings: ImageView? = null
     private var circleImageView: CircleImageView? = null
+    private var txtSign: TextView? = null // 个人签名
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,6 +90,11 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
             btn_settings.id -> {
                 startActivity(Intent(this, SettingsActivity::class.java))
             }
+            background_image.id, circle_image_view.id -> {
+                startActivity(Intent(this, ViewImageActivity::class.java)
+                        .putExtra("bmp_str", User.staticUser.avatarString)
+                        .putExtra("url", ""))
+            }
         }
     }
 
@@ -119,6 +113,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         backgroundImage = findViewById(R.id.background_image)
         btnSettings = findViewById(R.id.btn_settings)
         circleImageView = findViewById(R.id.circle_image_view)
+        txtSign = findViewById(R.id.txt_sign)
 
         viewPager!!.setAppBarLayout(appBarLayout)
 
@@ -144,6 +139,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         btnBack!!.setOnClickListener(this)
         btnEditProfile!!.setOnClickListener(this)
         btnSettings!!.setOnClickListener(this)
+        circleImageView!!.setOnClickListener(this)
+        backgroundImage!!.setOnClickListener(this)
 
         loadUserInfo()
     }
@@ -190,11 +187,19 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun loadUserInfo() {
+        if (User.staticUser == null)
+            User.staticUser = User.load()
         val user = User.staticUser
         val bmp = ImageManager.convertStringToBitmap(user.avatarString)
         userName!!.text = user.nickName
+        txtSign!!.text = "个人签名：${user.selfIntroduce}"
         fillBackgroundImage(bmp)
         fillAvatarImage(bmp)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadUserInfo()
     }
 
     private fun fillBackgroundImage(bmp: Bitmap?) {

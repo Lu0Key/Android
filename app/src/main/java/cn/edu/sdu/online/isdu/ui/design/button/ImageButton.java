@@ -1,14 +1,14 @@
-package cn.edu.sdu.online.isdu.ui.design;
+package cn.edu.sdu.online.isdu.ui.design.button;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import cn.edu.sdu.online.isdu.R;
@@ -23,25 +23,24 @@ import cn.edu.sdu.online.isdu.R;
  ****************************************************
  */
 
-public class SchoolImageButton extends LinearLayout {
+public class ImageButton extends LinearLayout {
 
     private ImageView btnImg; // 按钮图片
     private TextView btnTxt; // 按钮文字
-    private LinearLayout linearLayout;//背景
     private long stickTimeMillis = 0;
 
-    public SchoolImageButton(Context context) {
+    public ImageButton(Context context) {
         super(context);
     }
 
-    public SchoolImageButton(Context context, AttributeSet attrs) {
+    public ImageButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        LayoutInflater.from(context).inflate(R.layout.design_school_image_button, this);
+        LayoutInflater.from(context).inflate(R.layout.design_image_button, this);
 
         // Find views
         btnImg = findViewById(R.id.design_imgbtn_image);
         btnTxt = findViewById(R.id.design_imgbtn_text);
-        linearLayout = findViewById(R.id.linear_layout);
+
 
         // Get attributes
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.ImageButton);
@@ -56,8 +55,6 @@ public class SchoolImageButton extends LinearLayout {
                 case R.styleable.ImageButton_imageButtonText:
                     setText(arr.getText(ai).toString());
                     break;
-                default:
-                    break;
             }
         }
 
@@ -65,12 +62,12 @@ public class SchoolImageButton extends LinearLayout {
         arr.recycle();
     }
 
-    public SchoolImageButton(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ImageButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @TargetApi(21)
-    public SchoolImageButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ImageButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
@@ -92,11 +89,5 @@ public class SchoolImageButton extends LinearLayout {
         btnTxt.setText(text);
     }
 
-    public void setColor(int id){
-        btnTxt.setTextColor(id);
-    }
 
-    public void setBacColor(int id){
-        linearLayout.setBackgroundColor(id);
-    }
 }

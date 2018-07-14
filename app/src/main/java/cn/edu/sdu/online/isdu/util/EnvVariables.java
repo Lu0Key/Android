@@ -32,7 +32,7 @@ public class EnvVariables {
 
     public static void init(final Context context) {
         SharedPreferences sp = context.getSharedPreferences("env_variables", Context.MODE_PRIVATE);
-//        if (sp.getInt("start_week", 0) == 0) {
+        if (sp.getInt("start_week", 0) == 0) {
             // 未进行信息同步
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS)
@@ -47,9 +47,9 @@ public class EnvVariables {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     Logger.log(e);
-                    startWeek = 0;
-                    endWeek = 0;
-                    firstWeekTimeMillis = 0;
+                    startWeek = 1;
+                    endWeek = 20;
+                    firstWeekTimeMillis = 1520179200000L; // 加载默认值
                     save(context);
                 }
 
@@ -67,23 +67,27 @@ public class EnvVariables {
                     }
                 }
             });
-//        }
-//        else {
-//            startWeek = sp.getInt("start_week", 1);
-//            endWeek = sp.getInt("end_week", 20);
-//            firstWeekTimeMillis = sp.getLong("first_week_time_millis", 0);
-//
-//            currentWeek = calculateWeekIndex(System.currentTimeMillis());
-//        }
+        } else {
+            startWeek = sp.getInt("start_week", 1);
+            endWeek = sp.getInt("end_week", 20);
+            firstWeekTimeMillis = sp.getLong("first_week_time_millis", 1520179200000L);
+
+            currentWeek = calculateWeekIndex(System.currentTimeMillis());
+        }
     }
 
     private static void save(Context context) {
         SharedPreferences.Editor editor =
                 context.getSharedPreferences("env_variables", Context.MODE_PRIVATE).edit();
-        editor.putInt("start_week", startWeek);
-        editor.putInt("end_week", endWeek);
-        editor.putLong("first_week_time_millis", firstWeekTimeMillis);
-        Log.d("EnvVariables", "current_week" + currentWeek);
+        if (startWeek != 0 && endWeek != 0 && firstWeekTimeMillis != 0) {
+            editor.putInt("start_week", startWeek);
+            editor.putInt("end_week", endWeek);
+            editor.putLong("first_week_time_millis", firstWeekTimeMillis);
+        } else {
+            editor.putInt("start_week", 1);
+            editor.putInt("end_week", 20);
+            editor.putLong("first_week_time_millis", 1520179200000L);
+        }
         editor.apply();
     }
 

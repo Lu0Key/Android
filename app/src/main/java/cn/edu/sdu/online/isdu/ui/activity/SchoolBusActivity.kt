@@ -1,14 +1,13 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.ui.design.button.SchoolImageButton
 import kotlinx.android.synthetic.main.activity_school_bus.*
-import kotlinx.android.synthetic.main.design_image_button.view.*
 
 /**
  ****************************************************
@@ -30,7 +29,7 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
     private var searchNum : Int = 1
     private var fromP : Int = 0
     private var toP : Int = 0
-    private val xqBtn : Array<cn.edu.sdu.online.isdu.ui.design.SchoolImageButton?> = arrayOfNulls(10)
+    private val xqBtn : Array<SchoolImageButton?> = arrayOfNulls(10)
     private val xqName = arrayOf("","中心校区","洪家楼校区","趵突泉校区","软件园校区","兴隆山校区","千佛山校区")
     private var tipText : TextView ?= null
 

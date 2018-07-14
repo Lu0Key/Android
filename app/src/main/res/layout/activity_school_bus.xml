@@ -73,7 +73,7 @@
                     android:layout_marginEnd="16dp"
                     android:background="@color/colorWhite">
 
-                    <cn.edu.sdu.online.isdu.ui.design.SchoolImageButton
+                    <cn.edu.sdu.online.isdu.ui.design.button.SchoolImageButton
                         android:id="@+id/btn_zhongxin"
                         android:layout_width="0dp"
                         android:layout_weight="1"
@@ -83,7 +83,7 @@
                         app:imageButtonSrc="@drawable/location_zhongxin"
                         app:imageButtonText="中心校区"/>
 
-                    <cn.edu.sdu.online.isdu.ui.design.SchoolImageButton
+                    <cn.edu.sdu.online.isdu.ui.design.button.SchoolImageButton
                         android:id="@+id/btn_hongjialou"
                         android:layout_marginLeft="4dp"
                         android:layout_marginRight="4dp"
@@ -95,7 +95,7 @@
                         app:imageButtonSrc="@drawable/location_honglou"
                         app:imageButtonText="洪家楼校区"/>
 
-                    <cn.edu.sdu.online.isdu.ui.design.SchoolImageButton
+                    <cn.edu.sdu.online.isdu.ui.design.button.SchoolImageButton
                         android:id="@+id/btn_baotuquan"
                         android:layout_width="0dp"
                         android:layout_weight="1"
@@ -123,7 +123,7 @@
                     android:layout_marginBottom="4dp"
                     android:background="@color/colorWhite">
 
-                    <cn.edu.sdu.online.isdu.ui.design.SchoolImageButton
+                    <cn.edu.sdu.online.isdu.ui.design.button.SchoolImageButton
                         android:id="@+id/btn_ruanjianyuan"
                         android:layout_width="0dp"
                         android:layout_weight="1"
@@ -133,7 +133,7 @@
                         app:imageButtonSrc="@drawable/location_ruanjian"
                         app:imageButtonText="软件园校区"/>
 
-                    <cn.edu.sdu.online.isdu.ui.design.SchoolImageButton
+                    <cn.edu.sdu.online.isdu.ui.design.button.SchoolImageButton
                         android:id="@+id/btn_xinglongshan"
                         android:layout_marginLeft="4dp"
                         android:layout_marginRight="4dp"
@@ -145,7 +145,7 @@
                         app:imageButtonSrc="@drawable/location_xinglong"
                         app:imageButtonText="兴隆山校区"/>
 
-                    <cn.edu.sdu.online.isdu.ui.design.SchoolImageButton
+                    <cn.edu.sdu.online.isdu.ui.design.button.SchoolImageButton
                         android:id="@+id/btn_qianfoshan"
                         android:layout_width="0dp"
                         android:layout_weight="1"

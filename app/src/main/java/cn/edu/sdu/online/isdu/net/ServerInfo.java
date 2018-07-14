@@ -17,4 +17,9 @@ public class ServerInfo {
     public static final String url = "http://" + ipAddr + ":" + port + "/";
     public static final String envVarUrl = "http://" + ipAddr + ":8380/env_variables.html";
 
+    public static final String getUrlLogin(String num, String pwd) {
+        return url + "/user/signIn?j_username=" + num + "&j_password=" + pwd;
+    }
+
+    public static final String urlUpdate = url + "/user/update";
 }

@@ -1,6 +1,5 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -9,7 +8,7 @@ import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
-import cn.edu.sdu.online.isdu.ui.design.WideButton
+import cn.edu.sdu.online.isdu.ui.design.button.WideButton
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.util.Settings
 

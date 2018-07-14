@@ -18,7 +18,6 @@ import cn.edu.sdu.online.isdu.net.AccountOp
 import cn.edu.sdu.online.isdu.ui.fragments.FragmentHome
 import cn.edu.sdu.online.isdu.ui.fragments.FragmentMe
 import cn.edu.sdu.online.isdu.ui.fragments.FragmentNews
-import cn.edu.sdu.online.isdu.util.Settings
 import kotlinx.android.synthetic.main.activity_main.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -32,9 +31,8 @@ import android.widget.*
 import cn.edu.sdu.online.isdu.R.id.*
 import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.util.NotificationUtil
-import cn.edu.sdu.online.isdu.util.Permissions
-import cn.edu.sdu.online.isdu.util.Phone
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
+import cn.edu.sdu.online.isdu.util.*
 import cn.edu.sdu.online.isdu.util.NotificationUtil.NotificationBroadcastReceiver
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
@@ -77,7 +75,6 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         // 请求关键权限
         Permissions.requestPermission(this, Permissions.VIBRATE)
         Permissions.requestPermission(this, Permissions.INTERNET)
-
         /* 获取实例 */
         magicIndicator = magic_indicator
         mViewPager = view_pager
@@ -91,6 +88,11 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         // 同步用户信息
         AccountOp.syncUserInformation()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        EnvVariables.init(this)
     }
 
     private fun initFragment() {

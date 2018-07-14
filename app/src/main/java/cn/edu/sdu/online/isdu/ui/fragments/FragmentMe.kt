@@ -1,6 +1,5 @@
 package cn.edu.sdu.online.isdu.ui.fragments
 
-import android.arch.lifecycle.GeneratedAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -10,20 +9,18 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
 import cn.edu.sdu.online.isdu.ui.activity.*
-import cn.edu.sdu.online.isdu.ui.design.ImageButton
+import cn.edu.sdu.online.isdu.ui.design.button.ImageButton
 import cn.edu.sdu.online.isdu.util.ImageManager
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_me.*
