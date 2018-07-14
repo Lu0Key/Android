@@ -1,4 +1,4 @@
-package cn.edu.sdu.online.isdu.ui.design;
+package cn.edu.sdu.online.isdu.ui.design.viewpager;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

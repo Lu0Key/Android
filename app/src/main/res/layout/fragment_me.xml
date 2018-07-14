@@ -182,7 +182,7 @@
             android:layout_marginEnd="16dp"
             android:background="@color/colorWhite">
 
-            <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            <cn.edu.sdu.online.isdu.ui.design.button.ImageButton
                 android:id="@+id/btn_schedule"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -192,7 +192,7 @@
                 app:imageButtonSrc="@drawable/ic_todo"
                 app:imageButtonText="日程"/>
 
-            <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            <cn.edu.sdu.online.isdu.ui.design.button.ImageButton
                 android:id="@+id/btn_library"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -202,7 +202,7 @@
                 app:imageButtonSrc="@drawable/ic_library"
                 app:imageButtonText="图书馆"/>
 
-            <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            <cn.edu.sdu.online.isdu.ui.design.button.ImageButton
                 android:id="@+id/btn_bus"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -212,7 +212,7 @@
                 app:imageButtonSrc="@drawable/ic_bus"
                 app:imageButtonText="校车"/>
 
-            <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            <cn.edu.sdu.online.isdu.ui.design.button.ImageButton
                 android:id="@+id/btn_calender"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -233,7 +233,7 @@
             android:layout_marginBottom="4dp"
             android:background="@color/colorWhite">
 
-            <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            <cn.edu.sdu.online.isdu.ui.design.button.ImageButton
                 android:id="@+id/btn_exam"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -243,7 +243,7 @@
                 app:imageButtonSrc="@drawable/ic_exam"
                 app:imageButtonText="考试安排"/>
 
-            <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            <cn.edu.sdu.online.isdu.ui.design.button.ImageButton
                 android:id="@+id/btn_studyroom"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -253,7 +253,7 @@
                 app:imageButtonSrc="@drawable/ic_studyroom"
                 app:imageButtonText="自习室"/>
 
-            <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            <cn.edu.sdu.online.isdu.ui.design.button.ImageButton
                 android:id="@+id/btn_grade"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -263,7 +263,7 @@
                 app:imageButtonSrc="@drawable/ic_grade"
                 app:imageButtonText="成绩查询"/>
 
-            <cn.edu.sdu.online.isdu.ui.design.ImageButton
+            <cn.edu.sdu.online.isdu.ui.design.button.ImageButton
                 android:id="@+id/btn_cloud"
                 android:layout_width="0dp"
                 android:layout_weight="1"

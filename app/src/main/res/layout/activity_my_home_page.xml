@@ -239,13 +239,13 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <cn.edu.sdu.online.isdu.ui.design.NoScrollViewPager
+    <cn.edu.sdu.online.isdu.ui.design.viewpager.NoScrollViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    </cn.edu.sdu.online.isdu.ui.design.NoScrollViewPager>
+    </cn.edu.sdu.online.isdu.ui.design.viewpager.NoScrollViewPager>
 
 
 </android.support.design.widget.CoordinatorLayout>

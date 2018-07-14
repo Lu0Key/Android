@@ -1,6 +1,5 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -9,10 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.ui.design.RadioImageButton
+import cn.edu.sdu.online.isdu.ui.design.button.RadioImageButton
 import cn.edu.sdu.online.isdu.ui.design.dialog.WeekDialog
 import cn.edu.sdu.online.isdu.util.EnvVariables
 

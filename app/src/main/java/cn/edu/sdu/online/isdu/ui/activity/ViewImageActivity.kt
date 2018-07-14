@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.view.View
 import android.view.Window
 import android.widget.LinearLayout
@@ -116,12 +117,12 @@ class ViewImageActivity : BaseActivity() {
         })
 
         resId = intent.getIntExtra("res_id", 0)
-        url = intent.getStringExtra("url")
-        bmpStr = intent.getStringExtra("bmp_str")
+        url = if (intent.getStringExtra("url") == null) "" else intent.getStringExtra("url")
+        bmpStr = if (intent.getStringExtra("bmp_str") == null) "" else intent.getStringExtra("bmp_str")
 
         if (resId != 0) {
             draggableImageView!!.setImageResource(resId)
-        } else if (url != null && url != "") {
+        } else if (url != "") {
             loadingLayout!!.visibility = View.VISIBLE
             textView!!.text = "正在加载..."
             NetworkAccess.cache(url) { success, cachePath ->
@@ -135,7 +136,7 @@ class ViewImageActivity : BaseActivity() {
                     textView!!.text = "加载失败"
                 }
             }
-        } else if (bmpStr != null && bmpStr != "") {
+        } else if (bmpStr != "") {
             val bmp = ImageManager.convertStringToBitmap(bmpStr)
             draggableImageView!!.setImageBitmap(bmp)
         }

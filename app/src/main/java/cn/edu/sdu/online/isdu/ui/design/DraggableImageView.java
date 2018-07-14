@@ -30,10 +30,8 @@ import cn.edu.sdu.online.isdu.util.Logger;
 
 public class DraggableImageView extends View {
 
-    public static float dragMinScale = 0.5f;
+    public static float dragMinScale = 1f;
     public static float dragMaxScale = 4;
-    public static float maxScale = 3f;
-    public static float minScale = 1f;
     private static final int MODE_SCALE = 1;
     private static final int MODE_TRANSLATE = 2;
 
@@ -41,9 +39,6 @@ public class DraggableImageView extends View {
 
     private Context mContext;
     private Bitmap bitmap;
-    private Matrix matrix = new Matrix();
-
-    private Matrix translateMatrix = new Matrix();
 
     private float mImageWidth; // 图片真实宽度
     private float mImageHeight; // 图片真实高度
@@ -96,7 +91,6 @@ public class DraggableImageView extends View {
             bitmap = BitmapFactory.decodeResource(mContext.getResources(), resId);
             mImageWidth = bitmap.getWidth();
             mImageHeight = bitmap.getHeight();
-
         }
     }
 
@@ -180,8 +174,7 @@ public class DraggableImageView extends View {
                     postDelayed(touchEventCountThread, 300);
                     touchEventCountThread.flag = true;
                 } else if (touchEventCountThread.touchCount > 2) {
-                    touchEventCountThread.touchCount = 0;
-                    touchEventCountThread.pointFS.clear();
+                    touchEventCountThread.touchCount = 2;
                     touchEventCountThread.flag = true;
                 }
                 moved = false;
@@ -260,8 +253,10 @@ public class DraggableImageView extends View {
                         touchEventCountThread.touchCount = 0;
                         touchEventCountThread.isLongClick = false;
                     }
+                } else {
+                    setCenter();
                 }
-                setCenter();
+
                 invalidate();
                 break;
         }
@@ -288,6 +283,64 @@ public class DraggableImageView extends View {
         rectF.top = top2;
         rectF.bottom = bottom2;
         invalidate();
+    }
+
+    private void setScaleWithAnimation(float scale, float cx, float cy, float cx1, float cy1) {
+        float left2 = cx1 - scale * (cx - lastRectF.left);
+        float right2 = cx1 - scale * (cx - lastRectF.right);
+        float top2 = cy1 - scale * (cy - lastRectF.top);
+        float bottom2 = cy1 - scale * (cy - lastRectF.bottom);
+
+        RectF rF = new RectF(left2, top2, right2, bottom2);
+
+        float toX = rF.left, toY = rF.top;
+        float deltaX = (mScreenWidth - rF.right + rF.left) / 2;
+        if (deltaX < 0) {
+            // 过长
+            if (rF.left >= 0) {
+                toX = 0;
+            } else if (rF.right < mScreenWidth) {
+                toX = rF.left + mScreenWidth - rF.right;
+            }
+        } else {
+            toX = deltaX;
+        }
+
+        float deltaY = (mScreenHeight - rF.bottom + rF.top) / 2;
+        if (deltaY < 0) {
+            // 过长
+            if (rF.top >= 0) {
+                toY = 0;
+            } else if (rF.bottom < mScreenHeight) {
+                toY = mScreenHeight - rF.bottom + rF.top;
+            }
+        } else {
+            toY = deltaY;
+        }
+
+
+        rF.right -= (rF.left - toX);
+        rF.left = toX;
+        rF.bottom -= (rF.top - toY);
+        rF.top = toY;
+
+        int duration = 150;
+        ObjectAnimator animatorLeft = ObjectAnimator.ofFloat(rectF, "left", rectF.left, rF.left);
+        ObjectAnimator animatorRight = ObjectAnimator.ofFloat(rectF, "right", rectF.right, rF.right);
+        ObjectAnimator animatorTop = ObjectAnimator.ofFloat(rectF, "top", rectF.top, rF.top);
+        ObjectAnimator animatorBottom = ObjectAnimator.ofFloat(rectF, "bottom", rectF.bottom, rF.bottom);
+
+        animatorLeft.setDuration(duration);
+        animatorRight.setDuration(duration);
+        animatorTop.setDuration(duration);
+        animatorBottom.setDuration(duration);
+
+        animatorLeft.start();
+        animatorRight.start();
+        animatorTop.start();
+        animatorBottom.start();
+
+        updateHandler.postDelayed(updateRectRunnable, duration + 10);
     }
 
     private void setTranslation(float dx, float dy) {
@@ -321,7 +374,6 @@ public class DraggableImageView extends View {
 
         lastRectF.set(rectF);
         // 拖动还原动画
-
         float fromX = rectF.left, toX = rectF.left, fromY = rectF.top, toY = rectF.top;
             float deltaX = (mScreenWidth - rectF.right + rectF.left) / 2;
             if (deltaX < 0) {
@@ -397,13 +449,11 @@ public class DraggableImageView extends View {
     }
 
     public void autoZoom(float cx, float cy) {
-//        if ((lastRectF.right - lastRectF.left) < dragMaxScale * (normalRectF.right - normalRectF.left)) {
-//
-//            setScale(dragMaxScale * (normalRectF.right - normalRectF.left) / (lastRectF.right - lastRectF.left), cx, cy, cx, cy);
-//            lastRectF = rectF;
-//        } else if ((lastRectF.right - lastRectF.left) > dragMinScale * (normalRectF.right - normalRectF.left)) {
-//            setScale(dragMinScale, cx, cy, cx, cy);
-//        }
+        if ((lastRectF.right - lastRectF.left) < dragMaxScale * (normalRectF.right - normalRectF.left)) {
+            setScaleWithAnimation(dragMaxScale * (normalRectF.right - normalRectF.left) / (lastRectF.right - lastRectF.left), cx, cy, cx, cy);
+        } else if ((lastRectF.right - lastRectF.left) > dragMinScale * (normalRectF.right - normalRectF.left)) {
+            setScaleWithAnimation(dragMinScale * (normalRectF.right - normalRectF.left) / (lastRectF.right - lastRectF.left), cx, cy, cx, cy);
+        }
     }
 
     private void longClick() {
@@ -416,6 +466,7 @@ public class DraggableImageView extends View {
 
     private void doubleClick(PointF p1, PointF p2) {
         autoZoom(0.5f * (p1.x + p2.x), 0.5f * (p1.y + p2.y));
+//        autoZoom(200, 200);
     }
 
     class AnimRectF extends RectF {
@@ -448,6 +499,7 @@ public class DraggableImageView extends View {
 
         @Override
         public void run() {
+            Log.d("AAA", "flag=" + flag + "\ttouchCount=" + touchCount);
             if (flag) {
 
                 if (touchCount == 0) {
@@ -457,9 +509,9 @@ public class DraggableImageView extends View {
                     if (touchCount == 1) {
                         click();
                     } else {
-                        if (distance(pointFS.get(0), pointFS.get(1)) <= 20) {
+//                        if (distance(pointFS.get(0), pointFS.get(1)) <= 500) {
                             doubleClick(pointFS.get(0), pointFS.get(1));
-                        }
+//                        }
                     }
                     touchCount = 0;
                 }
