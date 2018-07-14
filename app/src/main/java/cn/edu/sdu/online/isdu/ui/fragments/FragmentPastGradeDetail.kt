@@ -79,7 +79,6 @@ class FragmentPastGradeDetail : Fragment() , View.OnClickListener {
                 if (keyCode == KeyEvent.KEYCODE_BACK && event.action === KeyEvent.ACTION_UP) {
                     if (popupWindow != null && popupWindow!!.isShowing()) {
                         popupWindow!!.dismiss()
-                        chooseTerm!!.setOnClickListener(this@FragmentPastGradeDetail)
                         return true//当fragment消费了点击事件后，返回true，activity中的点击事件就不会执行了
                     }
                 }
@@ -91,7 +90,6 @@ class FragmentPastGradeDetail : Fragment() , View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id){
             choose_term.id->{
-                chooseTerm!!.setOnClickListener(null)
                 numberPicker!!.value = currentTerm
 
                 // 强制隐藏键盘
@@ -102,11 +100,11 @@ class FragmentPastGradeDetail : Fragment() , View.OnClickListener {
                 popupWindow = PopupWindow(pickerView,
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 // 设置弹出窗体可点击
-                popupWindow!!.setFocusable(false)
+                popupWindow!!.setFocusable(true)
                 // 设置弹出窗体动画效果
                 popupWindow!!.setAnimationStyle(R.style.AnimBottom)
                 // 触屏位置如果在选择框外面则销毁弹出框
-                popupWindow!!.setOutsideTouchable(false)
+                popupWindow!!.setOutsideTouchable(true)
                 // 设置弹出窗体的背景
                 popupWindow!!.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
                 popupWindow!!.showAtLocation(pickerView,
@@ -128,11 +126,9 @@ class FragmentPastGradeDetail : Fragment() , View.OnClickListener {
                 currentTerm = numberPicker!!.value
                 chooseTerm!!.text = "   "+term[currentTerm]+"   "
                 popupWindow!!.dismiss()
-                chooseTerm!!.setOnClickListener(this)
             }
             btnCancel!!.id->{
                 popupWindow!!.dismiss()
-                chooseTerm!!.setOnClickListener(this)
             }
         }
     }
