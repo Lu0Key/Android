@@ -77,6 +77,25 @@ public class User extends LitePalSupport {
         return user;
     }
 
+    public static User load(int uid) {
+        User user;
+
+        if (uid != -1) {
+            List<User> users = LitePal
+                    .where("uid = ?", uid + "")
+                    .find(User.class);
+
+            if (!users.isEmpty())
+                user = users.get(0);
+            else
+                user = new User();
+        } else
+            user = new User();
+
+        user.uid = uid;
+        return user;
+    }
+
     public static void logout(Context context) {
         AccountOp.logout(context);
         staticUser.studentNumber = null;
@@ -85,9 +104,21 @@ public class User extends LitePalSupport {
 
     /**
      * 保存信息至SharedPreference
+     *
+     * 首先在数据库中查找对应ID的用户，如果存在则进行更新操作
+     * 如果不存在则新建
      */
     public void save(Context context) {
-        User user = LitePal.find(User.class, 1);
+        // Find user in database
+        List<User> users = LitePal.findAll(User.class);
+        User user = null;
+        for (User u : users) {
+            if (u.studentNumber.equals(this.studentNumber)) {
+                user = u;
+                break;
+            }
+        }
+
         if (user == null) user = new User();
         user.setUid(uid);
         user.setDepart(depart);
@@ -100,6 +131,10 @@ public class User extends LitePalSupport {
         user.setPasswordMD5(passwordMD5);
         user.setStudentNumber(studentNumber);
         user.save(); // LitePal Save
+
+    }
+
+    public void loginCache(Context context) {
         SharedPreferences sp = context.getSharedPreferences("login_cache", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("student_number", studentNumber);

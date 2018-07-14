@@ -14,8 +14,10 @@ import com.alibaba.fastjson.JSON;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.litepal.LitePal;
 
 import java.io.IOException;
+import java.util.List;
 
 import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.bean.User;
@@ -43,6 +45,8 @@ public class AccountOp {
             "cn.edu.sdu.online.isdu.USER_LOG_OUT";
     public static final String ACTION_UPDATE_USER_INFO =
             "cn.edu.sdu.online.isdu.UPDATE_USER_INFO";
+    public static final String ACTION_SYNC_USER_AVATAR =
+            "cn.edu.sdu.online.isdu.SYNC_USER_AVATAR_SUCCESS";
 
     public static LocalBroadcastManager localBroadcastManager =
             LocalBroadcastManager.getInstance(MyApplication.getContext());
@@ -60,7 +64,7 @@ public class AccountOp {
             NetworkAccess.buildRequest(ServerInfo.getUrlLogin(stuNum, stuPwd), new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
+                    Logger.log(e);
                 }
 
                 @Override
@@ -84,7 +88,7 @@ public class AccountOp {
                             }
 
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Logger.log(e);
                         }
 
 
@@ -123,8 +127,8 @@ public class AccountOp {
                 User.staticUser.setDepart(jsonObject.getString("depart"));
                 User.staticUser.setUid(jsonObject.getInt("id"));
 
-                User.staticUser.save();
                 User.staticUser.save(MyApplication.getContext());
+                User.staticUser.loginCache(MyApplication.getContext());
 
                 final Intent intent = new Intent(ACTION_SYNC_USER_INFO);
                 intent.putExtra("result", "success");
@@ -135,11 +139,49 @@ public class AccountOp {
                 localBroadcastManager.sendBroadcast(intent);
             }
 
-
-
         } catch (Exception e) {
             Logger.log(e);
         }
+    }
+
+    /**
+     * 同步他人用户
+     */
+    public static void getUserInformation(final int id) {
+        NetworkAccess.buildRequest(ServerInfo.getUserInfo(id + "", "nickname-sign-studentNumber-gender"), new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Logger.log(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    String json = response.body().string();
+                    Intent intent = new Intent(ACTION_SYNC_USER_INFO)
+                            .putExtra("id", id)
+                            .putExtra("json", json);
+                    localBroadcastManager.sendBroadcast(intent);
+                } catch (Exception e) {
+                    Logger.log(e);
+                }
+            }
+        });
+
+    }
+
+    public static void getUserAvatar(final int id) {
+        NetworkAccess.cache(ServerInfo.getUserInfo(id + "", "avatar"), new NetworkAccess.OnCacheFinishListener() {
+            @Override
+            public void onFinish(boolean success, String cachePath) {
+                if (success) {
+                    Intent intent = new Intent(ACTION_SYNC_USER_AVATAR)
+                            .putExtra("id", id)
+                            .putExtra("cache_path", cachePath);
+                    localBroadcastManager.sendBroadcast(intent);
+                }
+            }
+        });
     }
 
     public static void logout(Context context) {

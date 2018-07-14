@@ -3,6 +3,7 @@ package cn.edu.sdu.online.isdu.ui.activity
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -92,6 +93,8 @@ class LoginActivity : SlideActivity(), View.OnClickListener {
                 val json = response?.body()?.string()
                 try {
                     val jsonObj = JSONObject(json)
+
+                    Log.d("AAA", json)
 
                     if (!jsonObj.isNull("status") && jsonObj.getString("status") == "failed") {
                         runOnUiThread {

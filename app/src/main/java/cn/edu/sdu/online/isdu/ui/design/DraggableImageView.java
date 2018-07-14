@@ -139,39 +139,48 @@ public class DraggableImageView extends View {
      * 初始化图片尺寸
      */
     private void initBitmap() {
-        // 设定缩放矩阵
-        // 先缩放X轴，再缩放y轴
-        mWidth = mImageWidth;
-        mHeight = mImageHeight;
-        float curScale = 1.0f; // curScale记录了大图片缩小后的缩放倍数
-        if (mImageWidth > mScreenWidth) {
-            mWidth = mScreenWidth;
-            curScale = mWidth / mImageWidth;
-            mHeight = curScale * mHeight;
-            dragMaxScale = 1 / curScale;
-        }
-        if (mHeight > mScreenHeight) {
-            if (mWidth < mScreenWidth) {
+        if (mScreenWidth - 1f < 0) {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    initBitmap();
+                }
+            });
+        } else {
+            // 设定缩放矩阵
+            // 先缩放X轴，再缩放y轴
+            mWidth = mImageWidth;
+            mHeight = mImageHeight;
+            float curScale = 1.0f; // curScale记录了大图片缩小后的缩放倍数
+            if (mImageWidth > mScreenWidth) {
                 mWidth = mScreenWidth;
                 curScale = mWidth / mImageWidth;
-
                 mHeight = curScale * mHeight;
                 dragMaxScale = 1 / curScale;
             }
+            if (mHeight > mScreenHeight) {
+                if (mWidth < mScreenWidth) {
+                    mWidth = mScreenWidth;
+                    curScale = mWidth / mImageWidth;
+
+                    mHeight = curScale * mHeight;
+                    dragMaxScale = 1 / curScale;
+                }
+            }
+
+            // 设定居中方阵
+            float deltaX = (mScreenWidth - mWidth) / 2;
+            float deltaY = (mScreenHeight - mHeight) / 2;
+            dx = deltaX; dy = deltaY > 0 ? deltaY : 0;
+
+            rectF.left = dx;
+            rectF.right = dx + mWidth;
+            rectF.top = dy;
+            rectF.bottom = rectF.top + mHeight;
+
+            lastRectF.set(rectF);
+            normalRectF.set(rectF);
         }
-
-        // 设定居中方阵
-        float deltaX = (mScreenWidth - mWidth) / 2;
-        float deltaY = (mScreenHeight - mHeight) / 2;
-        dx = deltaX; dy = deltaY > 0 ? deltaY : 0;
-
-        rectF.left = dx;
-        rectF.right = dx + mWidth;
-        rectF.top = dy;
-        rectF.bottom = rectF.top + mHeight;
-
-        lastRectF.set(rectF);
-        normalRectF.set(rectF);
     }
 
 
@@ -184,14 +193,16 @@ public class DraggableImageView extends View {
         updateHandler.removeCallbacks(updateRectRunnable);
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                touchEventCountThread.pointFS.add(new PointF(event.getX(), event.getY()));
                 if (touchEventCountThread.touchCount == 0) {
                     postDelayed(touchEventCountThread, 300);
                     touchEventCountThread.flag = true;
                 } else if (touchEventCountThread.touchCount > 2) {
-                    touchEventCountThread.touchCount = 2;
+                    touchEventCountThread.touchCount = 0;
+                    touchEventCountThread.pointFS.clear();
                     touchEventCountThread.flag = true;
                 }
+                touchEventCountThread.pointFS.add(new PointF(event.getX(), event.getY()));
+
                 moved = false;
                 downX = event.getX();
                 downY = event.getY();
@@ -465,9 +476,9 @@ public class DraggableImageView extends View {
     }
 
     public void autoZoom(float cx, float cy) {
-        if ((lastRectF.right - lastRectF.left) < dragMaxScale * (normalRectF.right - normalRectF.left)) {
+        if ((lastRectF.right - lastRectF.left) + 0.5f < dragMaxScale * (normalRectF.right - normalRectF.left)) {
             setScaleWithAnimation(dragMaxScale * (normalRectF.right - normalRectF.left) / (lastRectF.right - lastRectF.left), cx, cy, cx, cy);
-        } else if ((lastRectF.right - lastRectF.left) > dragMinScale * (normalRectF.right - normalRectF.left)) {
+        } else if ((lastRectF.right - lastRectF.left) > dragMinScale * (normalRectF.right - normalRectF.left) + 0.5f) {
             setScaleWithAnimation(dragMinScale * (normalRectF.right - normalRectF.left) / (lastRectF.right - lastRectF.left), cx, cy, cx, cy);
         }
     }
@@ -515,7 +526,6 @@ public class DraggableImageView extends View {
 
         @Override
         public void run() {
-            Log.d("AAA", "flag=" + flag + "\ttouchCount=" + touchCount);
             if (flag) {
 
                 if (touchCount == 0) {
@@ -525,14 +535,14 @@ public class DraggableImageView extends View {
                     if (touchCount == 1) {
                         click();
                     } else {
-//                        if (distance(pointFS.get(0), pointFS.get(1)) <= 500) {
-                            doubleClick(pointFS.get(0), pointFS.get(1));
-//                        }
+                        doubleClick(pointFS.get(0), pointFS.get(1));
                     }
                     touchCount = 0;
                 }
 
                 pointFS.clear();
+
+            } else {
 
             }
         }

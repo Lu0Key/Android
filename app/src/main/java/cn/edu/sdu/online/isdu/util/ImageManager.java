@@ -204,6 +204,7 @@ public class ImageManager {
      * @return The string which is converted
      */
     public static String convertBitmapToString(Bitmap bitmap, int quality) {
+        if (bitmap == null) return "";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, quality, baos);
         byte[] b = baos.toByteArray();
@@ -248,20 +249,36 @@ public class ImageManager {
     }
 
     public static Bitmap loadStringFromFile(String filePath) {
+//        File file = new File(filePath);
+//        if (!file.exists()) return null;
+//
+//        Bitmap bitmap = null;
+//        try {
+//            Scanner scanner = new Scanner(file);
+//            StringBuilder sb = new StringBuilder();
+//            while (scanner.hasNext()) sb.append(scanner.nextLine());
+//            bitmap = convertStringToBitmap(sb.toString());
+//        } catch (FileNotFoundException e) {
+//            Logger.log(e);
+//            return null;
+//        }
+//        return bitmap;
+        return convertStringToBitmap(getStringFromFile(filePath));
+    }
+
+    public static String getStringFromFile(String filePath) {
         File file = new File(filePath);
         if (!file.exists()) return null;
 
-        Bitmap bitmap = null;
         try {
             Scanner scanner = new Scanner(file);
             StringBuilder sb = new StringBuilder();
             while (scanner.hasNext()) sb.append(scanner.nextLine());
-            bitmap = convertStringToBitmap(sb.toString());
+            return sb.toString();
         } catch (FileNotFoundException e) {
             Logger.log(e);
-            return null;
+            return "";
         }
-        return bitmap;
     }
 
 }

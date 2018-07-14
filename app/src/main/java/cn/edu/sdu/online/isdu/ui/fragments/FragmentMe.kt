@@ -210,7 +210,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
             val user = User.staticUser
             circleImageView?.setImageBitmap(ImageManager.convertStringToBitmap(user.avatarString))
             userName?.text = user.nickName
-            userId?.text = "${user.studentNumber} ID:${user.uid}"
+            userId?.text = "学号:${user.studentNumber}"
             userId?.visibility = View.VISIBLE
             imgArrowForward?.visibility = View.VISIBLE
             functionButtonLayout?.visibility = View.VISIBLE

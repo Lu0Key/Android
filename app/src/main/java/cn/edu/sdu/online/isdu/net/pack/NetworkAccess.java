@@ -5,6 +5,8 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -122,7 +124,8 @@ public class NetworkAccess {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     FileWriter fw = new FileWriter(cacheFile);
-                    fw.write(response.body().string());
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    fw.write(jsonObject.getString("avatar"));
                     fw.close();
                     if (listener != null)
                         listener.onFinish(true, cacheFile.getAbsolutePath());
