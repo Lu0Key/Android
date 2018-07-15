@@ -31,6 +31,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.Common
 import android.view.LayoutInflater
 import android.widget.*
 import cn.edu.sdu.online.isdu.R.id.*
+import cn.edu.sdu.online.isdu.app.AlphaActivity
 import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
