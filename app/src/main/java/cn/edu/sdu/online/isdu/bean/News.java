@@ -16,6 +16,7 @@ public class News {
 
     private String title; // 新闻标题
     private String briefContent; // 新闻内容摘要
+    private String newsContent; // 新闻完整内容
     private String date; // 新闻日期
     private String source; // 新闻来源或类别
     private String section; // 新闻所属板块
@@ -89,5 +90,20 @@ public class News {
 
     public void setExtraUrl(List<String> extraUrl) {
         this.extraUrl = extraUrl;
+    }
+
+    public String getNewsContent() {
+        return newsContent;
+    }
+
+    public void setNewsContent(String newsContent) {
+        this.newsContent = newsContent;
+    }
+
+    public static News loadFromString(String json) {
+        News news = new News();
+
+
+        return news;
     }
 }

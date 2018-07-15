@@ -41,6 +41,7 @@ public class NetworkAccess {
         call.enqueue(callback);
     }
 
+    @Deprecated
     public static void buildRequest(String url, String str, Callback callback) {
         MediaType mediaType = MediaType.parse("text/html; charset=utf-8");
         Request request = new Request.Builder()
@@ -97,7 +98,7 @@ public class NetworkAccess {
             if (chars[i] == '?')
                 chars[i] = '.';
             if (chars[i] == '&')
-                chars[i] = '-';
+                chars[i] = '_';
         }
 
 

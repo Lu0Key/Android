@@ -29,6 +29,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
+import static cn.edu.sdu.online.isdu.util.FileUtil.getStringFromFile;
+
 /**
  ****************************************************
  * @author zsj
@@ -249,36 +251,7 @@ public class ImageManager {
     }
 
     public static Bitmap loadStringFromFile(String filePath) {
-//        File file = new File(filePath);
-//        if (!file.exists()) return null;
-//
-//        Bitmap bitmap = null;
-//        try {
-//            Scanner scanner = new Scanner(file);
-//            StringBuilder sb = new StringBuilder();
-//            while (scanner.hasNext()) sb.append(scanner.nextLine());
-//            bitmap = convertStringToBitmap(sb.toString());
-//        } catch (FileNotFoundException e) {
-//            Logger.log(e);
-//            return null;
-//        }
-//        return bitmap;
         return convertStringToBitmap(getStringFromFile(filePath));
-    }
-
-    public static String getStringFromFile(String filePath) {
-        File file = new File(filePath);
-        if (!file.exists()) return null;
-
-        try {
-            Scanner scanner = new Scanner(file);
-            StringBuilder sb = new StringBuilder();
-            while (scanner.hasNext()) sb.append(scanner.nextLine());
-            return sb.toString();
-        } catch (FileNotFoundException e) {
-            Logger.log(e);
-            return "";
-        }
     }
 
 }

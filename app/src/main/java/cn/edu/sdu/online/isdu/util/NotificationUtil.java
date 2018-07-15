@@ -11,27 +11,59 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.sdu.online.isdu.R;
+
+/**
+ ****************************************************
+ * @author zsj
+ * Last Modifier: ZSJ
+ * Last Modify Time: 2018/7/15
+ *
+ * 整合消息工具包
+ *
+ * #添加线程锁，保证线程安全
+ ****************************************************
+ */
 
 public class NotificationUtil {
+
+    static List<Integer> notifyIdList = new ArrayList<>();
+
+    public static String[] channelIds = new String[] {"MIN", "LOW", "DEFAULT", "HIGH", "MAX"};
+
     static NotificationManager manager;
     static NotificationCompat.Builder builder; // API26以下
     static Notification.Builder nBuilder; // API26及以上
     static NotificationChannel notificationChannel;
+
+    public static final int PRIORITY_MIN = 0;
+    public static final int PRIORITY_LOW = 1;
+    public static final int PRIORITY_DEFAULT = 2;
+    public static final int PRIORITY_HIGH = 3;
+    public static final int PRIORITY_MAX = 4;
+
+    private static List<OnClickListener> onClickListenerList = new ArrayList<>();
+    private static List<OnCancelListener> onCancelListenerList = new ArrayList<>();
+
     static Context mContext;
 
+    static final Object lock = new Object();
+
     public static class Builder {
-        private int smallIconRes = 0;
+        private int smallIconRes = R.mipmap.ic_alpha_not;
         private int largeIconRes = 0;
         private String title;
         private String message;
         private PendingIntent pendingIntent;
-        private String channelId = "channel_id";
+        private String channelId = channelIds[0];
         private int notifyId = 0;
         private long when = 0;
         private boolean autoCancel = false;
@@ -44,6 +76,11 @@ public class NotificationUtil {
         private Bitmap bigBitmap;
         private boolean onGoing = false; // 常驻通知栏
         private String ticker;
+
+        private boolean needProgress = false;
+        private int progress; // 进度
+        private int maxProgress;
+        private boolean indeterminateProgress;
         private int priority = NotificationCompat.PRIORITY_MAX;
         List<NotificationCompat.Action> actionList = new ArrayList<>();
         List<Notification.Action> nActionList = new ArrayList<>();
@@ -53,13 +90,13 @@ public class NotificationUtil {
             manager = (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);
         }
 
-        public Builder addAction(NotificationCompat.Action action) {
-            this.actionList.add(action);
-            return this;
-        }
-
-        public Builder addAction(Notification.Action action) {
-            this.nActionList.add(action);
+        public Builder addAction(int icon, String title, PendingIntent intent) {
+            if (Build.VERSION.SDK_INT < 26) {
+                actionList.add(new NotificationCompat.Action(icon, title, intent));
+            } else {
+                nActionList.add(new Notification.Action.Builder(
+                        Icon.createWithResource(mContext, icon), title, intent).build());
+            }
             return this;
         }
 
@@ -98,6 +135,10 @@ public class NotificationUtil {
             return this;
         }
 
+        /**
+         * @deprecated Use {@link NotificationUtil.Builder#setPriority(int)} instead
+         */
+        @Deprecated
         public Builder setChannelId(String id) {
             this.channelId = id;
             return this;
@@ -148,13 +189,29 @@ public class NotificationUtil {
             return this;
         }
 
+        /**
+         * Set priority between 0 and 4
+         *
+         * @param priority Int number in the arrange of [0, 4]
+         * @return Builder
+         */
         public Builder setPriority(int priority) {
             this.priority = priority;
+            if (this.priority < 0) this.priority = 0;
+            if (this.priority > 4) this.priority = 4;
             return this;
         }
 
         public Builder setBigBitmap(Bitmap bigBitmap) {
             this.bigBitmap = bigBitmap;
+            return this;
+        }
+
+        public Builder setProgress(int max, int progress, boolean indeterminate) {
+            needProgress = true;
+            this.maxProgress = max;
+            this.progress = progress;
+            this.indeterminateProgress = indeterminate;
             return this;
         }
 
@@ -164,85 +221,58 @@ public class NotificationUtil {
             if (smallIconRes == 0) {
                 return null;
             }
+            synchronized (lock) {
+                if (Build.VERSION.SDK_INT < 26) {
+                    builder = new NotificationCompat.Builder(mContext, channelIds[priority]);
+                    if (smallIconRes != 0) builder.setSmallIcon(smallIconRes);
+                    if (largeIconRes != 0) builder.setLargeIcon(
+                            BitmapFactory.decodeResource(mContext.getResources(),
+                                    largeIconRes));
+                    if (title != null) builder.setContentTitle(title);
+                    if (message != null) builder.setContentText(message);
+                    if (pendingIntent != null) builder.setContentIntent(pendingIntent);
+                    if (when != 0) builder.setWhen(when);
+                    builder.setAutoCancel(autoCancel);
+                    if (vibrate) builder.setVibrate(new long[] {100, 100, 100, 100});
+                    if (lights) builder.setLights(lightColor, 1000, 1000);
+                    if (longText) builder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+                    if (bigPicture) builder.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bigBitmap));
+                    if (useDefault) builder.setDefaults(NotificationCompat.DEFAULT_ALL);
+                    if (onGoing) builder.setOngoing(true);
+                    if (ticker != null) builder.setTicker(ticker);
+                    if (needProgress) builder.setProgress(maxProgress, progress, indeterminateProgress);
+                    builder.setPriority(priority - 2);
 
-            Intent intentClick = new Intent(mContext, NotificationBroadcastReceiver.class);
-            intentClick.setAction("notification_clicked");
-            intentClick.putExtra("notify_id", notifyId);
-            intentClick.putExtra("channel_id", channelId);
-            PendingIntent pendingIntentClick = PendingIntent.getBroadcast(mContext, 0,
-                    intentClick, PendingIntent.FLAG_ONE_SHOT);
+                    if (!actionList.isEmpty()) {
+                        for (NotificationCompat.Action action : actionList)
+                            builder.addAction(action);
+                    }
 
-            Intent intentCancel = new Intent(mContext, NotificationBroadcastReceiver.class);
-            intentCancel.setAction("notification_cancelled");
-            intentCancel.putExtra("notify_id", notifyId);
-            intentCancel.putExtra("channel_id", channelId);
-            PendingIntent pendingIntentCancel = PendingIntent.getBroadcast(mContext, 0,
-                    intentCancel, PendingIntent.FLAG_ONE_SHOT);
-            if (Build.VERSION.SDK_INT < 26) {
-                builder = new NotificationCompat.Builder(mContext, channelId);
-                if (smallIconRes != 0) builder.setSmallIcon(smallIconRes);
-                if (largeIconRes != 0) builder.setLargeIcon(
-                        BitmapFactory.decodeResource(mContext.getResources(),
-                                largeIconRes));
-                if (title != null) builder.setContentTitle(title);
-                if (message != null) builder.setContentText(message);
-                if (pendingIntent != null) builder.setContentIntent(pendingIntent);
-                if (when != 0) builder.setWhen(when);
-                builder.setAutoCancel(autoCancel);
-                if (vibrate) builder.setVibrate(new long[] {100, 100, 100, 100});
-                if (lights) builder.setLights(lightColor, 1000, 1000);
-                if (longText) builder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
-                if (bigPicture) builder.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bigBitmap));
-                if (useDefault) builder.setDefaults(NotificationCompat.DEFAULT_ALL);
-                if (onGoing) builder.setOngoing(true);
-                if (ticker != null) builder.setTicker(ticker);
-                builder.setPriority(priority);
+                    return builder.build();
+                } else {
+                    nBuilder = new Notification.Builder(mContext, channelIds[priority]);
+                    if (smallIconRes != 0) nBuilder.setSmallIcon(smallIconRes);
+                    if (largeIconRes != 0) nBuilder.setLargeIcon(
+                            BitmapFactory.decodeResource(mContext.getResources(),
+                                    largeIconRes));
+                    if (title != null) nBuilder.setContentTitle(title);
+                    if (message != null) nBuilder.setContentText(message);
+                    if (pendingIntent != null) nBuilder.setContentIntent(pendingIntent);
+                    if (when != 0) nBuilder.setWhen(when);
+                    nBuilder.setAutoCancel(autoCancel);
+                    if (longText) nBuilder.setStyle(new Notification.BigTextStyle().bigText(message));
+                    if (bigPicture) nBuilder.setStyle(new Notification.BigPictureStyle().bigPicture(bigBitmap));
+                    if (onGoing) nBuilder.setOngoing(true);
+                    if (ticker != null) nBuilder.setTicker(ticker);
+                    if (needProgress) nBuilder.setProgress(maxProgress, progress, indeterminateProgress);
 
-                builder.setContentIntent(pendingIntentClick);
-                builder.setDeleteIntent(pendingIntentCancel);
+                    if (!nActionList.isEmpty()) {
+                        for (Notification.Action action : nActionList)
+                            nBuilder.addAction(action);
+                    }
 
-                if (!actionList.isEmpty()) {
-                    for (NotificationCompat.Action action : actionList)
-                        builder.addAction(action);
+                    return nBuilder.build();
                 }
-
-                return builder.build();
-            } else {
-                nBuilder = new Notification.Builder(mContext, channelId);
-                notificationChannel =
-                        new NotificationChannel(channelId, channelId, priority + 2);
-                if (smallIconRes != 0) nBuilder.setSmallIcon(smallIconRes);
-                if (largeIconRes != 0) nBuilder.setLargeIcon(
-                        BitmapFactory.decodeResource(mContext.getResources(),
-                                largeIconRes));
-                if (title != null) nBuilder.setContentTitle(title);
-                if (message != null) nBuilder.setContentText(message);
-                if (pendingIntent != null) nBuilder.setContentIntent(pendingIntent);
-                if (when != 0) nBuilder.setWhen(when);
-                nBuilder.setAutoCancel(autoCancel);
-                if (vibrate) {
-                    notificationChannel.enableVibration(true);
-                    notificationChannel.setVibrationPattern(new long[] {100, 100, 100, 100});
-                }
-                if (lights) {
-                    notificationChannel.enableLights(true);
-                    notificationChannel.setLightColor(lightColor);
-                }
-                if (longText) nBuilder.setStyle(new Notification.BigTextStyle().bigText(message));
-                if (bigPicture) nBuilder.setStyle(new Notification.BigPictureStyle().bigPicture(bigBitmap));
-                if (onGoing) nBuilder.setOngoing(true);
-                if (ticker != null) nBuilder.setTicker(ticker);
-
-                if (!nActionList.isEmpty()) {
-                    for (Notification.Action action : nActionList)
-                        nBuilder.addAction(action);
-                }
-
-                nBuilder.setContentIntent(pendingIntentClick);
-                nBuilder.setDeleteIntent(pendingIntentCancel);
-
-                manager.createNotificationChannel(notificationChannel);
-                return nBuilder.build();
             }
 
         }
@@ -256,26 +286,55 @@ public class NotificationUtil {
         }
     }
 
+    public static void init(Context mContext) {
+        manager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= 26)
+            for (int i = 0; i < channelIds.length; i++) {
+                String s = channelIds[i];
+                if (manager.getNotificationChannel(s) == null) {
+                    manager.createNotificationChannel(new NotificationChannel(
+                            s, s, i + 1
+                    ));
+                }
+            }
+    }
+
+    public static void send(int notifyId, Notification notification) {
+        if (manager != null)
+            manager.notify(notifyId, notification);
+    }
+
+    public static void updateNotification(int notifyId, Notification notification) {
+        manager.notify(notifyId, notification);
+    }
 
     public static void cancel(int id) {
-        if (manager != null) manager.cancel(id);
+        if (manager != null) {
+            manager.cancel(id);
+            notifyIdList.remove(notifyIdList.indexOf(id));
+        }
+    }
+
+    public static int getNextId() {
+        Integer i = 0;
+        while (notifyIdList.contains(i)) i++;
+        notifyIdList.add(i);
+        return i;
+    }
+
+
+    public static void addOnClickListener(OnClickListener onClickListener) {
+        onClickListenerList.add(onClickListener);
+    }
+
+    public static void addOnCancelListener(OnCancelListener onCancelListener) {
+        onCancelListenerList.add(onCancelListener);
     }
 
     public static class NotificationBroadcastReceiver extends BroadcastReceiver {
 
-        private static List<OnClickListener> onClickListenerList = new ArrayList<>();
-        private static List<OnCancelListener> onCancelListenerList = new ArrayList<>();
-
         public NotificationBroadcastReceiver() {
             super();
-        }
-
-        public static void addOnClickListener(OnClickListener onClickListener) {
-            onClickListenerList.add(onClickListener);
-        }
-
-        public static void addOnCancelListener(OnCancelListener onCancelListener) {
-            onCancelListenerList.add(onCancelListener);
         }
 
         @Override
@@ -305,4 +364,5 @@ public class NotificationUtil {
     public interface OnCancelListener {
         void onCancel(int notifyId, String channelId, NotificationManager manager);
     }
+
 }
