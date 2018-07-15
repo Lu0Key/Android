@@ -26,4 +26,8 @@ public class ServerInfo {
     }
 
     public static final String urlUpdate = url + "/user/update";
+
+    public static String getNewsUrl(int index) {
+        return url + "/";
+    }
 }

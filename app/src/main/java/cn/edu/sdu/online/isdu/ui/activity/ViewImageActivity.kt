@@ -19,7 +19,6 @@ import cn.edu.sdu.online.isdu.ui.design.DraggableImageView
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Phone
-import com.github.chrisbanes.photoview.PhotoView
 import kotlinx.android.synthetic.main.activity_view_image.*
 import java.io.File
 import java.io.FileInputStream

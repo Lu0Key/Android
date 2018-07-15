@@ -25,6 +25,7 @@ import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.viewpager.NoScrollViewPager
 import cn.edu.sdu.online.isdu.ui.fragments.FragmentMeArticles
+import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import com.bumptech.glide.Glide
@@ -317,7 +318,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 
             } else if (intent.action == ACTION_SYNC_USER_AVATAR) {
                 if (intent.getStringExtra("cache_path") != null) {
-                    user!!.avatarString = ImageManager.getStringFromFile(
+                    user!!.avatarString = FileUtil.getStringFromFile(
                             intent.getStringExtra("cache_path"))
                     user!!.save(this@MyHomePageActivity)
                     publishUserInfo()
