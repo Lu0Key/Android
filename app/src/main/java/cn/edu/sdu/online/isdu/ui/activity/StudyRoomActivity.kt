@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
@@ -24,7 +25,8 @@ import cn.edu.sdu.online.isdu.util.EnvVariables
  ****************************************************
  */
 
-class StudyRoomActivity : SlideActivity() {
+class StudyRoomActivity : SlideActivity(), View.OnClickListener {
+
     private var dayNames = listOf("一", "二", "三", "四", "五", "六", "日")
     private var radioButtons = ArrayList<RadioImageButton>()
     private var selectLayout: LinearLayout? = null
@@ -32,7 +34,7 @@ class StudyRoomActivity : SlideActivity() {
     private var selectDay: TextView? = null
     private var weeks = ArrayList<Int>()
     private var days = ArrayList<Int>()
-
+    private var btnBack: ImageView? = null
     private var recyclerView: RecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +48,14 @@ class StudyRoomActivity : SlideActivity() {
         updateRecyclerView()
     }
 
+    override fun onClick(v: View?) {
+        when (v!!.id) {
+            R.id.btn_back -> {
+                finish()
+            }
+        }
+    }
+
     private fun initView() {
         radioButtons.add(findViewById(R.id.radio_zhongxin))
         radioButtons.add(findViewById(R.id.radio_honglou))
@@ -57,7 +67,9 @@ class StudyRoomActivity : SlideActivity() {
         selectWeek = findViewById(R.id.select_week)
         selectDay = findViewById(R.id.select_day)
         recyclerView = findViewById(R.id.recycler_view)
+        btnBack = findViewById(R.id.btn_back)
 
+        btnBack!!.setOnClickListener(this)
         for (i in 0 until 6) {
             radioButtons[i].setOnClickListener {
                 if (radioButtons[i].isSelected)
