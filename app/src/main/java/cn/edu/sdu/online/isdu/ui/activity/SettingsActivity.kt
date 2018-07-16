@@ -1,5 +1,6 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -34,7 +35,7 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
     private var btnAlarmNews: WideButton? = null
     private var btnAlarmSchedule: WideButton? = null
     private var btnCloudSync: WideButton? = null
-
+    private var btnFeedBack: WideButton? = null
     private var btnLogout: TextView? = null
 
     private val startupPages = arrayListOf("论坛", "资讯", "个人中心")
@@ -72,6 +73,7 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
                 Toast.makeText(this, "注销成功", Toast.LENGTH_SHORT).show()
                 finish()
             }
+
         }
     }
 
@@ -96,6 +98,9 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
                     btnAlarmSchedule!!.setTxtComment(itemName)
                 }
                 dialog.show()
+            }
+            "feedback" -> {
+                startActivity(Intent(this, FeedbackActivity::class.java))
             }
         }
     }
@@ -124,12 +129,13 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnAlarmNews = findViewById(R.id.btn_alarm_news)
         btnAlarmSchedule = findViewById(R.id.btn_alarm_schedule)
         btnCloudSync = findViewById(R.id.btn_cloud_sync)
+        btnFeedBack = findViewById(R.id.btn_feedback)
 
         btnLogout = findViewById(R.id.btn_logout)
 
         btnBack!!.setOnClickListener(this)
         btnLogout!!.setOnClickListener(this)
-
+        btnFeedBack!!.setOnItemClickListener(this)
         btnStartupPage!!.setOnItemClickListener(this)
         btnAlarmSchedule!!.setOnItemClickListener(this)
         btnAlarmNews!!.setOnItemSwitchListener(this)

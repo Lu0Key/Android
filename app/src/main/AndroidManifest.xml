@@ -58,7 +58,7 @@
         <activity android:name=".ui.activity.ScheduleDetailActivity" />
         <activity android:name=".ui.activity.CreateScheduleActivity" />
         <activity android:name=".ui.activity.SchoolBusTable" />
-
+        <activity android:name=".ui.activity.FeedbackActivity" />
         <receiver android:name=".util.NotificationUtil$NotificationBroadcastReceiver">
             <intent-filter>
                 <action android:name="notification_clicked" />
