@@ -90,6 +90,9 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
                 else if (toP == 0){
                     tipText!!.text = "请选择终点"
                 }
+                else if (fromP == 0){
+                    tipText!!.text = "请选择起点"
+                }
                 else {
                     tipText!!.text = ""
                     val intent : Intent = Intent(this,SchoolBusTable::class.java)

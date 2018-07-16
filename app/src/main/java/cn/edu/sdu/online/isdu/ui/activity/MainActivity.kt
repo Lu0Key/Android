@@ -9,6 +9,8 @@ import android.content.ServiceConnection
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.util.Log
@@ -26,7 +28,7 @@ import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
 import android.graphics.Color.LTGRAY
-import android.os.*
+import android.os.Environment
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView
@@ -172,6 +174,7 @@ class MainActivity : SlideActivity(), View.OnClickListener {
      */
     override fun onClick(v: View?) {
     }
+
 
     /**
      * 按下返回键不退出应用

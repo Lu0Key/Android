@@ -1,11 +1,16 @@
 package cn.edu.sdu.online.isdu.util;
 
+<<<<<<< HEAD
 import android.content.Intent;
 import android.net.Uri;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Locale;
+=======
+import java.io.File;
+import java.io.FileNotFoundException;
+>>>>>>> origin/dev2
 import java.util.Scanner;
 
 public class FileUtil {
