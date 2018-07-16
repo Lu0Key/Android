@@ -1,7 +1,6 @@
 package cn.edu.sdu.online.isdu.util.download;
 
 import android.app.Activity;
-<<<<<<< HEAD
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
