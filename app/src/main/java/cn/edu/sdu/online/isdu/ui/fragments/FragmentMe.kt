@@ -138,7 +138,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
                 startActivity(Intent(activity, ScheduleActivity::class.java))
             }
             btn_download.id -> {
-
+                startActivity(Intent(activity, DownloadActivity::class.java))
             }
         }
     }

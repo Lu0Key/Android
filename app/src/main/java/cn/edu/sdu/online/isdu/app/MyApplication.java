@@ -7,6 +7,9 @@ import com.youngfeng.snake.Snake;
 
 import org.litepal.LitePal;
 
+import cn.edu.sdu.online.isdu.util.Settings;
+import cn.edu.sdu.online.isdu.util.download.Download;
+
 public class MyApplication extends Application {
 
     private static Context context;
@@ -17,6 +20,8 @@ public class MyApplication extends Application {
         context = getApplicationContext();
         LitePal.initialize(context);
         Snake.init(this);
+
+        Settings.load(context);
     }
 
     public static Context getContext() {

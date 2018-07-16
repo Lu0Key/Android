@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 public class Logger {
 
     public static void log(String message) {
-        String date = new SimpleDateFormat("yyyyMMdd").format(System.currentTimeMillis());
+        String date = new SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis());
         String time = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(System.currentTimeMillis());
         File log =
                 new File(Environment.getExternalStorageDirectory() + "/iSDU/log/" + date + ".log");
@@ -26,7 +26,7 @@ public class Logger {
 
         try {
             FileWriter fileWriter = new FileWriter(log);
-            fileWriter.write("################################\n");
+            fileWriter.write("\n################################################\n");
             fileWriter.write(time + ":" + message);
             fileWriter.close();
         } catch (IOException e) {
@@ -35,7 +35,7 @@ public class Logger {
     }
 
     public static void log(Throwable e) {
-        String date = new SimpleDateFormat("yyyyMMdd").format(System.currentTimeMillis());
+        String date = new SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis());
         String time = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(System.currentTimeMillis());
         File log =
                 new File(Environment.getExternalStorageDirectory() + "/iSDU/log/" + date + ".log");
@@ -51,7 +51,7 @@ public class Logger {
         try {
             FileWriter fileWriter = new FileWriter(log, true);
             PrintWriter printWriter = new PrintWriter(fileWriter);
-            fileWriter.write("################################\n");
+            fileWriter.write("################################################\n");
             fileWriter.write(time + ":");
             e.printStackTrace(printWriter);
             printWriter.close();

@@ -50,9 +50,6 @@ public class NotificationUtil {
     public static final int PRIORITY_HIGH = 3;
     public static final int PRIORITY_MAX = 4;
 
-    private static List<OnClickListener> onClickListenerList = new ArrayList<>();
-    private static List<OnCancelListener> onCancelListenerList = new ArrayList<>();
-
     static Context mContext;
 
     static final Object lock = new Object();
@@ -310,8 +307,13 @@ public class NotificationUtil {
 
     public static void cancel(int id) {
         if (manager != null) {
-            manager.cancel(id);
-            notifyIdList.remove(notifyIdList.indexOf(id));
+            try {
+                manager.cancel(id);
+                if (notifyIdList.indexOf(id) != -1)
+                    notifyIdList.remove(notifyIdList.indexOf(id));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -320,41 +322,6 @@ public class NotificationUtil {
         while (notifyIdList.contains(i)) i++;
         notifyIdList.add(i);
         return i;
-    }
-
-
-    public static void addOnClickListener(OnClickListener onClickListener) {
-        onClickListenerList.add(onClickListener);
-    }
-
-    public static void addOnCancelListener(OnCancelListener onCancelListener) {
-        onCancelListenerList.add(onCancelListener);
-    }
-
-    public static class NotificationBroadcastReceiver extends BroadcastReceiver {
-
-        public NotificationBroadcastReceiver() {
-            super();
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int notifyId = intent.getIntExtra("notify_id", -1);
-            String channelId = intent.getStringExtra("channel_id");
-            String action = intent.getAction();
-            NotificationManager manager =
-                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-            if (action == null) return;
-            if (action.equals("notification_clicked")) {
-                for (int i = 0; i < onClickListenerList.size(); i++)
-                    onClickListenerList.get(i).onClick(notifyId, channelId, manager);
-            } else if (action.equals("notification_cancelled")) {
-                for (int i = 0; i < onCancelListenerList.size(); i++)
-                    onCancelListenerList.get(i).onCancel(notifyId, channelId, manager);
-            }
-        }
-
     }
 
     public interface OnClickListener {
