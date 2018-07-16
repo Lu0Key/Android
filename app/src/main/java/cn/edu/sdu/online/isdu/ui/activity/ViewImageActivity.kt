@@ -19,7 +19,6 @@ import cn.edu.sdu.online.isdu.ui.design.DraggableImageView
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Phone
-import com.github.chrisbanes.photoview.PhotoView
 import kotlinx.android.synthetic.main.activity_view_image.*
 import java.io.File
 import java.io.FileInputStream
@@ -29,7 +28,7 @@ import java.io.FileOutputStream
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/7/13
+ * Last Modify Time: 2018/7/14
  *
  * 图片浏览活动
  ****************************************************
@@ -107,9 +106,12 @@ class ViewImageActivity : BaseActivity() {
                             Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
                         }
 
+                        decorateWindow()
+
                     }
                     "取消" -> {
                         dialog.dismiss()
+                        decorateWindow()
                     }
                 }
             }
@@ -127,19 +129,28 @@ class ViewImageActivity : BaseActivity() {
             textView!!.text = "正在加载..."
             NetworkAccess.cache(url) { success, cachePath ->
                 if (success) {
-                    val bmp = BitmapFactory.decodeFile(cachePath)
-                    draggableImageView!!.setImageBitmap(bmp)
-                    loadingLayout!!.visibility = View.GONE
+                    val bmp = ImageManager.loadStringFromFile(cachePath)
+                    runOnUiThread {
+                        draggableImageView!!.setImageBitmap(bmp)
+                        loadingLayout!!.visibility = View.GONE
+                    }
                 } else {
-                    loadingLayout!!.visibility = View.VISIBLE
-                    progressBar!!.visibility = View.GONE
-                    textView!!.text = "加载失败"
+                    runOnUiThread {
+                        loadingLayout!!.visibility = View.VISIBLE
+                        progressBar!!.visibility = View.GONE
+                        textView!!.text = "加载失败"
+                    }
                 }
             }
         } else if (bmpStr != "") {
             val bmp = ImageManager.convertStringToBitmap(bmpStr)
             draggableImageView!!.setImageBitmap(bmp)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        decorateWindow()
     }
 
     private fun decorateWindow() {

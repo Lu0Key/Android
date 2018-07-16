@@ -20,6 +20,9 @@
     <attr name="radioImageButtonSrc" format="reference|color" />
     <attr name="radioImageButtonText" format="string|reference" />
 
+    <attr name="normalTextColor" format="color|reference" />
+    <attr name="pressedTextColor" format="color|reference" />
+
     <declare-styleable name="WideButton">
         <attr name="wideButtonItemName" />
         <attr name="wideButtonComment" />
@@ -44,6 +47,11 @@
     <declare-styleable name="RadioImageButton">
         <attr name="radioImageButtonSrc" />
         <attr name="radioImageButtonText" />
+    </declare-styleable>
+
+    <declare-styleable name="ClickableTextView">
+        <attr name="normalTextColor" />
+        <attr name="pressedTextColor" />
     </declare-styleable>
 
     <!-- Declare custom theme attributes that allow changing which styles are

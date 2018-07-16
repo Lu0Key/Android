@@ -76,10 +76,10 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:text="User NameUser Nameser Nameser Name"
                             android:textSize="20sp"
                             android:textColor="@color/colorPrimaryText"
                             android:layout_gravity="center_horizontal"
+                            android:gravity="center_horizontal"
                             android:singleLine="true"
                             android:ellipsize="middle"/>
 
@@ -99,7 +99,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="123123"
                         android:singleLine="true"
                         android:textSize="12sp"
                         android:layout_marginBottom="4dp"

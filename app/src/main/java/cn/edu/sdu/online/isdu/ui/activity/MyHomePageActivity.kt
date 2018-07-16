@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -19,9 +20,14 @@ import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
+import cn.edu.sdu.online.isdu.net.AccountOp.ACTION_SYNC_USER_AVATAR
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.viewpager.NoScrollViewPager
 import cn.edu.sdu.online.isdu.ui.fragments.FragmentMeArticles
+import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
+import cn.edu.sdu.online.isdu.util.Logger
 import com.bumptech.glide.Glide
 import com.zhouwei.blurlibrary.EasyBlur
 import de.hdodenhof.circleimageview.CircleImageView
@@ -35,6 +41,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
+import org.json.JSONObject
 
 /**
  ****************************************************
@@ -50,7 +57,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 
     private var magicIndicator: MagicIndicator? = null
     private var viewPager: NoScrollViewPager? = null
-    private val mDataList = listOf("我的帖子", "我的评论", "关注的文章") // Indicator 数据
+    private val mDataList = listOf("帖子", "评论", "关注") // Indicator 数据
     private val mFragments = listOf(FragmentMeArticles(),
             FragmentMeArticles(), FragmentMeArticles()) // Fragment 数组
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
@@ -70,13 +77,23 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var circleImageView: CircleImageView? = null
     private var txtSign: TextView? = null // 个人签名
 
+    private var user: User? = null
+    private var id: Int = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_home_page)
 
+        id = intent.getIntExtra("id", User.load().uid)
+        user = User.load(id)
+
         initView()
         initFragments()
         initIndicator()
+
+        if (id != User.load().uid) setGuestView()
+
+        loadUserInfo()
     }
 
     override fun onClick(v: View?) {
@@ -92,8 +109,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
             }
             background_image.id, circle_image_view.id -> {
                 startActivity(Intent(this, ViewImageActivity::class.java)
-                        .putExtra("bmp_str", User.staticUser.avatarString)
-                        .putExtra("url", ""))
+                        .putExtra("url", ServerInfo.getUserInfo(user?.uid.toString(), "avatar")))
             }
         }
     }
@@ -142,7 +158,6 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         circleImageView!!.setOnClickListener(this)
         backgroundImage!!.setOnClickListener(this)
 
-        loadUserInfo()
     }
 
     /**
@@ -187,14 +202,29 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun loadUserInfo() {
-        if (User.staticUser == null)
-            User.staticUser = User.load()
-        val user = User.staticUser
-        val bmp = ImageManager.convertStringToBitmap(user.avatarString)
-        userName!!.text = user.nickName
-        txtSign!!.text = "个人签名：${user.selfIntroduce}"
-        fillBackgroundImage(bmp)
-        fillAvatarImage(bmp)
+        user = User.load(id)
+        publishUserInfo()
+        AccountOp.getUserInformation(id)
+    }
+
+    private fun publishUserInfo() {
+        if (user != null) {
+            userName!!.text = user!!.nickName
+            txtSign!!.text = "个人签名：${user!!.selfIntroduce}"
+            val bmp = ImageManager.convertStringToBitmap(user!!.avatarString)
+            if (bmp != null) {
+                fillBackgroundImage(bmp)
+                fillAvatarImage(bmp)
+            }
+        }
+    }
+
+    /**
+     * 隐藏设置、修改信息的按钮
+     */
+    private fun setGuestView() {
+        btnSettings!!.visibility = View.GONE
+        btnEditProfile!!.visibility = View.GONE
     }
 
     override fun onResume() {
@@ -211,9 +241,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                     .radius(15)
                     .scale(2)
                     .blur()
-            Glide.with(this)
-                    .load(bitmap)
-                    .into(backgroundImage!!)
+            backgroundImage!!.setImageBitmap(bitmap)
         } else {
             backgroundImage!!.setImageBitmap(null)
         }
@@ -225,12 +253,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
             circleImageView!!.setImageBitmap(null)
             miniCircleImageView!!.setImageBitmap(null)
         } else {
-            Glide.with(this)
-                    .load(bmp)
-                    .into(circleImageView!!)
-            Glide.with(this)
-                    .load(bmp)
-                    .into(miniCircleImageView!!)
+            circleImageView!!.setImageBitmap(bmp)
+            miniCircleImageView!!.setImageBitmap(bmp)
         }
     }
 
@@ -241,7 +265,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      */
     class FragAdapter(fm: FragmentManager, fragments: List<Fragment>) : FragmentPagerAdapter(fm) {
         private val mFragments = fragments
-        private val mDataList = listOf("我的帖子", "我的评论", "关注的文章") // Indicator 数据
+        private val mDataList = listOf("帖子", "评论", "关注") // Indicator 数据
 
         override fun getItem(position: Int): Fragment = mFragments[position]
 
@@ -252,28 +276,88 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         }
     }
 
-    private class UserSyncBroadcastReceiver(activity: MyHomePageActivity) :
+    private inner class UserSyncBroadcastReceiver(activity: MyHomePageActivity) :
             BaseActivity.MyBroadcastReceiver(activity) {
         private val activity = activity
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent!!.action == AccountOp.ACTION_USER_LOG_OUT) {
                 activity.finish()
+            } else if (intent.action == AccountOp.ACTION_SYNC_USER_INFO) {
+
+                if (user == null) user = User()
+
+                if (intent.getStringExtra("json") != null) {
+                    try {
+                        val jsonObject = JSONObject(intent.getStringExtra("json"))
+                        user!!.nickName = jsonObject.getString("nickname")
+                        user!!.selfIntroduce = jsonObject.getString("sign")
+                        user!!.studentNumber = jsonObject.getString("studentNumber")
+                        user!!.gender = if (jsonObject.getString("gender") == "男") User.GENDER_MALE
+                                        else (if (jsonObject.getString("gender") == "女") User.GENDER_FEMALE
+                                        else User.GENDER_SECRET)
+                        user!!.save(this@MyHomePageActivity)
+
+                        AccountOp.getUserAvatar(id)
+
+                        publishUserInfo()
+                    } catch (e: Exception) {
+                        Logger.log(e)
+                        val dialog = AlertDialog(this@MyHomePageActivity)
+                        dialog.setTitle("错误")
+                        dialog.setMessage("未获取到数据")
+                        dialog.setCancelable(false)
+                        dialog.setCancelOnTouchOutside(false)
+                        dialog.setPositiveButton("返回") {
+                            dialog.dismiss()
+                            finish()
+                        }
+                        runOnUiThread { dialog.show() }
+                    }
+                }
+
+
+            } else if (intent.action == ACTION_SYNC_USER_AVATAR) {
+                if (intent.getStringExtra("cache_path") != null) {
+                    user!!.avatarString = FileUtil.getStringFromFile(
+                            intent.getStringExtra("cache_path"))
+                    user!!.save(this@MyHomePageActivity)
+                    publishUserInfo()
+                } else {
+                    publishUserInfo()
+                }
             }
         }
     }
 
     override fun prepareBroadcastReceiver() {
         if (myBroadcastReceiver == null) {
-            val intentFilter = IntentFilter(AccountOp.ACTION_USER_LOG_OUT)
+            val intentFilter1 = IntentFilter(AccountOp.ACTION_USER_LOG_OUT)
+            val intentFilter2 = IntentFilter(AccountOp.ACTION_SYNC_USER_INFO)
+            val intentFilter3 = IntentFilter(AccountOp.ACTION_SYNC_USER_AVATAR)
             myBroadcastReceiver = UserSyncBroadcastReceiver(this)
             AccountOp.localBroadcastManager.registerReceiver(myBroadcastReceiver!!,
-                    intentFilter)
+                    intentFilter1)
+            AccountOp.localBroadcastManager.registerReceiver(myBroadcastReceiver!!,
+                    intentFilter2)
+            AccountOp.localBroadcastManager.registerReceiver(myBroadcastReceiver!!,
+                    intentFilter3)
         }
-
     }
 
     override fun unRegBroadcastReceiver() {
         if (myBroadcastReceiver != null)
             AccountOp.localBroadcastManager.unregisterReceiver(myBroadcastReceiver!!)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        if (savedInstanceState?.getString("id") != null) {
+            id = savedInstanceState.getInt("id")
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState!!.putInt("id", id)
     }
 }

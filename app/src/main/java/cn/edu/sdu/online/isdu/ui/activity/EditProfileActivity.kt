@@ -57,6 +57,7 @@ class EditProfileActivity : SlideActivity() {
     private var btnBack: ImageView? = null
     private var btnDone: ImageView? = null
     private var btnEditAvatar: TextView? = null
+    private var editStudentNumber: TextView? = null
 
     private var finalBitmap: Bitmap? = null
 
@@ -83,6 +84,7 @@ class EditProfileActivity : SlideActivity() {
         btnBack = findViewById(R.id.btn_back)
         btnDone = findViewById(R.id.btn_done)
         btnEditAvatar = findViewById(R.id.btn_edit_avatar)
+        editStudentNumber = findViewById(R.id.edit_student_number)
 
 
         btnEditAvatar!!.setOnClickListener {
@@ -141,6 +143,7 @@ class EditProfileActivity : SlideActivity() {
         editDepart!!.text = user.depart
         editName!!.text = user.name
         editIntroduction!!.setText(user.selfIntroduce)
+        editStudentNumber!!.text = user.studentNumber
     }
 
     /**

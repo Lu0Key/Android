@@ -1,11 +1,14 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
+import android.app.Notification
+import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.util.Log
@@ -23,28 +26,34 @@ import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
 import android.graphics.Color.LTGRAY
+import android.os.*
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView
 import android.view.LayoutInflater
 import android.widget.*
 import cn.edu.sdu.online.isdu.R.id.*
+import cn.edu.sdu.online.isdu.app.AlphaActivity
 import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.*
 import cn.edu.sdu.online.isdu.util.NotificationUtil.NotificationBroadcastReceiver
+import cn.edu.sdu.online.isdu.util.NotificationUtil.PRIORITY_MAX
+import cn.edu.sdu.online.isdu.util.download.Download
+import cn.edu.sdu.online.isdu.util.download.DownloadItem
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
-
+import java.io.File
+import java.io.FileWriter
 
 
 /**
 ****************************************************
 * @author zsj
 * Last Modifier: ZSJ
-* Last Modify Time: 2018/7/8
+* Last Modify Time: 2018/7/15
 *
 * 主活动页面
 * 其下附属3个Fragment
@@ -53,6 +62,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigat
 * #修复了常驻后台进程被杀重启时的崩溃bug
 * #添加按下返回键回到桌面的功能
 * #7/7重构主活动
+* #下载服务
 ****************************************************
 */
 class MainActivity : SlideActivity(), View.OnClickListener {
@@ -88,11 +98,18 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         // 同步用户信息
         AccountOp.syncUserInformation()
 
+        // 初始化下载工具
+        Download.init(this)
     }
 
     override fun onResume() {
         super.onResume()
         EnvVariables.init(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+//        unbindService(serviceConnection)
     }
 
     private fun initFragment() {
@@ -173,6 +190,28 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         }
         return super.onKeyDown(keyCode, event)
     }
+
+    /***********************************************
+     * 下载服务
+     **********************************************/
+//    private var downloadBinder: DownloadService.DownloadBinder? = null
+//    private val serviceConnection = object : ServiceConnection {
+//        override fun onServiceDisconnected(name: ComponentName?) {
+//
+//        }
+//
+//        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+//            downloadBinder = service as DownloadService.DownloadBinder
+//        }
+//    }
+//    /**
+//     * 绑定下载服务
+//     */
+//    private fun bindDownloadService() {
+//        val intent = Intent(this, DownloadService::class.java)
+//        startService(intent)
+//        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+//    }
 
     /**
      * 自定义ViewPager适配器类

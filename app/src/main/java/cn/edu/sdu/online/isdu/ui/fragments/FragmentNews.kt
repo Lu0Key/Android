@@ -1,6 +1,7 @@
 package cn.edu.sdu.online.isdu.ui.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.ui.activity.SearchActivity
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.UIUtil
@@ -63,6 +65,9 @@ class FragmentNews : Fragment(), Serializable {
 
         viewPager!!.offscreenPageLimit = mDataList.size
 //        blankView!!.visibility = View.GONE
+        searchBar!!.setOnClickListener {
+            startActivity(Intent(activity!!, SearchActivity::class.java))
+        }
     }
 
     private fun refresh() {

@@ -9,12 +9,14 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.bean.User
@@ -24,6 +26,9 @@ import cn.edu.sdu.online.isdu.ui.design.button.ImageButton
 import cn.edu.sdu.online.isdu.util.ImageManager
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_me.*
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.badge.BadgeAnchor
+import q.rorbin.badgeview.Badge
+import q.rorbin.badgeview.QBadgeView
 import java.io.Serializable
 
 /**
@@ -53,6 +58,8 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
     private var btnFollow: TextView? = null
     private var todayScheduleLayout: View? = null
     private var imgArrowForward: ImageView? = null
+    private var btnDownload: View? = null
+    private var txtDownload: TextView? = null
 
     private var functionButtonLayout: LinearLayout? = null
 
@@ -130,6 +137,9 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
             today_schedule.id -> {
                 startActivity(Intent(activity, ScheduleActivity::class.java))
             }
+            btn_download.id -> {
+
+            }
         }
     }
 
@@ -168,6 +178,8 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
         imgArrowForward = view.findViewById(R.id.img_arrow_forward)
         emptySymbol = view.findViewById(R.id.empty_symbol)
         functionButtonLayout = view.findViewById(R.id.function_button)
+        btnDownload = view.findViewById(R.id.btn_download)
+        txtDownload = view.findViewById(R.id.txt_download)
 
         btnBus!!.setOnClickListener(this)
         btnCalender!!.setOnClickListener(this)
@@ -178,6 +190,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
         btnStudyroom!!.setOnClickListener(this)
         btnSchedule!!.setOnClickListener(this)
         todayScheduleLayout!!.setOnClickListener(this)
+        btnDownload!!.setOnClickListener(this)
 
         btnMsg!!.setOnClickListener(this)
         btnFavorite!!.setOnClickListener(this)
@@ -210,7 +223,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
             val user = User.staticUser
             circleImageView?.setImageBitmap(ImageManager.convertStringToBitmap(user.avatarString))
             userName?.text = user.nickName
-            userId?.text = "${user.studentNumber} ID:${user.uid}"
+            userId?.text = "学号:${user.studentNumber}"
             userId?.visibility = View.VISIBLE
             imgArrowForward?.visibility = View.VISIBLE
             functionButtonLayout?.visibility = View.VISIBLE

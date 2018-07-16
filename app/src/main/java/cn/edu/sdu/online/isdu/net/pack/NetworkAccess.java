@@ -5,6 +5,8 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,6 +41,7 @@ public class NetworkAccess {
         call.enqueue(callback);
     }
 
+    @Deprecated
     public static void buildRequest(String url, String str, Callback callback) {
         MediaType mediaType = MediaType.parse("text/html; charset=utf-8");
         Request request = new Request.Builder()
@@ -87,12 +90,19 @@ public class NetworkAccess {
             cacheDir.mkdir();
         }
 
-        String s = url.substring(0, (ServerInfo.url).length() - 1);
-        while (s.contains("/")) {
-            s.replace('/', '_');
+        String s = (url.substring((ServerInfo.url).length(), url.length()));
+        char[] chars = s.toLowerCase().toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '/')
+                chars[i] = '_';
+            if (chars[i] == '?')
+                chars[i] = '.';
+            if (chars[i] == '&')
+                chars[i] = '_';
         }
 
-        final File cacheFile = new File(cacheDir.getAbsolutePath() + "/" + s);
+
+        final File cacheFile = new File(cacheDir.getAbsolutePath() + "/" + new String(chars));
 
         if (cacheFile.exists()) {
             if (listener != null)
@@ -115,7 +125,8 @@ public class NetworkAccess {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     FileWriter fw = new FileWriter(cacheFile);
-                    fw.write(response.body().string());
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    fw.write(jsonObject.getString("avatar"));
                     fw.close();
                     if (listener != null)
                         listener.onFinish(true, cacheFile.getAbsolutePath());

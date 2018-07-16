@@ -25,7 +25,11 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Scanner;
+
+import static cn.edu.sdu.online.isdu.util.FileUtil.getStringFromFile;
 
 /**
  ****************************************************
@@ -202,6 +206,7 @@ public class ImageManager {
      * @return The string which is converted
      */
     public static String convertBitmapToString(Bitmap bitmap, int quality) {
+        if (bitmap == null) return "";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, quality, baos);
         byte[] b = baos.toByteArray();
@@ -216,17 +221,14 @@ public class ImageManager {
     public static Bitmap convertStringToBitmap(String st) {
         // OutputStream out;
         Bitmap bitmap = null;
-        try
-        {
-            // out = new FileOutputStream("/sdcard/aa.jpg");
+        try {
             byte[] bitmapArray;
             bitmapArray = Base64.decode(st, Base64.DEFAULT);
             bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
             // bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             return bitmap;
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             return null;
         }
     }
@@ -246,6 +248,10 @@ public class ImageManager {
 
     public static int getBitmapSize(Bitmap bitmap) {
         return bitmap.getAllocationByteCount();
+    }
+
+    public static Bitmap loadStringFromFile(String filePath) {
+        return convertStringToBitmap(getStringFromFile(filePath));
     }
 
 }

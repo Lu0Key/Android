@@ -84,7 +84,45 @@
                 android:background="@color/colorWhite"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
                 android:orientation="vertical">
+
+                <!--昵称-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="昵称"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorSecondaryText"/>
+
+                    <EditText
+                        android:id="@+id/edit_user_name"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="User Name"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:textSize="16sp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/colorWhite"
+                        android:singleLine="true"/>
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorThemeGrey"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"/>
 
                 <!--用户名-->
                 <LinearLayout
@@ -97,18 +135,17 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="用户名"
+                        android:text="学号"
                         android:layout_gravity="center_vertical"
                         android:textSize="16sp"
                         android:textColor="@color/colorSecondaryText"/>
 
-                    <EditText
-                        android:id="@+id/edit_user_name"
+                    <TextView
+                        android:id="@+id/edit_student_number"
                         android:layout_width="0dp"
                         android:layout_weight="4"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="User Name"
                         android:paddingTop="8dp"
                         android:paddingBottom="8dp"
                         android:textSize="16sp"

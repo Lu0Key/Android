@@ -2,6 +2,7 @@ package cn.edu.sdu.online.isdu.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 
 /**
  ****************************************************
@@ -21,8 +22,8 @@ public class Settings {
     public static boolean ALARM_NEWS = false; // 新资讯提醒
     public static int ALARM_SCHEDULE = 0; // 日程提醒方式
     public static boolean CLOUD_SYNC = true; // 云同步
-
-
+    public static String DEFAULT_DOWNLOAD_LOCATION =
+            Environment.getExternalStorageDirectory() + "/iSDU/download/"; // 默认下载位置
 
     public static void load(Context context) {
         SharedPreferences sp = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
@@ -32,6 +33,8 @@ public class Settings {
         ALARM_NEWS = sp.getBoolean("alarm_news", false);
         ALARM_SCHEDULE = sp.getInt("alarm_schedule", 0);
         CLOUD_SYNC = sp.getBoolean("cloud_sync", true);
+        DEFAULT_DOWNLOAD_LOCATION = sp.getString("default_download_location",
+                Environment.getExternalStorageDirectory() + "/iSDU/download/");
     }
 
     public static void store(Context context) {
@@ -43,6 +46,7 @@ public class Settings {
         editor.putBoolean("alarm_news", ALARM_NEWS);
         editor.putInt("alarm_schedule", ALARM_SCHEDULE);
         editor.putBoolean("cloud_sync", CLOUD_SYNC);
+        editor.putString("default_download_location", DEFAULT_DOWNLOAD_LOCATION);
 
         editor.apply();
     }

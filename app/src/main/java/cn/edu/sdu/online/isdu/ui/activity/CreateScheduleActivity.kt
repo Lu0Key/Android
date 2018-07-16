@@ -39,7 +39,7 @@ class CreateScheduleActivity : SlideActivity(), View.OnClickListener {
     private var scheduleTimeStart: TextView? = null
     private var scheduleTimeEnd: TextView? = null
     private var repeatType: Spinner? = null
-    private var btnAdd: Button? = null
+    private var btnAdd: TextView? = null
 
     private var weeks = ArrayList<Int>()
     private var days = ArrayList<Int>()

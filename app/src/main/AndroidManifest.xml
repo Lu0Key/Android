@@ -66,7 +66,15 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.activity.ViewImageActivity"></activity>
+        <activity android:name=".ui.activity.ViewImageActivity" />
+        <activity android:name=".ui.activity.SearchActivity" />
+        <activity android:name=".ui.activity.MessageActivity" />
+        <activity android:name=".ui.activity.NewsActivity" />
+        <activity android:name=".ui.activity.DownloadActivity" />
+        <service android:name=".util.download.DownloadService"
+            android:enabled="true"
+            android:exported="true"/>
+
     </application>
 
 </manifest>
