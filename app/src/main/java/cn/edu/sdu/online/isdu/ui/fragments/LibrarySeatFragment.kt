@@ -26,7 +26,7 @@ import cn.edu.sdu.online.isdu.ui.design.button.LibraryRadioImageButton
 class LibrarySeatFragment : Fragment() {
 
     private var radioButtons = ArrayList<LibraryRadioImageButton>()
-    private var recyclerView : RecyclerView ?= null
+    private var recyclerView: RecyclerView ?= null
     private var adapter: LibrarySeatFragment.MyAdapter? = null
     private val dataList: MutableList<LibrarySeat> = java.util.ArrayList()
 

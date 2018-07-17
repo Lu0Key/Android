@@ -87,24 +87,24 @@ class NewsActivity : SlideActivity() {
      */
     private fun fetchNews() {
         NetworkAccess.cache(newsUrl) {success, cachePath ->
-            if (success) {
-                news = News.loadFromString(FileUtil.getStringFromFile(cachePath))
-                publish()
-            } else {
-                // 本地没有该缓存，则退出
-                if (news == null) {
-                    val dialog = AlertDialog(this)
-                    dialog.setCancelable(false)
-                    dialog.setCancelOnTouchOutside(false)
-                    dialog.setTitle("错误")
-                    dialog.setMessage("未获取到内容")
-                    dialog.setPositiveButton("返回") {
-                        dialog.dismiss()
-                        finish()
+                if (success) {
+                    news = News.loadFromString(FileUtil.getStringFromFile(cachePath))
+                    publish()
+                } else {
+                    // 本地没有该缓存，则退出
+                    if (news == null) {
+                        val dialog = AlertDialog(this)
+                        dialog.setCancelable(false)
+                        dialog.setCancelOnTouchOutside(false)
+                        dialog.setTitle("错误")
+                        dialog.setMessage("未获取到内容")
+                        dialog.setPositiveButton("返回") {
+                            dialog.dismiss()
+                            finish()
+                        }
+                        dialog.show()
                     }
-                    dialog.show()
                 }
-            }
         }
     }
 

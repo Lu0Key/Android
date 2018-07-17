@@ -1,4 +1,4 @@
-package cn.edu.sdu.online.isdu.ui.fragments
+package cn.edu.sdu.online.isdu.ui.fragments.main
 
 import android.content.BroadcastReceiver
 import android.content.Context

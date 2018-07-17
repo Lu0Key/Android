@@ -1,4 +1,4 @@
-package cn.edu.sdu.online.isdu.ui.fragments
+package cn.edu.sdu.online.isdu.ui.fragments.main
 
 import android.animation.*
 import android.content.Context
@@ -7,7 +7,6 @@ import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,8 +18,6 @@ import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.ui.design.recyclerviewpack.PullRefreshLayout
 import cn.edu.sdu.online.isdu.interfaces.OnRefreshListener
-import q.rorbin.badgeview.Badge
-import q.rorbin.badgeview.QBadgeView
 import java.util.*
 import kotlin.collections.ArrayList
 

@@ -1,28 +1,33 @@
-package cn.edu.sdu.online.isdu.ui.fragments
+package cn.edu.sdu.online.isdu.ui.fragments.download
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.interfaces.DownloadListener
 import cn.edu.sdu.online.isdu.ui.activity.DownloadActivity
-import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.util.Settings
 import cn.edu.sdu.online.isdu.util.download.Download
 import cn.edu.sdu.online.isdu.util.download.DownloadItem
 import java.io.File
+
+/**
+ ****************************************************
+ * @author zsj
+ * Last Modifier: ZSJ
+ * Last Modify Time: 2018/7/17
+ *
+ * 下载中任务的Fragment
+ ****************************************************
+ */
 
 class DownloadingFragment : Fragment() {
     private var btnStartAll: View? = null

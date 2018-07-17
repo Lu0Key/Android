@@ -4,16 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Environment
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.view.KeyEvent
 import android.view.View
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.net.AccountOp
-import cn.edu.sdu.online.isdu.ui.fragments.HomeFragment
-import cn.edu.sdu.online.isdu.ui.fragments.MeFragment
-import cn.edu.sdu.online.isdu.ui.fragments.NewsFragment
+import cn.edu.sdu.online.isdu.ui.fragments.main.HomeFragment
+import cn.edu.sdu.online.isdu.ui.fragments.main.MeFragment
+import cn.edu.sdu.online.isdu.ui.fragments.main.NewsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -25,7 +24,6 @@ import android.view.LayoutInflater
 import android.widget.*
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.util.*
-import cn.edu.sdu.online.isdu.util.download.DownloadItem
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
