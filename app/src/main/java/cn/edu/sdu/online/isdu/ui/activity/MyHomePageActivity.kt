@@ -293,16 +293,18 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                         publishUserInfo()
                     } catch (e: Exception) {
                         Logger.log(e)
-                        val dialog = AlertDialog(this@MyHomePageActivity)
-                        dialog.setTitle("错误")
-                        dialog.setMessage("未获取到数据")
-                        dialog.setCancelable(false)
-                        dialog.setCancelOnTouchOutside(false)
-                        dialog.setPositiveButton("返回") {
-                            dialog.dismiss()
-                            finish()
+                        runOnUiThread {
+                            val dialog = AlertDialog(this@MyHomePageActivity)
+                            dialog.setTitle("错误")
+                            dialog.setMessage("未获取到数据")
+                            dialog.setCancelable(false)
+                            dialog.setCancelOnTouchOutside(false)
+                            dialog.setPositiveButton("返回") {
+                                dialog.dismiss()
+                                finish()
+                            }
+                            dialog.show()
                         }
-                        runOnUiThread { dialog.show() }
                     }
                 }
 
