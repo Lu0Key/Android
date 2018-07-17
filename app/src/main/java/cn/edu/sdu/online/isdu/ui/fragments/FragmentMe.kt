@@ -9,14 +9,12 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.bean.User
@@ -26,9 +24,6 @@ import cn.edu.sdu.online.isdu.ui.design.button.ImageButton
 import cn.edu.sdu.online.isdu.util.ImageManager
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_me.*
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.badge.BadgeAnchor
-import q.rorbin.badgeview.Badge
-import q.rorbin.badgeview.QBadgeView
 import java.io.Serializable
 
 /**
@@ -138,7 +133,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
                 startActivity(Intent(activity, ScheduleActivity::class.java))
             }
             btn_download.id -> {
-
+                startActivity(Intent(activity, DownloadActivity::class.java))
             }
         }
     }

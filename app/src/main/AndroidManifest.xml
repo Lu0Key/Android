@@ -58,22 +58,22 @@
         <activity android:name=".ui.activity.ScheduleDetailActivity" />
         <activity android:name=".ui.activity.CreateScheduleActivity" />
         <activity android:name=".ui.activity.SchoolBusTable" />
-
-        <receiver android:name=".util.NotificationUtil$NotificationBroadcastReceiver">
-            <intent-filter>
-                <action android:name="notification_clicked" />
-                <action android:name="notification_cancelled" />
-            </intent-filter>
-        </receiver>
+        <activity android:name=".ui.activity.FeedbackActivity" />
 
         <activity android:name=".ui.activity.ViewImageActivity" />
         <activity android:name=".ui.activity.SearchActivity" />
         <activity android:name=".ui.activity.MessageActivity" />
         <activity android:name=".ui.activity.NewsActivity" />
-        <activity android:name=".ui.activity.DownloadActivity" />
-        <service android:name=".util.download.DownloadService"
-            android:enabled="true"
-            android:exported="true"/>
+        <activity android:name=".ui.activity.DownloadActivity"
+            android:launchMode="singleInstance"/>
+        <receiver android:name=".util.broadcast.DownloadBroadcastReceiver">
+            <intent-filter>
+                <action android:name="download_open" />
+                <action android:name="download_pause" />
+                <action android:name="download_cancel" />
+                <action android:name="download_start" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

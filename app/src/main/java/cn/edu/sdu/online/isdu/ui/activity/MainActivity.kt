@@ -9,6 +9,8 @@ import android.content.ServiceConnection
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.util.Log
@@ -26,7 +28,7 @@ import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
 import android.graphics.Color.LTGRAY
-import android.os.*
+import android.os.Environment
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView
@@ -38,7 +40,6 @@ import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.*
-import cn.edu.sdu.online.isdu.util.NotificationUtil.NotificationBroadcastReceiver
 import cn.edu.sdu.online.isdu.util.NotificationUtil.PRIORITY_MAX
 import cn.edu.sdu.online.isdu.util.download.Download
 import cn.edu.sdu.online.isdu.util.download.DownloadItem
@@ -97,9 +98,6 @@ class MainActivity : SlideActivity(), View.OnClickListener {
 
         // 同步用户信息
         AccountOp.syncUserInformation()
-
-        // 初始化下载工具
-        Download.init(this)
     }
 
     override fun onResume() {
@@ -190,28 +188,6 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         }
         return super.onKeyDown(keyCode, event)
     }
-
-    /***********************************************
-     * 下载服务
-     **********************************************/
-//    private var downloadBinder: DownloadService.DownloadBinder? = null
-//    private val serviceConnection = object : ServiceConnection {
-//        override fun onServiceDisconnected(name: ComponentName?) {
-//
-//        }
-//
-//        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-//            downloadBinder = service as DownloadService.DownloadBinder
-//        }
-//    }
-//    /**
-//     * 绑定下载服务
-//     */
-//    private fun bindDownloadService() {
-//        val intent = Intent(this, DownloadService::class.java)
-//        startService(intent)
-//        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-//    }
 
     /**
      * 自定义ViewPager适配器类

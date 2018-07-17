@@ -4,20 +4,27 @@ import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.litepal.crud.LitePalSupport;
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.interfaces.DownloadListener;
 import cn.edu.sdu.online.isdu.interfaces.DownloadOperation;
 import cn.edu.sdu.online.isdu.util.Logger;
 import cn.edu.sdu.online.isdu.util.NotificationUtil;
+import cn.edu.sdu.online.isdu.util.Settings;
 
 /**
  ****************************************************
@@ -26,10 +33,13 @@ import cn.edu.sdu.online.isdu.util.NotificationUtil;
  * Last Modify Time: 2018/7/15
  *
  * 下载内容Bean
+ *
+ *
  ****************************************************
  */
 
-public class DownloadItem implements DownloadOperation {
+public class DownloadItem extends LitePalSupport implements DownloadOperation {
+    /* 下载任务状态 */
     public static final int TYPE_SUCCESS = 0;
     public static final int TYPE_FAILED = 1;
     public static final int TYPE_PAUSED = 2;
@@ -37,23 +47,89 @@ public class DownloadItem implements DownloadOperation {
     public static final int TYPE_NEW_INSTANCE = 4;
     public static final int TYPE_DOWNLOADING = 5;
 
+    /* 下载URL */
     private String downloadUrl;
+    /* 文件名，不予修改 */
     private String fileName;
+    /* 任务状态 */
     private int status;
     private int progress;
     private int notifyId;
 
-    Notification notification;
+    private DownloadAsyncTask downloadAsyncTask;
+    public FileLengthDetector fileLengthDetector;
 
-    DownloadListener downloadListener;
+    public DownloadListener downloadListener = new DownloadListener() {
+        @Override
+        public void onProgress(int progress) {
+            setStatus(TYPE_DOWNLOADING);
+            setProgress(progress);
+            Download.save();
+            if (externalListener != null)
+                externalListener.onProgress(progress);
+            Download.buildNotification(DownloadItem.this);
+        }
 
-    DownloadTask downloadTask;
+        @Override
+        public void onSuccess() {
+            setStatus(TYPE_SUCCESS);
+            Download.save();
+            if (externalListener != null)
+                externalListener.onSuccess();
+            Download.buildNotification(DownloadItem.this);
+
+            if (fileLengthDetector != null)
+                fileLengthDetector.stop();
+            fileLengthDetector = null;
+        }
+
+        @Override
+        public void onFailed() {
+            setStatus(TYPE_FAILED);
+            Download.save();
+            if (externalListener != null)
+                externalListener.onFailed();
+            Download.buildNotification(DownloadItem.this);
+
+            if (fileLengthDetector != null)
+                fileLengthDetector.stop();
+            fileLengthDetector = null;
+        }
+
+        @Override
+        public void onPaused() {
+            setStatus(TYPE_PAUSED);
+            Download.save();
+            if (externalListener != null)
+                externalListener.onPaused();
+            Download.buildNotification(DownloadItem.this);
+
+            if (fileLengthDetector != null)
+                fileLengthDetector.stop();
+            fileLengthDetector = null;
+        }
+
+        @Override
+        public void onCanceled() {
+            setStatus(TYPE_CANCELED);
+            Download.save();
+            if (externalListener != null)
+                externalListener.onCanceled();
+            Download.buildNotification(DownloadItem.this);
+
+            if (fileLengthDetector != null)
+                fileLengthDetector.stop();
+            fileLengthDetector = null;
+        }
+    };
+
+    private DownloadListener externalListener;
 
     public DownloadItem(String downloadUrl) {
         setDownloadUrl(downloadUrl);
-        status = TYPE_NEW_INSTANCE;
-        notifyId = NotificationUtil.getNextId();
-        Log.d("AAA", notifyId + "");
+    }
+
+    public DownloadItem() {
     }
 
     public int getNotifyId() {
@@ -97,81 +173,64 @@ public class DownloadItem implements DownloadOperation {
         this.progress = progress;
     }
 
-    public static List<DownloadItem> getDownloadItemList() {
-        SharedPreferences sp =
-                MyApplication.getContext().getSharedPreferences("download_item", Context.MODE_PRIVATE);
-        String jsonString = sp.getString("json", "");
-        List<DownloadItem> downloadItems = new ArrayList<>();
-
-        if (!"".equals(jsonString)) {
-            try {
-                JSONArray jsonArray = new JSONArray(jsonString);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    DownloadItem downloadItem = new DownloadItem(jsonObject.getString("downloadUrl"));
-                    downloadItem.fileName = jsonObject.getString("fileName");
-                    downloadItem.status = jsonObject.getInt("status");
-                }
-            } catch (Exception e) {
-                Logger.log(e);
-                return downloadItems;
-            }
-
-        }
-
-        return downloadItems;
-    }
-
-    public static void saveDownloadItemList(List<DownloadItem> items) {
-        SharedPreferences.Editor editor = MyApplication.getContext().getSharedPreferences(
-                "download_item", Context.MODE_PRIVATE
-        ).edit();
-
-        JSONArray jsonArray = new JSONArray();
-        for (DownloadItem item : items) {
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("downloadUrl", item.downloadUrl);
-                jsonObject.put("fileName", item.fileName);
-                jsonObject.put("status", item.status);
-            } catch (JSONException e) {
-                Logger.log(e);
-            }
-            jsonArray.put(jsonObject);
-        }
-
-        editor.putString("json", jsonArray.toString());
-        editor.apply();
+    public void setExternalListener(DownloadListener externalListener) {
+        this.externalListener = externalListener;
     }
 
     @Override
     public void startDownload() {
-        if (downloadTask == null) {
-            downloadTask = new DownloadTask(this);
+        // 在Download中注册
+        if (!Download.downloadList.contains(this)) {
+            Download.add(this);
         }
-        downloadTask.startDownload();
+
+        if (downloadAsyncTask != null) {
+            downloadAsyncTask.pauseDownload();
+            downloadAsyncTask = null;
+        }
+        setStatus(TYPE_NEW_INSTANCE);
+        downloadAsyncTask = new DownloadAsyncTask(downloadListener);
+        downloadAsyncTask.execute(notifyId);
+
+        fileLengthDetector = new FileLengthDetector(Settings.DEFAULT_DOWNLOAD_LOCATION + getFileName());
+        new Thread(fileLengthDetector).start();
     }
 
     @Override
     public void pauseDownload() {
-        if (downloadTask != null) {
-            downloadTask.pauseDownload();
-            downloadTask = null;
+        if (externalListener != null)
+            externalListener.onPaused();
+        if (downloadAsyncTask != null) {
+            downloadAsyncTask.pauseDownload();
+            downloadAsyncTask = null;
         }
     }
 
     @Override
     public void cancelDownload() {
-        if (downloadTask != null) {
-            downloadTask.cancelDownload();
-            downloadTask = null;
+        if (externalListener != null)
+            externalListener.onPaused();
+        if (downloadAsyncTask != null) {
+            downloadAsyncTask.cancelDownload();
+            downloadAsyncTask = null;
         }
+        // 删除文件
+        String fileName = Settings.DEFAULT_DOWNLOAD_LOCATION + getFileName();
+        File file = new File(fileName);
+        if (file.exists()) file.delete();
+
+        NotificationUtil.cancel(notifyId);
+    }
+
+    public void remove() {
+        Download.remove(notifyId);
     }
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof DownloadItem) &&
+        return obj != null && (obj instanceof DownloadItem) &&
                 (((DownloadItem) obj).downloadUrl.equals(this.downloadUrl)) &&
                 (((DownloadItem) obj).fileName.equals(this.fileName));
     }
+
 }

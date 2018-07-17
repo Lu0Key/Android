@@ -140,6 +140,28 @@
 
             </cn.edu.sdu.online.isdu.ui.design.button.WideButton>
 
+            <!--#反馈#-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:background="@color/colorThemeGrey"
+                android:text="反馈"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
+
+            <!--反馈-->
+            <cn.edu.sdu.online.isdu.ui.design.button.WideButton
+                android:id="@+id/btn_feedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:wideButtonItemName="问题反馈"
+                app:wideButtonCanSwitch="false"
+                app:wideButtonItemId="feedback"
+                app:wideButtonShowArrow="false">
+
+            </cn.edu.sdu.online.isdu.ui.design.button.WideButton>
+
 
             <TextView
                 android:id="@+id/btn_logout"

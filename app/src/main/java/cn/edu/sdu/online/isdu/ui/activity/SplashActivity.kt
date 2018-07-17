@@ -15,6 +15,7 @@ import cn.edu.sdu.online.isdu.util.EnvVariables
 import cn.edu.sdu.online.isdu.util.NotificationUtil
 import cn.edu.sdu.online.isdu.util.Security
 import cn.edu.sdu.online.isdu.util.Settings
+import cn.edu.sdu.online.isdu.util.download.Download
 import kotlinx.android.synthetic.main.activity_splash.*
 
 /**
@@ -41,9 +42,9 @@ class SplashActivity : AppCompatActivity() {
         EnvVariables.init(this)
         NotificationUtil.init(this)
 
-        decorateWindow()
+        Download.init(this)
 
-        loadLocalSettings()
+        decorateWindow()
         loadLocalUser()
 
         Schedule.localScheduleList = Schedule.load(this)
@@ -74,14 +75,6 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-
-    /**
-     * 加载本地设置
-     *
-     */
-    private fun loadLocalSettings() {
-        Settings.load(this)
-    }
 
     /**
      * 加载本地用户缓存
