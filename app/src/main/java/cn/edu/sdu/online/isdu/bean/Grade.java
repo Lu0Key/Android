@@ -16,7 +16,7 @@ public class Grade {
      * zdf:班级最低分
      * pm:排名
      * zrs:总人数
-     * dd:等地
+     * dd:等第
      */
 
     private double pscj, qmcj, cj, jd, zgf, zdf;

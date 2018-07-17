@@ -19,7 +19,7 @@ import cn.edu.sdu.online.isdu.ui.design.button.LibraryRadioImageButton
  * Last Modifier: Cola_Mentos
  * Last Modify Time: 2018/7/16
  *
- * 图书馆御座查询碎片
+ * 图书馆余座查询碎片
  ****************************************************
  */
 
