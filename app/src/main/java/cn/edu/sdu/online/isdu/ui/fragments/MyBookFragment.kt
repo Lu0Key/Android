@@ -1,6 +1,7 @@
 package cn.edu.sdu.online.isdu.ui.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -8,9 +9,13 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Book
+import cn.edu.sdu.online.isdu.ui.activity.SearchBookActivity
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
+import kotlinx.android.synthetic.main.fragment_my_book.*
 import java.util.ArrayList
 /**
  ****************************************************
@@ -22,13 +27,14 @@ import java.util.ArrayList
  ****************************************************
  */
 
-
-class FragmentMyBook : Fragment() {
+class MyBookFragment : Fragment(), View.OnClickListener {
 
 
     private var recyclerView: RecyclerView?= null
-    private var adapter: FragmentMyBook.MyAdapter? = null
+    private var adapter: MyBookFragment.MyAdapter? = null
     private val dataList: MutableList<Book> = ArrayList()
+    private var searchBar : LinearLayout?= null
+    private var progressDialog : ProgressDialog ?=  null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -41,8 +47,17 @@ class FragmentMyBook : Fragment() {
 
     private fun initView(view : View){
         recyclerView = view.findViewById(R.id.recycler_view)
+        searchBar = view.findViewById(R.id.search_bar)
 
+        searchBar!!.setOnClickListener(this)
+    }
 
+    override fun onClick(v: View?) {
+        when(v!!.id){
+            search_bar.id->{
+                startActivity(Intent(activity!!,SearchBookActivity::class.java))
+            }
+        }
     }
 
     /**
@@ -52,6 +67,10 @@ class FragmentMyBook : Fragment() {
         adapter = MyAdapter(dataList, context!!)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = adapter
+        progressDialog = ProgressDialog(context,false)
+        //progressDialog!!.setMessage("正在加载中...")
+        //progressDialog!!.setButton(null,null)
+        //progressDialog!!.show()
     }
 
 

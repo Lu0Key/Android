@@ -59,9 +59,10 @@
         <activity android:name=".ui.activity.CreateScheduleActivity" />
         <activity android:name=".ui.activity.SchoolBusTable" />
         <activity android:name=".ui.activity.FeedbackActivity" />
-
+        <activity android:name=".ui.activity.HistoryActivity" />
         <activity android:name=".ui.activity.ViewImageActivity" />
         <activity android:name=".ui.activity.SearchActivity" />
+        <activity android:name=".ui.activity.SearchBookActivity"/>
         <activity android:name=".ui.activity.MessageActivity" />
         <activity android:name=".ui.activity.NewsActivity" />
         <activity android:name=".ui.activity.DownloadActivity"

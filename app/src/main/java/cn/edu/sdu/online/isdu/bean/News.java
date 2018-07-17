@@ -1,6 +1,12 @@
 package cn.edu.sdu.online.isdu.bean;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import cn.edu.sdu.online.isdu.util.Logger;
 
 /**
  ****************************************************
@@ -102,8 +108,28 @@ public class News {
 
     public static News loadFromString(String json) {
         News news = new News();
-
-
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            news.section = jsonObject.getString("site");
+            news.title = jsonObject.getString("title");
+            news.date = jsonObject.getString("date");
+            news.newsContent = jsonObject.getString("content");
+            if (jsonObject.getJSONArray("attachment") != null &&
+                    jsonObject.getJSONArray("attachment").length() > 0) {
+                JSONArray jsonArray = jsonObject.getJSONArray("attachment");
+                List<String> names = new ArrayList<>();
+                List<String> urls = new ArrayList<>();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    names.add(obj.getString("title"));
+                    urls.add(obj.getString("url"));
+                }
+                news.extras = names;
+                news.extraUrl = urls;
+            }
+        } catch (Exception e) {
+            Logger.log(e);
+        }
         return news;
     }
 }

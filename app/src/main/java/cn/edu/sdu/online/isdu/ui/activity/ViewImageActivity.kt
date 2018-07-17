@@ -87,7 +87,7 @@ class ViewImageActivity : BaseActivity() {
                             fos.close()
                             Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
                         } else if (url != "") {
-                            NetworkAccess.cache(url) { success, cachePath ->
+                            NetworkAccess.cache(url, "avatar") { success, cachePath ->
                                 if (success) {
                                     val bmp = BitmapFactory.decodeFile(cachePath)
                                     bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
@@ -127,7 +127,7 @@ class ViewImageActivity : BaseActivity() {
         } else if (url != "") {
             loadingLayout!!.visibility = View.VISIBLE
             textView!!.text = "正在加载..."
-            NetworkAccess.cache(url) { success, cachePath ->
+            NetworkAccess.cache(url, "avatar") { success, cachePath ->
                 if (success) {
                     val bmp = ImageManager.loadStringFromFile(cachePath)
                     runOnUiThread {

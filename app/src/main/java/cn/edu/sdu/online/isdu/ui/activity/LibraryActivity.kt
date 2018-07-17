@@ -10,8 +10,8 @@ import android.view.View
 import android.widget.ImageView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.ui.fragments.FragmentLibrarySeat
-import cn.edu.sdu.online.isdu.ui.fragments.FragmentMyBook
+import cn.edu.sdu.online.isdu.ui.fragments.LibrarySeatFragment
+import cn.edu.sdu.online.isdu.ui.fragments.MyBookFragment
 import kotlinx.android.synthetic.main.activity_library.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -36,7 +36,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorT
 class LibraryActivity : SlideActivity(), View.OnClickListener{
 
     private var backBtn : ImageView ?= null
-    private val mFragments = listOf(FragmentMyBook(),FragmentLibrarySeat())
+    private val mFragments = listOf(MyBookFragment(),LibrarySeatFragment())
     private var mViewPagerAdapter: LibraryActivity.FragAdapter? = null // ViewPager适配器
     private val mDataList = listOf("馆藏查询", "余座查询")
     private var viewPager: ViewPager? = null // ViewPager

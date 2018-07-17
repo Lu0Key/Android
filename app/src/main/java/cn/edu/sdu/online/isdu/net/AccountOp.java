@@ -171,7 +171,7 @@ public class AccountOp {
     }
 
     public static void getUserAvatar(final int id) {
-        NetworkAccess.cache(ServerInfo.getUserInfo(id + "", "avatar"), new NetworkAccess.OnCacheFinishListener() {
+        NetworkAccess.cache(ServerInfo.getUserInfo(id + "", "avatar"), "avatar", new NetworkAccess.OnCacheFinishListener() {
             @Override
             public void onFinish(boolean success, String cachePath) {
                 if (success) {

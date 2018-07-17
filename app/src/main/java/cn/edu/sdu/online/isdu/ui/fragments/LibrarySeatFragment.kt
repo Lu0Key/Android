@@ -19,15 +19,15 @@ import cn.edu.sdu.online.isdu.ui.design.button.LibraryRadioImageButton
  * Last Modifier: Cola_Mentos
  * Last Modify Time: 2018/7/16
  *
- * 图书馆御座查询碎片
+ * 图书馆余座查询碎片
  ****************************************************
  */
 
-class FragmentLibrarySeat : Fragment() {
+class LibrarySeatFragment : Fragment() {
 
     private var radioButtons = ArrayList<LibraryRadioImageButton>()
-    private var recyclerView : RecyclerView ?= null
-    private var adapter: FragmentLibrarySeat.MyAdapter? = null
+    private var recyclerView: RecyclerView ?= null
+    private var adapter: LibrarySeatFragment.MyAdapter? = null
     private val dataList: MutableList<LibrarySeat> = java.util.ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

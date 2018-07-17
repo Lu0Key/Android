@@ -1,31 +1,17 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 import android.content.Context
-import android.graphics.Color
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
-import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.interfaces.DownloadListener
-import cn.edu.sdu.online.isdu.ui.fragments.DownloadedFragment
-import cn.edu.sdu.online.isdu.ui.fragments.DownloadingFragment
-import cn.edu.sdu.online.isdu.util.download.Download
-import cn.edu.sdu.online.isdu.util.download.DownloadItem
+import cn.edu.sdu.online.isdu.ui.fragments.download.DownloadedFragment
+import cn.edu.sdu.online.isdu.ui.fragments.download.DownloadingFragment
 import kotlinx.android.synthetic.main.activity_download.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -36,7 +22,6 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView
 
 /**
  ****************************************************

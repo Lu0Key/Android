@@ -1,4 +1,4 @@
-package cn.edu.sdu.online.isdu.ui.fragments
+package cn.edu.sdu.online.isdu.ui.fragments.main
 
 import android.content.Context
 import android.content.Intent
@@ -10,8 +10,9 @@ import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.SearchActivity
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -33,16 +34,16 @@ import java.io.Serializable
  * 主页资讯碎片
  ****************************************************
  */
-class FragmentNews : Fragment(), Serializable {
+class NewsFragment : Fragment(), Serializable {
 
     private var searchBar: View? = null
     private var viewPager: ViewPager? = null
 
     private var magicIndicator: MagicIndicator? = null // Magic Indicator
     private val mDataList = listOf("学生在线", "本科生院", "青春山大", "山大视点") // Indicator 数据
-    private val mFragments = listOf(FragmentNewsContent.newInstance(0),
-            FragmentNewsContent.newInstance(1),
-            FragmentNewsContent.newInstance(2), FragmentNewsContent.newInstance(3))
+    private val mFragments = listOf(NewsContentFragment.newInstance(0),
+            NewsContentFragment.newInstance(1),
+            NewsContentFragment.newInstance(2), NewsContentFragment.newInstance(3))
     private var mViewPagerAdapter: FragAdapter? = null
 //    private var blankView: TextView? = null
 
@@ -72,7 +73,6 @@ class FragmentNews : Fragment(), Serializable {
 
     private fun refresh() {
 
-//        blankView!!.visibility = if (mDataList.isEmpty()) View.VISIBLE else View.GONE
     }
 
     /**

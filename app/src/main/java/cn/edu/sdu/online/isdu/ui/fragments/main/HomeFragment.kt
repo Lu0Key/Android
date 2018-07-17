@@ -1,4 +1,4 @@
-package cn.edu.sdu.online.isdu.ui.fragments
+package cn.edu.sdu.online.isdu.ui.fragments.main
 
 import android.content.Context
 import android.content.Intent
@@ -33,7 +33,7 @@ import java.io.Serializable
  ****************************************************
  */
 
-class FragmentHome : Fragment(), Serializable, View.OnClickListener {
+class HomeFragment : Fragment(), Serializable, View.OnClickListener {
 
     private var searchBar: LinearLayout? = null // 搜索框
     private var askBar: LinearLayout? = null // 提问框
@@ -42,8 +42,8 @@ class FragmentHome : Fragment(), Serializable, View.OnClickListener {
     private var viewPager: ViewPager? = null // ViewPager
 
     private val mDataList = listOf("推荐", "关注", "热榜", "校内相关") // Indicator 数据
-    private val mFragments = listOf(FragmentHomeRecommend(),
-            FragmentHomeRecommend(), FragmentHomeRecommend(), FragmentHomeRecommend()) // Fragment 数组
+    private val mFragments = listOf(HomeRecommendFragment(),
+            HomeRecommendFragment(), HomeRecommendFragment(), HomeRecommendFragment()) // Fragment 数组
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -135,6 +135,6 @@ class FragmentHome : Fragment(), Serializable, View.OnClickListener {
     }
 
     companion object {
-        val TAG = "FragmentHome"
+        val TAG = "HomeFragment"
     }
 }

@@ -158,9 +158,7 @@
                 app:wideButtonItemName="问题反馈"
                 app:wideButtonCanSwitch="false"
                 app:wideButtonItemId="feedback"
-                app:wideButtonShowArrow="false">
-
-            </cn.edu.sdu.online.isdu.ui.design.button.WideButton>
+                app:wideButtonShowArrow="true" />
 
 
             <TextView

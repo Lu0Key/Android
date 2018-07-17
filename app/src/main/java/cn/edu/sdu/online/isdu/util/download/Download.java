@@ -41,7 +41,7 @@ import static cn.edu.sdu.online.isdu.util.download.DownloadItem.TYPE_SUCCESS;
 public class Download {
 
     private static final int ID_ADD = 20; // 通知ID增加量
-    private static final int MAX_DOWNLOAD_COUNT = 10; // 最大并行下载数量
+//    private static final int MAX_DOWNLOAD_COUNT = 10; // 最大并行下载数量
 
     public static Activity activity;
 
@@ -116,8 +116,9 @@ public class Download {
     public static List<Integer> getDownloadingIdList() {
         List<Integer> itemIds = new ArrayList<>();
         for (int i = 0; i < downloadList.size(); i++) {
-            if (downloadList.get(i).getStatus() != TYPE_SUCCESS)
-                itemIds.add(downloadList.get(i).getNotifyId());
+            if (downloadList.get(i) != null)
+                if (downloadList.get(i).getStatus() != TYPE_SUCCESS)
+                    itemIds.add(downloadList.get(i).getNotifyId());
         }
         return itemIds;
     }
@@ -130,9 +131,10 @@ public class Download {
     public static List<Integer> getDownloadedIdList() {
         List<Integer> itemIds = new ArrayList<>();
         for (int i = 0; i < downloadList.size(); i++) {
-            if (downloadList.get(i).getStatus() == TYPE_SUCCESS)
-                itemIds.add(downloadList.get(i).getNotifyId());
-            Log.d("AAA", downloadList.get(i).getFileName() + "\t" + (i + ID_ADD));
+            if (downloadList.get(i) != null)
+                if (downloadList.get(i).getStatus() == TYPE_SUCCESS) {
+                    itemIds.add(downloadList.get(i).getNotifyId());
+                }
         }
         return itemIds;
     }
