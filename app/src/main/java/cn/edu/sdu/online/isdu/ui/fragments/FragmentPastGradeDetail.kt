@@ -74,17 +74,15 @@ class FragmentPastGradeDetail : Fragment() , View.OnClickListener {
         super.onResume()
         view!!.isFocusableInTouchMode = true
         view!!.requestFocus()
-        view!!.setOnKeyListener(object : View.OnKeyListener {
-            override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean {
-                if (keyCode == KeyEvent.KEYCODE_BACK && event.action === KeyEvent.ACTION_UP) {
-                    if (popupWindow != null && popupWindow!!.isShowing()) {
-                        popupWindow!!.dismiss()
-                        return true//当fragment消费了点击事件后，返回true，activity中的点击事件就不会执行了
-                    }
+        view!!.setOnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action === KeyEvent.ACTION_UP) {
+                if (popupWindow != null && popupWindow!!.isShowing()) {
+                    popupWindow!!.dismiss()
+                    true//当fragment消费了点击事件后，返回true，activity中的点击事件就不会执行了
                 }
-                return false//当fragmenet没有消费点击事件，返回false，activity中继续执行对应的逻辑
             }
-        })
+            false//当fragmenet没有消费点击事件，返回false，activity中继续执行对应的逻辑
+        }
     }
 
     override fun onClick(v: View?) {
