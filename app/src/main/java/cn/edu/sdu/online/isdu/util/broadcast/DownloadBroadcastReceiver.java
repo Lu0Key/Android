@@ -29,7 +29,7 @@ public class DownloadBroadcastReceiver extends BroadcastReceiver {
                     Download.get(notifyId).cancelDownload();
                     break;
                 case "download_open":
-
+                    Download.get(notifyId).open();
                     break;
             }
         }

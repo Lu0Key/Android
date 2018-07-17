@@ -17,8 +17,12 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.interfaces.DownloadListener
 import cn.edu.sdu.online.isdu.ui.activity.DownloadActivity
+import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
+import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
+import cn.edu.sdu.online.isdu.util.Settings
 import cn.edu.sdu.online.isdu.util.download.Download
 import cn.edu.sdu.online.isdu.util.download.DownloadItem
+import java.io.File
 
 class DownloadingFragment : Fragment() {
     private var btnStartAll: View? = null
@@ -93,6 +97,8 @@ class DownloadingFragment : Fragment() {
                         holder.itemLayout.setOnClickListener {
                             item.pauseDownload()
                         }
+                        holder.btnCancel.visibility = View.VISIBLE
+                        holder.btnClear.visibility = View.GONE
                     }
                 }
 
@@ -124,6 +130,8 @@ class DownloadingFragment : Fragment() {
                         holder.itemLayout.setOnClickListener {
                             item.startDownload()
                         }
+                        holder.btnCancel.visibility = View.VISIBLE
+                        holder.btnClear.visibility = View.GONE
                     }
                 }
 
@@ -140,6 +148,8 @@ class DownloadingFragment : Fragment() {
                             holder.txtStatus.text = "正在开始"
                             item.startDownload()
                         }
+                        holder.btnCancel.visibility = View.VISIBLE
+                        holder.btnClear.visibility = View.GONE
                     }
                 }
 
@@ -155,11 +165,38 @@ class DownloadingFragment : Fragment() {
                         holder.itemLayout.setOnClickListener {
                             item.startDownload()
                         }
+                        holder.btnCancel.visibility = View.GONE
+                        holder.btnClear.visibility = View.VISIBLE
                     }
                 }
             })
 
             holder.btnClear.visibility = View.GONE
+            holder.btnClear.setOnClickListener {
+                val dialog = OptionDialog(context!!, listOf("仅删除任务", "删除任务和文件"))
+                dialog.setMessage(item.fileName)
+                dialog.setCancelOnTouchOutside(true)
+                dialog.setOnItemSelectListener { itemName ->
+                    when (itemName) {
+                        "仅删除任务" -> {
+
+                            Download.remove(item.notifyId)
+
+                            adapter.notifyDataSetChanged()
+                        }
+                        "删除任务和文件" -> {
+
+                            val file = File(Settings.DEFAULT_DOWNLOAD_LOCATION +
+                                    Download.get(item.notifyId).fileName)
+                            if (file.exists()) file.delete()
+                            Download.remove(item.notifyId)
+
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                }
+                dialog.show()
+            }
 
             holder.fileName.text = item.fileName
 
@@ -178,6 +215,8 @@ class DownloadingFragment : Fragment() {
                     holder.itemLayout.setOnClickListener {
                         item.startDownload()
                     }
+                    holder.btnCancel.visibility = View.VISIBLE
+                    holder.btnClear.visibility = View.GONE
                 }
                 DownloadItem.TYPE_DOWNLOADING -> {
                     holder.btnStartPause.text = "暂停下载"
@@ -188,6 +227,8 @@ class DownloadingFragment : Fragment() {
                     holder.itemLayout.setOnClickListener {
                         item.pauseDownload()
                     }
+                    holder.btnCancel.visibility = View.VISIBLE
+                    holder.btnClear.visibility = View.GONE
                 }
                 DownloadItem.TYPE_CANCELED -> {
                     holder.btnStartPause.text = "重新下载"
@@ -200,6 +241,8 @@ class DownloadingFragment : Fragment() {
                     holder.itemLayout.setOnClickListener {
                         item.startDownload()
                     }
+                    holder.btnCancel.visibility = View.GONE
+                    holder.btnClear.visibility = View.VISIBLE
                 }
                 DownloadItem.TYPE_FAILED -> {
                     holder.btnStartPause.text = "重试"
@@ -212,6 +255,8 @@ class DownloadingFragment : Fragment() {
                     holder.itemLayout.setOnClickListener {
                         item.startDownload()
                     }
+                    holder.btnCancel.visibility = View.VISIBLE
+                    holder.btnClear.visibility = View.GONE
                 }
                 DownloadItem.TYPE_SUCCESS -> {
                     holder.txtStatus.text = "下载成功，点击打开"
@@ -229,11 +274,15 @@ class DownloadingFragment : Fragment() {
                     holder.itemLayout.setOnClickListener {
                         item.pauseDownload()
                     }
+                    holder.btnCancel.visibility = View.VISIBLE
+                    holder.btnClear.visibility = View.GONE
                 }
             }
 
             holder.btnCancel.setOnClickListener {
                 item.cancelDownload()
+                holder.btnCancel.visibility = View.GONE
+                holder.btnClear.visibility = View.VISIBLE
             }
 
         }

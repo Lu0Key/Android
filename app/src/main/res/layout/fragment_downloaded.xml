@@ -7,6 +7,11 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.DownloadingFragment">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorSeparateLine" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -22,16 +27,31 @@
             android:focusable="true"
             android:background="@drawable/design_image_button_background">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="清空下载任务"
-                android:textColor="@color/colorPrimaryText"
-                android:textSize="18sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
+                android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent">
+
+                <ImageView
+                    android:id="@+id/icon1"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_download_clear"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="清空下载任务"
+                    android:textColor="@color/colorPrimaryText"
+                    android:textSize="18sp"
+                    android:gravity="center"/>
+            </LinearLayout>
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>

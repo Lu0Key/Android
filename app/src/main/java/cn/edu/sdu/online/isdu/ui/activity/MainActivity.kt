@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Environment
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.view.KeyEvent
@@ -24,6 +25,7 @@ import android.view.LayoutInflater
 import android.widget.*
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.util.*
+import cn.edu.sdu.online.isdu.util.download.DownloadItem
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
@@ -77,10 +79,6 @@ class MainActivity : SlideActivity(), View.OnClickListener {
 
         // 同步用户信息
         AccountOp.syncUserInformation()
-
-//        DownloadItem("http://202.194.15.144:8380/files/rjy.mp4").startDownload()
-//        DownloadItem("http://202.194.15.144:8380/files/film.mp4").startDownload()
-//        DownloadItem("http://202.194.15.144:8380/files/mysql.tar.gz").startDownload()
     }
 
     override fun onResume() {

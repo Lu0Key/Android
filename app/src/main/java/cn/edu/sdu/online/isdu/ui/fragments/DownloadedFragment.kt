@@ -15,8 +15,11 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.interfaces.DownloadListener
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
+import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
+import cn.edu.sdu.online.isdu.util.Settings
 import cn.edu.sdu.online.isdu.util.download.Download
 import cn.edu.sdu.online.isdu.util.download.DownloadItem
+import java.io.File
 
 class DownloadedFragment : Fragment() {
     private var btnClearAll: View? = null
@@ -41,18 +44,26 @@ class DownloadedFragment : Fragment() {
         recyclerView!!.adapter = adapter
 
         btnClearAll!!.setOnClickListener {
-            val dialog = AlertDialog(context!!)
-            dialog.setTitle("清空下载任务")
-            dialog.setMessage("确定要清空所有任务吗？")
-            dialog.setPositiveButton("是") {
-                for (item in Download.getDownloadedIdList()) {
-                    Download.remove(item)
+            val list = listOf("仅删除任务", "删除任务和文件")
+            val dialog = OptionDialog(context!!, list)
+            dialog.setMessage("清空所有下载任务")
+            dialog.setOnItemSelectListener {itemName ->  
+                when (itemName) {
+                    "仅删除任务" -> {
+                        for (item in Download.getDownloadedIdList()) {
+                            Download.remove(item)
+                        }
+                        adapter.notifyDataSetChanged()
+                    }
+                    "删除任务和文件" -> {
+                        for (item in Download.getDownloadedIdList()) {
+                            val file = File(Settings.DEFAULT_DOWNLOAD_LOCATION + Download.get(item).fileName)
+                            if (file.exists()) file.delete()
+                            Download.remove(item)
+                        }
+                        adapter.notifyDataSetChanged()
+                    }
                 }
-                adapter.notifyDataSetChanged()
-                dialog.dismiss()
-            }
-            dialog.setNegativeButton("否") {
-                dialog.dismiss()
             }
             dialog.show()
         }
@@ -89,20 +100,31 @@ class DownloadedFragment : Fragment() {
             holder.txtProgress.visibility = View.GONE
             holder.progressBar.visibility = View.GONE
             holder.itemLayout.setOnClickListener {
-
+                item.open()
             }
 
             holder.btnClear.setOnClickListener {
-                val dialog = AlertDialog(context!!)
-                dialog.setTitle("清除下载任务")
-                dialog.setMessage("确定清除下载任务 ${item.fileName} 吗？")
-                dialog.setPositiveButton("是") {
-                    Download.remove(item.notifyId)
-                    dialog.dismiss()
-                    adapter.notifyDataSetChanged()
-                }
-                dialog.setNegativeButton("否") {
-                    dialog.dismiss()
+                val dialog = OptionDialog(context!!, listOf("仅删除任务", "删除任务和文件"))
+                dialog.setMessage(item.fileName)
+                dialog.setCancelOnTouchOutside(true)
+                dialog.setOnItemSelectListener { itemName ->
+                    when (itemName) {
+                        "仅删除任务" -> {
+
+                            Download.remove(item.notifyId)
+
+                            adapter.notifyDataSetChanged()
+                        }
+                        "删除任务和文件" -> {
+
+                            val file = File(Settings.DEFAULT_DOWNLOAD_LOCATION +
+                                    Download.get(item.notifyId).fileName)
+                            if (file.exists()) file.delete()
+                            Download.remove(item.notifyId)
+
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
                 }
                 dialog.show()
             }

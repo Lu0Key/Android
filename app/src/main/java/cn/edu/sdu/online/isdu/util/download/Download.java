@@ -116,8 +116,9 @@ public class Download {
     public static List<Integer> getDownloadingIdList() {
         List<Integer> itemIds = new ArrayList<>();
         for (int i = 0; i < downloadList.size(); i++) {
-            if (downloadList.get(i).getStatus() != TYPE_SUCCESS)
-                itemIds.add(downloadList.get(i).getNotifyId());
+            if (downloadList.get(i) != null)
+                if (downloadList.get(i).getStatus() != TYPE_SUCCESS)
+                    itemIds.add(downloadList.get(i).getNotifyId());
         }
         return itemIds;
     }

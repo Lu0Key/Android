@@ -23,6 +23,8 @@ import java.util.Set;
 import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.interfaces.DownloadListener;
 import cn.edu.sdu.online.isdu.interfaces.DownloadOperation;
+import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog;
+import cn.edu.sdu.online.isdu.util.FileUtil;
 import cn.edu.sdu.online.isdu.util.Logger;
 import cn.edu.sdu.online.isdu.util.NotificationUtil;
 import cn.edu.sdu.online.isdu.util.Settings;
@@ -205,6 +207,8 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
         // 在Download中注册
         if (!Download.downloadList.contains(this)) {
             Download.add(this);
+        } else {
+            notifyId = Download.downloadList.get(Download.downloadList.indexOf(this)).notifyId;
         }
 
         if (downloadAsyncTask != null) {
@@ -245,8 +249,8 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
         NotificationUtil.cancel(notifyId);
     }
 
-    public void remove() {
-        Download.remove(notifyId);
+    public void open() {
+        FileUtil.openFiles(Settings.DEFAULT_DOWNLOAD_LOCATION + getFileName());
     }
 
     @Override
