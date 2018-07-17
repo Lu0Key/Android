@@ -51,7 +51,7 @@ dependencies {
     implementation 'org.litepal.android:core:2.0.0'
     implementation 'jp.wasabeef:glide-transformations:3.3.0'
     implementation 'com.github.pinguo-zhouwei:EasyBlur:v1.0.0'
-    implementation("com.github.bumptech.glide:glide:4.7.1") {
+    implementation('com.github.bumptech.glide:glide:4.7.1') {
         exclude group: "com.android.support"
     }
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'

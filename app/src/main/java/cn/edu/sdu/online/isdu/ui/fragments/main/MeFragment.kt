@@ -118,7 +118,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
 
             }
             btn_history.id -> {
-
+                startActivity(Intent(activity, HistoryActivity::class.java))
             }
             btn_follow.id -> {
 
