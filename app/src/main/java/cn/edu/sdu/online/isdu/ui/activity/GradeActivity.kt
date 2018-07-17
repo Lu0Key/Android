@@ -10,8 +10,8 @@ import android.view.View
 import android.widget.ImageView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.ui.fragments.FragmentGradeDetail
-import cn.edu.sdu.online.isdu.ui.fragments.FragmentPastGradeDetail
+import cn.edu.sdu.online.isdu.ui.fragments.GradeDetailFragment
+import cn.edu.sdu.online.isdu.ui.fragments.PastGradeDetailFragment
 import kotlinx.android.synthetic.main.activity_grade.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -38,7 +38,7 @@ class GradeActivity : SlideActivity() , View.OnClickListener {
     private val mDataList = listOf("本学期成绩", "历年成绩")
     private var magicIndicator: MagicIndicator? = null // Magic Indicator
     private var viewPager: ViewPager? = null // ViewPager
-    private val mFragments = listOf(FragmentGradeDetail(), FragmentPastGradeDetail()) // Fragment 数组
+    private val mFragments = listOf(GradeDetailFragment(), PastGradeDetailFragment()) // Fragment 数组
     private var mViewPagerAdapter: GradeActivity.FragAdapter? = null // ViewPager适配器
     private var btnBack : ImageView ?= null
 

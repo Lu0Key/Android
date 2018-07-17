@@ -12,7 +12,6 @@ import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.News
-import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.NewsActivity
@@ -20,7 +19,7 @@ import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import org.json.JSONArray
 
-class FragmentNewsContent : Fragment() {
+class NewsContentFragment : Fragment() {
 
     private var recyclerView: RecyclerView? = null
     private val sectionName = listOf("学生在线", "本科生院", "青春山大", "山大视点")
@@ -112,8 +111,8 @@ class FragmentNewsContent : Fragment() {
     }
 
     companion object {
-        fun newInstance(index: Int): FragmentNewsContent {
-            val fragment = FragmentNewsContent()
+        fun newInstance(index: Int): NewsContentFragment {
+            val fragment = NewsContentFragment()
             fragment.setArguments(index)
             return fragment
         }

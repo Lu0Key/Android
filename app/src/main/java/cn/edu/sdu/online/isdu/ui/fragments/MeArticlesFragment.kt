@@ -1,50 +1,46 @@
 package cn.edu.sdu.online.isdu.ui.fragments
 
-import android.animation.*
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Post
-import cn.edu.sdu.online.isdu.ui.design.recyclerviewpack.PullRefreshLayout
 import cn.edu.sdu.online.isdu.interfaces.OnRefreshListener
-import q.rorbin.badgeview.Badge
-import q.rorbin.badgeview.QBadgeView
-import java.util.*
+import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
+import com.liaoinstan.springview.widget.SpringView
+import kotlinx.android.synthetic.main.activity_my_home_page.*
 import kotlin.collections.ArrayList
 
 /**
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/5/25
+ * Last Modify Time: 2018/5/26
  *
- * 主页论坛推荐碎片
+ * 个人主页我的文章碎片
  ****************************************************
  */
 
-class FragmentHomeRecommend : Fragment() {
+class MeArticlesFragment : Fragment() {
 
     private var recyclerView: RecyclerView? = null
     private var adapter: MyAdapter? = null
-    private var updateBar: TextView? = null
-    private var pullRefreshLayout: PullRefreshLayout? = null
     private var dataList: MutableList<Post> = ArrayList()
-    private var blankView: TextView? = null
+
+    private var pullRefreshLayout: SpringView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_home_recommend, container, false)
+        val view = inflater.inflate(R.layout.fragment_me_articles, container, false)
+
         initView(view)
         initRecyclerView()
         initPullRefreshLayout()
@@ -52,102 +48,55 @@ class FragmentHomeRecommend : Fragment() {
         return view
     }
 
-    /**
-     * 初始化View
-     */
     private fun initView(view: View) {
         recyclerView = view.findViewById(R.id.recycler_view)
-        updateBar = view.findViewById(R.id.update_bar)
         pullRefreshLayout = view.findViewById(R.id.pull_refresh_layout)
-        blankView = view.findViewById(R.id.blank_view)
 
-        updateBar!!.translationY = -100f
-        blankView!!.visibility = View.GONE
+//        pullRefreshLayout!!.setAppBarLayout((activity as MyHomePageActivity).getAppBar())
     }
 
-    /**
-     * 初始化RecyclerView
-     */
     private fun initRecyclerView() {
-        adapter = MyAdapter(dataList, context!!)
-
         recyclerView!!.layoutManager = LinearLayoutManager(context)
+
+        adapter = MyAdapter(dataList, context!!)
         recyclerView!!.adapter = adapter
     }
+
 
     /**
      * 初始化下拉刷新
      */
     private fun initPullRefreshLayout() {
         // 下拉刷新监听器
-        pullRefreshLayout!!.setOnRefreshListener {
+        pullRefreshLayout!!.setListener(object : SpringView.OnFreshListener {
+            override fun onLoadmore() {
+                val onRefreshListener = OnRefreshListener { result, data ->
+                    dataList.add(Post())
 
-            val onRefreshListener = OnRefreshListener { result, data ->
-                showUpdateBar(Random().nextInt(20))
-                pullRefreshLayout!!.setRefreshing(false)
+                    adapter!!.notifyDataSetChanged()
+                    pullRefreshLayout!!.onFinishFreshAndLoad()
+                    recyclerView!!.smoothScrollBy(0, 250)
+                }
 
-                blankView!!.visibility = if (dataList.isEmpty()) View.VISIBLE else View.GONE
+                Handler().postDelayed({
+                    onRefreshListener.onRefresh(0, 0)
+                }, 2000)
             }
 
-            Handler().postDelayed({
-                onRefreshListener.onRefresh(0, 0)
-            }, 2000)
-        }
+            override fun onRefresh() {
 
-        // 上拉加载监听器
-        pullRefreshLayout!!.setOnLoadListener {
+                val onRefreshListener = OnRefreshListener { result, data ->
+                    pullRefreshLayout!!.onFinishFreshAndLoad()
+                }
 
-            val onRefreshListener = OnRefreshListener { result, data ->
-                adapter!!.notifyDataSetChanged()
-                pullRefreshLayout!!.setLoading(false)
-                recyclerView!!.smoothScrollBy(0, 250)
+                Handler().postDelayed({
+                    onRefreshListener.onRefresh(0, 0)
+                }, 2000)
             }
+        })
 
-            Handler().postDelayed({
-                onRefreshListener.onRefresh(0, 0)
-            }, 2000)
-
-        }
     }
 
-    /**
-     * 显示更新条
-     *
-     * @param updateNumber 更新内容的数量，大于等于0
-     */
-    private fun showUpdateBar(updateNumber: Int) {
-        if (updateNumber < 0) return
-
-        if (updateNumber == 0) {
-            updateBar!!.text = "没有更新内容"
-        } else updateBar!!.text = "推荐引擎有 $updateNumber 条更新"
-
-        showUpdateBar()
-
-        Handler().postDelayed({hideUpdateBar()}, 3000)
-    }
-
-    /**
-     * 隐藏更新条
-     */
-    private fun hideUpdateBar() {
-        val animator = ObjectAnimator.ofFloat(updateBar!!, "translationY", 0f, -100f)
-
-        animator.duration = 300
-        animator.interpolator = DecelerateInterpolator()
-        animator.start()
-    }
-
-    /**
-     * 显示更新条
-     */
-    private fun showUpdateBar() {
-        val animator = ObjectAnimator.ofFloat(updateBar!!, "translationY", -100f, 0f)
-
-        animator.duration = 300
-        animator.interpolator = DecelerateInterpolator()
-        animator.start()
-    }
 
     class MyAdapter(dataList: List<Post>?, context: Context) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
@@ -176,5 +125,6 @@ class FragmentHomeRecommend : Fragment() {
             val releaseTime: TextView = v.findViewById(R.id.release_time) // 发布时间
         }
     }
+
 
 }

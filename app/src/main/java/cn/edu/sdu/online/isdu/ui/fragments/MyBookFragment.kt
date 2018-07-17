@@ -23,11 +23,11 @@ import java.util.ArrayList
  */
 
 
-class FragmentMyBook : Fragment() {
+class MyBookFragment : Fragment() {
 
 
     private var recyclerView: RecyclerView?= null
-    private var adapter: FragmentMyBook.MyAdapter? = null
+    private var adapter: MyBookFragment.MyAdapter? = null
     private val dataList: MutableList<Book> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

@@ -22,7 +22,7 @@ import cn.edu.sdu.online.isdu.bean.Grade
  * 本学期成绩碎片
  ****************************************************
  */
-class FragmentGradeDetail : Fragment() {
+class GradeDetailFragment : Fragment() {
 
     private var recyclerView : RecyclerView ?= null
     private var textView : TextView ?= null

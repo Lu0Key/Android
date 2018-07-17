@@ -21,8 +21,8 @@ import cn.edu.sdu.online.isdu.util.download.Download
 import cn.edu.sdu.online.isdu.util.download.DownloadItem
 
 class DownloadingFragment : Fragment() {
-    private var btnStartAll: LinearLayout? = null
-    private var btnPauseAll: LinearLayout? = null
+    private var btnStartAll: View? = null
+    private var btnPauseAll: View? = null
     private var recyclerView: RecyclerView? = null
 
     var adapter = ItemAdapter()
@@ -37,9 +37,30 @@ class DownloadingFragment : Fragment() {
 
     private fun initView(view: View) {
         recyclerView = view.findViewById(R.id.recycler_view)
+        btnStartAll = view.findViewById(R.id.btn_start_all)
+        btnPauseAll = view.findViewById(R.id.btn_pause_all)
 
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = adapter
+
+        btnStartAll!!.setOnClickListener {
+            for (item in Download.getDownloadingIdList()) {
+                if (Download.get(item).status != DownloadItem.TYPE_DOWNLOADING
+                        || Download.get(item).status != DownloadItem.TYPE_NEW_INSTANCE) {
+                    Download.get(item).startDownload()
+                }
+            }
+            adapter.notifyDataSetChanged()
+        }
+
+        btnPauseAll!!.setOnClickListener {
+            for (item in Download.getDownloadingIdList()) {
+                if (Download.get(item).status == DownloadItem.TYPE_DOWNLOADING
+                        || Download.get(item).status == DownloadItem.TYPE_NEW_INSTANCE)
+                    Download.get(item).pauseDownload()
+            }
+            adapter.notifyDataSetChanged()
+        }
     }
 
     /**
@@ -60,6 +81,10 @@ class DownloadingFragment : Fragment() {
             item.setExternalListener(object : DownloadListener {
                 override fun onProgress(progress: Int) {
                     activity?.runOnUiThread {
+                        holder.btnStartPause.text = "暂停下载"
+                        holder.btnStartPause.setOnClickListener {
+                            item.pauseDownload()
+                        }
                         holder.txtProgress.visibility = View.VISIBLE
                         holder.progressBar.visibility = View.VISIBLE
                         holder.txtStatus.text = "正在下载 ${item.fileLengthDetector.speed}"
@@ -89,6 +114,10 @@ class DownloadingFragment : Fragment() {
 
                 override fun onFailed() {
                     activity?.runOnUiThread {
+                        holder.btnStartPause.text = "重试"
+                        holder.btnStartPause.setOnClickListener {
+                            item.startDownload()
+                        }
                         holder.txtProgress.visibility = View.GONE
                         holder.progressBar.visibility = View.GONE
                         holder.txtStatus.text = "下载失败，点击重试"
@@ -100,6 +129,10 @@ class DownloadingFragment : Fragment() {
 
                 override fun onPaused() {
                     activity?.runOnUiThread {
+                        holder.btnStartPause.text = "开始下载"
+                        holder.btnStartPause.setOnClickListener {
+                            item.startDownload()
+                        }
                         holder.txtProgress.visibility = View.VISIBLE
                         holder.progressBar.visibility = View.VISIBLE
                         holder.txtStatus.text = "下载暂停"
@@ -112,6 +145,10 @@ class DownloadingFragment : Fragment() {
 
                 override fun onCanceled() {
                     activity?.runOnUiThread {
+                        holder.btnStartPause.text = "重新下载"
+                        holder.btnStartPause.setOnClickListener {
+                            item.startDownload()
+                        }
                         holder.txtProgress.visibility = View.GONE
                         holder.progressBar.visibility = View.GONE
                         holder.txtStatus.text = "下载已取消，点击重新下载"
@@ -122,6 +159,8 @@ class DownloadingFragment : Fragment() {
                 }
             })
 
+            holder.btnClear.visibility = View.GONE
+
             holder.fileName.text = item.fileName
 
             holder.progressBar.progress = item.progress
@@ -129,6 +168,10 @@ class DownloadingFragment : Fragment() {
 
             when (item.status) {
                 DownloadItem.TYPE_PAUSED -> {
+                    holder.btnStartPause.text = "开始下载"
+                    holder.btnStartPause.setOnClickListener {
+                        item.startDownload()
+                    }
                     holder.txtProgress.visibility = View.VISIBLE
                     holder.progressBar.visibility = View.VISIBLE
                     holder.txtStatus.text = "下载暂停"
@@ -137,12 +180,20 @@ class DownloadingFragment : Fragment() {
                     }
                 }
                 DownloadItem.TYPE_DOWNLOADING -> {
+                    holder.btnStartPause.text = "暂停下载"
+                    holder.btnStartPause.setOnClickListener {
+                        item.pauseDownload()
+                    }
                     holder.txtStatus.text = "正在下载"
                     holder.itemLayout.setOnClickListener {
                         item.pauseDownload()
                     }
                 }
                 DownloadItem.TYPE_CANCELED -> {
+                    holder.btnStartPause.text = "重新下载"
+                    holder.btnStartPause.setOnClickListener {
+                        item.startDownload()
+                    }
                     holder.txtProgress.visibility = View.GONE
                     holder.progressBar.visibility = View.GONE
                     holder.txtStatus.text = "下载已取消，点击重新下载"
@@ -151,6 +202,10 @@ class DownloadingFragment : Fragment() {
                     }
                 }
                 DownloadItem.TYPE_FAILED -> {
+                    holder.btnStartPause.text = "重试"
+                    holder.btnStartPause.setOnClickListener {
+                        item.startDownload()
+                    }
                     holder.txtProgress.visibility = View.GONE
                     holder.progressBar.visibility = View.GONE
                     holder.txtStatus.text = "下载失败，点击重试"
@@ -166,11 +221,19 @@ class DownloadingFragment : Fragment() {
                     }
                 }
                 DownloadItem.TYPE_NEW_INSTANCE -> {
+                    holder.btnStartPause.text = "暂停下载"
+                    holder.btnStartPause.setOnClickListener {
+                        item.pauseDownload()
+                    }
                     holder.txtStatus.text = "准备下载"
                     holder.itemLayout.setOnClickListener {
                         item.pauseDownload()
                     }
                 }
+            }
+
+            holder.btnCancel.setOnClickListener {
+                item.cancelDownload()
             }
 
         }
@@ -181,6 +244,9 @@ class DownloadingFragment : Fragment() {
             var progressBar: ProgressBar = view.findViewById(R.id.progress_bar)
             var txtProgress: TextView = view.findViewById(R.id.txt_progress)
             var txtStatus: TextView = view.findViewById(R.id.item_status)
+            var btnStartPause: TextView = view.findViewById(R.id.btn_start_pause)
+            var btnCancel: TextView = view.findViewById(R.id.btn_cancel)
+            var btnClear: TextView = view.findViewById(R.id.btn_clear)
         }
     }
 }

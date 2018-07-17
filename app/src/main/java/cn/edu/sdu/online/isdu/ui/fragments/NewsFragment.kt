@@ -7,11 +7,11 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
-import android.view.*
-import android.widget.LinearLayout
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.ui.activity.SearchActivity
-import kotlinx.android.synthetic.main.fragment_home.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.UIUtil
@@ -27,54 +27,51 @@ import java.io.Serializable
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/5/25
+ * Last Modify Time: 2018/5/21
  *
- * 主页论坛碎片
+ * 主页资讯碎片
  ****************************************************
  */
+class NewsFragment : Fragment(), Serializable {
 
-class FragmentHome : Fragment(), Serializable, View.OnClickListener {
-
-    private var searchBar: LinearLayout? = null // 搜索框
-    private var askBar: LinearLayout? = null // 提问框
+    private var searchBar: View? = null
+    private var viewPager: ViewPager? = null
 
     private var magicIndicator: MagicIndicator? = null // Magic Indicator
-    private var viewPager: ViewPager? = null // ViewPager
-
-    private val mDataList = listOf("推荐", "关注", "热榜", "校内相关") // Indicator 数据
-    private val mFragments = listOf(FragmentHomeRecommend(),
-            FragmentHomeRecommend(), FragmentHomeRecommend(), FragmentHomeRecommend()) // Fragment 数组
-    private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
+    private val mDataList = listOf("学生在线", "本科生院", "青春山大", "山大视点") // Indicator 数据
+    private val mFragments = listOf(NewsContentFragment.newInstance(0),
+            NewsContentFragment.newInstance(1),
+            NewsContentFragment.newInstance(2), NewsContentFragment.newInstance(3))
+    private var mViewPagerAdapter: FragAdapter? = null
+//    private var blankView: TextView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_news, container, false)
 
         initView(view)
         initFragments()
         initIndicator()
+
+        refresh()
         return view
     }
 
-    /**
-     * 初始化View
-     */
     private fun initView(view: View) {
-        /* 获取实例 */
         searchBar = view.findViewById(R.id.search_bar)
-        askBar = view.findViewById(R.id.ask_bar)
-        magicIndicator = view.findViewById(R.id.magic_indicator)
         viewPager = view.findViewById(R.id.view_pager)
+        magicIndicator = view.findViewById(R.id.magic_indicator)
+//        blankView = view.findViewById(R.id.blank_view)
 
-        viewPager!!.offscreenPageLimit = mDataList.size // 设置ViewPager的预加载页面数量，防止销毁
-        searchBar!!.setOnClickListener(this)
+        viewPager!!.offscreenPageLimit = mDataList.size
+//        blankView!!.visibility = View.GONE
+        searchBar!!.setOnClickListener {
+            startActivity(Intent(activity!!, SearchActivity::class.java))
+        }
     }
 
-    override fun onClick(v: View?) {
-        when (v!!.id) {
-            search_bar.id -> {
-                startActivity(Intent(activity!!, SearchActivity::class.java))
-            }
-        }
+    private fun refresh() {
+
+//        blankView!!.visibility = if (mDataList.isEmpty()) View.VISIBLE else View.GONE
     }
 
     /**
@@ -88,7 +85,7 @@ class FragmentHome : Fragment(), Serializable, View.OnClickListener {
                 simplePagerTitleView.normalColor = 0xFF808080.toInt()
                 simplePagerTitleView.selectedColor = 0xFF131313.toInt()
                 simplePagerTitleView.text = mDataList[p1]
-                simplePagerTitleView.textSize = 18f
+                simplePagerTitleView.textSize = 16f
                 simplePagerTitleView.setOnClickListener { viewPager?.currentItem = p1 }
                 return simplePagerTitleView
             }
@@ -123,7 +120,7 @@ class FragmentHome : Fragment(), Serializable, View.OnClickListener {
      */
     class FragAdapter(fm: FragmentManager, fragments: List<Fragment>) : FragmentPagerAdapter(fm) {
         private val mFragments = fragments
-        private val mDataList = listOf("推荐", "关注", "热榜", "校内相关") // Indicator 数据
+        private val mDataList = listOf("学生在线", "本科生院", "青春山大", "山大视点") // Indicator 数据
 
         override fun getItem(position: Int): Fragment = mFragments[position]
 
@@ -132,9 +129,5 @@ class FragmentHome : Fragment(), Serializable, View.OnClickListener {
         override fun getPageTitle(position: Int): CharSequence? {
             return mDataList[position]
         }
-    }
-
-    companion object {
-        val TAG = "FragmentHome"
     }
 }

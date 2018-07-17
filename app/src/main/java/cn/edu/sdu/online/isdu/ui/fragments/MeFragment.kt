@@ -36,7 +36,7 @@ import java.io.Serializable
  ****************************************************
  */
 
-class FragmentMe : Fragment(), View.OnClickListener, Serializable {
+class MeFragment : Fragment(), View.OnClickListener, Serializable {
 
     /* 八宫格按钮 */
     private var btnSchedule: ImageButton? = null
@@ -278,8 +278,8 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
         }
     }
 
-    class UserSyncBroadcastReceiver(fragmentMe: FragmentMe) : BroadcastReceiver() {
-        private val fragmentMe = fragmentMe
+    class UserSyncBroadcastReceiver(meFragment: MeFragment) : BroadcastReceiver() {
+        private val fragmentMe = meFragment
         override fun onReceive(context: Context?, intent: Intent?) {
             fragmentMe.loadUserInformation()
 //            if (intent!!.action == AccountOp.ACTION_SYNC_USER_INFO) {

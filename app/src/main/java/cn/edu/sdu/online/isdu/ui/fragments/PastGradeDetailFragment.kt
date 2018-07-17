@@ -32,7 +32,7 @@ import android.view.KeyEvent.KEYCODE_BACK
  * 历年成绩碎片
  ****************************************************
  */
-class FragmentPastGradeDetail : Fragment() , View.OnClickListener {
+class PastGradeDetailFragment : Fragment() , View.OnClickListener {
 
     private var recyclerView : RecyclerView?= null
     private var textView : TextView?= null

@@ -15,6 +15,7 @@ import org.litepal.crud.LitePalSupport;
 
 import java.io.File;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -55,6 +56,7 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
     private int status;
     private int progress;
     private int notifyId;
+    private long size;
 
     private DownloadAsyncTask downloadAsyncTask;
     public FileLengthDetector fileLengthDetector;
@@ -177,6 +179,27 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
         this.externalListener = externalListener;
     }
 
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public String getFormattedSize() {
+        if (size < 1024) {
+            return size + "B";
+        } else if (size < 1024 * 1024) {
+            double spd = ((double) size) / (1024.0);
+            return new DecimalFormat(".00").format(spd) + "KB";
+        } else {
+            double spd = ((double) size) / (1024.0 * 1024.0);
+            return new DecimalFormat(".00").format(spd) + "MB";
+        }
+
+    }
+
     @Override
     public void startDownload() {
         // 在Download中注册
@@ -209,7 +232,7 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
     @Override
     public void cancelDownload() {
         if (externalListener != null)
-            externalListener.onPaused();
+            externalListener.onCanceled();
         if (downloadAsyncTask != null) {
             downloadAsyncTask.cancelDownload();
             downloadAsyncTask = null;
