@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
-import java.util.List;
 
 import cn.edu.sdu.online.isdu.bean.History;
 
@@ -22,7 +21,7 @@ public class DAO_history {
     //在浏览体帖子时调用以纪录浏览历史
     public void newHistory(History history){
         ContentValues values=new ContentValues();
-        database=dbo_history.getReadableDatabase();
+        database=dbo_history.getWritableDatabase();
         values.put("title",history.getTitle());
         values.put("subject",history.getSubject());
         values.put("time",history.getTime());
@@ -47,7 +46,9 @@ public class DAO_history {
         c.close();
         return historyList;
     }
+
     public void clear(){
+        database=dbo_history.getWritableDatabase();
         database.delete("tb_history",null,null);
     }
 }

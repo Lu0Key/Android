@@ -1,19 +1,14 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
-import android.content.ComponentCallbacks2
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.view.menu.MenuView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.History
@@ -21,11 +16,9 @@ import cn.edu.sdu.online.isdu.util.DataBase.DAO_history
 
 
 import kotlinx.android.synthetic.main.activity_history.*
-import java.text.SimpleDateFormat
 
 
 class HistoryActivity : SlideActivity(), View.OnClickListener {
-
     private var dataList = arrayListOf<History>()
     private var mAdapter: MyAdapter? = null
     private var recyclerView: RecyclerView? = null
@@ -33,21 +26,16 @@ class HistoryActivity : SlideActivity(), View.OnClickListener {
     private var btnClear:TextView? = null
     private var blankView: TextView? = null
     private var dao_history:DAO_history? = null
-    public var historyActivity:HistoryActivity? =null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        historyActivity=this;
         setContentView(R.layout.activity_history)
         initView()
         dao_history= DAO_history(this)
-        dao_history!!.newHistory(History("学工部、武装部召开会议部署暑假工作","山大实训",12345L,"http://"))
-        dao_history!!.newHistory(History("学工部、武装部召开会议部署暑假工作2","山大实训2",123456L,"http://2"))
-        dao_history!!.newHistory(History("学工部、武装部召开会议部署暑假工作3","山大实训3",123456L,"http://3"))
+        dao_history!!.newHistory(History("学工部、武装部召开会议部署暑假工作3","山大实训5",1497703200000,"http://5"))
+        dao_history!!.newHistory(History("学工部、武装部召开会议部署暑假工作3","山大实训5",1497703200000,"http://5"))
         initData()
         blankView!!.visibility = if (dataList.isEmpty()) View.VISIBLE else View.GONE
         initRecyclerView()
-
     }
 
     private fun initView() {
@@ -75,7 +63,6 @@ class HistoryActivity : SlideActivity(), View.OnClickListener {
     }
     private fun initData(){
         dataList=dao_history!!.history
-        //dataList.add(History("学工部、武装部召开会议部署暑假工作","山大实训",12345L,"http://"))
     }
     private fun initRecyclerView() {
         mAdapter = MyAdapter(dataList)
@@ -84,7 +71,6 @@ class HistoryActivity : SlideActivity(), View.OnClickListener {
     }
 
     class MyAdapter(private val dataList: List<History>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
-
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.history_item, parent, false)
             return ViewHolder(view)
@@ -96,7 +82,20 @@ class HistoryActivity : SlideActivity(), View.OnClickListener {
             val history = dataList[position]
             holder.historyTitle.text = history.title
             holder.historySubject.text = history.subject
-            holder.historyTime.text =SimpleDateFormat("yyyy-MM-dd HH:mm").format(history.time)
+            val timeDelta:Long = System.currentTimeMillis()-history.time
+            if(((timeDelta/1000/60).toInt())<1){
+                holder.historyTime.text ="刚刚"
+            }else if((timeDelta/1000/60)<60){
+                holder.historyTime.text =(((timeDelta/1000/60).toInt()).toString()+"分钟前")
+            }else if((timeDelta/1000/60/60)<24){
+                holder.historyTime.text =(((timeDelta/1000/60/60).toInt()).toString() + "小时前")
+            }else if((timeDelta/1000/60/60/24)<30){
+                holder.historyTime.text =(((timeDelta/1000/60/60/24).toInt()).toString() + "天前")
+            }else if((timeDelta/1000/60/60/24/30)<12){
+                holder.historyTime.text =(((timeDelta/1000/60/60/24/30).toInt()).toString() + "月前")
+            }else {
+                holder.historyTime.text =(((timeDelta/1000/60/60/24/365).toInt()).toString() + "年前")
+            }
             holder.itemLayout.setOnClickListener(){
                 Log.w("click",dataList[position].url)
             }
