@@ -41,7 +41,7 @@ import static cn.edu.sdu.online.isdu.util.download.DownloadItem.TYPE_SUCCESS;
 public class Download {
 
     private static final int ID_ADD = 20; // 通知ID增加量
-    private static final int MAX_DOWNLOAD_COUNT = 10; // 最大并行下载数量
+//    private static final int MAX_DOWNLOAD_COUNT = 10; // 最大并行下载数量
 
     public static Activity activity;
 

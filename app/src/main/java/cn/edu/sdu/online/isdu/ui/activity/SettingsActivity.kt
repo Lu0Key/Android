@@ -141,6 +141,10 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnAlarmNews!!.setOnItemSwitchListener(this)
         btnAlarmMessage!!.setOnItemSwitchListener(this)
         btnCloudSync!!.setOnItemSwitchListener(this)
+
+        if (User.staticUser == null) User.staticUser = User.load()
+        if (User.staticUser.studentNumber == null ||
+                User.staticUser.studentNumber == "") btnLogout!!.visibility = View.GONE
     }
 
     override fun prepareBroadcastReceiver() {

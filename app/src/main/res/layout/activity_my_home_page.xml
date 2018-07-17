@@ -210,17 +210,10 @@
                         android:src="@mipmap/ic_launcher"
                         android:layout_centerInParent="true"/>
 
-                    <ImageView
-                        android:id="@+id/btn_settings"
+                    <View
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:src="@drawable/ic_settings"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:clickable="true"
-                        android:focusable="true"/>
+                        android:layout_alignParentEnd="true" />
                 </RelativeLayout>
 
             </android.support.v7.widget.Toolbar>

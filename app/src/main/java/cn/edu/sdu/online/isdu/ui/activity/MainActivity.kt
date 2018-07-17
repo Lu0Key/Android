@@ -98,6 +98,10 @@ class MainActivity : SlideActivity(), View.OnClickListener {
 
         // 同步用户信息
         AccountOp.syncUserInformation()
+
+//        DownloadItem("http://202.194.15.144:8380/files/rjy.mp4").startDownload()
+//        DownloadItem("http://202.194.15.144:8380/files/film.mp4").startDownload()
+//        DownloadItem("http://202.194.15.144:8380/files/mysql.tar.gz").startDownload()
     }
 
     override fun onResume() {

@@ -73,7 +73,6 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var btnBack: ImageView? = null
     private var miniCircleImageView: CircleImageView? = null
     private var backgroundImage: ImageView? = null
-    private var btnSettings: ImageView? = null
     private var circleImageView: CircleImageView? = null
     private var txtSign: TextView? = null // 个人签名
 
@@ -104,9 +103,6 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
             btn_back.id -> {
                 finish()
             }
-            btn_settings.id -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
-            }
             background_image.id, circle_image_view.id -> {
                 startActivity(Intent(this, ViewImageActivity::class.java)
                         .putExtra("url", ServerInfo.getUserInfo(user?.uid.toString(), "avatar")))
@@ -127,7 +123,6 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         toolBar = findViewById(R.id.tool_bar)
         miniCircleImageView = findViewById(R.id.mini_circle_image_view)
         backgroundImage = findViewById(R.id.background_image)
-        btnSettings = findViewById(R.id.btn_settings)
         circleImageView = findViewById(R.id.circle_image_view)
         txtSign = findViewById(R.id.txt_sign)
 
@@ -154,7 +149,6 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 
         btnBack!!.setOnClickListener(this)
         btnEditProfile!!.setOnClickListener(this)
-        btnSettings!!.setOnClickListener(this)
         circleImageView!!.setOnClickListener(this)
         backgroundImage!!.setOnClickListener(this)
 
@@ -223,7 +217,6 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      * 隐藏设置、修改信息的按钮
      */
     private fun setGuestView() {
-        btnSettings!!.visibility = View.GONE
         btnEditProfile!!.visibility = View.GONE
     }
 

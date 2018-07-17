@@ -55,6 +55,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
     private var imgArrowForward: ImageView? = null
     private var btnDownload: View? = null
     private var txtDownload: TextView? = null
+    private var btnSettings: View? = null
 
     private var functionButtonLayout: LinearLayout? = null
 
@@ -135,6 +136,9 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
             btn_download.id -> {
                 startActivity(Intent(activity, DownloadActivity::class.java))
             }
+            btn_settings.id -> {
+                startActivity(Intent(activity, SettingsActivity::class.java))
+            }
         }
     }
 
@@ -175,6 +179,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
         functionButtonLayout = view.findViewById(R.id.function_button)
         btnDownload = view.findViewById(R.id.btn_download)
         txtDownload = view.findViewById(R.id.txt_download)
+        btnSettings = view.findViewById(R.id.btn_settings)
 
         btnBus!!.setOnClickListener(this)
         btnCalender!!.setOnClickListener(this)
@@ -186,6 +191,7 @@ class FragmentMe : Fragment(), View.OnClickListener, Serializable {
         btnSchedule!!.setOnClickListener(this)
         todayScheduleLayout!!.setOnClickListener(this)
         btnDownload!!.setOnClickListener(this)
+        btnSettings!!.setOnClickListener(this)
 
         btnMsg!!.setOnClickListener(this)
         btnFavorite!!.setOnClickListener(this)
