@@ -125,8 +125,7 @@ public class NetworkAccess {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     FileWriter fw = new FileWriter(cacheFile);
-                    JSONObject jsonObject = new JSONObject(response.body().string());
-                    fw.write(jsonObject.getString("avatar"));
+                    fw.write(response.body().string());
                     fw.close();
                     if (listener != null)
                         listener.onFinish(true, cacheFile.getAbsolutePath());

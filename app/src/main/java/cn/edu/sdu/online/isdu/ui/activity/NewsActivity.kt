@@ -3,6 +3,7 @@ package cn.edu.sdu.online.isdu.ui.activity
 import android.graphics.Typeface
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.PixelUtil
+import cn.edu.sdu.online.isdu.util.download.DownloadItem
 import kotlinx.android.synthetic.main.fragment_grade_detail.*
 
 /**
@@ -42,6 +44,8 @@ class NewsActivity : SlideActivity() {
     private var section: String? = null
 
     private var news: News? = null
+
+    private var extraAdded: MutableList<String> = ArrayList()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,10 +74,10 @@ class NewsActivity : SlideActivity() {
 
     private fun publish() {
         newsTitle!!.text = news!!.title
-        newsSection!!.text = section
+        newsSection!!.text = news!!.section
         newsDate!!.text = news!!.date
         newsContent!!.text = news!!.newsContent
-        if (news!!.extras.isEmpty()) {
+        if (news!!.extras == null || news!!.extras.isEmpty()) {
             extraSection!!.visibility = View.GONE
         } else {
             for (i in 0 until news!!.extras.size) {
@@ -89,7 +93,7 @@ class NewsActivity : SlideActivity() {
         NetworkAccess.cache(newsUrl) {success, cachePath ->
                 if (success) {
                     news = News.loadFromString(FileUtil.getStringFromFile(cachePath))
-                    publish()
+                    runOnUiThread { publish() }
                 } else {
                     // 本地没有该缓存，则退出
                     if (news == null) {
@@ -112,13 +116,15 @@ class NewsActivity : SlideActivity() {
      * 添加附件
      */
     private fun addExtra(name: String, url: String) {
+        if (extraAdded.contains(url)) return
+        extraAdded.add(url)
         val params = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT)
-        params.setMargins(0, PixelUtil.dp2px(this, 4), 0, PixelUtil.dp2px(this, 4))
+        params.setMargins(0, PixelUtil.dp2px(this, 8), 0, PixelUtil.dp2px(this, 8))
         val textView = TextView(this)
         textView.text = name
         textView.gravity = Gravity.CENTER
-        textView.setBackgroundResource(R.drawable.grey_stroke)
+        textView.setBackgroundResource(R.drawable.selector_grey_text_background)
         textView.isFocusable = true
         textView.isClickable = true
         textView.setPadding(PixelUtil.dp2px(this, 28), PixelUtil.dp2px(this, 4),
@@ -126,7 +132,10 @@ class NewsActivity : SlideActivity() {
         textView.minHeight = PixelUtil.dp2px(this, 40)
         textView.typeface = Typeface.DEFAULT_BOLD
         textView.setTextColor((0xFF131313).toInt())
-        textView.setOnClickListener { Toast.makeText(this, url, Toast.LENGTH_SHORT).show() }
+        textView.setOnClickListener {
+            Toast.makeText(this, "开始下载 $name", Toast.LENGTH_SHORT).show()
+            DownloadItem(url).startDownload()
+        }
 
         textView.layoutParams = params
         extraSection!!.addView(textView)

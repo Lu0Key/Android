@@ -46,7 +46,7 @@
                 <TextView
                     android:id="@+id/text1"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="清空下载任务"
                     android:textColor="@color/colorPrimaryText"
                     android:textSize="18sp"

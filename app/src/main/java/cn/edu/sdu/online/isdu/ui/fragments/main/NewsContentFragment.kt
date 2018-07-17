@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,6 +46,7 @@ class NewsContentFragment : Fragment() {
     private fun initRecyclerView() {
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         adapter = MyAdapter(dataList)
+        recyclerView!!.adapter = adapter
     }
 
     private fun getNewsList() {
@@ -60,12 +62,15 @@ class NewsContentFragment : Fragment() {
                         val news = News()
                         news.title = jsonObj.getString("title")
                         news.date = jsonObj.getString("date")
-                        news.source = jsonObj.getString("source")
-                        news.url = jsonObj.getString("url")
+                        news.source = jsonObj.getString("block")
+                        news.url = ServerInfo.getNewsUrl(index, i)
                         dataList.add(news)
                     }
 
-                    adapter!!.notifyDataSetChanged()
+                    activity!!.runOnUiThread {
+                        adapter!!.notifyDataSetChanged()
+                    }
+
                 } catch (e: Exception) {
                     Logger.log(e)
                 }

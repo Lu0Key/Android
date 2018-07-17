@@ -28,6 +28,47 @@ public class ServerInfo {
     public static final String urlUpdate = url + "/user/update";
 
     public static String getNewsUrl(int index) {
-        return url + "/";
+        String site;
+        switch (index) {
+            case 0:
+                site = "sduOnline";
+                break;
+            case 1:
+                site = "underGraduate";
+                break;
+            case 2:
+                site = "sduYouth";
+                break;
+            case 3: default:
+                site = "sduView";
+                break;
+        }
+        return "https://sduonline.cn/isdu/news/api/index.php?site=" + site;
     }
+
+    /**
+     *
+     * @param index 版块ID
+     * @param id 所处位置的ID
+     * @return
+     */
+    public static String getNewsUrl(int index, int id) {
+        String site;
+        switch (index) {
+            case 0:
+                site = "sduOnline";
+                break;
+            case 1:
+                site = "underGraduate";
+                break;
+            case 2:
+                site = "sduYouth";
+                break;
+            case 3: default:
+                site = "sduView";
+                break;
+        }
+        return "https://sduonline.cn/isdu/news/api/index.php?site=" + site + "&content&id=" + id;
+    }
+
 }

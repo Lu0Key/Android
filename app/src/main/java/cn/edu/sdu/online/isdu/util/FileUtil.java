@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -23,14 +26,21 @@ public class FileUtil {
 
     public static String getStringFromFile(String filePath) {
         File file = new File(filePath);
-        if (!file.exists()) return null;
+        if (!file.exists()) return "";
 
         try {
-            Scanner scanner = new Scanner(file);
+            FileReader fileReader = new FileReader(file);
+            char[] charBuf = new char[1024];
+            int len = 0;
             StringBuilder sb = new StringBuilder();
-            while (scanner.hasNext()) sb.append(scanner.nextLine());
+            while ((len = fileReader.read(charBuf)) > 0) {
+                sb.append(new String(charBuf, 0, len));
+            }
+            fileReader.close();
+
             return sb.toString();
-        } catch (FileNotFoundException e) {
+
+        } catch (Exception e) {
             Logger.log(e);
             return "";
         }
