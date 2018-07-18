@@ -113,7 +113,7 @@ public class DownloadAsyncTask extends AsyncTask<Integer, Integer, Integer> {
                     randomAccessFile.seek(downloadedLength);
 
                     int len = 0;
-                    byte[] b = new byte[10240];
+                    byte[] b = new byte[4096];
 
                     while((len = is.read(b)) != -1) {
                         if (isPaused) {

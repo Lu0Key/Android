@@ -125,8 +125,62 @@ public class NetworkAccess {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     FileWriter fw = new FileWriter(cacheFile);
+                    fw.write(response.body().string());
+                    fw.close();
+                    if (listener != null)
+                        listener.onFinish(true, cacheFile.getAbsolutePath());
+                } catch (Exception e) {
+                    Logger.log(e);
+                }
+            }
+        });
+
+    }
+
+    public static void cache(String url, final String key, @Nullable final OnCacheFinishListener listener) {
+        File cacheDir = new File(Environment.getExternalStorageDirectory() + "/iSDU/cache");
+        if (!cacheDir.exists()) {
+            if (!cacheDir.getParentFile().exists()) cacheDir.getParentFile().mkdirs();
+            cacheDir.mkdir();
+        }
+
+        String s = (url.substring((ServerInfo.url).length(), url.length()));
+        char[] chars = s.toLowerCase().toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '/')
+                chars[i] = '_';
+            if (chars[i] == '?')
+                chars[i] = '.';
+            if (chars[i] == '&')
+                chars[i] = '_';
+        }
+
+
+        final File cacheFile = new File(cacheDir.getAbsolutePath() + "/" + new String(chars) + "#" + key);
+
+        if (cacheFile.exists()) {
+            if (listener != null)
+                listener.onFinish(true, cacheFile.getAbsolutePath());
+        } else try {
+            cacheFile.createNewFile();
+        } catch (IOException e) {
+            Logger.log(e);
+        }
+
+        buildRequest(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Logger.log(e);
+                if (listener != null)
+                    listener.onFinish(false, null);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    FileWriter fw = new FileWriter(cacheFile);
                     JSONObject jsonObject = new JSONObject(response.body().string());
-                    fw.write(jsonObject.getString("avatar"));
+                    fw.write(jsonObject.getString(key));
                     fw.close();
                     if (listener != null)
                         listener.onFinish(true, cacheFile.getAbsolutePath());
@@ -172,10 +226,12 @@ public class NetworkAccess {
             Logger.log(e);
         }
 
+        // 构建缓存文件结束
+
         List<String> keys = new ArrayList<>();
         keys.add("startPos");
         List<String> values = new ArrayList<>();
-        values.add(startPos+"");
+        values.add(startPos + "");
 
         buildRequest(url, keys, values, new Callback() {
             @Override
@@ -186,7 +242,8 @@ public class NetworkAccess {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, Response response) {
+
                 try {
                     FileWriter fw = new FileWriter(cacheFile);
                     JSONObject jsonObject = new JSONObject(response.body().string());

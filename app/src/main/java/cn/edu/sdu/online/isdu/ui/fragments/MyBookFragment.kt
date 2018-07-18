@@ -28,11 +28,12 @@ import java.util.ArrayList
  */
 
 
-class FragmentMyBook : Fragment() , View.OnClickListener{
+class MyBookFragment : Fragment(), View.OnClickListener {
+
 
 
     private var recyclerView: RecyclerView?= null
-    private var adapter: FragmentMyBook.MyAdapter? = null
+    private var adapter: MyBookFragment.MyAdapter? = null
     private val dataList: MutableList<Book> = ArrayList()
     private var searchBar : LinearLayout?= null
     private var progressDialog : ProgressDialog ?=  null

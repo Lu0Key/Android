@@ -15,6 +15,7 @@ import org.litepal.crud.LitePalSupport;
 
 import java.io.File;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +23,8 @@ import java.util.Set;
 import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.interfaces.DownloadListener;
 import cn.edu.sdu.online.isdu.interfaces.DownloadOperation;
+import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog;
+import cn.edu.sdu.online.isdu.util.FileUtil;
 import cn.edu.sdu.online.isdu.util.Logger;
 import cn.edu.sdu.online.isdu.util.NotificationUtil;
 import cn.edu.sdu.online.isdu.util.Settings;
@@ -55,6 +58,7 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
     private int status;
     private int progress;
     private int notifyId;
+    private long size;
 
     private DownloadAsyncTask downloadAsyncTask;
     public FileLengthDetector fileLengthDetector;
@@ -177,11 +181,34 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
         this.externalListener = externalListener;
     }
 
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public String getFormattedSize() {
+        if (size < 1024) {
+            return size + "B";
+        } else if (size < 1024 * 1024) {
+            double spd = ((double) size) / (1024.0);
+            return new DecimalFormat(".00").format(spd) + "KB";
+        } else {
+            double spd = ((double) size) / (1024.0 * 1024.0);
+            return new DecimalFormat(".00").format(spd) + "MB";
+        }
+
+    }
+
     @Override
     public void startDownload() {
         // 在Download中注册
         if (!Download.downloadList.contains(this)) {
             Download.add(this);
+        } else {
+            notifyId = Download.downloadList.get(Download.downloadList.indexOf(this)).notifyId;
         }
 
         if (downloadAsyncTask != null) {
@@ -209,7 +236,7 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
     @Override
     public void cancelDownload() {
         if (externalListener != null)
-            externalListener.onPaused();
+            externalListener.onCanceled();
         if (downloadAsyncTask != null) {
             downloadAsyncTask.cancelDownload();
             downloadAsyncTask = null;
@@ -222,8 +249,8 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
         NotificationUtil.cancel(notifyId);
     }
 
-    public void remove() {
-        Download.remove(notifyId);
+    public void open() {
+        FileUtil.openFiles(Settings.DEFAULT_DOWNLOAD_LOCATION + getFileName());
     }
 
     @Override

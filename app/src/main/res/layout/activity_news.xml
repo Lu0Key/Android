@@ -41,37 +41,41 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
 
             <TextView
                 android:id="@+id/news_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="关于公布山东大学-上海交通大学人工智能芯动力（AiC SUMMER SCHOOL）暑期创新班入选名单的通知"
+                android:lineSpacingMultiplier="1.2"
                 android:gravity="center"
                 android:textColor="@color/colorPrimaryText"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:focusedByDefault="true" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:id="@+id/news_section"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="本科生院"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
                     android:paddingStart="8dp"
@@ -84,7 +88,6 @@
                     android:id="@+id/news_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2018-07-13"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
                     android:paddingStart="8dp"
@@ -97,10 +100,10 @@
                 android:id="@+id/news_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="各位同学：\n\n经学生申报、材料审核、专家评审，山东大学2018年暑假与上海交通大学合作开展的人工智能芯动力暑期创新班选拔工作也已经结束，现在将入选名单予以公布。"
                 android:textColor="@color/colorPrimaryText"
                 android:textSize="16sp"
-                android:lineSpacingMultiplier="1.2"/>
+                android:lineSpacingMultiplier="1.3"
+                android:textIsSelectable="true" />
 
             <!--附件区域-->
             <LinearLayout

@@ -1,53 +1,32 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
-import android.app.Notification
-import android.app.PendingIntent
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
-import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
-import android.view.ViewParent
 import cn.edu.sdu.online.isdu.R
-import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
-import cn.edu.sdu.online.isdu.ui.fragments.FragmentHome
-import cn.edu.sdu.online.isdu.ui.fragments.FragmentMe
-import cn.edu.sdu.online.isdu.ui.fragments.FragmentNews
+import cn.edu.sdu.online.isdu.ui.fragments.main.HomeFragment
+import cn.edu.sdu.online.isdu.ui.fragments.main.MeFragment
+import cn.edu.sdu.online.isdu.ui.fragments.main.NewsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
-import android.graphics.Color.LTGRAY
-import android.os.Environment
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView
 import android.view.LayoutInflater
 import android.widget.*
-import cn.edu.sdu.online.isdu.R.id.*
-import cn.edu.sdu.online.isdu.app.AlphaActivity
-import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.*
-import cn.edu.sdu.online.isdu.util.NotificationUtil.PRIORITY_MAX
-import cn.edu.sdu.online.isdu.util.download.Download
-import cn.edu.sdu.online.isdu.util.download.DownloadItem
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
-import java.io.File
-import java.io.FileWriter
 
 
 /**
@@ -69,7 +48,7 @@ import java.io.FileWriter
 class MainActivity : SlideActivity(), View.OnClickListener {
 
     private var fragments: MutableList<Fragment> = ArrayList() // Fragment列表
-    private var fragmentTags = listOf("FragmentHome", "FragmentNews", "FragmentMe") // Fragment Tag
+    private var fragmentTags = listOf("HomeFragment", "NewsFragment", "MeFragment") // Fragment Tag
     private val imgRes = listOf(R.drawable.home_selected, R.drawable.news_selected, R.drawable.me_selected)
     private val imgBackRes = listOf(R.drawable.home_back, R.drawable.news_back, R.drawable.me_back)
 
@@ -105,16 +84,11 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         EnvVariables.init(this)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-//        unbindService(serviceConnection)
-    }
-
     private fun initFragment() {
         if (fragments.isEmpty()) {
-            fragments.add(FragmentHome())
-            fragments.add(FragmentNews())
-            fragments.add(FragmentMe())
+            fragments.add(HomeFragment())
+            fragments.add(NewsFragment())
+            fragments.add(MeFragment())
         }
     }
 

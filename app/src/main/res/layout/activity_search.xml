@@ -61,6 +61,17 @@
                 app:pressedTextColor="#4523d1"/>
         </LinearLayout>
 
+        <net.lucode.hackware.magicindicator.MagicIndicator
+            android:id="@+id/magic_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+        <cn.edu.sdu.online.isdu.ui.design.viewpager.ViewPagerForScrollView
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </cn.edu.sdu.online.isdu.ui.design.viewpager.ViewPagerForScrollView>
     </LinearLayout>
 
 </ScrollView>

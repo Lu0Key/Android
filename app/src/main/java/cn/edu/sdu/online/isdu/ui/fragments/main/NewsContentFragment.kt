@@ -1,10 +1,11 @@
-package cn.edu.sdu.online.isdu.ui.fragments
+package cn.edu.sdu.online.isdu.ui.fragments.main
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.News
-import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.NewsActivity
@@ -20,7 +20,7 @@ import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import org.json.JSONArray
 
-class FragmentNewsContent : Fragment() {
+class NewsContentFragment : Fragment() {
 
     private var recyclerView: RecyclerView? = null
     private val sectionName = listOf("学生在线", "本科生院", "青春山大", "山大视点")
@@ -46,6 +46,7 @@ class FragmentNewsContent : Fragment() {
     private fun initRecyclerView() {
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         adapter = MyAdapter(dataList)
+        recyclerView!!.adapter = adapter
     }
 
     private fun getNewsList() {
@@ -61,12 +62,15 @@ class FragmentNewsContent : Fragment() {
                         val news = News()
                         news.title = jsonObj.getString("title")
                         news.date = jsonObj.getString("date")
-                        news.source = jsonObj.getString("source")
-                        news.url = jsonObj.getString("url")
+                        news.source = jsonObj.getString("block")
+                        news.url = ServerInfo.getNewsUrl(index, i)
                         dataList.add(news)
                     }
 
-                    adapter!!.notifyDataSetChanged()
+                    activity!!.runOnUiThread {
+                        adapter!!.notifyDataSetChanged()
+                    }
+
                 } catch (e: Exception) {
                     Logger.log(e)
                 }
@@ -112,8 +116,8 @@ class FragmentNewsContent : Fragment() {
     }
 
     companion object {
-        fun newInstance(index: Int): FragmentNewsContent {
-            val fragment = FragmentNewsContent()
+        fun newInstance(index: Int): NewsContentFragment {
+            val fragment = NewsContentFragment()
             fragment.setArguments(index)
             return fragment
         }
