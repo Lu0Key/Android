@@ -1,5 +1,6 @@
 package cn.edu.sdu.online.isdu.ui.fragments.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
 import cn.edu.sdu.online.isdu.util.ImageManager
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -32,10 +34,8 @@ class SearchUserFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_search_post, container, false)
         initView(view)
-        initData()
-        loadingLayout!!.visibility = if (dataList.isEmpty()) View.VISIBLE else View.GONE
+
         initRecyclerView()
-        Log.w("s", mAdapter!!.getItemCount().toString())
         return view
     }
 
@@ -53,6 +53,22 @@ class SearchUserFragment : Fragment() {
         dataList.add(User.load("201700301044"))
     }
 
+    fun initData(user : User){
+        dataList.clear()
+        dataList.add(user)
+    }
+    fun refresh(){
+        mAdapter!!.notifyDataSetChanged()
+    }
+
+    fun clear(){
+        dataList.clear();
+        if(mAdapter!=null){
+            mAdapter!!.notifyDataSetChanged()
+        }
+    }
+
+
     inner class MyAdapter(mDataList: List<User>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
         private var mDataList = mDataList
@@ -67,16 +83,19 @@ class SearchUserFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val user = mDataList[position]
-            val bmp = ImageManager.convertStringToBitmap(user!!.avatarString)
+            val bmp = ImageManager.convertStringToBitmap(user.avatarString)
             holder.circleImageView!!.setImageBitmap(bmp)
-            holder.userName!!.setText(user.nickName)
-            holder.userSign!!.setText(user.selfIntroduce)
+            holder.userName!!.text = user.nickName
+            holder.userSign!!.text = user.selfIntroduce
             holder.btnfollow!!.setOnClickListener {
-                Log.w("click", "follow")
+
+                Log.w("click","follow")
             }
             holder.itemLayout!!.setOnClickListener {
-                Log.w("click", "item")
-                //startActivity(Intent(context, MyHomePageActivity::class.java).putExtra("id", user[position].id))
+                Log.i("id",user.studentNumber)
+                user.save(this@SearchUserFragment.activity)
+                startActivity(Intent(context, MyHomePageActivity::class.java)
+                        .putExtra("id", user.uid))
             }
         }
 
@@ -87,7 +106,5 @@ class SearchUserFragment : Fragment() {
             var btnfollow: TextView? = view.findViewById(R.id.btn_follow)
             var itemLayout: View = view.findViewById(R.id.item_layout)
         }
-
     }
-
 }

@@ -48,7 +48,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -69,27 +70,28 @@
                 android:textSize="20sp"/>
 
             <View
+                android:id="@+id/separate_line1"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@color/colorSeparateLine" />
+                android:layout_marginTop="8dp"
+                android:background="@color/colorSeparateLine"/>
 
             <com.sendtion.xrichtext.RichTextEditor
                 android:id="@+id/rich_edit_content"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:layout_marginTop="8dp"
                 app:rt_editor_image_bottom="10"
                 app:rt_editor_text_init_hint="内容"
                 app:rt_editor_text_size="16"
                 app:rt_editor_text_color="@color/colorAccent"/>
 
-            <include layout="@layout/operation_bar" />
         </LinearLayout>
     </ScrollView>
 
-
+    <include layout="@layout/edit_operation_bar" />
 
 </LinearLayout>

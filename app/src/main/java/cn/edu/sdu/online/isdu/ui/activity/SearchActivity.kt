@@ -1,7 +1,6 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -11,12 +10,16 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.AlphaActivity
-import cn.edu.sdu.online.isdu.ui.fragments.main.NewsContentFragment
+import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.fragments.search.SearchNewsFragment
 import cn.edu.sdu.online.isdu.ui.fragments.search.SearchPostFragment
 import cn.edu.sdu.online.isdu.ui.fragments.search.SearchUserFragment
+import cn.edu.sdu.online.isdu.util.Logger
 import kotlinx.android.synthetic.main.activity_download.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -27,6 +30,11 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
 /**
  ****************************************************
@@ -46,10 +54,8 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
     private var viewPager: ViewPager? = null
     private var magicIndicator: MagicIndicator? = null
     private var mViewPagerAdapter: FragAdapter? = null
-
     private val mDataList = listOf("帖子", "资讯", "用户")
     private val mFragments = listOf(SearchPostFragment(), SearchNewsFragment(), SearchUserFragment())
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -85,6 +91,57 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
             }
             R.id.btn_search -> {
 
+                var text:String=editSearch!!.text.toString()
+                when(viewPager?.currentItem){
+                    0 -> {
+                        (mFragments[0]as SearchPostFragment ).initData()
+                    }
+                    1 -> {
+                        (mFragments[1]as SearchNewsFragment ).initData()
+                    }
+                    2 -> {
+                        if(editSearch!!.text!=null){
+                            val url = ServerInfo.searchUser(editSearch!!.text.toString())
+                            NetworkAccess.buildRequest(url, object : Callback {
+                                override fun onFailure(call: Call?, e: IOException?) {
+                                    runOnUiThread {
+                                        Logger.log(e)
+                                        Toast.makeText(this@SearchActivity, "网络错误", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                override fun onResponse(call: Call?, response: Response?) {
+                                    val json = response?.body()?.string()
+                                    try {
+                                        val jsonObj = JSONObject(json)
+                                        if (!jsonObj.isNull("status") && jsonObj.getString("status") == "failed") {
+                                            runOnUiThread {
+                                                Toast.makeText(this@SearchActivity, "用户不存在", Toast.LENGTH_SHORT).show()
+                                            }
+                                        } else {
+                                            val user = User()
+                                            user!!.avatarString = jsonObj.getString("avatar")
+                                            user!!.nickName = jsonObj.getString("nickname")
+                                            user!!.selfIntroduce = jsonObj.getString("sign")
+                                            user!!.studentNumber=jsonObj.getString("studentnumber")
+                                            user!!.uid=jsonObj.getInt("id")
+                                            runOnUiThread {
+                                                (mFragments[2]as SearchUserFragment ).initData(user)
+                                                viewPager!!.adapter!!.notifyDataSetChanged()
+                                                (mFragments[2]as SearchUserFragment ).refresh()
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        Logger.log(e)
+                                        runOnUiThread {
+                                            Toast.makeText(this@SearchActivity, "网络错误\n服务器无响应", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -101,7 +158,12 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                 simplePagerTitleView.selectedColor = 0xFF131313.toInt()
                 simplePagerTitleView.text = mDataList[p1]
                 simplePagerTitleView.textSize = 16f
-                simplePagerTitleView.setOnClickListener { viewPager?.currentItem = p1 }
+                simplePagerTitleView.setOnClickListener {
+                    viewPager?.currentItem = p1
+                    if(p1!=2){
+                        (mFragments[2]as SearchUserFragment ).clear()
+                    }
+                }
                 return simplePagerTitleView
             }
 

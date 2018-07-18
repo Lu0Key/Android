@@ -20,7 +20,9 @@ public class ServerInfo {
     public static final String getUrlLogin(String num, String pwd) {
         return url + "/user/signIn?j_username=" + num + "&j_password=" + pwd;
     }
-
+    public static String searchUser(String studentNumber){
+        return url + "user/findBySN?studentNumber="+studentNumber;
+    }
     public static String getUserInfo(String id, String key) {
         return url + "/user/getInformation?id=" + id + "&key=" + key;
     }
