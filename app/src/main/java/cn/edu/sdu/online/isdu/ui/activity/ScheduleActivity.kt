@@ -167,8 +167,17 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
 
         scheduleTable!!.setOnItemClickListener {
             schedule ->
+            val sb = StringBuilder()
+            for (i in schedule!!.repeatWeeks)
+                sb.append("$i,")
+
             val intent = Intent(this@ScheduleActivity, ScheduleDetailActivity::class.java)
-            intent.putExtra("schedule", schedule)
+            intent.putExtra("name", schedule.scheduleName)
+                    .putExtra("location", schedule.scheduleLocation)
+                    .putExtra("color", schedule.scheduleColor)
+                    .putExtra("start_time", schedule.startTime.toString())
+                    .putExtra("end_time", schedule.endTime.toString())
+                    .putExtra("repeat_weeks", sb.toString())
             startActivity(intent)
         }
         if (totalList!!.isNotEmpty())
@@ -206,7 +215,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
                     val courseArray = JSONObject(jsonString).getJSONArray("obj")
                     totalList = Schedule.loadCourse(courseArray)
                     // 加载考试信息
-                    getExamData()
+//                    getExamData()
 
                     runOnUiThread {
                         setCurrentWeek(currentWeek)

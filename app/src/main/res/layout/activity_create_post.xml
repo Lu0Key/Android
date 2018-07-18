@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorThemeGrey"
+    android:background="@color/colorWhite"
     tools:context=".ui.activity.CreatePostActivity">
 
 
@@ -45,10 +45,51 @@
             android:focusable="true"/>
     </LinearLayout>
 
-    <com.jshaz.xrichtextplus.RichTextEditor
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-    </com.jshaz.xrichtextplus.RichTextEditor>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/edit_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="标题"
+                android:textColor="@color/colorPrimaryText"
+                android:background="@color/colorWhite"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:textSize="20sp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@color/colorSeparateLine" />
+
+            <com.sendtion.xrichtext.RichTextEditor
+                android:id="@+id/rich_edit_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:rt_editor_image_bottom="10"
+                app:rt_editor_text_init_hint="内容"
+                app:rt_editor_text_size="16"
+                app:rt_editor_text_color="@color/colorAccent"/>
+
+            <include layout="@layout/operation_bar" />
+        </LinearLayout>
+    </ScrollView>
+
+
 
 </LinearLayout>

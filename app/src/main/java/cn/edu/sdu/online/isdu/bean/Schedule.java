@@ -67,6 +67,8 @@ public class Schedule implements Parcelable {
     protected Schedule(Parcel in) {
         scheduleName = in.readString();
         scheduleLocation = in.readString();
+        startTime = in.readParcelable(ScheduleTime.class.getClassLoader());
+        endTime = in.readParcelable(ScheduleTime.class.getClassLoader());
         scheduleColor = in.readInt();
         scheduleTextColor = in.readInt();
     }
@@ -158,6 +160,8 @@ public class Schedule implements Parcelable {
         dest.writeString(scheduleLocation);
         dest.writeInt(scheduleColor);
         dest.writeInt(scheduleTextColor);
+        dest.writeParcelable(startTime, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+        dest.writeParcelable(endTime, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
     }
 
     /**
