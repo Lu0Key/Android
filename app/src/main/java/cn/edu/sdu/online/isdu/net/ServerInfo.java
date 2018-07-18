@@ -23,6 +23,9 @@ public class ServerInfo {
     public static String searchUser(String studentNumber){
         return url + "user/findBySN?studentNumber="+studentNumber;
     }
+    public static String searchUserbyNickName(String NickName){
+        return url + "user/findByNN?nickname="+NickName;
+    }
     public static String getUserInfo(String id, String key) {
         return url + "/user/getInformation?id=" + id + "&key=" + key;
     }

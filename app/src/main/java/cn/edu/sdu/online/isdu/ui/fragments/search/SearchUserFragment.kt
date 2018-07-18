@@ -15,7 +15,6 @@ import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
 import cn.edu.sdu.online.isdu.util.ImageManager
 import de.hdodenhof.circleimageview.CircleImageView
-
 /**
  ****************************************************
  * @author zsj
@@ -34,7 +33,6 @@ class SearchUserFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_search_post, container, false)
         initView(view)
-
         initRecyclerView()
         return view
     }
@@ -49,17 +47,10 @@ class SearchUserFragment : Fragment() {
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = mAdapter
     }
-
-    private fun initData(){
-        dataList.add(User.load("201700301044"))
-        dataList.add(User.load("201700301044"))
-    }
-
-    fun initData(user : User){
+    fun initData(list : List<User>){
         dataList.clear()
-        dataList.add(user)
+        dataList.addAll(list)
     }
-
     fun refresh(){
         mAdapter!!.notifyDataSetChanged()
     }
@@ -71,6 +62,10 @@ class SearchUserFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        dataList.clear()
+    }
 
     inner class MyAdapter(mDataList: List<User>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
@@ -96,9 +91,7 @@ class SearchUserFragment : Fragment() {
             }
             holder.itemLayout!!.setOnClickListener {
                 Log.i("id",user.studentNumber)
-                user.save(this@SearchUserFragment.activity)
-                startActivity(Intent(context, MyHomePageActivity::class.java)
-                        .putExtra("id", user.uid))
+                startActivity(Intent(context, MyHomePageActivity::class.java).putExtra("id", user.uid))
             }
         }
 
