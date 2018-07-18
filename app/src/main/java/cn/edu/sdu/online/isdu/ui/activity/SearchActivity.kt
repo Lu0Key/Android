@@ -52,7 +52,7 @@ import java.io.IOException
 class SearchActivity : AlphaActivity(), View.OnClickListener {
 
     private var btnBack: View? = null
-    private var editSearch: EditText? = null
+    var editSearch: EditText? = null
     private var btnSearch: TextView? = null
     private var viewPager: ViewPager? = null
     private var magicIndicator: MagicIndicator? = null
@@ -105,6 +105,7 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                     }
                     2 -> {
                         if(editSearch!!.text!=null){
+                            (mFragments[2]as SearchUserFragment ).onLoading()
                             var list: MutableList<User> = ArrayList<User>()
                             var idflag: Boolean = false
                             var url = ServerInfo.searchUser(editSearch!!.text.toString())
@@ -153,7 +154,7 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                                     try {
                                         if (json!!.equals("[]")&&!idflag) {
                                             runOnUiThread {
-                                                Toast.makeText(this@SearchActivity, "用户不存在", Toast.LENGTH_SHORT).show()
+                                                (mFragments[2]as SearchUserFragment ).noResult()
                                             }
                                         } else {
                                             val jsonArray = JSONArray(json)

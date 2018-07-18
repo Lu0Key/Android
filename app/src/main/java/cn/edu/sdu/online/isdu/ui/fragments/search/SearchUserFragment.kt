@@ -13,6 +13,7 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
+import cn.edu.sdu.online.isdu.ui.activity.SearchActivity
 import cn.edu.sdu.online.isdu.util.ImageManager
 import de.hdodenhof.circleimageview.CircleImageView
 /**
@@ -29,9 +30,10 @@ class SearchUserFragment : Fragment() {
     private var mAdapter: MyAdapter? = null
     private var loadingLayout: View? = null
     private var recyclerView: RecyclerView? = null
+    private var blankView: TextView? = null
     private var dataList = arrayListOf<User>()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_search_post, container, false)
+        val view = inflater.inflate(R.layout.fragment_search_user, container, false)
         initView(view)
         initRecyclerView()
         return view
@@ -40,6 +42,7 @@ class SearchUserFragment : Fragment() {
     private fun initView(view: View) {
         loadingLayout = view.findViewById(R.id.loading_layout)
         recyclerView = view.findViewById(R.id.recycler_view)
+        blankView = view.findViewById(R.id.blank_view)
     }
 
     private fun initRecyclerView() {
@@ -50,6 +53,9 @@ class SearchUserFragment : Fragment() {
     fun initData(list : List<User>){
         dataList.clear()
         dataList.addAll(list)
+        recyclerView!!.visibility = View.VISIBLE
+        loadingLayout!!.visibility = View.GONE
+        blankView!!.visibility = View.GONE
     }
     fun refresh(){
         mAdapter!!.notifyDataSetChanged()
@@ -62,6 +68,17 @@ class SearchUserFragment : Fragment() {
         }
     }
 
+    fun noResult(){
+        clear()
+        recyclerView!!.visibility = View.GONE
+        loadingLayout!!.visibility = View.GONE
+        blankView!!.visibility = View.VISIBLE
+    }
+    fun onLoading(){
+        recyclerView!!.visibility = View.GONE
+        loadingLayout!!.visibility = View.VISIBLE
+        blankView!!.visibility = View.GONE
+    }
     override fun onResume() {
         super.onResume()
         dataList.clear()
@@ -86,11 +103,11 @@ class SearchUserFragment : Fragment() {
             holder.userName!!.text = user.nickName
             holder.userSign!!.text = user.selfIntroduce
             holder.btnfollow!!.setOnClickListener {
-
                 Log.w("click","follow")
             }
             holder.itemLayout!!.setOnClickListener {
-                Log.i("id",user.studentNumber)
+                (activity as SearchActivity).editSearch!!.setText("")
+                clear()
                 startActivity(Intent(context, MyHomePageActivity::class.java).putExtra("id", user.uid))
             }
         }
