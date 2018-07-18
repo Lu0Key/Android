@@ -63,7 +63,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var collapsingToolbar: CollapsingToolbarLayout? = null
     private var toolBar: Toolbar? = null
     private var appBarLayout: AppBarLayout? = null // AppBarLayout实例
-
+    private var MyFollower: TextView? = null
+    private var FollowMe: TextView? = null
     private var btnEditProfile: ImageView? = null // 编辑个人资料
     private var txtMyFollower: TextView? = null // 我关注的人
     private var txtFollowMe: TextView? = null // 关注我的人
@@ -115,6 +116,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         btnEditProfile = findViewById(R.id.btn_edit_profile)
         txtMyFollower = findViewById(R.id.my_follower_count)
         txtFollowMe = findViewById(R.id.following_me_count)
+        MyFollower = findViewById(R.id.my_follower)
+        FollowMe = findViewById(R.id.who_follow_me)
         userName = findViewById(R.id.user_name)
         collapsingToolbar = findViewById(R.id.collapsing_toolbar)
         btnBack = findViewById(R.id.btn_back)
@@ -216,6 +219,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      */
     private fun setGuestView() {
         btnEditProfile!!.visibility = View.GONE
+        FollowMe!!.text="关注TA的人"
+        MyFollower!!.text="TA关注的人"
     }
 
     override fun onResume() {

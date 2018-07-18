@@ -130,6 +130,7 @@
                                 android:layout_gravity="center_horizontal"/>
 
                             <TextView
+                                android:id="@+id/my_follower"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="我关注的人"
@@ -154,6 +155,7 @@
                                 android:layout_gravity="center_horizontal"/>
 
                             <TextView
+                                android:id="@+id/who_follow_me"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="关注我的人"
