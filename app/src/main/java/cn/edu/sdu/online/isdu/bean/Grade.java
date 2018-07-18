@@ -152,8 +152,8 @@ public class Grade {
                     grade.pm = obj.getInt("pm");
                     grade.zrs = obj.getInt("xkrs");
                     grade.xf = obj.getDouble("xf");
-                    grade.pscj = "";
-                    grade.qmcj = "";
+                    grade.pscj = !obj.isNull("psjc") ? obj.getString("psjc") : "";
+                    grade.qmcj = !obj.isNull("qmcj") ? obj.getString("qmcj") : "";
                     grade.kxh = obj.getInt("kxh");
                     if (grade.kxh < 600) {
                         zfz += grade.xf*grade.jd;
