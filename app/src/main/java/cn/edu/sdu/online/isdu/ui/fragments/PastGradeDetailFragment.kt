@@ -10,18 +10,16 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.NumberPicker
-import android.widget.PopupWindow
-import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Grade
 import kotlinx.android.synthetic.main.design_custom_number_picker.*
 import kotlinx.android.synthetic.main.fragment_past_grade_detail.*
 import android.view.KeyEvent.KEYCODE_BACK
+import android.widget.*
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.ui.design.MyLinearLayoutManager
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import java.math.RoundingMode
@@ -85,14 +83,16 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
                     dataList.addAll(Grade.pastGradeLoadFromString(FileUtil.getStringFromFile(cachePath),currentTerm+1))
 
                     activity!!.runOnUiThread {
-                        adapter!!.notifyDataSetChanged()
-                        val  nf : NumberFormat = NumberFormat.getNumberInstance();
+                        val  nf : NumberFormat = NumberFormat.getNumberInstance()
                         //保留两位小数
                         nf.maximumFractionDigits = 2
+                        nf.minimumFractionDigits = 2
                         // 如果不需要四舍五入，可以使用RoundingMode.DOWN
                         nf.roundingMode= RoundingMode.UP
                         zjdText!!.text = nf.format(Grade.z_jd[currentTerm + 1])
-                        if (textView!!.visibility != View.GONE) textView!!.visibility = View.GONE
+                        if (dataList.size > 0 && User.staticUser.uid != 0) textView!!.visibility = View.GONE
+                        else textView!!.visibility = View.VISIBLE
+                        adapter!!.notifyDataSetChanged()
                     }
 
                 } catch (e: Exception) {
@@ -173,7 +173,7 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
      * 初始化RecyclerView
      */
     private fun initRecyclerView() {
-        recyclerView!!.layoutManager = LinearLayoutManager(context)
+        recyclerView!!.layoutManager = MyLinearLayoutManager(context,LinearLayoutManager.VERTICAL, false)
         adapter = MyAdapter(dataList)
         recyclerView!!.adapter = adapter
     }
@@ -230,10 +230,8 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
             holder.qmcjText.text = grade.qmcj
             holder.ddText.text = grade.dd
             holder.jdText.text = grade.jd.toString()
-            holder.pmText.visibility = View.GONE
-            holder.zrsText.visibility = View.GONE
-            holder.zgfText.visibility = View.GONE
-            holder.zdfext.visibility = View.GONE
+            holder.layout3.visibility = View.GONE
+            holder.layout4.visibility = View.GONE
 
         }
 
@@ -257,6 +255,9 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
             val zdfext : TextView = v.findViewById(R.id.zdf) // 等第
             val pmText : TextView = v.findViewById(R.id.pm) // 排名
             val zrsText : TextView = v.findViewById(R.id.zrs) // 总人数
+            val layout3 : LinearLayout = v.findViewById(R.id.layout3)
+            val layout4 : LinearLayout = v.findViewById(R.id.layout4)
+
         }
     }
 

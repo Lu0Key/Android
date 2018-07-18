@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -17,6 +18,7 @@ import cn.edu.sdu.online.isdu.bean.Grade
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.ui.design.MyLinearLayoutManager
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
@@ -79,7 +81,8 @@ class GradeDetailFragment : Fragment() {
                         // 如果不需要四舍五入，可以使用RoundingMode.DOWN
                         nf.roundingMode=RoundingMode.UP
                         zjdText!!.text = nf.format(Grade.zjd)
-                        textView!!.visibility = View.GONE
+                        if (User.staticUser.uid != 0 && dataList.size > 0) textView!!.visibility = View.GONE
+                        else textView!!.visibility = View.VISIBLE
                         adapter!!.notifyDataSetChanged()
                     }
 
@@ -97,9 +100,8 @@ class GradeDetailFragment : Fragment() {
      * 初始化RecyclerView
      */
     private fun initRecyclerView() {
-        recyclerView!!.layoutManager = LinearLayoutManager(context)
+        recyclerView!!.layoutManager = MyLinearLayoutManager(context,LinearLayoutManager.VERTICAL, false)
         adapter = MyAdapter(dataList)
-
         recyclerView!!.adapter = adapter
     }
 
