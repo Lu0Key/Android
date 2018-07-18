@@ -78,7 +78,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.activity.CreatePostActivity"></activity>
+        <activity android:name=".ui.activity.CreatePostActivity" />
     </application>
 
 </manifest>
