@@ -47,7 +47,7 @@ public class ImageManager {
     public static final int OPEN_GALLERY = 1;
 
     private Uri imageUri;
-    private String imagePath;
+    public String imagePath;
 
     private Uri fromUri, destUri; // 用于裁剪的URI
 
@@ -71,6 +71,8 @@ public class ImageManager {
         } else {
             fromUri = Uri.fromFile(thumb);
         }
+
+        imagePath = thumb.getAbsolutePath();
 
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fromUri);
@@ -116,6 +118,20 @@ public class ImageManager {
 
     public void handleImage(Activity context, Intent data) {
         initCrop(context);
+
+        handleImage(data, context);
+
+        //获取打开文件的URI
+        if (Build.VERSION.SDK_INT >= 24) {
+            fromUri = FileProvider.getUriForFile(context,
+                    "cn.edu.sdu.online.isdu.fileprovider", new File(imagePath));
+        } else {
+            fromUri = Uri.fromFile(new File(imagePath));
+        }
+        openCrop(context);
+    }
+
+    public void handleImage(Intent data, Activity context) {
         if (Build.VERSION.SDK_INT >= 19) {
             imagePath = null;
             Uri uri = data.getData();
@@ -141,15 +157,6 @@ public class ImageManager {
             imagePath = getImagePath(uri, null, context);
         }
 
-        //获取打开文件的URI
-        if (Build.VERSION.SDK_INT >= 24) {
-            fromUri = FileProvider.getUriForFile(context,
-                    "cn.edu.sdu.online.isdu.fileprovider", new File(imagePath));
-        } else {
-            fromUri = Uri.fromFile(new File(imagePath));
-        }
-
-        openCrop(context);
     }
 
     private String getImagePath(Uri uri, String selection, Context context) {

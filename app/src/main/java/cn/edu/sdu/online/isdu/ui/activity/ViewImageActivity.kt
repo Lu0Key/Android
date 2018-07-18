@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.BaseActivity
+import cn.edu.sdu.online.isdu.app.NormActivity
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.DraggableImageView
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
@@ -35,7 +36,7 @@ import java.io.FileOutputStream
  ****************************************************
  */
 
-class ViewImageActivity : BaseActivity() {
+class ViewImageActivity : NormActivity() {
 
     private var draggableImageView: DraggableImageView? = null
     private var progressBar: ProgressBar? = null
@@ -47,6 +48,7 @@ class ViewImageActivity : BaseActivity() {
     var bmpStr: String = ""
     var cacheKey: String = ""
     var isString = false
+    var filePath = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -149,6 +151,7 @@ class ViewImageActivity : BaseActivity() {
         bmpStr = if (intent.getStringExtra("bmp_str") == null) "" else intent.getStringExtra("bmp_str")
         cacheKey = if (intent.getStringExtra("key") == null) "" else intent.getStringExtra("key")
         isString = intent.getBooleanExtra("isString", false)
+        filePath = if (intent.getStringExtra("file_path") == null) "" else intent.getStringExtra("file_path")
 
         if (resId != 0) {
             draggableImageView!!.setImageResource(resId)
@@ -172,6 +175,9 @@ class ViewImageActivity : BaseActivity() {
             }
         } else if (bmpStr != "") {
             val bmp = ImageManager.convertStringToBitmap(bmpStr)
+            draggableImageView!!.setImageBitmap(bmp)
+        } else if (filePath != "") {
+            val bmp = BitmapFactory.decodeFile(filePath)
             draggableImageView!!.setImageBitmap(bmp)
         }
     }
@@ -199,11 +205,4 @@ class ViewImageActivity : BaseActivity() {
         }
     }
 
-    override fun prepareBroadcastReceiver() {
-
-    }
-
-    override fun unRegBroadcastReceiver() {
-
-    }
 }

@@ -43,11 +43,13 @@ class SearchUserFragment : Fragment() {
         loadingLayout = view.findViewById(R.id.loading_layout)
         recyclerView = view.findViewById(R.id.recycler_view)
     }
+
     private fun initRecyclerView() {
         mAdapter = MyAdapter(dataList)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = mAdapter
     }
+
     private fun initData(){
         dataList.add(User.load("201700301044"))
         dataList.add(User.load("201700301044"))
@@ -57,6 +59,7 @@ class SearchUserFragment : Fragment() {
         dataList.clear()
         dataList.add(user)
     }
+
     fun refresh(){
         mAdapter!!.notifyDataSetChanged()
     }

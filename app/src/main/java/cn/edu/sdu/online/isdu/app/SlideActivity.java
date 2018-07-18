@@ -18,7 +18,7 @@ import cn.edu.sdu.online.isdu.R;
 
 @SuppressLint("Registered")
 @EnableDragToClose
-public class SlideActivity extends BaseActivity {
+public class SlideActivity extends NormActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,13 +34,4 @@ public class SlideActivity extends BaseActivity {
         overridePendingTransition(R.anim.snake_slide_in_left, R.anim.snake_slide_out_right);
     }
 
-    @Override
-    protected void prepareBroadcastReceiver() {
-
-    }
-
-    @Override
-    protected void unRegBroadcastReceiver() {
-
-    }
 }

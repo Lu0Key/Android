@@ -35,6 +35,7 @@
             android:textSize="18sp"/>
 
         <TextView
+            android:id="@+id/btn_done"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:text="发布"
@@ -78,7 +79,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@color/colorSeparateLine"/>
 
-            <com.sendtion.xrichtext.RichTextEditor
+            <cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextEditor
                 android:id="@+id/rich_edit_content"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -86,8 +87,7 @@
                 android:layout_marginTop="8dp"
                 app:rt_editor_image_bottom="10"
                 app:rt_editor_text_init_hint="内容"
-                app:rt_editor_text_size="16"
-                app:rt_editor_text_color="@color/colorAccent"/>
+                app:rt_editor_text_size="16"/>
 
         </LinearLayout>
     </ScrollView>

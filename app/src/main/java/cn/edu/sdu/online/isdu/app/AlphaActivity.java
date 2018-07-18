@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 
 import cn.edu.sdu.online.isdu.R;
 
-public class AlphaActivity extends BaseActivity {
+public class AlphaActivity extends NormActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -19,13 +19,4 @@ public class AlphaActivity extends BaseActivity {
         overridePendingTransition(R.anim.alpha_0_100, R.anim.alpha_100_0);
     }
 
-    @Override
-    protected void prepareBroadcastReceiver() {
-
-    }
-
-    @Override
-    protected void unRegBroadcastReceiver() {
-
-    }
 }
