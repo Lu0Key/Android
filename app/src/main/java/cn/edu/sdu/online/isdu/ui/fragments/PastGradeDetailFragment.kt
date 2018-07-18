@@ -58,8 +58,9 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
         val view = inflater.inflate(R.layout.fragment_past_grade_detail, container, false)
         initView(view)
         initRecyclerView()
-        initNumberPicker()
         getPastGrade()
+        initNumberPicker()
+
         return view
     }
 
@@ -79,20 +80,19 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
         NetworkAccess.cache(url) { success, cachePath ->
             if (success) {
                 try {
+
                     dataList.clear()
                     dataList.addAll(Grade.pastGradeLoadFromString(FileUtil.getStringFromFile(cachePath),currentTerm+1))
 
                     activity!!.runOnUiThread {
+                        adapter!!.notifyDataSetChanged()
                         val  nf : NumberFormat = NumberFormat.getNumberInstance();
                         //保留两位小数
                         nf.maximumFractionDigits = 2
                         // 如果不需要四舍五入，可以使用RoundingMode.DOWN
                         nf.roundingMode= RoundingMode.UP
-
                         zjdText!!.text = nf.format(Grade.z_jd[currentTerm + 1])
-
-                        textView!!.visibility = View.GONE
-                        adapter!!.notifyDataSetChanged()
+                        if (textView!!.visibility != View.GONE) textView!!.visibility = View.GONE
                     }
 
                 } catch (e: Exception) {
@@ -173,9 +173,8 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
      * 初始化RecyclerView
      */
     private fun initRecyclerView() {
-        adapter = MyAdapter(dataList)
-
         recyclerView!!.layoutManager = LinearLayoutManager(context)
+        adapter = MyAdapter(dataList)
         recyclerView!!.adapter = adapter
     }
 
@@ -225,7 +224,6 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val grade = dataList[position]
-
             holder.cjText.text = grade.cj
             holder.kcmText.text = grade.kcm
             holder.pscjText.text = grade.pscj
