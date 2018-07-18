@@ -71,4 +71,12 @@ public class ServerInfo {
         return "https://sduonline.cn/isdu/news/api/index.php?site=" + site + "&content&id=" + id;
     }
 
+    public static String getGradeUrl(String id){
+        return url+"/academic/curTerm?id="+id;
+    }
+
+    public static String getPastGradeUrl(String id,String term){
+        return url+ "/academic/termScore?id="+id+"&termId="+term;
+    }
+
 }
