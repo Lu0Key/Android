@@ -58,25 +58,25 @@
         <!--关注-->
         <TextView
             android:id="@+id/btn_follow"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/purple_stroke_rect_colorchanged"
-            android:paddingRight="12dp"
-            android:paddingLeft="12dp"
-            android:paddingTop="4dp"
+            android:clickable="true"
+            android:focusable="true"
             android:paddingBottom="4dp"
-            android:textSize="14sp"
-            android:textColor="@color/colorPurpleDark"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="4dp"
             android:text="关注"
-            android:layout_gravity="end"
-            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/colorPurpleDark"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.179" />
 
     </android.support.constraint.ConstraintLayout>
 

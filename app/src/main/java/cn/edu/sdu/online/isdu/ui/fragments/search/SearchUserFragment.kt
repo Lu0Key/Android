@@ -33,8 +33,6 @@ class SearchUserFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_search_post, container, false)
         initView(view)
-        initData()
-        loadingLayout!!.visibility = if (dataList.isEmpty()) View.VISIBLE else View.GONE
         initRecyclerView()
         return view
     }
@@ -43,15 +41,27 @@ class SearchUserFragment : Fragment() {
         loadingLayout = view.findViewById(R.id.loading_layout)
         recyclerView = view.findViewById(R.id.recycler_view)
     }
+
     private fun initRecyclerView() {
         mAdapter = MyAdapter(dataList)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = mAdapter
     }
-    private fun initData(){
-        dataList.add(User.load("201700301052"))
-        dataList.add(User.load("201700301052"))
+    fun initData(user : User){
+        dataList.clear()
+        dataList.add(user)
     }
+    fun refresh(){
+        mAdapter!!.notifyDataSetChanged()
+    }
+
+    fun clear(){
+        dataList.clear();
+        if(mAdapter!=null){
+            mAdapter!!.notifyDataSetChanged()
+        }
+    }
+
 
     inner class MyAdapter(mDataList: List<User>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
@@ -75,7 +85,9 @@ class SearchUserFragment : Fragment() {
                 Log.w("click","follow")
             }
             holder.itemLayout!!.setOnClickListener {
-                startActivity(Intent(context, MyHomePageActivity::class.java).putExtra("id", user.studentNumber))
+                Log.i("id",user.studentNumber)
+                user.save(this@SearchUserFragment.activity)
+                startActivity(Intent(context, MyHomePageActivity::class.java).putExtra("id", user.uid))
             }
         }
 
