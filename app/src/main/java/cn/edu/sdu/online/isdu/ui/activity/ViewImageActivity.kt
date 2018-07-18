@@ -17,6 +17,7 @@ import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.DraggableImageView
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
+import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Phone
 import kotlinx.android.synthetic.main.activity_view_image.*
@@ -44,6 +45,8 @@ class ViewImageActivity : BaseActivity() {
     var resId: Int = 0
     var url: String = ""
     var bmpStr: String = ""
+    var cacheKey: String = ""
+    var isString = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,17 +90,40 @@ class ViewImageActivity : BaseActivity() {
                             fos.close()
                             Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
                         } else if (url != "") {
-                            NetworkAccess.cache(url, "avatar") { success, cachePath ->
-                                if (success) {
-                                    val bmp = BitmapFactory.decodeFile(cachePath)
-                                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-                                    fos.flush()
-                                    fos.close()
-                                    Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
-                                } else {
-                                    Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                            if (cacheKey == "") {
+                                NetworkAccess.cache(url) { success, cachePath ->
+                                    if (success) {
+                                        /********************************************
+                                         *
+                                         ********************************************/
+                                        val bmp = if (isString) ImageManager.convertStringToBitmap(FileUtil.getStringFromFile(cachePath)) else
+                                            BitmapFactory.decodeFile(cachePath)
+                                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                                        fos.flush()
+                                        fos.close()
+                                        Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            } else {
+                                NetworkAccess.cache(url, cacheKey) { success, cachePath ->
+                                    if (success) {
+                                        /********************************************
+                         dd                *
+                                         ********************************************/
+                                        val bmp = if (isString) ImageManager.convertStringToBitmap(FileUtil.getStringFromFile(cachePath)) else
+                                            BitmapFactory.decodeFile(cachePath)
+                                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                                        fos.flush()
+                                        fos.close()
+                                        Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
                             }
+
                         } else if (bmpStr != "") {
                             val bmp = ImageManager.convertStringToBitmap(bmpStr)
                             bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
@@ -121,6 +147,8 @@ class ViewImageActivity : BaseActivity() {
         resId = intent.getIntExtra("res_id", 0)
         url = if (intent.getStringExtra("url") == null) "" else intent.getStringExtra("url")
         bmpStr = if (intent.getStringExtra("bmp_str") == null) "" else intent.getStringExtra("bmp_str")
+        cacheKey = if (intent.getStringExtra("key") == null) "" else intent.getStringExtra("key")
+        isString = intent.getBooleanExtra("isString", false)
 
         if (resId != 0) {
             draggableImageView!!.setImageResource(resId)

@@ -83,6 +83,7 @@ public class Download {
                     DownloadItem downloadItem = new DownloadItem();
 
                     downloadItem.setDownloadUrl(obj.getString("download_url"));
+                    downloadItem.setFileName(obj.getString("file_name"));
                     downloadItem.setStatus(obj.getInt("status"));
                     downloadItem.setProgress(obj.getInt("progress"));
 
@@ -177,6 +178,7 @@ public class Download {
                     obj.put("download_url", downloadList.get(i).getDownloadUrl());
                     obj.put("status", downloadList.get(i).getStatus());
                     obj.put("progress", downloadList.get(i).getProgress());
+                    obj.put("file_name", downloadList.get(i).getFileName());
                     jsonArray.put(obj);
                 } catch (JSONException e) {
                     e.printStackTrace();

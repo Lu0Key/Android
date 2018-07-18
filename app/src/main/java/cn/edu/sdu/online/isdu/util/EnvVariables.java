@@ -28,6 +28,8 @@ public class EnvVariables {
     public static int endWeek = 20;
     public static int currentWeek = -1;
 
+    public static boolean lessonDelay = false; // 是否按照夏季作息推迟上课
+
     public static long firstWeekTimeMillis = 0;
 
     public static void init(final Context context) {
@@ -98,7 +100,11 @@ public class EnvVariables {
 
         int daily = 24 * 60 * 60;
         int days = (int) Math.ceil(((double) delta) / ((double) daily));
-        return (days / 7) + 1;
+        if ((days / 7) + 1 > endWeek)
+            return endWeek;
+        else if ((days / 7) + 1 < startWeek)
+            return startWeek;
+        else return (days / 7) + 1;
     }
 
     /**

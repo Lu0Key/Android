@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -103,7 +104,9 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
             }
             background_image.id, circle_image_view.id -> {
                 startActivity(Intent(this, ViewImageActivity::class.java)
-                        .putExtra("url", ServerInfo.getUserInfo(user?.uid.toString(), "avatar")))
+                        .putExtra("url", ServerInfo.getUserInfo(user?.uid.toString(), "avatar"))
+                        .putExtra("key", "avatar")
+                        .putExtra("isString", true))
             }
         }
     }
@@ -282,7 +285,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                         val jsonObject = JSONObject(intent.getStringExtra("json"))
                         user!!.nickName = jsonObject.getString("nickname")
                         user!!.selfIntroduce = jsonObject.getString("sign")
-                        user!!.studentNumber = jsonObject.getString("studentNumber")
+                        user!!.studentNumber = jsonObject.getString("studentnumber")
+                        user!!.uid = jsonObject.getInt("id")
                         user!!.gender = if (jsonObject.getString("gender") == "男") User.GENDER_MALE
                                         else (if (jsonObject.getString("gender") == "女") User.GENDER_FEMALE
                                         else User.GENDER_SECRET)
@@ -293,7 +297,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                         publishUserInfo()
                     } catch (e: Exception) {
                         Logger.log(e)
-                        runOnUiThread {
+//                        runOnUiThread {
                             val dialog = AlertDialog(this@MyHomePageActivity)
                             dialog.setTitle("错误")
                             dialog.setMessage("未获取到数据")
@@ -304,7 +308,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                                 finish()
                             }
                             dialog.show()
-                        }
+//                        }
                     }
                 }
 
