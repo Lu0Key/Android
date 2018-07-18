@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
@@ -84,7 +85,9 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                 finish()
             }
             R.id.btn_search -> {
-
+                var text:String=editSearch!!.text.toString()
+                Log.w("search",text)
+                Log.w("search",viewPager!!.currentItem.toString())
             }
         }
     }
