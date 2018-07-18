@@ -81,7 +81,8 @@ class GradeDetailFragment : Fragment() {
                         // 如果不需要四舍五入，可以使用RoundingMode.DOWN
                         nf.roundingMode=RoundingMode.UP
                         zjdText!!.text = nf.format(Grade.zjd)
-                        textView!!.visibility = View.GONE
+                        if (User.staticUser.uid != 0 && dataList.size > 0) textView!!.visibility = View.GONE
+                        else textView!!.visibility = View.VISIBLE
                         adapter!!.notifyDataSetChanged()
                     }
 

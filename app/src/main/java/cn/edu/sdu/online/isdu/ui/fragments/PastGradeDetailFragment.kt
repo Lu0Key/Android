@@ -83,7 +83,6 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
                     dataList.addAll(Grade.pastGradeLoadFromString(FileUtil.getStringFromFile(cachePath),currentTerm+1))
 
                     activity!!.runOnUiThread {
-                        adapter!!.notifyDataSetChanged()
                         val  nf : NumberFormat = NumberFormat.getNumberInstance()
                         //保留两位小数
                         nf.maximumFractionDigits = 2
@@ -91,7 +90,9 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
                         // 如果不需要四舍五入，可以使用RoundingMode.DOWN
                         nf.roundingMode= RoundingMode.UP
                         zjdText!!.text = nf.format(Grade.z_jd[currentTerm + 1])
-                        if (textView!!.visibility != View.GONE) textView!!.visibility = View.GONE
+                        if (dataList.size > 0 && User.staticUser.uid != 0) textView!!.visibility = View.GONE
+                        else textView!!.visibility = View.VISIBLE
+                        adapter!!.notifyDataSetChanged()
                     }
 
                 } catch (e: Exception) {
