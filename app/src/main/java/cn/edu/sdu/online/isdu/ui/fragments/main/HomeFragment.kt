@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager
 import android.view.*
 import android.widget.LinearLayout
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.ui.activity.CreatePostActivity
 import cn.edu.sdu.online.isdu.ui.activity.SearchActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import net.lucode.hackware.magicindicator.MagicIndicator
@@ -35,8 +36,8 @@ import java.io.Serializable
 
 class HomeFragment : Fragment(), Serializable, View.OnClickListener {
 
-    private var searchBar: LinearLayout? = null // 搜索框
-    private var askBar: LinearLayout? = null // 提问框
+    private var searchBar: View? = null // 搜索框
+    private var askBar: View? = null // 提问框
 
     private var magicIndicator: MagicIndicator? = null // Magic Indicator
     private var viewPager: ViewPager? = null // ViewPager
@@ -67,12 +68,16 @@ class HomeFragment : Fragment(), Serializable, View.OnClickListener {
 
         viewPager!!.offscreenPageLimit = mDataList.size // 设置ViewPager的预加载页面数量，防止销毁
         searchBar!!.setOnClickListener(this)
+        askBar!!.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v!!.id) {
             search_bar.id -> {
                 startActivity(Intent(activity!!, SearchActivity::class.java))
+            }
+            ask_bar.id -> {
+                startActivity(Intent(activity!!, CreatePostActivity::class.java))
             }
         }
     }

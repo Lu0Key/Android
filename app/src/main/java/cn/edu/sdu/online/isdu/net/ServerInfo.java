@@ -71,4 +71,13 @@ public class ServerInfo {
         return "https://sduonline.cn/isdu/news/api/index.php?site=" + site + "&content&id=" + id;
     }
 
+
+    public static String getExamUrl(int id) {
+        return url + "/academic/schedule?id=" + id;
+    }
+
+    public static String getScheduleUrl(int id) {
+        return url + "/academic/table?id=" + id;
+    }
+
 }

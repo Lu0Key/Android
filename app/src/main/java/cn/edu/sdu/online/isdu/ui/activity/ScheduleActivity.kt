@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,13 +18,16 @@ import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.bean.Exam
 import cn.edu.sdu.online.isdu.bean.Schedule
+import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.ScheduleTable
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
-import cn.edu.sdu.online.isdu.util.EnvVariables
-import cn.edu.sdu.online.isdu.util.PixelUtil
-import cn.edu.sdu.online.isdu.util.ScheduleTime
+import cn.edu.sdu.online.isdu.util.*
 import kotlinx.android.synthetic.main.activity_schedule.*
+import org.json.JSONObject
 
 /**
  ****************************************************
@@ -51,21 +55,38 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
 
     private var selectLayoutVisible = false
 
+    private var totalList: MutableList<MutableList<MutableList<Schedule>>>? = ArrayList()
+
+    private var adapter: MyAdapter? = null
+
+    private var examList = ArrayList<Exam>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_schedule)
 
-        if (EnvVariables.currentWeek == -1) {
+        if (User.staticUser == null) User.staticUser = User.load()
+        if (User.staticUser.studentNumber == null) {
             val dialog = AlertDialog(this)
             dialog.setTitle("无数据")
-            dialog.setMessage("未获取到数据，请稍后重试")
+            dialog.setMessage("请登录后重试")
             dialog.setCancelOnTouchOutside(false)
             dialog.setCancelable(false)
-            dialog.setPositiveButton("返回") {
+            dialog.setPositiveButton("登录") {
+                dialog.dismiss()
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+            dialog.setNegativeButton("返回") {
                 finish()
                 dialog.dismiss()
             }
             dialog.show()
+        }
+
+
+        if (EnvVariables.currentWeek == -1) {
+
         } else {
             initView()
             initSchedule()
@@ -142,8 +163,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
      * 从startWeek到endWeek中选取第currentWeek - 1个列表进行绘制
      */
     private fun initSchedule() {
-        val list = ArrayList<ArrayList<Schedule>>()
-        initScheduleData(list)
+        initScheduleData()
 
         scheduleTable!!.setOnItemClickListener {
             schedule ->
@@ -151,7 +171,8 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
             intent.putExtra("schedule", schedule)
             startActivity(intent)
         }
-        scheduleTable!!.setScheduleList(list as List<MutableList<Schedule>>?)
+        if (totalList!!.isNotEmpty())
+            scheduleTable!!.setScheduleList(totalList!![currentWeek - 1])
     }
 
     private fun initRecyclerView() {
@@ -160,7 +181,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
             dataList.add(SelectableWeekIndex(i + 1))
         }
         dataList[currentWeek - 1].selected = true
-        val adapter = MyAdapter(dataList)
+        adapter = MyAdapter(dataList)
 
         onWeekSelectListener = object : MyAdapter.OnWeekSelectListener {
             override fun onWeekSelect(index: Int) {
@@ -168,7 +189,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
             }
         }
 
-        adapter.setOnWeekSelectListener(onWeekSelectListener!!)
+        adapter!!.setOnWeekSelectListener(onWeekSelectListener!!)
 
         recyclerView!!.layoutManager =
                 LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -177,8 +198,78 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         recyclerView!!.scrollToPosition(currentWeek - 1)
     }
 
-    private fun initScheduleData(list: ArrayList<ArrayList<Schedule>>) {
+    private fun initScheduleData() {
+        NetworkAccess.cache(ServerInfo.getScheduleUrl(User.staticUser.uid)) { success, cachePath ->
+            if (success) {
+                val jsonString = FileUtil.getStringFromFile(cachePath)
+                try {
+                    val courseArray = JSONObject(jsonString).getJSONArray("obj")
+                    totalList = Schedule.loadCourse(courseArray)
+                    // 加载考试信息
+                    getExamData()
 
+                    runOnUiThread {
+                        setCurrentWeek(currentWeek)
+                    }
+                } catch (e: Exception) {
+                    Logger.log(e)
+                }
+            }
+        }
+    }
+
+
+    private fun getExamData() {
+        if (User.staticUser == null) User.staticUser = User.load()
+        NetworkAccess.cache(ServerInfo.getExamUrl(User.staticUser.uid)) { success, cachePath ->
+            if (success) {
+                val jsonString = FileUtil.getStringFromFile(cachePath)
+                if (jsonString != null && jsonString.trim() != "") {
+                    try {
+                        val jsonObject = JSONObject(jsonString)
+
+                        if (jsonObject.getString("status") == "success") {
+
+                            val exams = jsonObject.getJSONObject("obj")
+//                            for (i in 0 until exams.length()) {
+                            // 期末考试、形势政策考试……
+                            val examNames = exams.names()
+                            for (j in 0 until examNames.length()) {
+                                // 获取期末考试、形势政策考试的JSONArray
+
+                                val obj = exams.getJSONArray(examNames.getString(j))
+
+                                for (k in 0 until obj.length()) {
+                                    val exam = obj.getJSONObject(k)
+                                    // 获取每场考试内容
+                                    val item = Exam(
+                                            exam.getString("examDate"),
+                                            exam.getString("examTime"),
+                                            exam.getString("examRoom"),
+                                            exam.getString("resultComposition"),
+                                            exam.getString("examMethod"),
+                                            exam.getString("courseName")
+                                    )
+                                    totalList!![item.week][item.day].add(item.toSchedule())
+                                }
+
+                            }
+//                            }
+
+                            runOnUiThread {
+
+                            }
+
+                        }
+
+                    } catch (e: Exception) {
+                        Logger.log(e)
+                    }
+                } else {
+
+                }
+            }
+        }
     }
 
     private fun getTotalWeeks() {
@@ -191,8 +282,17 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
 
     private fun setCurrentWeek(index: Int) {
         currentWeek = index
+
+        if (totalList!!.isNotEmpty()) {
+            Log.d("BBB", totalList!![currentWeek - 1][0].size.toString())
+            scheduleTable!!.setScheduleList(totalList!![currentWeek - 1])
+        }
+
         scheduleTable!!.setCurrentWeekIndex(currentWeek)
         txtCurrentWeek!!.text = "第 $index 周"
+
+        adapter?.notifyDataSetChanged()
+
     }
 
     private fun hideWeekSelect() {
@@ -238,8 +338,6 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
                     item.selected = false
                 }
                 dataList[position].selected = true
-
-                notifyDataSetChanged()
             }
         }
 

@@ -111,7 +111,7 @@ public class ScheduleTable extends View {
 
         // 获取实际高度和宽度
         minWidth = (int) (rectWidth * 7 / 5.2);
-        minHeight = (int) (minWidth * 0.8);
+        minHeight = (int) (minWidth);
 
         rectWidth = Math.max(minWidth, rectWidth);
         rectHeight = Math.max(minHeight, rectHeight);
