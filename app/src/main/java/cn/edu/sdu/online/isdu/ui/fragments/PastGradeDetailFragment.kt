@@ -19,8 +19,13 @@ import cn.edu.sdu.online.isdu.bean.Grade
 import kotlinx.android.synthetic.main.design_custom_number_picker.*
 import kotlinx.android.synthetic.main.fragment_past_grade_detail.*
 import android.view.KeyEvent.KEYCODE_BACK
-
-
+import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.util.FileUtil
+import cn.edu.sdu.online.isdu.util.Logger
+import java.math.RoundingMode
+import java.text.NumberFormat
 
 
 /**
@@ -45,6 +50,7 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
     private var pickerView : View ?= null
     private var currentTerm : Int = 0
     private var popupWindow : PopupWindow ?= null
+    private var zjdText : TextView ?= null
     private val term = arrayOf("一", "二", "三", "四", "五", "六","七","八")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -52,21 +58,52 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
         val view = inflater.inflate(R.layout.fragment_past_grade_detail, container, false)
         initView(view)
         initRecyclerView()
+        getPastGrade()
         initNumberPicker()
+
         return view
     }
 
     fun initView(v : View){
 
-
         chooseTerm = v.findViewById(R.id.choose_term)
         recyclerView = v.findViewById(R.id.recycler_view)
         textView = v.findViewById(R.id.text_view)
-
+        zjdText = v.findViewById(R.id.jd_text)
         chooseTerm!!.setOnClickListener(this)
 
     }
 
+    private fun getPastGrade(){
+        var url: String
+        url = ServerInfo.getPastGradeUrl(User.staticUser.uid.toString(),(currentTerm+1).toString())
+        NetworkAccess.cache(url) { success, cachePath ->
+            if (success) {
+                try {
+
+                    dataList.clear()
+                    dataList.addAll(Grade.pastGradeLoadFromString(FileUtil.getStringFromFile(cachePath),currentTerm+1))
+
+                    activity!!.runOnUiThread {
+                        adapter!!.notifyDataSetChanged()
+                        val  nf : NumberFormat = NumberFormat.getNumberInstance();
+                        //保留两位小数
+                        nf.maximumFractionDigits = 2
+                        // 如果不需要四舍五入，可以使用RoundingMode.DOWN
+                        nf.roundingMode= RoundingMode.UP
+                        zjdText!!.text = nf.format(Grade.z_jd[currentTerm + 1])
+                        if (textView!!.visibility != View.GONE) textView!!.visibility = View.GONE
+                    }
+
+                } catch (e: Exception) {
+                    Logger.log(e)
+                }
+            }else{
+
+            }
+
+        }
+    }
     /**
      * 重写后退键，当弹出popupWindow时点击后退键不会关闭当前活动
      */
@@ -124,6 +161,7 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
                 currentTerm = numberPicker!!.value
                 chooseTerm!!.text = "   "+term[currentTerm]+"   "
                 popupWindow!!.dismiss()
+                getPastGrade()
             }
             btnCancel!!.id->{
                 popupWindow!!.dismiss()
@@ -135,9 +173,8 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
      * 初始化RecyclerView
      */
     private fun initRecyclerView() {
-        adapter = MyAdapter(dataList, context!!)
-
         recyclerView!!.layoutManager = LinearLayoutManager(context)
+        adapter = MyAdapter(dataList)
         recyclerView!!.adapter = adapter
     }
 
@@ -180,15 +217,24 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
         }
     }
 
-    inner class MyAdapter(dataList: List<Grade>?, context: Context) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+    inner class MyAdapter(dataList: List<Grade>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
-        private val context = context
+
         private val dataList = dataList
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            if (!dataList!!.isEmpty()){
-                textView!!.text = ""
-            }
+            val grade = dataList[position]
+            holder.cjText.text = grade.cj
+            holder.kcmText.text = grade.kcm
+            holder.pscjText.text = grade.pscj
+            holder.qmcjText.text = grade.qmcj
+            holder.ddText.text = grade.dd
+            holder.jdText.text = grade.jd.toString()
+            holder.pmText.visibility = View.GONE
+            holder.zrsText.visibility = View.GONE
+            holder.zgfText.visibility = View.GONE
+            holder.zdfext.visibility = View.GONE
+
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -198,11 +244,19 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
             return ViewHolder(v = view)
         }
 
-        override fun getItemCount(): Int = dataList?.size ?: 0
+        override fun getItemCount(): Int = dataList.size
 
         inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+            val kcmText : TextView = v.findViewById(R.id.kcm) // 课程名
             val cjText : TextView = v.findViewById(R.id.cj) // 成绩
+            val pscjText : TextView = v.findViewById(R.id.pscj) // 平时成绩
+            val qmcjText : TextView = v.findViewById(R.id.qmcj) // 期末成绩
             val jdText : TextView = v.findViewById(R.id.jd) // 绩点
+            val ddText : TextView = v.findViewById(R.id.dd) // 等第
+            val zgfText : TextView = v.findViewById(R.id.zgf) // 等第
+            val zdfext : TextView = v.findViewById(R.id.zdf) // 等第
+            val pmText : TextView = v.findViewById(R.id.pm) // 排名
+            val zrsText : TextView = v.findViewById(R.id.zrs) // 总人数
         }
     }
 
