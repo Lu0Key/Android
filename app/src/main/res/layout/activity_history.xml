@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/colorThemeGrey"
-    tools:context=".ui.activity.ExamActivity">
+    tools:context=".ui.activity.HistoryActivity">
 
 
     <LinearLayout

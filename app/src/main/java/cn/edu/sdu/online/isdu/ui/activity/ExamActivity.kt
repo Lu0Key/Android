@@ -2,8 +2,10 @@ package cn.edu.sdu.online.isdu.ui.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.FileUriExposedException
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +14,15 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.Exam
+import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
+import cn.edu.sdu.online.isdu.util.FileUtil
+import cn.edu.sdu.online.isdu.util.Logger
 import kotlinx.android.synthetic.main.activity_exam.*
+import org.json.JSONArray
+import org.json.JSONObject
 
 /**
  ****************************************************
@@ -37,6 +47,8 @@ class ExamActivity : SlideActivity(), View.OnClickListener {
 
         initView()
         initRecyclerView()
+
+        getData()
     }
 
     private fun initView() {
@@ -55,16 +67,76 @@ class ExamActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun initRecyclerView() {
-        dataList.add(Exam("2018年07月06日", "8:30-10:30", "软件园5区108d", "笔试：%", "闭卷", "大学物理（2）"))
-        dataList.add(Exam("2018年07月04日", "8:30-10:30", "软件园1区108d", "笔试：%", "闭卷", "高等数学（2）"))
-        dataList.add(Exam("2018年07月06日", "8:30-10:30", "软件园5区108d", "笔试：%", "闭卷", "大学物理（2）"))
-        dataList.add(Exam("2018年07月04日", "8:30-10:30", "软件园1区108d", "笔试：%", "闭卷", "高等数学（2）"))
-        dataList.add(Exam("2018年07月06日", "8:30-10:30", "软件园5区108d", "笔试：%", "闭卷", "大学物理（2）"))
-        dataList.add(Exam("2018年07月04日", "8:30-10:30", "软件园1区108d", "笔试：%", "闭卷", "高等数学（2）"))
-
         mAdapter = MyAdapter(dataList)
         recyclerView!!.layoutManager = LinearLayoutManager(this)
         recyclerView!!.adapter = mAdapter
+    }
+
+    private fun getData() {
+        if (User.staticUser == null) User.staticUser = User.load()
+        NetworkAccess.cache(ServerInfo.getExamUrl(User.staticUser.uid)) { success, cachePath ->
+            if (success) {
+                val jsonString = FileUtil.getStringFromFile(cachePath)
+                if (jsonString != null && jsonString.trim() != "") {
+                    try {
+                        val jsonObject = JSONObject(jsonString)
+
+                        if (jsonObject.getString("status") == "success") {
+
+                            dataList.clear()
+
+                            val exams = jsonObject.getJSONObject("obj")
+//                            for (i in 0 until exams.length()) {
+                                // 期末考试、形势政策考试……
+                            val examNames = exams.names()
+                            for (j in 0 until examNames.length()) {
+                                // 获取期末考试、形势政策考试的JSONArray
+
+                                val obj = exams.getJSONArray(examNames.getString(j))
+
+                                for (k in 0 until obj.length()) {
+                                    val exam = obj.getJSONObject(k)
+                                    // 获取每场考试内容
+                                    dataList.add(Exam(
+                                            exam.getString("examDate"),
+                                            exam.getString("examTime"),
+                                            exam.getString("examRoom"),
+                                            exam.getString("resultComposition"),
+                                            exam.getString("examMethod"),
+                                            exam.getString("courseName")
+                                    ))
+                                }
+
+                            }
+//                            }
+
+                            runOnUiThread {
+                                mAdapter!!.notifyDataSetChanged()
+                            }
+
+                        } else {
+                            val dialog = AlertDialog(this@ExamActivity)
+                            dialog.setTitle("无信息")
+                            dialog.setMessage("没有查询到考试安排\n╮(╯▽╰)╭")
+                            dialog.setPositiveButton("返回") {
+                                dialog.dismiss()
+                                finish()
+                            }
+                            dialog.setNegativeButton(null, null)
+                            dialog.setCancelable(false)
+                            dialog.setCancelOnTouchOutside(false)
+                            dialog.show()
+                            throw Exception("No valid data is received in ExamActivity!")
+                        }
+
+                    } catch (e: Exception) {
+                        Logger.log(e)
+                    }
+                } else {
+
+                }
+            }
+        }
     }
 
     class MyAdapter(private val dataList: List<Exam>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {

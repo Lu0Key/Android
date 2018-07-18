@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/colorThemeGrey"
-    tools:context=".ui.activity.StudyRoomActivity">
+    tools:context=".ui.activity.CreateScheduleActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".app.MyApplication"
@@ -62,11 +63,13 @@
         <activity android:name=".ui.activity.HistoryActivity" />
         <activity android:name=".ui.activity.ViewImageActivity" />
         <activity android:name=".ui.activity.SearchActivity" />
-        <activity android:name=".ui.activity.SearchBookActivity"/>
+        <activity android:name=".ui.activity.SearchBookActivity" />
         <activity android:name=".ui.activity.MessageActivity" />
         <activity android:name=".ui.activity.NewsActivity" />
-        <activity android:name=".ui.activity.DownloadActivity"
-            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".ui.activity.DownloadActivity"
+            android:launchMode="singleInstance" />
+
         <receiver android:name=".util.broadcast.DownloadBroadcastReceiver">
             <intent-filter>
                 <action android:name="download_open" />
@@ -76,6 +79,7 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".ui.activity.CreatePostActivity" />
     </application>
 
 </manifest>

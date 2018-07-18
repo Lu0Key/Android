@@ -7,9 +7,14 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -124,9 +129,20 @@ public class NetworkAccess {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
-                    FileWriter fw = new FileWriter(cacheFile);
-                    fw.write(response.body().string());
-                    fw.close();
+                    InputStream is = response.body().byteStream();
+                    BufferedInputStream bis = new BufferedInputStream(is);
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cacheFile));
+
+                    int len = 0;
+                    byte[] b = new byte[2048];
+                    while ((len = bis.read(b)) > 0) {
+                        bos.write(b, 0, len);
+                    }
+
+                    bos.flush();
+                    bos.close();
+                    bis.close();
+                    is.close();
                     if (listener != null)
                         listener.onFinish(true, cacheFile.getAbsolutePath());
                 } catch (Exception e) {
@@ -137,6 +153,13 @@ public class NetworkAccess {
 
     }
 
+    /**
+     * 获取网页JSON中的某个Key的值并缓存这个值
+     *
+     * @param url URL地址
+     * @param key 需要查询的Key
+     * @param listener 返回监听器
+     */
     public static void cache(String url, final String key, @Nullable final OnCacheFinishListener listener) {
         File cacheDir = new File(Environment.getExternalStorageDirectory() + "/iSDU/cache");
         if (!cacheDir.exists()) {
@@ -227,7 +250,6 @@ public class NetworkAccess {
         }
 
         // 构建缓存文件结束
-
         List<String> keys = new ArrayList<>();
         keys.add("startPos");
         List<String> values = new ArrayList<>();

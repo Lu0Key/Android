@@ -134,7 +134,9 @@ class NewsActivity : SlideActivity() {
         textView.setTextColor((0xFF131313).toInt())
         textView.setOnClickListener {
             Toast.makeText(this, "开始下载 $name", Toast.LENGTH_SHORT).show()
-            DownloadItem(url).startDownload()
+            val item = DownloadItem(url)
+            item.fileName = name
+            item.startDownload()
         }
 
         textView.layoutParams = params

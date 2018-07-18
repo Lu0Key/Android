@@ -1,5 +1,16 @@
 package cn.edu.sdu.online.isdu.bean;
 
+import android.util.Log;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.edu.sdu.online.isdu.util.Logger;
+
 /**
  * @author Cola_Mentos
  * @date 2018/7/11
@@ -8,6 +19,7 @@ package cn.edu.sdu.online.isdu.bean;
 public class Grade {
 
     /**
+     * kcm:课程名称
      * pscj:平时成绩
      * qmcj:期末成绩
      * cj:成绩
@@ -19,22 +31,33 @@ public class Grade {
      * dd:等第
      */
 
-    private double pscj, qmcj, cj, jd, zgf, zdf;
-    private int pm, zrs;
-    private String dd;
+    private double  jd, xf;
+    private int pm, zrs, kxh;
+    private String dd,kcm,cj, zgf, zdf, pscj, qmcj;
+    public static double zjd=0,zxf=0,zfz=0;
+    public static double[] z_jd = new double[10];
+    public static double[] z_xf = new double[10];
+    public static double[] z_fz = new double[10];
 
-    public Grade() {
+
+
+    public Grade(){
+
     }
 
-    public void setPscj(double pscj) {
+    public void setPscj(String pscj) {
         this.pscj = pscj;
     }
 
-    public void setQmcj(double qmcj) {
+    public void setKxh(int kxh) {
+        this.kxh = kxh;
+    }
+
+    public void setQmcj(String qmcj) {
         this.qmcj = qmcj;
     }
 
-    public void setCj(double cj) {
+    public void setCj(String cj) {
         this.cj = cj;
     }
 
@@ -42,11 +65,11 @@ public class Grade {
         this.jd = jd;
     }
 
-    public void setZgf(double zgf) {
+    public void setZgf(String zgf) {
         this.zgf = zgf;
     }
 
-    public void setZdf(double zdf) {
+    public void setZdf(String zdf) {
         this.zdf = zdf;
     }
 
@@ -62,15 +85,17 @@ public class Grade {
         this.dd = dd;
     }
 
-    public double getPscj() {
+    public void setKcm(String kcm) { this.kcm = kcm; }
+
+    public String getPscj() {
         return pscj;
     }
 
-    public double getQmcj() {
+    public String getQmcj() {
         return qmcj;
     }
 
-    public double getCj() {
+    public String getCj() {
         return cj;
     }
 
@@ -78,11 +103,11 @@ public class Grade {
         return jd;
     }
 
-    public double getZdf() {
+    public String getZdf() {
         return zdf;
     }
 
-    public double getZgf() {
+    public String getZgf() {
         return zgf;
     }
 
@@ -98,4 +123,92 @@ public class Grade {
         return dd;
     }
 
+    public String getKcm() { return kcm; }
+
+    public int getKxh() {
+        return kxh;
+    }
+
+    public static List<Grade> loadFromString(String json){
+        List<Grade> list = new ArrayList<>();
+        Grade grade;
+        try{
+            JSONObject jsonObject = new JSONObject(json);
+            zfz=0;
+            zxf=0;
+            zjd=0;
+            if (jsonObject.getJSONArray("obj") != null
+                    && jsonObject.getJSONArray("obj").length() > 0){
+                JSONArray jsonArray = jsonObject.getJSONArray("obj");
+                for (int i = 0;i < jsonArray.length();++i){
+                    grade = new Grade();
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    grade.kcm = obj.getString("kcm");
+                    grade.cj = obj.getString("cj");
+                    grade.zgf = obj.getString("zgf");
+                    grade.jd = obj.getDouble("wfzjd");
+                    grade.dd = obj.getString("wfzdj");
+                    grade.zdf = obj.getString("zdf");
+                    grade.pm = obj.getInt("pm");
+                    grade.zrs = obj.getInt("xkrs");
+                    grade.xf = obj.getDouble("xf");
+                    grade.pscj = !obj.isNull("psjc") ? obj.getString("psjc") : "";
+                    grade.qmcj = !obj.isNull("qmcj") ? obj.getString("qmcj") : "";
+                    grade.kxh = obj.getInt("kxh");
+                    if (grade.kxh < 600) {
+                        zfz += grade.xf*grade.jd;
+                        zxf += grade.xf;
+                    }
+                    zjd = zfz/zxf;
+                    list.add(grade);
+                }
+            }
+
+        }catch (Exception e){
+            Logger.log(e);
+        }
+        return list;
+    }
+
+    public static List<Grade> pastGradeLoadFromString(String json,int term){
+        List<Grade> list = new ArrayList<>();
+        Grade grade;
+        try{
+            JSONObject jsonObject = new JSONObject(json);
+            z_fz[term] = 0;
+            z_xf[term] = 0;
+            z_jd[term] = 0;
+            if (jsonObject.getJSONArray("obj") != null
+                    && jsonObject.getJSONArray("obj").length() > 0){
+                JSONArray jsonArray = jsonObject.getJSONArray("obj");
+                for (int i = 0;i < jsonArray.length();++i){
+                    grade = new Grade();
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    grade.kcm = obj.getString("kcm");
+                    grade.cj = obj.getString("kscj");
+                    grade.zgf = "";
+                    grade.jd = obj.getDouble("wfzjd");
+                    grade.dd = obj.getString("wfzdj");
+                    grade.zdf = "";
+                    grade.pm = 0;
+                    grade.zrs = 0;
+                    grade.xf = obj.getDouble("xf");
+                    grade.pscj = !obj.isNull("pscj") ? obj.getString("pscj") : "";
+                    grade.qmcj = !obj.isNull("qmcj") ? obj.getString("qmcj") : "";
+                    grade.kxh = obj.getInt("kxh");
+
+                    if (grade.kxh < 600) {
+                        z_fz[term] += grade.xf*grade.jd;
+                        z_xf[term] += grade.xf;
+                    }
+                    z_jd[term] = z_xf[term] == 0 ? 0 : z_fz[term]/z_xf[term];
+                    list.add(grade);
+                }
+            }
+
+        }catch (Exception e){
+            Logger.log(e);
+        }
+        return list;
+    }
 }

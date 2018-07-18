@@ -22,6 +22,7 @@ import cn.edu.sdu.online.isdu.net.AccountOp
 import cn.edu.sdu.online.isdu.ui.activity.*
 import cn.edu.sdu.online.isdu.ui.design.button.ImageButton
 import cn.edu.sdu.online.isdu.util.ImageManager
+import cn.edu.sdu.online.isdu.util.Logger
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_me.*
 import java.io.Serializable

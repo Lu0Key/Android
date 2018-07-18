@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import cn.edu.sdu.online.isdu.net.ServerInfo;
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess;
+import cn.edu.sdu.online.isdu.util.EnvVariables;
 import cn.edu.sdu.online.isdu.util.Logger;
 import cn.edu.sdu.online.isdu.util.ScheduleTime;
 import okhttp3.Call;
@@ -27,7 +29,7 @@ import okhttp3.Response;
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/7/7
+ * Last Modify Time: 2018/7/18
  *
  * 日程的Java Bean
  ****************************************************
@@ -36,10 +38,10 @@ import okhttp3.Response;
 public class Schedule implements Parcelable {
 
     public static final int[] defaultScheduleColor = new int[] {
-        0xFF7F66, 0xFFCC66, 0x66E6FF, 0x7F66FF, 0xFF2970, 0x00EB9C
+        0xFFFF7F66, 0xFFFFCC66, 0xFF66E6FF, 0xFF7F66FF, 0xFFFF2970, 0xFF00EB9C
     }; // 默认提供的日程背景颜色
 
-    public static final int defaultScheduleTextColor = 0xFFFFFF;
+    public static final int defaultScheduleTextColor = 0xFFFFFFFF;
 
     public static List<List<List<Schedule>>> localScheduleList;
 
@@ -65,6 +67,8 @@ public class Schedule implements Parcelable {
     protected Schedule(Parcel in) {
         scheduleName = in.readString();
         scheduleLocation = in.readString();
+        startTime = in.readParcelable(ScheduleTime.class.getClassLoader());
+        endTime = in.readParcelable(ScheduleTime.class.getClassLoader());
         scheduleColor = in.readInt();
         scheduleTextColor = in.readInt();
     }
@@ -156,6 +160,8 @@ public class Schedule implements Parcelable {
         dest.writeString(scheduleLocation);
         dest.writeInt(scheduleColor);
         dest.writeInt(scheduleTextColor);
+        dest.writeParcelable(startTime, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+        dest.writeParcelable(endTime, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
     }
 
     /**
@@ -172,7 +178,7 @@ public class Schedule implements Parcelable {
         SharedPreferences sp = context.getSharedPreferences("schedule_list", Context.MODE_PRIVATE);
         String jsonString = sp.getString("schedules", "");
         if (jsonString.equals("")) {
-            loadFromNet(context);
+//            loadFromNet(context);
             return new ArrayList<>();
         }
         return load(jsonString);
@@ -237,24 +243,6 @@ public class Schedule implements Parcelable {
         }
     }
 
-    /**
-     * 从网络读取日程
-     */
-    private static void loadFromNet(final Context context) {
-        NetworkAccess.buildRequest(ServerInfo.url,
-                new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        Logger.log(e);
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        localScheduleList = load(response.body().string());
-                        save(context);
-                    }
-                });
-    }
 
     public static String parse() {
         try {
@@ -304,6 +292,128 @@ public class Schedule implements Parcelable {
                 context.getSharedPreferences("schedule_list", Context.MODE_PRIVATE).edit();
         editor.putString("schedules", parse());
         editor.apply();
+    }
+
+
+    /*************************************
+     * 加载日程表
+     ************************************/
+    public static List<List<List<Schedule>>> loadCourse(JSONArray jsonArray) {
+        List<List<List<Schedule>>> list =
+                new ArrayList<>(); // 20周的总表
+
+        // 初始化
+        for (int i = EnvVariables.startWeek; i <= EnvVariables.endWeek; i++) {
+            // 第i周
+            List<List<Schedule>> listI = new ArrayList<>();
+            for (int j = 0; j < 7; j++) {
+                List<Schedule> listJ = new ArrayList<>();
+                listI.add(listJ);
+            }
+            list.add(listI);
+        }
+
+        List<Schedule> schedules = new ArrayList<>();
+        int colorId = 0;
+        for (int i = 0; i < jsonArray.length(); i++) { // 遍历每个课程
+            try {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                String courseName = obj.getString("courseName") + "(" + obj.getString("teacher") + ")";
+                String week = obj.getString("week");
+                int weekDay = obj.getInt("weekday");
+                int courseOrder = obj.getInt("courseOrder");
+                String location = obj.getString("room");
+
+                Schedule schedule = new Schedule(courseName, location, getCourseStartTime(courseOrder),
+                        getCourseEndTime(courseOrder), RepeatType.WEEKLY);
+
+                // 确定日程颜色
+                boolean flag = false;
+                for (Schedule s : schedules) {
+                    if (s.getScheduleName().equals(courseName) && s.getScheduleLocation().equals(location)) {
+                        flag = true;
+                        schedule.setScheduleColor(s.scheduleColor);
+                        schedule.setScheduleTextColor(s.scheduleTextColor);
+                    }
+                }
+
+                if (!flag) {
+                    schedule.setScheduleColor(defaultScheduleColor[colorId]);
+                    schedule.setScheduleTextColor(defaultScheduleTextColor);
+                    colorId = (colorId + 1) % defaultScheduleColor.length;
+                }
+                schedules.add(schedule);
+
+                int startWeek = EnvVariables.startWeek;
+                int endWeek = week.lastIndexOf('1') + 1;
+                for (int j = 0; j < week.length(); j++) {
+                    if (week.charAt(j) == '1') {
+                        schedule.repeatWeeks.add(j + 1);
+                    }
+                }
+
+                for (int j = startWeek; j <= endWeek; j++) {
+                    list.get(j - 1).get(weekDay - 1).add(schedule);
+                }
+
+            } catch (JSONException e) {
+                Logger.log(e);
+            }
+        }
+
+
+
+        return list;
+    }
+
+    private static ScheduleTime getCourseStartTime(int order) {
+        switch (order) {
+            case 1:
+                return new ScheduleTime(8, 0);
+            case 2:
+                return new ScheduleTime(10, 10);
+            case 3:
+                if (EnvVariables.lessonDelay)
+                    return new ScheduleTime(14, 0);
+                else
+                    return new ScheduleTime(13, 30);
+            case 4:
+                if (EnvVariables.lessonDelay)
+                    return new ScheduleTime(16, 10);
+                else
+                    return new ScheduleTime(15, 40);
+            case 5:
+            default:
+                if (EnvVariables.lessonDelay)
+                    return new ScheduleTime(18, 30);
+                else
+                    return new ScheduleTime(19, 0);
+        }
+    }
+
+    private static ScheduleTime getCourseEndTime(int order) {
+        switch (order) {
+            case 1:
+                return new ScheduleTime(9, 50);
+            case 2:
+                return new ScheduleTime(12, 0);
+            case 3:
+                if (EnvVariables.lessonDelay)
+                    return new ScheduleTime(15, 50);
+                else
+                    return new ScheduleTime(15, 20);
+            case 4:
+                if (EnvVariables.lessonDelay)
+                    return new ScheduleTime(18, 0);
+                else
+                    return new ScheduleTime(17, 30);
+            case 5:
+            default:
+                if (EnvVariables.lessonDelay)
+                    return new ScheduleTime(20, 20);
+                else
+                    return new ScheduleTime(20, 50);
+        }
     }
 
 }

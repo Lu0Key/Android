@@ -107,7 +107,7 @@ public class AccountOp {
         try {
             if (jsonObject.isNull("status") || !jsonObject.getString("status").equals("failed")) {
 
-                User.staticUser.setStudentNumber(jsonObject.getString("studentNumber"));
+                User.staticUser.setStudentNumber(jsonObject.getString("studentnumber"));
                 User.staticUser.setPasswordMD5(jsonObject.getString("j_password"));
                 User.staticUser.setNickName(jsonObject.getString("nickname"));
                 User.staticUser.setName(jsonObject.getString("name"));
@@ -148,7 +148,7 @@ public class AccountOp {
      * 同步他人用户
      */
     public static void getUserInformation(final int id) {
-        NetworkAccess.buildRequest(ServerInfo.getUserInfo(id + "", "nickname-sign-studentNumber-gender"), new Callback() {
+        NetworkAccess.buildRequest(ServerInfo.getUserInfo(id + "", "id-nickname-sign-studentnumber-gender"), new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Logger.log(e);
