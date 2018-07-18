@@ -47,9 +47,9 @@ class SearchUserFragment : Fragment() {
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = mAdapter
     }
-    fun initData(user : User){
+    fun initData(list : List<User>){
         dataList.clear()
-        dataList.add(user)
+        dataList.addAll(list)
     }
     fun refresh(){
         mAdapter!!.notifyDataSetChanged()
@@ -62,6 +62,10 @@ class SearchUserFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        dataList.clear()
+    }
 
     inner class MyAdapter(mDataList: List<User>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
@@ -86,7 +90,6 @@ class SearchUserFragment : Fragment() {
             }
             holder.itemLayout!!.setOnClickListener {
                 Log.i("id",user.studentNumber)
-                user.save(this@SearchUserFragment.activity)
                 startActivity(Intent(context, MyHomePageActivity::class.java).putExtra("id", user.uid))
             }
         }

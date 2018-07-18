@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
@@ -20,6 +21,7 @@ import cn.edu.sdu.online.isdu.ui.fragments.search.SearchNewsFragment
 import cn.edu.sdu.online.isdu.ui.fragments.search.SearchPostFragment
 import cn.edu.sdu.online.isdu.ui.fragments.search.SearchUserFragment
 import cn.edu.sdu.online.isdu.util.Logger
+import com.alibaba.fastjson.JSONPObject
 import kotlinx.android.synthetic.main.activity_download.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -33,6 +35,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorT
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 
@@ -98,10 +101,13 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                     }
                     1 -> {
                         (mFragments[1]as SearchNewsFragment ).initData()
+
                     }
                     2 -> {
                         if(editSearch!!.text!=null){
-                            val url = ServerInfo.searchUser(editSearch!!.text.toString())
+                            var list: MutableList<User> = ArrayList<User>()
+                            var idflag: Boolean = false
+                            var url = ServerInfo.searchUser(editSearch!!.text.toString())
                             NetworkAccess.buildRequest(url, object : Callback {
                                 override fun onFailure(call: Call?, e: IOException?) {
                                     runOnUiThread {
@@ -114,18 +120,57 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                                     try {
                                         val jsonObj = JSONObject(json)
                                         if (!jsonObj.isNull("status") && jsonObj.getString("status") == "failed") {
+                                            idflag=false
+                                        } else {
+                                            val user = User()
+                                            user.avatarString = jsonObj.getString("avatar")
+                                            user.nickName = jsonObj.getString("nickname")
+                                            user.selfIntroduce = jsonObj.getString("sign")
+                                            user.studentNumber=jsonObj.getString("studentnumber")
+                                            user.uid=jsonObj.getInt("id")
+                                            idflag=true
+                                            list.add(user)
+                                            Log.w("sn",list[0].studentNumber)
+                                        }
+                                    } catch (e: Exception) {
+                                        Logger.log(e)
+                                        runOnUiThread {
+                                            Toast.makeText(this@SearchActivity, "网络错误\n服务器无响应", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+                            })
+                            url = ServerInfo.searchUserbyNickName(editSearch!!.text.toString())
+                            NetworkAccess.buildRequest(url, object : Callback {
+                                override fun onFailure(call: Call?, e: IOException?) {
+                                    runOnUiThread {
+                                        Logger.log(e)
+                                        Toast.makeText(this@SearchActivity, "网络错误", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                override fun onResponse(call: Call?, response: Response?) {
+                                    val json = response?.body()?.string()
+                                    try {
+                                        if (json!!.equals("[]")&&!idflag) {
                                             runOnUiThread {
                                                 Toast.makeText(this@SearchActivity, "用户不存在", Toast.LENGTH_SHORT).show()
                                             }
                                         } else {
-                                            val user = User()
-                                            user!!.avatarString = jsonObj.getString("avatar")
-                                            user!!.nickName = jsonObj.getString("nickname")
-                                            user!!.selfIntroduce = jsonObj.getString("sign")
-                                            user!!.studentNumber=jsonObj.getString("studentnumber")
-                                            user!!.uid=jsonObj.getInt("id")
+                                            val jsonArray = JSONArray(json)
+                                            for (k in 0 until jsonArray.length()) {
+                                                val obj = jsonArray.getJSONObject(k)
+                                                // 获取每场考试内容
+                                                val item = User(
+                                                        obj.getString("nickname"),
+                                                        obj.getString("studentnumber"),
+                                                        obj.getString("avatar"),
+                                                        obj.getString("sign"),
+                                                        obj.getInt("id")
+                                                )
+                                                list.add(item)
+                                            }
                                             runOnUiThread {
-                                                (mFragments[2]as SearchUserFragment ).initData(user)
+                                                (mFragments[2]as SearchUserFragment ).initData(list)
                                                 viewPager!!.adapter!!.notifyDataSetChanged()
                                                 (mFragments[2]as SearchUserFragment ).refresh()
                                             }
@@ -208,3 +253,4 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
         }
     }
 }
+

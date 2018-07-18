@@ -46,6 +46,14 @@ public class User extends LitePalSupport {
 
     public User() {}
 
+    public User(String nickName, String studentNumber, String avatarString, String selfIntroduce, int uid) {
+        this.nickName = nickName;
+        this.studentNumber = studentNumber;
+        this.avatarString = avatarString;
+        this.selfIntroduce = selfIntroduce;
+        this.uid = uid;
+    }
+
     /**
      * 加载本地用户信息
      * @return Local user information
