@@ -39,6 +39,7 @@ class FeedbackActivity : SlideActivity(), View.OnClickListener{
         setContentView(R.layout.activity_feedback)
         initView()
     }
+
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.btn_back -> {

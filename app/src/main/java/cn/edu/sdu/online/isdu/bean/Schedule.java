@@ -19,6 +19,7 @@ import java.util.List;
 import cn.edu.sdu.online.isdu.net.ServerInfo;
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess;
 import cn.edu.sdu.online.isdu.util.EnvVariables;
+import cn.edu.sdu.online.isdu.util.FileUtil;
 import cn.edu.sdu.online.isdu.util.Logger;
 import cn.edu.sdu.online.isdu.util.ScheduleTime;
 import okhttp3.Call;
@@ -178,7 +179,7 @@ public class Schedule implements Parcelable {
         SharedPreferences sp = context.getSharedPreferences("schedule_list", Context.MODE_PRIVATE);
         String jsonString = sp.getString("schedules", "");
         if (jsonString.equals("")) {
-//            loadFromNet(context);
+            loadFromNet(context);
             return new ArrayList<>();
         }
         return load(jsonString);
@@ -243,6 +244,25 @@ public class Schedule implements Parcelable {
         }
     }
 
+    public static void loadFromNet(final Context context) {
+        if (User.staticUser == null) User.staticUser = User.load();
+        if (User.staticUser.getStudentNumber() != null)
+            NetworkAccess.cache(ServerInfo.getScheduleUrl(User.staticUser.getUid()),
+                    new NetworkAccess.OnCacheFinishListener() {
+                        @Override
+                        public void onFinish(boolean success, String cachePath) {
+                            if (success) {
+                                String jsonString = FileUtil.getStringFromFile(cachePath);
+                                try {
+                                    localScheduleList = loadCourse(new JSONObject(jsonString).getJSONArray("obj"));
+                                } catch (JSONException e) {
+                                    Logger.log(e);
+                                }
+                                save(context);
+                            }
+                        }
+                    });
+    }
 
     public static String parse() {
         try {

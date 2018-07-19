@@ -10,6 +10,8 @@ import android.view.View
 import android.widget.ImageView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.ui.fragments.GradeDetailFragment
 import cn.edu.sdu.online.isdu.ui.fragments.PastGradeDetailFragment
 import kotlinx.android.synthetic.main.activity_grade.*
@@ -41,6 +43,7 @@ class GradeActivity : SlideActivity() , View.OnClickListener {
     private val mFragments = listOf(GradeDetailFragment(), PastGradeDetailFragment()) // Fragment 数组
     private var mViewPagerAdapter: GradeActivity.FragAdapter? = null // ViewPager适配器
     private var btnBack : ImageView ?= null
+    private var progressDialog : ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +52,10 @@ class GradeActivity : SlideActivity() , View.OnClickListener {
         initView()
         initFragments()
         initIndicator()
+
     }
+
+
 
     /**
      * 初始化view
@@ -62,6 +68,7 @@ class GradeActivity : SlideActivity() , View.OnClickListener {
 
         btnBack!!.setOnClickListener(this)
         viewPager!!.offscreenPageLimit = mDataList.size // 设置ViewPager的预加载页面数量，防止销毁
+
 
     }
 

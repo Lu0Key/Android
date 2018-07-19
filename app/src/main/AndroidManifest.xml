@@ -20,7 +20,7 @@
         <activity
             android:name=".ui.activity.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/FullscreenTheme">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -58,7 +58,7 @@
         <activity android:name=".ui.activity.LoginActivity" />
         <activity android:name=".ui.activity.ScheduleDetailActivity" />
         <activity android:name=".ui.activity.CreateScheduleActivity" />
-        <activity android:name=".ui.activity.SchoolBusTable" />
+        <activity android:name=".ui.activity.SchoolBusTableActivity" />
         <activity android:name=".ui.activity.FeedbackActivity" />
         <activity android:name=".ui.activity.HistoryActivity" />
         <activity android:name=".ui.activity.ViewImageActivity" />
@@ -80,6 +80,8 @@
         </receiver>
 
         <activity android:name=".ui.activity.CreatePostActivity" />
+        <activity android:name=".ui.activity.StudyRoomTableActivity" />
+        <activity android:name=".ui.activity.PostDetailActivity"></activity>
     </application>
 
 </manifest>

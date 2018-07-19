@@ -55,7 +55,7 @@ dependencies {
         exclude group: "com.android.support"
     }
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
-    implementation 'com.youngfeng.android:snake:0.3.2'
+    implementation 'com.youngfeng.android:snake:0.3.0'
     annotationProcessor 'com.youngfeng.android:snake-compiler:0.3.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
 }

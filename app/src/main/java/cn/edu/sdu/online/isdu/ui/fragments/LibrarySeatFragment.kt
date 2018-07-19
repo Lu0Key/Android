@@ -3,15 +3,27 @@ package cn.edu.sdu.online.isdu.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.os.NetworkOnMainThreadException
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.LibrarySeat
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.button.LibraryRadioImageButton
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
+import cn.edu.sdu.online.isdu.util.Logger
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import org.json.JSONArray
+import java.io.IOException
 
 /**
  ****************************************************
@@ -29,6 +41,9 @@ class LibrarySeatFragment : Fragment() {
     private var recyclerView: RecyclerView ?= null
     private var adapter: LibrarySeatFragment.MyAdapter? = null
     private val dataList: MutableList<LibrarySeat> = java.util.ArrayList()
+    private val libraries = listOf("zxwl", "zxjz", "hjl", "btq", "qfsfg", "xls")
+
+    private var dialog: ProgressDialog? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -51,19 +66,74 @@ class LibrarySeatFragment : Fragment() {
 
         for (i in 0..5) {
             radioButtons[i].setOnClickListener {
-                if (radioButtons[i].isSelected)
+                if (radioButtons[i].isSelected) {
                     cancelAllClick()
-                else {
+                    dataList.clear()
+                    adapter?.notifyDataSetChanged()
+                } else {
                     cancelAllClick()
                     radioButtons[i].isSelected = true
+
+                    getData(i)
                 }
             }
         }
+
     }
 
     private fun cancelAllClick() {
         for (i in 0..5)
             radioButtons[i].isSelected = false
+    }
+
+    private fun getData(index: Int) {
+        dialog = ProgressDialog(context, false)
+        dialog!!.setCancelable(false)
+        dialog!!.setMessage("正在查询")
+        dialog!!.show()
+
+        NetworkAccess.buildRequest(ServerInfo.getLibrarySearUrl(libraries[index]),
+                object : Callback {
+                    override fun onFailure(call: Call?, e: IOException?) {
+                        Logger.log(e)
+                        activity?.runOnUiThread {
+                            dialog?.dismiss()
+                            dataList.clear()
+                            adapter?.notifyDataSetChanged()
+                        }
+                    }
+
+                    override fun onResponse(call: Call?, response: Response?) {
+                        activity?.runOnUiThread {
+                            dialog?.dismiss()
+                        }
+                        try {
+                            val jsonArray = JSONArray(response?.body()?.string())
+
+                            dataList.clear()
+
+                            for (i in 0 until jsonArray.length()) {
+                                val obj = jsonArray.getJSONObject(i)
+                                val seat = LibrarySeat()
+                                seat.free = obj.getInt("free")
+                                seat.used = obj.getInt("used")
+                                seat.room = obj.getString("room")
+
+                                dataList.add(seat)
+                            }
+
+                            activity?.runOnUiThread {
+                                adapter?.notifyDataSetChanged()
+                            }
+                        } catch (e: Exception) {
+                            Logger.log(e)
+                            activity?.runOnUiThread {
+                                dataList.clear()
+                                adapter?.notifyDataSetChanged()
+                            }
+                        }
+                    }
+                })
     }
 
     /**
@@ -86,7 +156,13 @@ class LibrarySeatFragment : Fragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             if (position == 0){
                 holder.line.visibility = View.GONE
-            }
+            } else holder.line.visibility = View.VISIBLE
+
+            val item = dataList!![position]
+
+            holder.room.text = item.room
+            holder.used.text = item.used.toString()
+            holder.free.text = item.free.toString()
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -96,10 +172,13 @@ class LibrarySeatFragment : Fragment() {
             return ViewHolder(v = view)
         }
 
-        override fun getItemCount(): Int = 3//dataList?.size ?: 0
+        override fun getItemCount(): Int = dataList?.size ?: 0
 
         inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-            val line : View = v.findViewById(R.id.line)
+            var line: View = v.findViewById(R.id.line)
+            var room: TextView = v.findViewById(R.id.place)
+            var used: TextView = v.findViewById(R.id.occupied_seats)
+            var free: TextView = v.findViewById(R.id.remain_seats)
         }
     }
 

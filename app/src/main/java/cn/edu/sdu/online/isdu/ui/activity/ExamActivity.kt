@@ -18,6 +18,7 @@ import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import kotlinx.android.synthetic.main.activity_exam.*
@@ -40,6 +41,8 @@ class ExamActivity : SlideActivity(), View.OnClickListener {
     private var mAdapter: MyAdapter? = null
     private var recyclerView: RecyclerView? = null
     private var btnBack: ImageView? = null
+
+    private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,8 +76,15 @@ class ExamActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun getData() {
+        dialog = ProgressDialog(this, false)
+        dialog!!.setMessage("正在加载")
+        dialog!!.setButton(null, null)
+        dialog!!.setCancelable(false)
+        dialog!!.show()
+
         if (User.staticUser == null) User.staticUser = User.load()
         NetworkAccess.cache(ServerInfo.getExamUrl(User.staticUser.uid)) { success, cachePath ->
+            dialog?.dismiss()
             if (success) {
                 val jsonString = FileUtil.getStringFromFile(cachePath)
                 if (jsonString != null && jsonString.trim() != "") {

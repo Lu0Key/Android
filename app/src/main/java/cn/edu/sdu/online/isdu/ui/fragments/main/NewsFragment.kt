@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.SearchActivity
@@ -34,7 +35,7 @@ import java.io.Serializable
  * 主页资讯碎片
  ****************************************************
  */
-class NewsFragment : Fragment(), Serializable {
+class NewsFragment : LazyLoadFragment(), Serializable {
 
     private var searchBar: View? = null
     private var viewPager: ViewPager? = null
@@ -54,7 +55,6 @@ class NewsFragment : Fragment(), Serializable {
         initFragments()
         initIndicator()
 
-        refresh()
         return view
     }
 
@@ -71,7 +71,7 @@ class NewsFragment : Fragment(), Serializable {
         }
     }
 
-    private fun refresh() {
+    override fun loadData() {
 
     }
 

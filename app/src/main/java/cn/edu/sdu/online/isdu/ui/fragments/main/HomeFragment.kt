@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager
 import android.view.*
 import android.widget.LinearLayout
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.ui.activity.CreatePostActivity
 import cn.edu.sdu.online.isdu.ui.activity.SearchActivity
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -34,7 +35,7 @@ import java.io.Serializable
  ****************************************************
  */
 
-class HomeFragment : Fragment(), Serializable, View.OnClickListener {
+class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
 
     private var searchBar: View? = null // 搜索框
     private var askBar: View? = null // 提问框
@@ -121,6 +122,10 @@ class HomeFragment : Fragment(), Serializable, View.OnClickListener {
     private fun initFragments() {
         mViewPagerAdapter = FragAdapter(childFragmentManager, mFragments)
         viewPager!!.adapter = mViewPagerAdapter
+    }
+
+    override fun loadData() {
+
     }
 
     /**
