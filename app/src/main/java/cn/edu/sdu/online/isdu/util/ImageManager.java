@@ -54,7 +54,7 @@ public class ImageManager {
     public void captureByCamera(Activity activity) {
         initCrop(activity);
         // 构建图片缓存文件
-        File thumb = new File(activity.getCacheDir().getAbsolutePath() + "/thumb/" +
+        File thumb = new File(Environment.getExternalStorageDirectory() + "/iSDU/thumb/" +
             System.currentTimeMillis() + ".jpg");
         if (!thumb.exists()) {
             if (!thumb.getParentFile().exists()) thumb.getParentFile().mkdirs();
@@ -101,11 +101,16 @@ public class ImageManager {
 
     private void initCrop(Context context) {
         //获取打开文件的URI
-        File croppedImage = new File(context.getCacheDir().getAbsolutePath() + "/thumb/" +
+        File croppedImage = new File(Environment.getExternalStorageDirectory() + "/iSDU/thumb/" +
                 System.currentTimeMillis() + "_c.jpg");
 
         if (!croppedImage.exists()) {
             if (!croppedImage.getParentFile().exists()) croppedImage.getParentFile().mkdirs();
+            try {
+                croppedImage.createNewFile();
+            } catch (IOException e) {
+                Logger.log(e);
+            }
         }
 
         if (Build.VERSION.SDK_INT >= 24) {
@@ -175,7 +180,7 @@ public class ImageManager {
     public void openCrop(Activity activity) {
         UCrop.of(fromUri, destUri)
                 .withAspectRatio(1, 1)
-                .withMaxResultSize(320, 320)
+                .withMaxResultSize(640, 640)
                 .start(activity);
     }
 

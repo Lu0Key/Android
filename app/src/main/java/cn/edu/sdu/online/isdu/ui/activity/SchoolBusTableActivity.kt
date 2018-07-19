@@ -14,6 +14,7 @@ import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.Bus
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.Logger
 import kotlinx.android.synthetic.main.activity_school_bus_table.*
 import okhttp3.Call
@@ -44,11 +45,14 @@ class SchoolBusTableActivity : SlideActivity() ,View.OnClickListener{
     private val dataList: MutableList<Bus> = ArrayList()
     private var textView : TextView ?= null
 
+    private var dialog: ProgressDialog? = null
+
     private val xqName = arrayOf("","中心校区","洪家楼校区","趵突泉校区","软件园校区","兴隆山校区","千佛山校区")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_school_bus_table)
+
         initView()
 
         getData()
@@ -73,13 +77,20 @@ class SchoolBusTableActivity : SlideActivity() ,View.OnClickListener{
     }
 
     private fun getData() {
+        dialog = ProgressDialog(this, false)
+        dialog!!.setMessage("正在加载")
+        dialog!!.setButton(null, null)
+        dialog!!.setCancelable(false)
+        dialog!!.show()
         NetworkAccess.buildRequest(ServerInfo.getSchoolBusUrl(xqName[fromP!!], xqName[toP!!], searchNum!!),
                 object : Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
+                        dialog?.dismiss()
                         Logger.log(e)
                     }
 
                     override fun onResponse(call: Call?, response: Response?) {
+                        dialog?.dismiss()
                         try {
                             val jsonString = response?.body()?.string()
                             if (jsonString == null || jsonString == "[]") {

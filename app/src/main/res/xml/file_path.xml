@@ -4,4 +4,7 @@
     <external-files-path
         name="Download"
         path="" />
+    <root-path
+        name="root-path"
+        path="/" />
 </paths>

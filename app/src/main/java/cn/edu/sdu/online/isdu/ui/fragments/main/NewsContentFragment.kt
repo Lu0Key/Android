@@ -28,6 +28,7 @@ class NewsContentFragment : LazyLoadFragment() {
     private var index = 0
     private var dataList: MutableList<News> = ArrayList()
     private var adapter: MyAdapter? = null
+    private var blankView: TextView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_news_content, container, false)
@@ -39,6 +40,7 @@ class NewsContentFragment : LazyLoadFragment() {
 
     private fun initView(view: View) {
         recyclerView = view.findViewById(R.id.recycler_view)
+        blankView = view.findViewById(R.id.blank_view)
 
         initRecyclerView()
     }
@@ -80,6 +82,7 @@ class NewsContentFragment : LazyLoadFragment() {
     }
 
     override fun publishData() {
+        blankView?.visibility = View.GONE
         adapter!!.notifyDataSetChanged()
     }
 
