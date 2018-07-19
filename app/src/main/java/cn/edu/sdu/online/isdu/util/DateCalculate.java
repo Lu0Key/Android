@@ -26,5 +26,4 @@ public class DateCalculate {
         return date;
     }
 
-
 }
