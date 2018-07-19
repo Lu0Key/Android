@@ -153,6 +153,77 @@ public class NetworkAccess {
     }
 
     /**
+     * 成绩专用
+     * @param url
+     * @param listener
+     */
+    public static void cacheGrade(String url, @Nullable final OnCacheFinishListener listener) {
+        File cacheDir = new File(Environment.getExternalStorageDirectory() + "/iSDU/cache");
+        if (!cacheDir.exists()) {
+            if (!cacheDir.getParentFile().exists()) cacheDir.getParentFile().mkdirs();
+            cacheDir.mkdir();
+        }
+
+        String s = (url.substring((ServerInfo.url).length(), url.length()));
+        char[] chars = s.toLowerCase().toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '/')
+                chars[i] = '_';
+            if (chars[i] == '?')
+                chars[i] = '.';
+            if (chars[i] == '&')
+                chars[i] = '_';
+        }
+
+
+        final File cacheFile = new File(cacheDir.getAbsolutePath() + "/" + new String(chars));
+
+        if (cacheFile.exists()) {
+            if (listener != null)
+                listener.onFinish(true, cacheFile.getAbsolutePath());
+        } else try {
+            cacheFile.createNewFile();
+            listener.onFinish(true, cacheFile.getAbsolutePath());
+        } catch (IOException e) {
+            Logger.log(e);
+        }
+
+        buildRequest(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Logger.log(e);
+                if (listener != null)
+                    listener.onFinish(false, null);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    InputStream is = response.body().byteStream();
+                    BufferedInputStream bis = new BufferedInputStream(is);
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cacheFile));
+
+                    int len = 0;
+                    byte[] b = new byte[2048];
+                    while ((len = bis.read(b)) > 0) {
+                        bos.write(b, 0, len);
+                    }
+
+                    bos.flush();
+                    bos.close();
+                    bis.close();
+                    is.close();
+                    if (listener != null)
+                        listener.onFinish(true, cacheFile.getAbsolutePath());
+                } catch (Exception e) {
+                    Logger.log(e);
+                }
+            }
+        });
+
+    }
+
+    /**
      * 获取网页JSON中的某个Key的值并缓存这个值
      *
      * @param url URL地址

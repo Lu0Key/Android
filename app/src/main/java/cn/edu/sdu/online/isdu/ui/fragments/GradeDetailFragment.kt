@@ -1,17 +1,14 @@
 package cn.edu.sdu.online.isdu.ui.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Grade
@@ -20,11 +17,10 @@ import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.MyLinearLayoutManager
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
-import cn.edu.sdu.online.isdu.util.DateCalculate
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
-import org.json.JSONArray
-import org.json.JSONObject
+
 import java.math.RoundingMode
 import java.text.NumberFormat
 
@@ -45,7 +41,10 @@ class GradeDetailFragment : Fragment() {
     private var zjdText : TextView ?= null
     private var dataList: MutableList<Grade> = ArrayList()
     private var jdLayout : LinearLayout ?= null
-
+    private var progressDialog : ProgressDialog? = null
+    private var judge : Boolean = false
+    private var dialog : AlertDialog ?= null
+    private var tot : Int = 0
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -57,24 +56,36 @@ class GradeDetailFragment : Fragment() {
     }
 
     fun initView(v : View){
-
+        tot=0
         recyclerView = v.findViewById(R.id.recycler_view)
         textView = v.findViewById(R.id.text_view)
         zjdText = v.findViewById(R.id.jd_text)
         jdLayout = v.findViewById(R.id.jd_layout)
+        progressDialog = ProgressDialog(context,false)
+        progressDialog!!.setMessage("正在查询教学评估完成情况")
+        progressDialog!!.setButton(null,null)
+
+        progressDialog!!.show()
     }
 
     private fun getInfo() {
 
-
         var url: String
         url = ServerInfo.getGradeUrl(User.staticUser.uid.toString())
-        NetworkAccess.cache(url) { success, cachePath ->
+        NetworkAccess.cacheGrade(url) { success, cachePath ->
             if (success) {
                 try {
+                    ++tot
+                    judge = Grade.judgeEva(FileUtil.getStringFromFile(cachePath))
+                    if (tot == 2) activity!!.runOnUiThread {
+                        checkEducateEvaluate()
+                    }
+
                     dataList.clear()
                     dataList.addAll(Grade.loadFromString(FileUtil.getStringFromFile(cachePath)))
+
                     activity!!.runOnUiThread {
+
                         val  nf : NumberFormat= NumberFormat.getNumberInstance()
                         //保留两位小数
                         nf.maximumFractionDigits = 2
@@ -90,12 +101,42 @@ class GradeDetailFragment : Fragment() {
                     Logger.log(e)
                 }
             }else{
-
+                activity!!.runOnUiThread {
+                    progressDialog!!.dismiss()
+                    dialog = AlertDialog(context!!)
+                    dialog!!.setTitle("抱歉")
+                    dialog!!.setMessage("网络出了点小状况，你的成绩可能不是最新的哦！")
+                    dialog!!.setPositiveButton("确定") {
+                        dialog!!.dismiss()
+                    }
+                    dialog!!.setCancelable(true)
+                    dialog!!.setCancelOnTouchOutside(true)
+                    dialog!!.show()
+                }
             }
-
         }
+
+
     }
 
+    private fun checkEducateEvaluate(){
+        if (judge) {
+            progressDialog!!.dismiss()
+        }
+        else {
+            progressDialog!!.dismiss()
+            dialog = AlertDialog(context!!)
+            dialog!!.setTitle("抱歉")
+            dialog!!.setMessage("教学评估未完成，无法查询成绩")
+            dialog!!.setPositiveButton("确定") {
+                dialog!!.dismiss()
+                activity!!.finish()
+            }
+            dialog!!.setCancelable(false)
+            dialog!!.setCancelOnTouchOutside(false)
+            dialog!!.show()
+        }
+    }
     /**
      * 初始化RecyclerView
      */
