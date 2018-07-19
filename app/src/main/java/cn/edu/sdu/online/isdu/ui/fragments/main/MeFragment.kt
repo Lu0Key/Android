@@ -38,7 +38,7 @@ import java.io.Serializable
  ****************************************************
  */
 
-class MeFragment : LazyLoadFragment(), View.OnClickListener, Serializable {
+class MeFragment : Fragment(), View.OnClickListener, Serializable {
 
     /* 八宫格按钮 */
     private var btnSchedule: ImageButton? = null
@@ -83,7 +83,7 @@ class MeFragment : LazyLoadFragment(), View.OnClickListener, Serializable {
 
         prepareBroadcastReceiver()
 
-//        loadUserInformation()
+        loadUserInformation()
         return view
     }
 
@@ -144,14 +144,10 @@ class MeFragment : LazyLoadFragment(), View.OnClickListener, Serializable {
         }
     }
 
-    override fun loadData() {
+    override fun onResume() {
+        super.onResume()
         loadUserInformation()
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//        loadUserInformation()
-//    }
 
     override fun onDestroy() {
         super.onDestroy()

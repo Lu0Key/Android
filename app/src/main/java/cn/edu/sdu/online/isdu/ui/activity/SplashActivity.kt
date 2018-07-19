@@ -32,28 +32,37 @@ import kotlinx.android.synthetic.main.activity_splash.*
 
 class SplashActivity : AppCompatActivity() {
 
+    private var splashHandler: SplashHandler? = null
+    private var handler: Handler? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        EnvVariables.init(this)
-        NotificationUtil.init(this)
-
-        Download.init(this)
-        FileUtil.init(this)
-
         decorateWindow()
-        loadLocalUser()
 
-        Schedule.localScheduleList = Schedule.load(this)
-
-        Handler().postDelayed({
-            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-            finish()
-        }, PAGE_SHOW_TIME_MILLIS)
+        showSplash()
 
     }
 
+    private fun showSplash() {
+        handler = Handler()
+        splashHandler = SplashHandler()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (handler != null && splashHandler != null) {
+            handler!!.removeCallbacks(splashHandler)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (handler != null && splashHandler != null) {
+            handler!!.postDelayed(splashHandler, PAGE_SHOW_TIME_MILLIS)
+        }
+    }
 
     private fun decorateWindow() {
         val decorView = window.decorView
@@ -73,13 +82,11 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-
-    /**
-     * 加载本地用户缓存
-     *
-     */
-    private fun loadLocalUser() {
-        User.staticUser = User.load()
+    inner class SplashHandler : Runnable {
+        override fun run() {
+            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            finish()
+        }
     }
 
     companion object {
