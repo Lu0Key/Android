@@ -20,6 +20,7 @@ import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.MyLinearLayoutManager
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
+import cn.edu.sdu.online.isdu.util.DateCalculate
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import org.json.JSONArray
@@ -50,7 +51,6 @@ class GradeDetailFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_grade_detail, container, false)
         initView(view)
-
         initRecyclerView()
         getInfo()
         return view
@@ -75,7 +75,7 @@ class GradeDetailFragment : Fragment() {
                     dataList.clear()
                     dataList.addAll(Grade.loadFromString(FileUtil.getStringFromFile(cachePath)))
                     activity!!.runOnUiThread {
-                        val  nf : NumberFormat= NumberFormat.getNumberInstance();
+                        val  nf : NumberFormat= NumberFormat.getNumberInstance()
                         //保留两位小数
                         nf.maximumFractionDigits = 2
                         // 如果不需要四舍五入，可以使用RoundingMode.DOWN
