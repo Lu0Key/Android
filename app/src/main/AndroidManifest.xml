@@ -80,7 +80,8 @@
         </receiver>
 
         <activity android:name=".ui.activity.CreatePostActivity" />
-        <activity android:name=".ui.activity.StudyRoomTableActivity"></activity>
+        <activity android:name=".ui.activity.StudyRoomTableActivity" />
+        <activity android:name=".ui.activity.PostDetailActivity"></activity>
     </application>
 
 </manifest>

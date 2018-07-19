@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
@@ -37,7 +38,7 @@ import java.io.Serializable
  ****************************************************
  */
 
-class MeFragment : Fragment(), View.OnClickListener, Serializable {
+class MeFragment : LazyLoadFragment(), View.OnClickListener, Serializable {
 
     /* 八宫格按钮 */
     private var btnSchedule: ImageButton? = null
@@ -143,10 +144,14 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun loadData() {
         loadUserInformation()
     }
+
+//    override fun onResume() {
+//        super.onResume()
+//        loadUserInformation()
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
