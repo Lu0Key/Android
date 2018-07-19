@@ -44,7 +44,9 @@ class SearchPostFragment : Fragment() {
     fun initData(){
 
     }
+    fun clear(){
 
+    }
     private fun initRecyclerView() {
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         adapter = MyAdapter(dataList)

@@ -108,8 +108,8 @@ class SearchNewsFragment : Fragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val news = mDataList[position]
             holder.itemLayout.setOnClickListener {
-                clear()
-                (activity as SearchActivity).editSearch!!.setText("")
+                //clear()
+                //(activity as SearchActivity).editSearch!!.setText("")
                 activity!!.startActivity(Intent(activity, NewsActivity::class.java)
                         .putExtra("section", news.section)
                         .putExtra("url", news.url))

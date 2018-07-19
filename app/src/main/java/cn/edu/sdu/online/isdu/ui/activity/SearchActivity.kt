@@ -107,7 +107,7 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                         (mFragments[0]as SearchPostFragment ).initData()
                     }
                     1 -> {
-                        if(editSearch!!.text!=null){
+                        if(editSearch!!.text!= null){
                             val pattern = Pattern.compile(editSearch!!.text.toString(),Pattern.CASE_INSENSITIVE)
                             (mFragments[1]as SearchNewsFragment ).onLoading()
                             var datalist:MutableList<News> = ArrayList<News>()
@@ -136,12 +136,12 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                                     }
                                 }
                                 Log.d("news",datalist.size.toString())
-                                if(datalist.size==0){
-                                    (mFragments[1]as SearchNewsFragment ).noResult()
+                                if(datalist.size == 0){
+                                    (mFragments[1] as SearchNewsFragment ).noResult()
                                 }else{
-                                    (mFragments[1]as SearchNewsFragment ).initData(datalist)
+                                    (mFragments[1] as SearchNewsFragment ).initData(datalist)
                                     viewPager!!.adapter!!.notifyDataSetChanged()
-                                    (mFragments[1]as SearchNewsFragment ).refresh()
+                                    (mFragments[1] as SearchNewsFragment ).refresh()
                                 }
                             } catch (e: Exception) {
                                 Logger.log(e)
@@ -152,9 +152,8 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                         if(editSearch!!.text!=null){
                             (mFragments[2]as SearchUserFragment ).onLoading()
                             var list: MutableList<User> = ArrayList<User>()
+                            /*
                             var idflag = false
-                            var lock = false
-
                             var url = ServerInfo.searchUser(editSearch!!.text.toString())
                             NetworkAccess.buildRequest(url, object : Callback {
                                 override fun onFailure(call: Call?, e: IOException?) {
@@ -188,7 +187,8 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                                     }
                                 }
                             })
-                            url = ServerInfo.searchUserbyNickName(editSearch!!.text.toString())
+                            */
+                            var url = ServerInfo.searchUserbyNickName(editSearch!!.text.toString())
                             NetworkAccess.buildRequest(url, object : Callback {
                                 override fun onFailure(call: Call?, e: IOException?) {
                                     runOnUiThread {
@@ -199,7 +199,9 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                                 override fun onResponse(call: Call?, response: Response?) {
                                     val json = response?.body()?.string()
                                     try {
-                                        if (json!!.equals("[]")&&!idflag) {
+                                        Log.w("response",json)
+                                        if (json!!.equals("[]")) {
+                                            Log.w("response","null")
                                             runOnUiThread {
                                                 (mFragments[2]as SearchUserFragment ).noResult()
                                             }
@@ -217,10 +219,12 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                                                 list.add(item)
                                             }
                                         }
-                                        runOnUiThread {
-                                            (mFragments[2]as SearchUserFragment ).initData(list)
-                                            viewPager!!.adapter!!.notifyDataSetChanged()
-                                            (mFragments[2]as SearchUserFragment ).refresh()
+                                        if(list.size!= 0){
+                                            runOnUiThread {
+                                                (mFragments[2]as SearchUserFragment ).initData(list)
+                                                viewPager!!.adapter!!.notifyDataSetChanged()
+                                                (mFragments[2]as SearchUserFragment ).refresh()
+                                            }
                                         }
                                     } catch (e: Exception) {
                                         Logger.log(e)
@@ -252,8 +256,19 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                 simplePagerTitleView.textSize = 16f
                 simplePagerTitleView.setOnClickListener {
                     viewPager?.currentItem = p1
-                    if(p1!=2){
-                        (mFragments[2]as SearchUserFragment ).clear()
+                    when(p1){
+                        0 -> {
+                            (mFragments[1]as SearchNewsFragment ).clear()
+                            (mFragments[2]as SearchUserFragment ).clear()
+                        }
+                        1 -> {
+                            (mFragments[0]as SearchPostFragment ).clear()
+                            (mFragments[2]as SearchUserFragment ).clear()
+                        }
+                        2 -> {
+                            (mFragments[0]as SearchPostFragment ).clear()
+                            (mFragments[1]as SearchNewsFragment ).clear()
+                        }
                     }
                 }
                 return simplePagerTitleView

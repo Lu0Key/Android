@@ -106,8 +106,8 @@ class SearchUserFragment : Fragment() {
                 Log.w("click","follow")
             }
             holder.itemLayout!!.setOnClickListener {
-                (activity as SearchActivity).editSearch!!.setText("")
-                clear()
+                //(activity as SearchActivity).editSearch!!.setText("")
+                //clear()
                 startActivity(Intent(context, MyHomePageActivity::class.java).putExtra("id", user.uid))
             }
         }
