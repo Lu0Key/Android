@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.net.ServerInfo;
 import cn.edu.sdu.online.isdu.util.Logger;
 import okhttp3.Call;
@@ -89,13 +90,11 @@ public class NetworkAccess {
     }
 
     public static void cache(String url, @Nullable final OnCacheFinishListener listener) {
-        File cacheDir = new File(Environment.getExternalStorageDirectory() + "/iSDU/cache");
-        if (!cacheDir.exists()) {
-            if (!cacheDir.getParentFile().exists()) cacheDir.getParentFile().mkdirs();
-            cacheDir.mkdir();
-        }
+        File cacheDir = MyApplication.getContext().getCacheDir();
 
-        String s = (url.substring((ServerInfo.url).length(), url.length()));
+        String s = url.substring(
+                (url.startsWith("http")) ? url.indexOf("/", 8) : url.indexOf("/")
+                , url.length());
         char[] chars = s.toLowerCase().toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (chars[i] == '/')
@@ -161,13 +160,11 @@ public class NetworkAccess {
      * @param listener 返回监听器
      */
     public static void cache(String url, final String key, @Nullable final OnCacheFinishListener listener) {
-        File cacheDir = new File(Environment.getExternalStorageDirectory() + "/iSDU/cache");
-        if (!cacheDir.exists()) {
-            if (!cacheDir.getParentFile().exists()) cacheDir.getParentFile().mkdirs();
-            cacheDir.mkdir();
-        }
+        File cacheDir = MyApplication.getContext().getCacheDir();
 
-        String s = (url.substring((ServerInfo.url).length(), url.length()));
+        String s = url.substring(
+                (url.startsWith("http")) ? url.indexOf("/", 8) : url.indexOf("/")
+                , url.length());
         char[] chars = s.toLowerCase().toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (chars[i] == '/')
@@ -216,15 +213,13 @@ public class NetworkAccess {
     }
 
     public static void cache(String url, int startPos, @Nullable final OnCacheFinishListener listener){
-        File cacheDir = new File(Environment.getExternalStorageDirectory() + "/iSDU/cache");
-        if (!cacheDir.exists()) {
-            if (!cacheDir.getParentFile().exists()) cacheDir.getParentFile().mkdirs();
-            cacheDir.mkdir();
-        }
+        File cacheDir = MyApplication.getContext().getCacheDir();
 
-        String s = (url.substring((ServerInfo.url).length(), url.length()));
-        if (startPos < 10) s+="00"+startPos;
-        else if (startPos < 100) s+="0"+startPos;
+        String s = url.substring(
+                (url.startsWith("http")) ? url.indexOf("/", 8) : url.indexOf("/")
+                , url.length());
+        if (startPos < 10) s += "00" + startPos;
+        else if (startPos < 100) s += "0" + startPos;
         else s+=""+startPos;
 
         char[] chars = s.toLowerCase().toCharArray();

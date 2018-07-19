@@ -3,6 +3,7 @@ package cn.edu.sdu.online.isdu.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -10,8 +11,10 @@ import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.ui.design.button.WideButton
+import cn.edu.sdu.online.isdu.ui.design.dialog.InputDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.util.Settings
+import java.io.File
 
 /**
  ****************************************************
@@ -37,6 +40,7 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
     private var btnCloudSync: WideButton? = null
     private var btnFeedBack: WideButton? = null
     private var btnLogout: TextView? = null
+    private var btnDownloadLocation: WideButton? = null
 
     private val startupPages = arrayListOf("论坛", "资讯", "个人中心")
     private val alarmScheduleList = listOf("不提醒", "震动", "铃声（需要开启媒体音量）")
@@ -61,6 +65,7 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnAlarmMessage!!.setSwitch(Settings.ALARM_MESSAGE)
         btnAlarmNews!!.setSwitch(Settings.ALARM_NEWS)
         btnAlarmSchedule!!.setTxtComment(alarmScheduleList[Settings.ALARM_SCHEDULE])
+        btnDownloadLocation!!.setTxtComment(Settings.DEFAULT_DOWNLOAD_LOCATION)
     }
 
     override fun onClick(v: View?) {
@@ -102,6 +107,25 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
             "feedback" -> {
                 startActivity(Intent(this, FeedbackActivity::class.java))
             }
+            "download_location" -> {
+                val dialog = InputDialog(this)
+                dialog.setTitle("输入下载位置")
+                dialog.text = Settings.DEFAULT_DOWNLOAD_LOCATION
+                dialog.setPositiveButton("确定") {
+
+                    Settings.DEFAULT_DOWNLOAD_LOCATION = dialog.text
+                    Settings.store(this)
+                    dialog.dismiss()
+
+
+                }
+
+                dialog.setNegativeButton("取消") {
+                    dialog.dismiss()
+                }
+
+                dialog.show()
+            }
         }
     }
 
@@ -130,6 +154,8 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnAlarmSchedule = findViewById(R.id.btn_alarm_schedule)
         btnCloudSync = findViewById(R.id.btn_cloud_sync)
         btnFeedBack = findViewById(R.id.btn_feedback)
+        btnDownloadLocation = findViewById(R.id.btn_download_location)
+
 
         btnLogout = findViewById(R.id.btn_logout)
 
@@ -141,6 +167,7 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnAlarmNews!!.setOnItemSwitchListener(this)
         btnAlarmMessage!!.setOnItemSwitchListener(this)
         btnCloudSync!!.setOnItemSwitchListener(this)
+        btnDownloadLocation!!.setOnItemClickListener(this)
 
         if (User.staticUser == null) User.staticUser = User.load()
         if (User.staticUser.studentNumber == null ||

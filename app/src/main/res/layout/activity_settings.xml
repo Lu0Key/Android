@@ -70,6 +70,17 @@
                 app:wideButtonShowArrow="false">
 
             </cn.edu.sdu.online.isdu.ui.design.button.WideButton>
+            <!--默认下载位置-->
+            <cn.edu.sdu.online.isdu.ui.design.button.WideButton
+                android:id="@+id/btn_download_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:wideButtonItemName="默认下载位置"
+                app:wideButtonCanSwitch="false"
+                app:wideButtonItemId="download_location"
+                app:wideButtonShowArrow="false">
+
+            </cn.edu.sdu.online.isdu.ui.design.button.WideButton>
 
             <!--#消息提醒#-->
             <TextView

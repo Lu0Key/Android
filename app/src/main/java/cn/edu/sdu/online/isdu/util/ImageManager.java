@@ -54,7 +54,7 @@ public class ImageManager {
     public void captureByCamera(Activity activity) {
         initCrop(activity);
         // 构建图片缓存文件
-        File thumb = new File(Environment.getExternalStorageDirectory() + "/iSDU/thumb/" +
+        File thumb = new File(activity.getCacheDir().getAbsolutePath() + "/thumb/" +
             System.currentTimeMillis() + ".jpg");
         if (!thumb.exists()) {
             if (!thumb.getParentFile().exists()) thumb.getParentFile().mkdirs();
@@ -101,7 +101,7 @@ public class ImageManager {
 
     private void initCrop(Context context) {
         //获取打开文件的URI
-        File croppedImage = new File(Environment.getExternalStorageDirectory() + "/iSDU/thumb/" +
+        File croppedImage = new File(context.getCacheDir().getAbsolutePath() + "/thumb/" +
                 System.currentTimeMillis() + "_c.jpg");
 
         if (!croppedImage.exists()) {
