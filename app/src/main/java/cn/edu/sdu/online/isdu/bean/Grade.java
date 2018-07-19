@@ -129,6 +129,26 @@ public class Grade {
         return kxh;
     }
 
+    public static boolean judgeEva(String json){
+        try{
+            JSONObject jsonObject = new JSONObject(json);
+            if (!jsonObject.isNull("status")){
+                if (jsonObject.getString("status").equals("failed")){
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+            else {
+                return false;
+            }
+        }catch (Exception e){
+            Logger.log(e);
+        }
+        return false;
+    }
+
     public static List<Grade> loadFromString(String json){
         List<Grade> list = new ArrayList<>();
         Grade grade;
@@ -145,6 +165,9 @@ public class Grade {
                     JSONObject obj = jsonArray.getJSONObject(i);
                     grade.kcm = obj.getString("kcm");
                     grade.cj = obj.getString("cj");
+                    if (grade.cj.charAt(0) == '-') {
+                        grade.cj = grade.cj.substring(1);
+                    }
                     grade.zgf = obj.getString("zgf");
                     grade.jd = obj.getDouble("wfzjd");
                     grade.dd = obj.getString("wfzdj");
@@ -186,6 +209,9 @@ public class Grade {
                     JSONObject obj = jsonArray.getJSONObject(i);
                     grade.kcm = obj.getString("kcm");
                     grade.cj = obj.getString("kscj");
+                    if (grade.cj.charAt(0) == '-') {
+                        grade.cj = grade.cj.substring(1);
+                    }
                     grade.zgf = "";
                     grade.jd = obj.getDouble("wfzjd");
                     grade.dd = obj.getString("wfzdj");
