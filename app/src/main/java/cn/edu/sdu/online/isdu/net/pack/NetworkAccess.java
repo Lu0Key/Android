@@ -158,11 +158,7 @@ public class NetworkAccess {
      * @param listener
      */
     public static void cacheGrade(String url, @Nullable final OnCacheFinishListener listener) {
-        File cacheDir = new File(Environment.getExternalStorageDirectory() + "/iSDU/cache");
-        if (!cacheDir.exists()) {
-            if (!cacheDir.getParentFile().exists()) cacheDir.getParentFile().mkdirs();
-            cacheDir.mkdir();
-        }
+        File cacheDir = MyApplication.getContext().getCacheDir();
 
         String s = (url.substring((ServerInfo.url).length(), url.length()));
         char[] chars = s.toLowerCase().toCharArray();
