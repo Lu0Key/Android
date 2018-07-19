@@ -2,6 +2,7 @@ package cn.edu.sdu.online.isdu.ui.activity
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Environment
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
@@ -14,12 +15,14 @@ import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.AlphaActivity
+import cn.edu.sdu.online.isdu.bean.News
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.fragments.search.SearchNewsFragment
 import cn.edu.sdu.online.isdu.ui.fragments.search.SearchPostFragment
 import cn.edu.sdu.online.isdu.ui.fragments.search.SearchUserFragment
+import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import com.alibaba.fastjson.JSONPObject
 import kotlinx.android.synthetic.main.activity_download.*
@@ -38,6 +41,7 @@ import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.util.regex.Pattern
 
 /**
  ****************************************************
@@ -59,6 +63,8 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
     private var mViewPagerAdapter: FragAdapter? = null
     private val mDataList = listOf("帖子", "资讯", "用户")
     private val mFragments = listOf(SearchPostFragment(), SearchNewsFragment(), SearchUserFragment())
+    private val section = listOf("sduonline","undergraduate","sduyouth","sduview")
+    private val sectionName = listOf("学生在线", "本科生院", "青春山大", "山大视点")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -67,7 +73,8 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
         initFragments()
         initIndicator()
     }
-
+    @Synchronized fun synchronizedMethod() {
+    }
     private fun initView() {
         btnBack = findViewById(R.id.btn_back)
         editSearch = findViewById(R.id.edit_search)
@@ -100,14 +107,54 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                         (mFragments[0]as SearchPostFragment ).initData()
                     }
                     1 -> {
-                        (mFragments[1]as SearchNewsFragment ).initData()
-
+                        if(editSearch!!.text!=null){
+                            val pattern = Pattern.compile(editSearch!!.text.toString(),Pattern.CASE_INSENSITIVE)
+                            (mFragments[1]as SearchNewsFragment ).onLoading()
+                            var datalist:MutableList<News> = ArrayList<News>()
+                            try {
+                                datalist.clear()
+                                for(j in 0 until section.size) {
+                                    val cachePath = "ews_api_index.php.site=" + section[j]
+                                    val jsonArray = JSONArray(FileUtil.getStringFromFile(Environment.getExternalStorageDirectory().toString() + "/iSDU/cache/" + cachePath))
+                                    Log.d("section",section[j])
+                                    for (i in 0 until jsonArray.length()) {
+                                        val jsonObj = jsonArray.getJSONObject(i)
+                                        val title = jsonObj.getString("title")
+                                        val matcher1 = pattern.matcher(title)
+                                        //val matcher2 = pattern.matcher(jsonObj.getString("block"))
+                                        //Log.d(section[j],title)
+                                        if(matcher1.find()){
+                                            Log.w("search","find")
+                                            val news = News()
+                                            news.title = title
+                                            news.date = jsonObj.getString("date")
+                                            news.source = jsonObj.getString("block")
+                                            news.section = sectionName[j]
+                                            news.url = ServerInfo.getNewsUrl(j, i)
+                                            datalist.add(news)
+                                        }
+                                    }
+                                }
+                                Log.d("news",datalist.size.toString())
+                                if(datalist.size==0){
+                                    (mFragments[1]as SearchNewsFragment ).noResult()
+                                }else{
+                                    (mFragments[1]as SearchNewsFragment ).initData(datalist)
+                                    viewPager!!.adapter!!.notifyDataSetChanged()
+                                    (mFragments[1]as SearchNewsFragment ).refresh()
+                                }
+                            } catch (e: Exception) {
+                                Logger.log(e)
+                            }
+                        }
                     }
                     2 -> {
                         if(editSearch!!.text!=null){
                             (mFragments[2]as SearchUserFragment ).onLoading()
                             var list: MutableList<User> = ArrayList<User>()
-                            var idflag: Boolean = false
+                            var idflag = false
+                            var lock = false
+
                             var url = ServerInfo.searchUser(editSearch!!.text.toString())
                             NetworkAccess.buildRequest(url, object : Callback {
                                 override fun onFailure(call: Call?, e: IOException?) {
@@ -160,7 +207,6 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                                             val jsonArray = JSONArray(json)
                                             for (k in 0 until jsonArray.length()) {
                                                 val obj = jsonArray.getJSONObject(k)
-                                                // 获取每场考试内容
                                                 val item = User(
                                                         obj.getString("nickname"),
                                                         obj.getString("studentnumber"),
@@ -170,11 +216,11 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                                                 )
                                                 list.add(item)
                                             }
-                                            runOnUiThread {
-                                                (mFragments[2]as SearchUserFragment ).initData(list)
-                                                viewPager!!.adapter!!.notifyDataSetChanged()
-                                                (mFragments[2]as SearchUserFragment ).refresh()
-                                            }
+                                        }
+                                        runOnUiThread {
+                                            (mFragments[2]as SearchUserFragment ).initData(list)
+                                            viewPager!!.adapter!!.notifyDataSetChanged()
+                                            (mFragments[2]as SearchUserFragment ).refresh()
                                         }
                                     } catch (e: Exception) {
                                         Logger.log(e)
