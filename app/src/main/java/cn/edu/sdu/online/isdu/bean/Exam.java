@@ -106,7 +106,7 @@ public class Exam {
         int month = Integer.parseInt(date.substring(5, 7));
         int day = Integer.parseInt(date.substring(8, 10));
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day);
+        calendar.set(year, month - 1, day);
         return EnvVariables.calculateWeekIndex(calendar.getTimeInMillis());
     }
 
@@ -116,7 +116,7 @@ public class Exam {
         int day = Integer.parseInt(date.substring(8, 10));
         Calendar calendar;
         calendar = Calendar.getInstance();
-        calendar.set(year, month, day);
+        calendar.set(year, month - 1, day);
         return calendar.get(Calendar.DAY_OF_WEEK) - 1;
     }
 

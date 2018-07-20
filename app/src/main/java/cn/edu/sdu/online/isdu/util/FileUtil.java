@@ -1,6 +1,7 @@
 package cn.edu.sdu.online.isdu.util;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;

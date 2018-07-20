@@ -23,6 +23,16 @@ import kotlinx.android.synthetic.main.activity_create_post.*
 import kotlinx.android.synthetic.main.edit_operation_bar.*
 import java.io.File
 
+/**
+ ****************************************************
+ * @author zsj
+ * Last Modifier: ZSJ
+ * Last Modify Time: 2018/7/19
+ *
+ * 新建帖子页面
+ ****************************************************
+ */
+
 class CreatePostActivity : NormActivity(), View.OnClickListener {
 
     private var btnAlbum: View? = null
@@ -71,7 +81,7 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
             }
             btn_done.id -> {
                 val list = richEditText!!.buildEditData()
-
+                performUpload(list)
             }
             btn_back.id -> {
                 val dialog = AlertDialog(this)
@@ -94,8 +104,17 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
 //        super.onBackPressed()
     }
 
-    private fun performUpload() {
-
+    /**
+     * 上传帖子策略：
+     * 向服务器申请上传，获得返回的帖子ID值
+     * 遍历列表，依次上传图片，并保存服务端返回的图片URL
+     * 再构造Post的对象列表，转为JSONArray后再上传服务器
+     *
+     * @param list 富文本编辑器生成的数据列表
+     */
+    private fun performUpload(list: List<RichTextEditor.EditData>) {
+        // 向服务器请求上传
+        
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

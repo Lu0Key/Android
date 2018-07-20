@@ -95,4 +95,20 @@ public class ServerInfo {
 
     }
 
+    public static String getSchoolBusUrl(String from, String to, int isWeekend) {
+        return "https://sduonline.cn/isdu/schoolbus/api/?start=" + from + "&end=" + to + "&isWeekend=" + isWeekend;
+    }
+
+    public static String getStudyRooms(String campus) {
+        return "http://sduonline.cn/isdu/studyroom/api/?campus=" + campus;
+    }
+
+    public static String getLibrarySearUrl(String loc) {
+        return "https://sduonline.cn/isdu/library/api/?room=" + loc;
+    }
+
+    public static String getStudyRooms(String campus, String building, String date) {
+        return "http://sduonline.cn/isdu/studyroom/api/?campus=" + campus + "&building=" + building + "&date=" + date;
+    }
+
 }
