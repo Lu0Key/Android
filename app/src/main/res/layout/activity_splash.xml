@@ -3,35 +3,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@color/colorWhite"
     tools:context="cn.edu.sdu.online.isdu.ui.activity.SplashActivity">
 
     <ImageView
-        android:id="@+id/img"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/pic_dongdong"
-        android:scaleType="centerCrop"/>
+        android:id="@+id/img_0"
+        android:layout_width="80dp"
+        android:layout_height="120dp"
+        android:src="@drawable/img_splash_0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"/>
 
     <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@mipmap/ic_launcher"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:src="@drawable/img_splash_3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.276" />
+        tools:layout_editor_absoluteX="16dp"
+        android:scaleType="fitXY"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/img_1"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:text="i山大"
-        android:textColor="@color/colorWhite"
-        android:textSize="24sp"
+        android:src="@drawable/img_splash_1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.708" />
+        app:layout_constraintVertical_bias="0.203" />
+
+    <ImageView
+        android:id="@+id/img_2"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_splash_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </android.support.constraint.ConstraintLayout>
