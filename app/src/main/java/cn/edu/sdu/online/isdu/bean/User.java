@@ -10,6 +10,7 @@ import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
 import java.util.List;
+import java.util.Objects;
 
 import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.net.AccountOp;
@@ -140,6 +141,17 @@ public class User extends LitePalSupport {
         user.setStudentNumber(studentNumber);
         user.save(); // LitePal Save
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        User user = (User) o;
+        return Objects.equals(studentNumber, user.studentNumber) ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(studentNumber);
     }
 
     public void loginCache(Context context) {

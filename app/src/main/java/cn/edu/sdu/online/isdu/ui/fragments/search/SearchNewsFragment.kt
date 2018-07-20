@@ -2,7 +2,7 @@ package cn.edu.sdu.online.isdu.ui.fragments.search
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import android.os.Environment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -11,15 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.News
-import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.NewsActivity
-import cn.edu.sdu.online.isdu.ui.activity.SearchActivity
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import org.json.JSONArray
+import java.util.regex.Pattern
 
 /**
  ****************************************************
@@ -31,13 +30,17 @@ import org.json.JSONArray
  ****************************************************
  */
 
-class SearchNewsFragment : Fragment() {
+class SearchNewsFragment : LazyLoadFragment() {
 
-    private var dataList: MutableList<News> = ArrayList()
+    private var dataList: MutableList<News> = arrayListOf<News>()
     private var adapter: MyAdapter? = null
     private var loadingLayout: View? = null
     private var recyclerView: RecyclerView? = null
     private var blankView: TextView? = null
+    private var search : String? = null
+    private var isLoadComplete = false
+    private val section = listOf("sduonline","undergraduate","sduyouth","sduview")
+    private val sectionName = listOf("学生在线", "本科生院", "青春山大", "山大视点")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_search_news, container, false)
@@ -46,45 +49,83 @@ class SearchNewsFragment : Fragment() {
         return view
     }
 
+    fun setSearch(search: String?){
+        this.search = search
+        isLoadComplete = false
+        if(this.isVisible){
+            loadData()
+        }
+    }
+
     private fun initView(view: View) {
         loadingLayout = view.findViewById(R.id.loading_layout)
         recyclerView = view.findViewById(R.id.recycler_view)
         blankView = view.findViewById(R.id.blank_view)
     }
 
-    fun initData(list : List<News>){
-        dataList.clear()
-        dataList.addAll(list)
-        recyclerView!!.visibility = View.VISIBLE
-        loadingLayout!!.visibility = View.GONE
-        blankView!!.visibility = View.GONE
+    override fun isLoadComplete(): Boolean {
+        return isLoadComplete
     }
 
-    fun refresh(){
-        adapter!!.notifyDataSetChanged()
+    override fun loadData() {
+        super.loadData()
+        if(search!=null){
+            val pattern = Pattern.compile(search, Pattern.CASE_INSENSITIVE)
+            onLoading()
+            dataList.clear()
+            try {
+                for(j in 0 until section.size) {
+                    val cachePath = "ews_api_index.php.site=" + section[j]
+                    val jsonArray = JSONArray(FileUtil.getStringFromFile(Environment.getExternalStorageDirectory().toString() + "/iSDU/cache/" + cachePath))
+                    for (i in 0 until jsonArray.length()) {
+                        val jsonObj = jsonArray.getJSONObject(i)
+                        val title = jsonObj.getString("title")
+                        val matcher1 = pattern.matcher(title)
+                        //val matcher2 = pattern.matcher(jsonObj.getString("block"))
+                        //Log.d(section[j],title)
+                        if(matcher1.find()){
+                            val news = News()
+                            news.title = title
+                            news.date = jsonObj.getString("date")
+                            news.source = jsonObj.getString("block")
+                            news.section = sectionName[j]
+                            news.url = ServerInfo.getNewsUrl(j, i)
+                            dataList.add(news)
+                        }
+                    }
+                }
+                Log.d("news",dataList.size.toString())
+            } catch (e: Exception) {
+                Logger.log(e)
+            }
+            activity!!.runOnUiThread {
+                isLoadComplete = true
+                publishData()
+            }
+        }
     }
 
-    fun clear(){
-        dataList.clear();
+    override fun publishData() {
+        super.publishData()
+        super.publishData()
+        if(dataList.size!= 0){
+            recyclerView!!.visibility = View.VISIBLE
+            loadingLayout!!.visibility = View.GONE
+            blankView!!.visibility = View.GONE
+        }else{
+            recyclerView!!.visibility = View.GONE
+            loadingLayout!!.visibility = View.GONE
+            blankView!!.visibility = View.VISIBLE
+        }
         if(adapter!=null){
             adapter!!.notifyDataSetChanged()
         }
     }
 
-    fun noResult(){
-        clear()
-        recyclerView!!.visibility = View.GONE
-        loadingLayout!!.visibility = View.GONE
-        blankView!!.visibility = View.VISIBLE
-    }
     fun onLoading(){
         recyclerView!!.visibility = View.GONE
         loadingLayout!!.visibility = View.VISIBLE
         blankView!!.visibility = View.GONE
-    }
-    override fun onResume() {
-        super.onResume()
-        dataList.clear()
     }
 
     private fun initRecyclerView() {
