@@ -64,7 +64,7 @@ class HistoryActivity : SlideActivity(), View.OnClickListener {
     }
     private fun initRecyclerView() {
         mAdapter = MyAdapter(dataList)
-        recyclerView!!.layoutManager = LinearLayoutManager(this)
+        recyclerView!!.layoutManager = LinearLayoutManager(this@HistoryActivity)
         recyclerView!!.adapter = mAdapter
     }
 
