@@ -1,11 +1,13 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import cn.edu.sdu.online.isdu.R
@@ -24,7 +26,10 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
+import q.rorbin.badgeview.Badge
+import q.rorbin.badgeview.QBadgeView
 import java.io.Serializable
+import java.nio.file.attribute.BasicFileAttributeView
 
 /**
  ****************************************************
@@ -45,14 +50,12 @@ class MessageActivity : SlideActivity(), View.OnClickListener , Serializable {
     private var viewPager: ViewPager? = null // ViewPager
     private var magicIndicator: MagicIndicator? = null // Magic Indicator
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
         initView()
         initFragments()
         initIndicator()
-
     }
 
     private fun initView() {

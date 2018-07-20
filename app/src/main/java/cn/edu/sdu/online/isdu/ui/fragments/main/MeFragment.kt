@@ -9,6 +9,7 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,9 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_me.*
 import org.json.JSONException
 import org.json.JSONObject
+import q.rorbin.badgeview.Badge
+import q.rorbin.badgeview.Badge.OnDragStateChangedListener.STATE_SUCCEED
+import q.rorbin.badgeview.QBadgeView
 import java.io.Serializable
 
 /**
@@ -80,6 +84,8 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
     private var personalInformationLayout: ConstraintLayout? = null // 个人信息入口，进入个人主页
 
     private var broadcastReceiver: UserSyncBroadcastReceiver? = null
+
+    private var badgs:Badge? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_me, container, false)
@@ -207,6 +213,15 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
         btnHistory!!.setOnClickListener(this)
         btnFollow!!.setOnClickListener(this)
         personalInformationLayout!!.setOnClickListener(this)
+
+        badgs = QBadgeView(context).bindTarget(btnMsg).setBadgeNumber(5);
+        badgs!!.setBadgeTextSize(15f,true)
+        badgs!!.setOnDragStateChangedListener { dragState, badge, targetView ->
+            if(dragState==STATE_SUCCEED){
+                badgs!!.hide(true)
+            }
+        }
+        //TODO 小红点数量
     }
 
     private fun prepareBroadcastReceiver() {
