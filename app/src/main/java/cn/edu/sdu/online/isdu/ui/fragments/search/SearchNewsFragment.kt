@@ -14,6 +14,7 @@ import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.News
 import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.NewsActivity
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
@@ -39,7 +40,7 @@ class SearchNewsFragment : LazyLoadFragment() {
     private var blankView: TextView? = null
     private var search : String? = null
     private var isLoadComplete = false
-    private val section = listOf("sduonline","undergraduate","sduyouth","sduview")
+    private val section = listOf("sduOnline","underGraduate","sduYouth","sduView")
     private val sectionName = listOf("学生在线", "本科生院", "青春山大", "山大视点")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -51,8 +52,8 @@ class SearchNewsFragment : LazyLoadFragment() {
 
     fun setSearch(search: String?){
         this.search = search
-        isLoadComplete = false
-        if(this.isVisible){
+        if (userVisibleHint && isLoadComplete){
+            isLoadComplete = false
             loadData()
         }
     }
@@ -63,10 +64,9 @@ class SearchNewsFragment : LazyLoadFragment() {
         blankView = view.findViewById(R.id.blank_view)
     }
 
-    override fun isLoadComplete(): Boolean {
-        return isLoadComplete
-    }
+    override fun isLoadComplete(): Boolean = isLoadComplete
 
+    /*
     override fun loadData() {
         super.loadData()
         if(search!=null){
@@ -82,7 +82,6 @@ class SearchNewsFragment : LazyLoadFragment() {
                         val title = jsonObj.getString("title")
                         val matcher1 = pattern.matcher(title)
                         //val matcher2 = pattern.matcher(jsonObj.getString("block"))
-                        //Log.d(section[j],title)
                         if(matcher1.find()){
                             val news = News()
                             news.title = title
@@ -103,11 +102,51 @@ class SearchNewsFragment : LazyLoadFragment() {
                 publishData()
             }
         }
+    }*/
+
+    override fun loadData() {
+        dataList.clear()
+        pullData(0)
+
+    }
+
+    private fun pullData(index: Int) {
+        if (index >= section.size) {
+            publishData()
+            return
+        }
+        val pattern = Pattern.compile(search, Pattern.CASE_INSENSITIVE)
+        NetworkAccess.cache(ServerInfo.getNewsUrl(index)) { success, cachePath ->
+            if (success) {
+                val jsonArray = JSONArray(FileUtil.getStringFromFile(cachePath))
+                for (i in 0 until jsonArray.length()) {
+                    val jsonObj = jsonArray.getJSONObject(i)
+
+                    val title = jsonObj.getString("title")
+                    val matcher1 = pattern.matcher(title)
+                    //val matcher2 = pattern.matcher(jsonObj.getString("block"))
+                    if(matcher1.find()){
+                        val news = News()
+                        news.title = title
+                        news.date = jsonObj.getString("date")
+                        news.source = jsonObj.getString("block")
+                        news.section = sectionName[index]
+                        news.url = ServerInfo.getNewsUrl(index, i)
+                        dataList.add(news)
+                    }
+                }
+            }
+
+            activity!!.runOnUiThread {
+                pullData(index + 1)
+            }
+        }
+
     }
 
     override fun publishData() {
-        super.publishData()
-        if(dataList.size!= 0){
+        isLoadComplete = true
+        if(dataList.size != 0){
             recyclerView!!.visibility = View.VISIBLE
             loadingLayout!!.visibility = View.GONE
             blankView!!.visibility = View.GONE
@@ -116,7 +155,7 @@ class SearchNewsFragment : LazyLoadFragment() {
             loadingLayout!!.visibility = View.GONE
             blankView!!.visibility = View.VISIBLE
         }
-        if(adapter!=null){
+        if(adapter != null){
             adapter!!.notifyDataSetChanged()
         }
     }

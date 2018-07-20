@@ -40,7 +40,7 @@ class SearchUserFragment : LazyLoadFragment() {
     private var loadingLayout: View? = null
     private var recyclerView: RecyclerView? = null
     private var blankView: TextView? = null
-    private var dataSet = linkedSetOf<User>()
+    private var dataList = ArrayList<User>()
     private var search : String? = null
     private var isLoadComplete = false
     private var isLoading = false
@@ -60,22 +60,22 @@ class SearchUserFragment : LazyLoadFragment() {
     }
 
     private fun initRecyclerView() {
-        mAdapter = MyAdapter(dataSet)
+        mAdapter = MyAdapter()
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = mAdapter
     }
 
     fun setSearch(search: String?){
         this.search = search
-        isLoadComplete = false
-        if(this.isVisible){
+        if(userVisibleHint && isLoadComplete){
+            isLoadComplete = false
             loadData()
         }
     }
 
     override fun loadData() {
         super.loadData()
-        if(search!=null){
+        if(search != null){
             isLoading = true
             onLoading()
             var url = ServerInfo.searchUserbyNickName(search)
@@ -89,8 +89,8 @@ class SearchUserFragment : LazyLoadFragment() {
                 override fun onResponse(call: Call?, response: Response?) {
                     val json = response?.body()?.string()
                     try {
-                        dataSet.clear()
-                        if (json!!.equals("[]")) {
+                        dataList.clear()
+                        if (json == "[]") {
                         } else {
                             val jsonArray = JSONArray(json)
                             for (k in 0 until jsonArray.length()) {
@@ -102,7 +102,7 @@ class SearchUserFragment : LazyLoadFragment() {
                                         obj.getString("sign"),
                                         obj.getInt("id")
                                 )
-                                dataSet.add(item)
+                                dataList.add(item)
                             }
                         }
                     } catch (e: Exception) {
@@ -125,8 +125,7 @@ class SearchUserFragment : LazyLoadFragment() {
     }
 
     override fun publishData() {
-        super.publishData()
-        if(dataSet.size!= 0){
+        if(dataList.size != 0){
             recyclerView!!.visibility = View.VISIBLE
             loadingLayout!!.visibility = View.GONE
             blankView!!.visibility = View.GONE
@@ -135,7 +134,7 @@ class SearchUserFragment : LazyLoadFragment() {
             loadingLayout!!.visibility = View.GONE
             blankView!!.visibility = View.VISIBLE
         }
-        if(mAdapter!=null){
+        if(mAdapter != null){
             mAdapter!!.notifyDataSetChanged()
         }
     }
@@ -146,9 +145,7 @@ class SearchUserFragment : LazyLoadFragment() {
         blankView!!.visibility = View.GONE
     }
 
-    inner class MyAdapter(mDataSet: MutableSet<User>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
-
-        private var DataSet = mDataSet
+    inner class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context)
@@ -156,23 +153,24 @@ class SearchUserFragment : LazyLoadFragment() {
             return ViewHolder(view)
         }
 
-        override fun getItemCount(): Int = DataSet.size
+        override fun getItemCount(): Int = dataList.size
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            var user : User? = null
-            var i = 0
-            while(DataSet.iterator().hasNext()&& i<=position && DataSet.size>0){
-                user = DataSet.iterator().next()
-                i++
-            }
-            val bmp = ImageManager.convertStringToBitmap(user!!.avatarString)
-            holder.circleImageView!!.setImageBitmap(bmp)
-            holder.userName!!.text = user!!.nickName
-            holder.userSign!!.text = user!!.selfIntroduce
-            holder.btnfollow!!.setOnClickListener {
+//            var user : User? = null
+//            var i = 0
+//            while(dataSet.iterator().hasNext()&& i<=position && dataSet.size>0){
+//                user = dataSet.iterator().next()
+//                i++
+//            }
+            val user = dataList[position]
+            val bmp = ImageManager.convertStringToBitmap(user.avatarString)
+            holder.circleImageView.setImageBitmap(bmp)
+            holder.userName.text = user.nickName
+            holder.userSign.text = user.selfIntroduce
+            holder.btnfollow.setOnClickListener {
                 Log.w("click","follow")
             }
-            holder.itemLayout!!.setOnClickListener {
+            holder.itemLayout.setOnClickListener {
                 //(activity as SearchActivity).editSearch!!.setText("")
                 //clear()
                 startActivity(Intent(context, MyHomePageActivity::class.java).putExtra("id", user.uid))
@@ -180,10 +178,10 @@ class SearchUserFragment : LazyLoadFragment() {
         }
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            var circleImageView: CircleImageView? = view.findViewById(R.id.circle_image_view)
-            var userName: TextView? = view.findViewById(R.id.user_name)
-            var userSign: TextView? = view.findViewById(R.id.user_sign)
-            var btnfollow: TextView? = view.findViewById(R.id.btn_follow)
+            var circleImageView: CircleImageView = view.findViewById(R.id.circle_image_view)
+            var userName: TextView = view.findViewById(R.id.user_name)
+            var userSign: TextView = view.findViewById(R.id.user_sign)
+            var btnfollow: TextView = view.findViewById(R.id.btn_follow)
             var itemLayout: View = view.findViewById(R.id.item_layout)
         }
     }

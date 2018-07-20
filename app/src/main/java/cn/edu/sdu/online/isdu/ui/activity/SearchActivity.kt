@@ -85,12 +85,11 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                 finish()
             }
             R.id.btn_search -> {
-                Log.w("cl","btn_search")
-                magicIndicator!!.visibility=View.VISIBLE
-                if(editSearch!!.text.toString()!=""){
-                    (mFragments[0]as SearchPostFragment).setSearch(editSearch!!.text.toString())
-                    (mFragments[1]as SearchNewsFragment).setSearch(editSearch!!.text.toString())
-                    (mFragments[2]as SearchUserFragment).setSearch(editSearch!!.text.toString())
+                magicIndicator!!.visibility = View.VISIBLE
+                if(editSearch!!.text.toString() != ""){
+                    (mFragments[0] as SearchPostFragment).setSearch(editSearch!!.text.toString())
+                    (mFragments[1] as SearchNewsFragment).setSearch(editSearch!!.text.toString())
+                    (mFragments[2] as SearchUserFragment).setSearch(editSearch!!.text.toString())
                 }
             }
         }

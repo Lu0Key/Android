@@ -19,6 +19,7 @@ import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.NewsActivity
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
+import cn.edu.sdu.online.isdu.util.download.DownloadItem
 import org.json.JSONArray
 
 class NewsContentFragment : LazyLoadFragment() {
@@ -65,11 +66,12 @@ class NewsContentFragment : LazyLoadFragment() {
                         news.title = jsonObj.getString("title")
                         news.date = jsonObj.getString("date")
                         news.source = jsonObj.getString("block")
+                        news.originUrl = jsonObj.getString("url")
                         news.url = ServerInfo.getNewsUrl(index, i)
                         dataList.add(news)
                     }
 
-                    activity!!.runOnUiThread {
+                    activity?.runOnUiThread {
                         publishData()
                     }
 
@@ -77,7 +79,7 @@ class NewsContentFragment : LazyLoadFragment() {
                     Logger.log(e)
                 }
             } else {
-                activity!!.runOnUiThread {
+                activity?.runOnUiThread {
                     publishData()
                 }
             }
@@ -113,10 +115,17 @@ class NewsContentFragment : LazyLoadFragment() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val news = mDataList[position]
-            holder.itemLayout.setOnClickListener {
-                activity!!.startActivity(Intent(activity, NewsActivity::class.java)
-                        .putExtra("section", sectionName[index])
-                        .putExtra("url", news.url))
+
+            if (news.source == "办公文件") {
+                holder.itemLayout.setOnClickListener {
+                    DownloadItem(news.originUrl).startDownload()
+                }
+            } else {
+                holder.itemLayout.setOnClickListener {
+                    activity!!.startActivity(Intent(activity, NewsActivity::class.java)
+                            .putExtra("section", sectionName[index])
+                            .putExtra("url", news.url))
+                }
             }
 
             holder.newsDate.text = news.date
@@ -130,6 +139,17 @@ class NewsContentFragment : LazyLoadFragment() {
             var newsSource: TextView = view.findViewById(R.id.news_source)
             var newsDate: TextView = view.findViewById(R.id.news_date)
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("index", index)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null)
+            index = savedInstanceState.getInt("index", 0)
     }
 
     companion object {
