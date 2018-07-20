@@ -215,7 +215,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
                     val courseArray = JSONObject(jsonString).getJSONArray("obj")
                     totalList = Schedule.loadCourse(courseArray)
                     // 加载考试信息
-//                    getExamData()
+                    getExamData()
 
                     runOnUiThread {
                         setCurrentWeek(currentWeek)
@@ -259,14 +259,20 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
                                             exam.getString("examMethod"),
                                             exam.getString("courseName")
                                     )
-                                    totalList!![item.week][item.day].add(item.toSchedule())
+
+                                    val schedule = item.toSchedule()
+                                    schedule.repeatWeeks.add(item.week)
+
+                                    Log.d("AAA", "WEEK=${item.week} DAY=${item.day}")
+
+                                    totalList!![item.week - 1][item.day - 1].add(schedule)
                                 }
 
                             }
 //                            }
 
                             runOnUiThread {
-
+                                adapter!!.notifyDataSetChanged()
                             }
 
                         }
@@ -293,7 +299,6 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         currentWeek = index
 
         if (totalList!!.isNotEmpty()) {
-            Log.d("BBB", totalList!![currentWeek - 1][0].size.toString())
             scheduleTable!!.setScheduleList(totalList!![currentWeek - 1])
         }
 

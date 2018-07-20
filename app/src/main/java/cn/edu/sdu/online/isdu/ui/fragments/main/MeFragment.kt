@@ -16,15 +16,22 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.*
 import cn.edu.sdu.online.isdu.ui.design.button.ImageButton
+import cn.edu.sdu.online.isdu.util.EnvVariables
+import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_me.*
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.Serializable
 
 /**
@@ -68,7 +75,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
     /* TodoList */
     private var recyclerView: RecyclerView? = null
     private var adapter: TodoAdapter? = null
-    private var todoList: List<Any> = ArrayList()
+    private var todoList: List<Schedule> = ArrayList()
 
     private var personalInformationLayout: ConstraintLayout? = null // 个人信息入口，进入个人主页
 
@@ -82,7 +89,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
 
         prepareBroadcastReceiver()
 
-//        loadUserInformation()
+        loadUserInformation()
         return view
     }
 
@@ -146,6 +153,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
     override fun onResume() {
         super.onResume()
         loadUserInformation()
+        loadSchedule()
     }
 
     override fun onDestroy() {
@@ -243,7 +251,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
     private fun initRecyclerView() {
         recyclerView!!.layoutManager = LinearLayoutManager(context)
 
-        adapter = TodoAdapter(null)
+        adapter = TodoAdapter(todoList)
         recyclerView!!.adapter = adapter
 
         if (adapter!!.itemCount == 0) {
@@ -255,14 +263,47 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
         }
     }
 
-    class TodoAdapter(data: List<Schedule>?) : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
+    /**
+     * 加载今日安排
+     */
+    private fun loadSchedule() {
+        if (User.staticUser == null) User.staticUser = User.load()
+        if (User.staticUser.studentNumber != null)
+        NetworkAccess.cache(ServerInfo.getScheduleUrl(User.staticUser.uid)) { success, cachePath ->
+            if (success) {
+                val jsonString = FileUtil.getStringFromFile(cachePath)
+                try {
+                    Schedule.localScheduleList =
+                            Schedule.loadCourse(JSONObject(jsonString).getJSONArray("obj"))
+
+                    if (EnvVariables.currentWeek == -1)
+                        EnvVariables.currentWeek = EnvVariables.calculateWeekIndex(System.currentTimeMillis())
+                    todoList = Schedule.localScheduleList[EnvVariables.currentWeek - 1][EnvVariables.getCurrentDay() - 1]
+
+                    activity!!.runOnUiThread {
+                        adapter!!.notifyDataSetChanged()
+                    }
+
+                } catch (e: JSONException) {
+                    Logger.log(e)
+                }
+            }
+        }
+
+    }
+
+    inner class TodoAdapter(data: List<Schedule>?) : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
 
         private val dataList = data
 
         override fun getItemCount(): Int = dataList?.size ?: 0
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val item = todoList[position]
             holder.todoIndex.text = (position + 1).toString()
+            holder.todoName.text = item.scheduleName
+            holder.todoTime.text = item.startTime.toString()
+            holder.todoLocation.text = item.scheduleLocation
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -271,7 +312,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
             return ViewHolder(view)
         }
 
-        class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val todoIndex = view.findViewById<TextView>(R.id.todo_index)
             val todoName = view.findViewById<TextView>(R.id.todo_name)
             val todoTime = view.findViewById<TextView>(R.id.todo_time)

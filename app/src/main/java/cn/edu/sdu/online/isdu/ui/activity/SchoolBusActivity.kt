@@ -95,7 +95,7 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
                 }
                 else {
                     tipText!!.text = ""
-                    val intent : Intent = Intent(this,SchoolBusTable::class.java)
+                    val intent = Intent(this,SchoolBusTableActivity::class.java)
                     intent.putExtra("searchNum",searchNum)
                     intent.putExtra("fromP",fromP)
                     intent.putExtra("toP",toP)
@@ -103,10 +103,10 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
                 }
             }
             workday.id->{
-                searchNum = 1
+                searchNum = 0
             }
             non_workday.id->{
-                searchNum = 2
+                searchNum = 1
             }
             btn_back.id->{
                 finish()
@@ -116,7 +116,7 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
          */
             else ->{
                 for (i in 1..6){
-                    if (v!!.id == xqBtn[i]!!.id){
+                    if (v.id == xqBtn[i]!!.id){
                         //将当前选择的校区背景变成灰色
                         xqBtn[i]!!.setBacColor(resources.getColor(R.color.colorThemeGrey))
                         //如果没有选择出发地，并且当前点击的校区之前没有被选中，那么久作为出发地，否则取消选中

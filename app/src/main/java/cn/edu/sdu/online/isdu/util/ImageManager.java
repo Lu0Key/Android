@@ -106,6 +106,11 @@ public class ImageManager {
 
         if (!croppedImage.exists()) {
             if (!croppedImage.getParentFile().exists()) croppedImage.getParentFile().mkdirs();
+            try {
+                croppedImage.createNewFile();
+            } catch (IOException e) {
+                Logger.log(e);
+            }
         }
 
         if (Build.VERSION.SDK_INT >= 24) {
@@ -175,7 +180,7 @@ public class ImageManager {
     public void openCrop(Activity activity) {
         UCrop.of(fromUri, destUri)
                 .withAspectRatio(1, 1)
-                .withMaxResultSize(320, 320)
+                .withMaxResultSize(640, 640)
                 .start(activity);
     }
 

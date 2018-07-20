@@ -167,42 +167,59 @@ class EditProfileActivity : SlideActivity() {
             d.setNegativeButton(null, null)
             d.show()
         } else {
-            progressDialog = ProgressDialog(this, false)
-            progressDialog!!.setMessage("正在更新信息...")
-            progressDialog!!.setButton(null, null)
-            progressDialog!!.show()
+            if (editUserName!!.text.toString().length > 20) {
+                val d = AlertDialog(this)
+                d.setCancelOnTouchOutside(true)
+                d.setTitle("字数超限")
+                d.setMessage("昵称不能超过20字")
+                d.setPositiveButton("取消") {d.dismiss()}
+                d.setNegativeButton(null, null)
+                d.show()
+            } else if (editIntroduction!!.text.toString().length > 50) {
+                val d = AlertDialog(this)
+                d.setCancelOnTouchOutside(true)
+                d.setTitle("字数超限")
+                d.setMessage("个人签名不能超过50字")
+                d.setPositiveButton("取消") {d.dismiss()}
+                d.setNegativeButton(null, null)
+                d.show()
+            } else {
+                progressDialog = ProgressDialog(this, false)
+                progressDialog!!.setMessage("正在更新信息...")
+                progressDialog!!.setButton(null, null)
+                progressDialog!!.show()
 
-            val keys = listOf("studentNumber", "j_password", "nickname", "avatar", "sign")
-            val values = listOf(User.staticUser.studentNumber, User.staticUser.passwordMD5,
-                    editUserName!!.text.toString(), ImageManager.convertBitmapToString(finalBitmap),
-                    editIntroduction!!.text.toString())
+                val keys = listOf("studentNumber", "j_password", "nickname", "avatar", "sign")
+                val values = listOf(User.staticUser.studentNumber, User.staticUser.passwordMD5,
+                        editUserName!!.text.toString(), ImageManager.convertBitmapToString(finalBitmap),
+                        editIntroduction!!.text.toString())
 
-            val callback = object : Callback {
-                override fun onFailure(call: Call?, e: IOException?) {
-                    runOnUiThread {
-                        progressDialog!!.dismiss()
-                        Toast.makeText(this@EditProfileActivity,
-                                "网络出错", Toast.LENGTH_SHORT).show()
-                        Logger.log(e)
+                val callback = object : Callback {
+                    override fun onFailure(call: Call?, e: IOException?) {
+                        runOnUiThread {
+                            progressDialog!!.dismiss()
+                            Toast.makeText(this@EditProfileActivity,
+                                    "网络出错", Toast.LENGTH_SHORT).show()
+                            Logger.log(e)
+                        }
+                    }
+
+                    override fun onResponse(call: Call?, response: Response?) {
+                        runOnUiThread {
+                            progressDialog!!.dismiss()
+                            User.staticUser.nickName = editUserName!!.text.toString()
+                            User.staticUser.avatarString = ImageManager.convertBitmapToString(finalBitmap)
+                            User.staticUser.selfIntroduce = editIntroduction!!.text.toString()
+                            User.staticUser.save(this@EditProfileActivity)
+                            Toast.makeText(this@EditProfileActivity,
+                                    "更新成功", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
                     }
                 }
-
-                override fun onResponse(call: Call?, response: Response?) {
-                    runOnUiThread {
-//                        Log.d("AAA", response?.body()?.string())
-//                        Log.d("AAA", ImageManager.getBitmapSize(finalBitmap).toString())
-                        progressDialog!!.dismiss()
-                        User.staticUser.nickName = editUserName!!.text.toString()
-                        User.staticUser.avatarString = ImageManager.convertBitmapToString(finalBitmap)
-                        User.staticUser.selfIntroduce = editIntroduction!!.text.toString()
-                        User.staticUser.save(this@EditProfileActivity)
-                        Toast.makeText(this@EditProfileActivity,
-                                "更新成功", Toast.LENGTH_SHORT).show()
-                        finish()
-                    }
-                }
+                NetworkAccess.buildRequest(ServerInfo.urlUpdate, keys, values, callback)
             }
-            NetworkAccess.buildRequest(ServerInfo.urlUpdate, keys, values, callback)
+
         }
     }
 

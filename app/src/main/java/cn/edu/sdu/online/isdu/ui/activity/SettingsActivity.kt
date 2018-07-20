@@ -2,16 +2,29 @@ package cn.edu.sdu.online.isdu.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.BuildConfig
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.button.WideButton
+import cn.edu.sdu.online.isdu.ui.design.dialog.InputDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
+import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Settings
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import java.io.File
+import java.io.IOException
 
 /**
  ****************************************************
@@ -37,6 +50,9 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
     private var btnCloudSync: WideButton? = null
     private var btnFeedBack: WideButton? = null
     private var btnLogout: TextView? = null
+    private var btnDownloadLocation: WideButton? = null
+
+    private var btnBugReport: WideButton? = null
 
     private val startupPages = arrayListOf("论坛", "资讯", "个人中心")
     private val alarmScheduleList = listOf("不提醒", "震动", "铃声（需要开启媒体音量）")
@@ -61,6 +77,7 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnAlarmMessage!!.setSwitch(Settings.ALARM_MESSAGE)
         btnAlarmNews!!.setSwitch(Settings.ALARM_NEWS)
         btnAlarmSchedule!!.setTxtComment(alarmScheduleList[Settings.ALARM_SCHEDULE])
+        btnDownloadLocation!!.setTxtComment(Settings.DEFAULT_DOWNLOAD_LOCATION)
     }
 
     override fun onClick(v: View?) {
@@ -102,6 +119,61 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
             "feedback" -> {
                 startActivity(Intent(this, FeedbackActivity::class.java))
             }
+            "download_location" -> {
+                val dialog = InputDialog(this)
+                dialog.setTitle("输入下载位置")
+                dialog.text = Settings.DEFAULT_DOWNLOAD_LOCATION
+                dialog.setPositiveButton("确定") {
+
+                    Settings.DEFAULT_DOWNLOAD_LOCATION = dialog.text
+                    Settings.store(this)
+                    dialog.dismiss()
+
+
+                }
+
+                dialog.setNegativeButton("取消") {
+                    dialog.dismiss()
+                }
+
+                dialog.show()
+            }
+            "bug_report" -> {
+                val dialog = ProgressDialog(this, false)
+                dialog.setMessage("正在处理日志文件")
+                dialog.setButton(null, null)
+                dialog.show()
+
+                val dir = File(Environment.getExternalStorageDirectory().toString() + "/iSDU/log/")
+                val files = dir.listFiles()
+
+                val sb = StringBuilder()
+
+                for (i in files.size - 1 until files.size - 6) {
+                    // 获取最近5次的Log文件
+                    if (i < 0) break
+                    if (files[i].name.endsWith(".log")) {
+                        sb.append(FileUtil.getStringFromFile(files[i].absolutePath))
+                    }
+                }
+
+                NetworkAccess.buildRequest(ServerInfo.url, "bug", sb.toString(), object : Callback {
+                    override fun onFailure(call: Call?, e: IOException?) {
+                        runOnUiThread {
+                            dialog.dismiss()
+                            Toast.makeText(this@SettingsActivity, "提交失败", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onResponse(call: Call?, response: Response?) {
+                        runOnUiThread {
+                            dialog.dismiss()
+                            Toast.makeText(this@SettingsActivity, "提交成功", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }
+                })
+            }
         }
     }
 
@@ -130,6 +202,10 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnAlarmSchedule = findViewById(R.id.btn_alarm_schedule)
         btnCloudSync = findViewById(R.id.btn_cloud_sync)
         btnFeedBack = findViewById(R.id.btn_feedback)
+        btnDownloadLocation = findViewById(R.id.btn_download_location)
+        btnBugReport = findViewById(R.id.btn_bug_report)
+
+        if (!BuildConfig.IS_TEST_VERSION) btnBugReport!!.visibility = View.GONE
 
         btnLogout = findViewById(R.id.btn_logout)
 
@@ -141,6 +217,8 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnAlarmNews!!.setOnItemSwitchListener(this)
         btnAlarmMessage!!.setOnItemSwitchListener(this)
         btnCloudSync!!.setOnItemSwitchListener(this)
+        btnDownloadLocation!!.setOnItemClickListener(this)
+        btnBugReport!!.setOnItemClickListener(this)
 
         if (User.staticUser == null) User.staticUser = User.load()
         if (User.staticUser.studentNumber == null ||

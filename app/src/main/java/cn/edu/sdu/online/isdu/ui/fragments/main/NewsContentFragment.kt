@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.News
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
@@ -20,25 +21,26 @@ import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import org.json.JSONArray
 
-class NewsContentFragment : Fragment() {
+class NewsContentFragment : LazyLoadFragment() {
 
     private var recyclerView: RecyclerView? = null
     private val sectionName = listOf("学生在线", "本科生院", "青春山大", "山大视点")
     private var index = 0
     private var dataList: MutableList<News> = ArrayList()
     private var adapter: MyAdapter? = null
+    private var blankView: TextView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_news_content, container, false)
 
         initView(view)
 
-        getNewsList()
         return view
     }
 
     private fun initView(view: View) {
         recyclerView = view.findViewById(R.id.recycler_view)
+        blankView = view.findViewById(R.id.blank_view)
 
         initRecyclerView()
     }
@@ -49,7 +51,7 @@ class NewsContentFragment : Fragment() {
         recyclerView!!.adapter = adapter
     }
 
-    private fun getNewsList() {
+    override fun loadData() {
         NetworkAccess.cache(ServerInfo.getNewsUrl(index)) { success, cachePath ->
             if (success) {
                 try {
@@ -68,17 +70,23 @@ class NewsContentFragment : Fragment() {
                     }
 
                     activity!!.runOnUiThread {
-                        adapter!!.notifyDataSetChanged()
+                        publishData()
                     }
 
                 } catch (e: Exception) {
                     Logger.log(e)
                 }
             } else {
-                Toast.makeText(context, "网络错误", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+    override fun publishData() {
+        blankView?.visibility = View.GONE
+        adapter!!.notifyDataSetChanged()
+    }
+
+    override fun isLoadComplete(): Boolean = dataList.isNotEmpty()
 
     private fun setArguments(index: Int) {
         this.index = index

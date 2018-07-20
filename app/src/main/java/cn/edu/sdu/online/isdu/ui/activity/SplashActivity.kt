@@ -5,6 +5,7 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
@@ -32,28 +33,67 @@ import kotlinx.android.synthetic.main.activity_splash.*
 
 class SplashActivity : AppCompatActivity() {
 
+    private var splashHandler: SplashHandler? = null
+    private var handler: Handler? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        EnvVariables.init(this)
-        NotificationUtil.init(this)
-
-        Download.init(this)
-        FileUtil.init(this)
-
         decorateWindow()
-        loadLocalUser()
 
-        Schedule.localScheduleList = Schedule.load(this)
+        showSplash()
 
-        Handler().postDelayed({
-            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-            finish()
-        }, PAGE_SHOW_TIME_MILLIS)
+        img.visibility = View.INVISIBLE
 
     }
 
+    /******************************************
+     * 这是个彩蛋
+     * 冬冬nb！
+     * 点击Splash两次即可看到冬冬的照片
+     ******************************************/
+    var count = 0
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        when (event!!.action) {
+            MotionEvent.ACTION_DOWN -> {
+                count++
+                if (count == 2) {
+                    img.visibility = View.VISIBLE
+                    if (handler != null) {
+                        handler!!.removeCallbacks(splashHandler)
+                        splashHandler = null
+                        handler = null
+                    } else {
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    }
+                }
+                count = count % 2
+            }
+
+        }
+        return super.onTouchEvent(event)
+    }
+
+    private fun showSplash() {
+        handler = Handler()
+        splashHandler = SplashHandler()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (handler != null && splashHandler != null) {
+            handler!!.removeCallbacks(splashHandler)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (handler != null && splashHandler != null) {
+            handler!!.postDelayed(splashHandler, PAGE_SHOW_TIME_MILLIS)
+        }
+    }
 
     private fun decorateWindow() {
         val decorView = window.decorView
@@ -73,16 +113,14 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-
-    /**
-     * 加载本地用户缓存
-     *
-     */
-    private fun loadLocalUser() {
-        User.staticUser = User.load()
+    inner class SplashHandler : Runnable {
+        override fun run() {
+            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            finish()
+        }
     }
 
     companion object {
-        const val PAGE_SHOW_TIME_MILLIS = 1000L // 展示TimeOut
+        const val PAGE_SHOW_TIME_MILLIS = 1500L // 展示TimeOut
     }
 }

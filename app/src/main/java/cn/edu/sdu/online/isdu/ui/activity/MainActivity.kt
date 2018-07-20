@@ -23,7 +23,10 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.Common
 import android.view.LayoutInflater
 import android.widget.*
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.bean.Schedule
+import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.util.*
+import cn.edu.sdu.online.isdu.util.download.Download
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
@@ -62,9 +65,14 @@ class MainActivity : SlideActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         // 请求关键权限
         Permissions.requestPermission(this, Permissions.VIBRATE)
         Permissions.requestPermission(this, Permissions.INTERNET)
+
+        initApplication()
+
+
         /* 获取实例 */
         magicIndicator = magic_indicator
         mViewPager = view_pager
@@ -83,6 +91,30 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         super.onResume()
         EnvVariables.init(this)
     }
+
+    /**
+     * 初始化整个应用需要的一些内容
+     */
+    private fun initApplication() {
+        EnvVariables.init(this)
+        NotificationUtil.init(this)
+
+        Download.init(this)
+        FileUtil.init(this)
+        loadLocalUser()
+
+        Schedule.localScheduleList = Schedule.load(this)
+    }
+
+    /**
+     * 加载本地用户缓存
+     *
+     */
+    private fun loadLocalUser() {
+        User.staticUser = User.load()
+    }
+
+
 
     private fun initFragment() {
         if (fragments.isEmpty()) {

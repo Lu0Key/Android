@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ImageView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.ui.fragments.LibrarySeatFragment
 import cn.edu.sdu.online.isdu.ui.fragments.MyBookFragment
 import kotlinx.android.synthetic.main.activity_library.*
@@ -41,6 +42,7 @@ class LibraryActivity : SlideActivity(), View.OnClickListener{
     private val mDataList = listOf("馆藏查询", "余座查询")
     private var viewPager: ViewPager? = null // ViewPager
     private var magicIndicator: MagicIndicator? = null // Magic Indicator
+    private var progressDialog : ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +65,8 @@ class LibraryActivity : SlideActivity(), View.OnClickListener{
 
         backBtn!!.setOnClickListener(this)
         viewPager!!.offscreenPageLimit = mDataList.size // 设置ViewPager的预加载页面数量，防止销毁
+
+
     }
 
     override fun onClick(v : View){
