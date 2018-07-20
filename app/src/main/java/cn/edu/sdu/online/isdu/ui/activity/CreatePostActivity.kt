@@ -199,7 +199,8 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
 
         params.put("uid", User.staticUser.uid.toString())
         params.put("data", jsonArray.toString())
-        post("http://211.87.226.186:8384/upload/img", "{\"uid\": \"${User.staticUser.uid}\", \"data\": \"${jsonArray}\"}", hashMap)
+        Log.d("AAA", JSON.toJSONString(params))
+        post("http://202.194.15.133:8384/upload/img", JSON.toJSONString(params), hashMap)
     }
 
 
@@ -369,6 +370,7 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
 
                 outStream.flush()
                 outStream.close()
+
                 conn.disconnect()
 
             } catch (e: Exception) {
