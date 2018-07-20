@@ -83,6 +83,8 @@ class MainActivity : SlideActivity(), View.OnClickListener {
 
         initMagicIndicator()
 
+        mViewPager!!.currentItem = Settings.STARTUP_PAGE
+
         // 同步用户信息
         AccountOp.syncUserInformation()
     }
@@ -96,6 +98,7 @@ class MainActivity : SlideActivity(), View.OnClickListener {
      * 初始化整个应用需要的一些内容
      */
     private fun initApplication() {
+        Settings.load(this)
         EnvVariables.init(this)
         NotificationUtil.init(this)
 

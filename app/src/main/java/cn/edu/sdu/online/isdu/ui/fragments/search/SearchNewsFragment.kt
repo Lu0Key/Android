@@ -33,7 +33,10 @@ import java.util.regex.Pattern
 
 class SearchNewsFragment : LazyLoadFragment() {
 
-    private var dataList: MutableList<News> = arrayListOf<News>()
+    private var dataList: MutableList<MutableList<News>> = ArrayList()
+
+    val list: MutableList<News> = ArrayList()
+
     private var adapter: MyAdapter? = null
     private var loadingLayout: View? = null
     private var recyclerView: RecyclerView? = null
@@ -45,14 +48,22 @@ class SearchNewsFragment : LazyLoadFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_search_news, container, false)
+
+        dataList.clear()
+        dataList.add(ArrayList())
+        dataList.add(ArrayList())
+        dataList.add(ArrayList())
+        dataList.add(ArrayList())
+
         initView(view)
         initRecyclerView()
         return view
     }
 
+
     fun setSearch(search: String?){
         this.search = search
-        if (userVisibleHint && isLoadComplete){
+        if (userVisibleHint){
             isLoadComplete = false
             loadData()
         }
@@ -106,8 +117,11 @@ class SearchNewsFragment : LazyLoadFragment() {
 
     override fun loadData() {
         dataList.clear()
+        dataList.add(ArrayList())
+        dataList.add(ArrayList())
+        dataList.add(ArrayList())
+        dataList.add(ArrayList())
         pullData(0)
-
     }
 
     private fun pullData(index: Int) {
@@ -118,23 +132,34 @@ class SearchNewsFragment : LazyLoadFragment() {
         val pattern = Pattern.compile(search, Pattern.CASE_INSENSITIVE)
         NetworkAccess.cache(ServerInfo.getNewsUrl(index)) { success, cachePath ->
             if (success) {
-                val jsonArray = JSONArray(FileUtil.getStringFromFile(cachePath))
-                for (i in 0 until jsonArray.length()) {
-                    val jsonObj = jsonArray.getJSONObject(i)
+                try {
+                    val str = FileUtil.getStringFromFile(cachePath)
+                    dataList[index].clear()
+                    if (str != "") {
+                        val jsonArray = JSONArray(str)
 
-                    val title = jsonObj.getString("title")
-                    val matcher1 = pattern.matcher(title)
-                    //val matcher2 = pattern.matcher(jsonObj.getString("block"))
-                    if(matcher1.find()){
-                        val news = News()
-                        news.title = title
-                        news.date = jsonObj.getString("date")
-                        news.source = jsonObj.getString("block")
-                        news.section = sectionName[index]
-                        news.url = ServerInfo.getNewsUrl(index, i)
-                        dataList.add(news)
+                        for (i in 0 until jsonArray.length()) {
+                            val jsonObj = jsonArray.getJSONObject(i)
+
+                            val title = jsonObj.getString("title")
+                            val matcher1 = pattern.matcher(title)
+                            //val matcher2 = pattern.matcher(jsonObj.getString("block"))
+                            if(matcher1.find()){
+                                val news = News()
+                                news.title = title
+                                news.date = jsonObj.getString("date")
+                                news.source = jsonObj.getString("block")
+                                news.section = sectionName[index]
+                                news.url = ServerInfo.getNewsUrl(index, i)
+                                dataList[index].add(news)
+                            }
+                        }
                     }
+                } catch (e: Exception) {
+                    Logger.log(e)
                 }
+
+
             }
 
             activity!!.runOnUiThread {
@@ -146,7 +171,14 @@ class SearchNewsFragment : LazyLoadFragment() {
 
     override fun publishData() {
         isLoadComplete = true
-        if(dataList.size != 0){
+
+        list.clear()
+        list.addAll(dataList[0])
+        list.addAll(dataList[1])
+        list.addAll(dataList[2])
+        list.addAll(dataList[3])
+
+        if(list.size != 0){
             recyclerView!!.visibility = View.VISIBLE
             loadingLayout!!.visibility = View.GONE
             blankView!!.visibility = View.GONE
@@ -168,7 +200,7 @@ class SearchNewsFragment : LazyLoadFragment() {
 
     private fun initRecyclerView() {
         recyclerView!!.layoutManager = LinearLayoutManager(context)
-        adapter = MyAdapter(dataList)
+        adapter = MyAdapter(list)
         recyclerView!!.adapter = adapter
     }
 
