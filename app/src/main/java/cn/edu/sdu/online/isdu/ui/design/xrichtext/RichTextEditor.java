@@ -598,11 +598,68 @@ public class RichTextEditor extends ScrollView {
 		return dataList;
 	}
 
-	public class EditData {
+	/**
+	 * 设置内容
+	 */
+	public void setEditData(final List<EditData> dataList) {
+		post(new Runnable() {
+			@Override
+			public void run() {
+				allLayout.removeAllViews();
+				for (int i = 0; i < dataList.size(); i++) {
+					EditData data = dataList.get(i);
+					if (data.imagePath != null &&
+							!data.imagePath.equals("")) {
+						Bitmap bmp = BitmapFactory.decodeFile(data.imagePath);
+						addImageViewAtIndex(i, bmp, data.imagePath);
+					} else {
+						addEditTextAtIndex(i, data.inputStr);
+					}
+				}
+			}
+		});
+
+	}
+
+	public static class EditData {
 		public String inputStr;
 		public String imagePath;
 		public Bitmap bitmap;
-		public int imageIndex;
+		public String imageName;
+
+		public EditData() {}
+
+		public String getInputStr() {
+			return inputStr;
+		}
+
+		public void setInputStr(String inputStr) {
+			this.inputStr = inputStr;
+		}
+
+		public String getImagePath() {
+			return imagePath;
+		}
+
+		public void setImagePath(String imagePath) {
+			this.imagePath = imagePath;
+		}
+
+		public Bitmap getBitmap() {
+			return bitmap;
+		}
+
+		public void setBitmap(Bitmap bitmap) {
+			this.bitmap = bitmap;
+		}
+
+		public String getImageName() {
+			return imageName;
+		}
+
+		public void setImageName(String imageName) {
+			this.imageName = imageName;
+		}
 	}
 
     public int getRtImageHeight() {

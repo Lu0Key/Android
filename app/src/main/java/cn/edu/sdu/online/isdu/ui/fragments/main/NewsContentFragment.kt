@@ -77,12 +77,21 @@ class NewsContentFragment : LazyLoadFragment() {
                     Logger.log(e)
                 }
             } else {
+                activity!!.runOnUiThread {
+                    publishData()
+                }
             }
         }
     }
 
     override fun publishData() {
-        blankView?.visibility = View.GONE
+        if (dataList.isNotEmpty()) {
+            blankView?.visibility = View.GONE
+        } else {
+            blankView?.visibility = View.VISIBLE
+            blankView?.text = "加载失败"
+        }
+
         adapter!!.notifyDataSetChanged()
     }
 

@@ -225,6 +225,13 @@ public class ImageManager {
         return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
+    public static byte[] convertBitmapToByteArray(Bitmap bitmap) {
+        if (bitmap == null) return new byte[0];
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        return baos.toByteArray();
+    }
+
     /**
      * string转成bitmap
      *
