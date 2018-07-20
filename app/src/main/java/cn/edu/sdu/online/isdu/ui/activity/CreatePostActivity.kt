@@ -114,7 +114,32 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
      */
     private fun performUpload(list: List<RichTextEditor.EditData>) {
         // 向服务器请求上传
-        
+        val hashMap = handleImages(list) // 获取优化后的图片散列表
+
+    }
+
+    /**
+     * 预处理图片
+     * 给List中的图片编号
+     * 存入Map中，可以优化上传
+     */
+    private fun handleImages(list: List<RichTextEditor.EditData>): HashMap<Int, String> {
+        val hashMap = HashMap<Int, String>()
+        var index = 0
+
+        for (data in list) {
+            if (data.imagePath != "") {
+                // 是图片
+                if (hashMap.containsValue(data.imagePath)) {
+                    data.imageIndex = hashMap.values.indexOf(data.imagePath)
+                } else {
+                    data.imageIndex = index
+                    hashMap[index++] = data.imagePath
+                }
+            }
+        }
+
+        return hashMap
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

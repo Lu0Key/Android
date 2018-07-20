@@ -9,6 +9,7 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,10 +25,7 @@ import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.*
 import cn.edu.sdu.online.isdu.ui.design.button.ImageButton
-import cn.edu.sdu.online.isdu.util.EnvVariables
-import cn.edu.sdu.online.isdu.util.FileUtil
-import cn.edu.sdu.online.isdu.util.ImageManager
-import cn.edu.sdu.online.isdu.util.Logger
+import cn.edu.sdu.online.isdu.util.*
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_me.*
 import org.json.JSONException
@@ -75,7 +73,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
     /* TodoList */
     private var recyclerView: RecyclerView? = null
     private var adapter: TodoAdapter? = null
-    private var todoList: List<Schedule> = ArrayList()
+    private var todoList: MutableList<Schedule> = ArrayList()
 
     private var personalInformationLayout: ConstraintLayout? = null // 个人信息入口，进入个人主页
 
@@ -123,7 +121,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
 
             }
             btn_my_favorite.id -> {
-
+                startActivity(Intent(activity, CollectActivity::class.java))
             }
             btn_history.id -> {
                 startActivity(Intent(activity, HistoryActivity::class.java))
@@ -251,7 +249,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
     private fun initRecyclerView() {
         recyclerView!!.layoutManager = LinearLayoutManager(context)
 
-        adapter = TodoAdapter(todoList)
+        adapter = TodoAdapter()
         recyclerView!!.adapter = adapter
 
         if (adapter!!.itemCount == 0) {
@@ -281,6 +279,13 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
                     todoList = Schedule.localScheduleList[EnvVariables.currentWeek - 1][EnvVariables.getCurrentDay() - 1]
 
                     activity!!.runOnUiThread {
+                        if (todoList.isEmpty()) {
+                            recyclerView!!.visibility = View.GONE
+                            emptySymbol!!.visibility = View.VISIBLE
+                        } else {
+                            recyclerView!!.visibility = View.VISIBLE
+                            emptySymbol!!.visibility = View.GONE
+                        }
                         adapter!!.notifyDataSetChanged()
                     }
 
@@ -292,32 +297,31 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
 
     }
 
-    inner class TodoAdapter(data: List<Schedule>?) : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
+    inner class TodoAdapter : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
 
-        private val dataList = data
+            override fun getItemCount(): Int = todoList.size
 
-        override fun getItemCount(): Int = dataList?.size ?: 0
+            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                val item = todoList[position]
+                holder.todoIndex.text = (position + 1).toString()
+                holder.todoName.text = item.scheduleName
+                holder.todoTime.text = item.startTime.toString()
+                holder.todoLocation.text = item.scheduleLocation
+            }
 
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = todoList[position]
-            holder.todoIndex.text = (position + 1).toString()
-            holder.todoName.text = item.scheduleName
-            holder.todoTime.text = item.startTime.toString()
-            holder.todoLocation.text = item.scheduleLocation
-        }
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.todo_item, parent, false)
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.todo_item, parent, false)
+                return ViewHolder(view)
+            }
 
-            return ViewHolder(view)
-        }
+            inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+                var todoIndex = view.findViewById<TextView>(R.id.todo_index)
+                var todoName = view.findViewById<TextView>(R.id.todo_name)
+                var todoTime = view.findViewById<TextView>(R.id.todo_time)
+                var todoLocation = view.findViewById<TextView>(R.id.todo_location)
+            }
 
-        inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val todoIndex = view.findViewById<TextView>(R.id.todo_index)
-            val todoName = view.findViewById<TextView>(R.id.todo_name)
-            val todoTime = view.findViewById<TextView>(R.id.todo_time)
-            val todoLocation = view.findViewById<TextView>(R.id.todo_location)
-        }
     }
 
     class UserSyncBroadcastReceiver(meFragment: MeFragment) : BroadcastReceiver() {

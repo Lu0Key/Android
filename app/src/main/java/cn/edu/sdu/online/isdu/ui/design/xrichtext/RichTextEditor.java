@@ -602,6 +602,7 @@ public class RichTextEditor extends ScrollView {
 		public String inputStr;
 		public String imagePath;
 		public Bitmap bitmap;
+		public int imageIndex;
 	}
 
     public int getRtImageHeight() {

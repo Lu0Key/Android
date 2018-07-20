@@ -41,7 +41,6 @@ class NewsActivity : SlideActivity() {
     private var newsContent: TextView? = null
 
     private var newsUrl: String? = null
-    private var section: String? = null
 
     private var news: News? = null
 
@@ -53,7 +52,6 @@ class NewsActivity : SlideActivity() {
         setContentView(R.layout.activity_news)
 
         newsUrl = intent.getStringExtra("url")
-        section = intent.getStringExtra("section")
 
         initView()
 

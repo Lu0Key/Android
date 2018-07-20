@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_post_detail.*
 class PostDetailActivity : SlideActivity() {
 
     private var postId: Int = 0 // 帖子ID
+    private var url: String = "" // URL
 
     private var txtTitle: TextView? = null
     private var txtContent: RichTextView? = null
@@ -25,7 +26,8 @@ class PostDetailActivity : SlideActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_detail)
 
-        postId = intent.getIntExtra("post_id", 0)
+//        postId = intent.getIntExtra("url", 0)
+        url = intent.getStringExtra("url")
 
         initView()
 
