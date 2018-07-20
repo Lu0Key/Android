@@ -31,8 +31,6 @@ class HistoryActivity : SlideActivity(), View.OnClickListener {
         setContentView(R.layout.activity_history)
         initView()
         dao_history= DAO_history(this)
-        dao_history!!.newHistory(History("学工部、武装部召开会议部署暑假工作3","山大实训5",1497703200000,"http://5"))
-        dao_history!!.newHistory(History("学工部、武装部召开会议部署暑假工作3","山大实训5",1497703200000,"http://5"))
         initData()
         blankView!!.visibility = if (dataList.isEmpty()) View.VISIBLE else View.GONE
         initRecyclerView()

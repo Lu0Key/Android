@@ -120,7 +120,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
                 startActivity(Intent(activity, StudyRoomActivity::class.java))
             }
             btn_msg.id -> {
-
+                startActivity(Intent(activity, MessageActivity::class.java))
             }
             btn_my_favorite.id -> {
 

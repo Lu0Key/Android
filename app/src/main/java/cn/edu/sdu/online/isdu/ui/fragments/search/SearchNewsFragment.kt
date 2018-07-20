@@ -107,7 +107,6 @@ class SearchNewsFragment : LazyLoadFragment() {
 
     override fun publishData() {
         super.publishData()
-        super.publishData()
         if(dataList.size!= 0){
             recyclerView!!.visibility = View.VISIBLE
             loadingLayout!!.visibility = View.GONE
