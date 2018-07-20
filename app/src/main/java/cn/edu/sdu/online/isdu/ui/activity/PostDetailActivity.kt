@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_post_detail.*
 class PostDetailActivity : SlideActivity() {
 
     private var postId: Int = 0 // 帖子ID
+
     private var url: String = "" // URL
 
     private var txtTitle: TextView? = null

@@ -2,7 +2,6 @@ package cn.edu.sdu.online.isdu.ui.fragments.search
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -10,12 +9,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
-import cn.edu.sdu.online.isdu.ui.activity.SearchActivity
 import cn.edu.sdu.online.isdu.util.ImageManager
+import cn.edu.sdu.online.isdu.util.Logger
 import de.hdodenhof.circleimageview.CircleImageView
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import org.json.JSONArray
+import java.io.IOException
+
 /**
  ****************************************************
  * @author zsj
@@ -26,16 +35,21 @@ import de.hdodenhof.circleimageview.CircleImageView
  ****************************************************
  */
 
-class SearchUserFragment : Fragment() {
+class SearchUserFragment : LazyLoadFragment() {
     private var mAdapter: MyAdapter? = null
     private var loadingLayout: View? = null
     private var recyclerView: RecyclerView? = null
     private var blankView: TextView? = null
-    private var dataList = arrayListOf<User>()
+    private var dataSet = linkedSetOf<User>()
+    private var search : String? = null
+    private var isLoadComplete = false
+    private var isLoading = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_search_user, container, false)
         initView(view)
         initRecyclerView()
+
         return view
     }
 
@@ -46,47 +60,95 @@ class SearchUserFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        mAdapter = MyAdapter(dataList)
+        mAdapter = MyAdapter(dataSet)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = mAdapter
     }
-    fun initData(list : List<User>){
-        dataList.clear()
-        dataList.addAll(list)
-        recyclerView!!.visibility = View.VISIBLE
-        loadingLayout!!.visibility = View.GONE
-        blankView!!.visibility = View.GONE
-    }
-    fun refresh(){
-        mAdapter!!.notifyDataSetChanged()
+
+    fun setSearch(search: String?){
+        this.search = search
+        isLoadComplete = false
+        if(this.isVisible){
+            loadData()
+        }
     }
 
-    fun clear(){
-        dataList.clear();
+    override fun loadData() {
+        super.loadData()
+        if(search!=null){
+            isLoading = true
+            onLoading()
+            var url = ServerInfo.searchUserbyNickName(search)
+            NetworkAccess.buildRequest(url, object : Callback {
+                override fun onFailure(call: Call?, e: IOException?) {
+                    activity!!.runOnUiThread {
+                        Logger.log(e)
+                        Toast.makeText(context, "网络错误", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onResponse(call: Call?, response: Response?) {
+                    val json = response?.body()?.string()
+                    try {
+                        dataSet.clear()
+                        if (json!!.equals("[]")) {
+                        } else {
+                            val jsonArray = JSONArray(json)
+                            for (k in 0 until jsonArray.length()) {
+                                val obj = jsonArray.getJSONObject(k)
+                                val item = User(
+                                        obj.getString("nickname"),
+                                        obj.getString("studentnumber"),
+                                        obj.getString("avatar"),
+                                        obj.getString("sign"),
+                                        obj.getInt("id")
+                                )
+                                dataSet.add(item)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Logger.log(e)
+                        activity!!.runOnUiThread {
+                            Toast.makeText(context, "网络错误\n服务器无响应", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    activity!!.runOnUiThread {
+                        isLoadComplete = true
+                        publishData()
+                    }
+                }
+            })
+        }
+    }
+
+    override fun isLoadComplete(): Boolean {
+        return isLoadComplete
+    }
+
+    override fun publishData() {
+        super.publishData()
+        if(dataSet.size!= 0){
+            recyclerView!!.visibility = View.VISIBLE
+            loadingLayout!!.visibility = View.GONE
+            blankView!!.visibility = View.GONE
+        }else{
+            recyclerView!!.visibility = View.GONE
+            loadingLayout!!.visibility = View.GONE
+            blankView!!.visibility = View.VISIBLE
+        }
         if(mAdapter!=null){
             mAdapter!!.notifyDataSetChanged()
         }
     }
 
-    fun noResult(){
-        clear()
-        recyclerView!!.visibility = View.GONE
-        loadingLayout!!.visibility = View.GONE
-        blankView!!.visibility = View.VISIBLE
-    }
     fun onLoading(){
         recyclerView!!.visibility = View.GONE
         loadingLayout!!.visibility = View.VISIBLE
         blankView!!.visibility = View.GONE
     }
-    override fun onResume() {
-        super.onResume()
-        dataList.clear()
-    }
 
-    inner class MyAdapter(mDataList: List<User>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+    inner class MyAdapter(mDataSet: MutableSet<User>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
-        private var mDataList = mDataList
+        private var DataSet = mDataSet
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context)
@@ -94,14 +156,19 @@ class SearchUserFragment : Fragment() {
             return ViewHolder(view)
         }
 
-        override fun getItemCount(): Int = mDataList.size
+        override fun getItemCount(): Int = DataSet.size
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val user = mDataList[position]
-            val bmp = ImageManager.convertStringToBitmap(user.avatarString)
+            var user : User? = null
+            var i = 0
+            while(DataSet.iterator().hasNext()&& i<=position && DataSet.size>0){
+                user = DataSet.iterator().next()
+                i++
+            }
+            val bmp = ImageManager.convertStringToBitmap(user!!.avatarString)
             holder.circleImageView!!.setImageBitmap(bmp)
-            holder.userName!!.text = user.nickName
-            holder.userSign!!.text = user.selfIntroduce
+            holder.userName!!.text = user!!.nickName
+            holder.userSign!!.text = user!!.selfIntroduce
             holder.btnfollow!!.setOnClickListener {
                 Log.w("click","follow")
             }

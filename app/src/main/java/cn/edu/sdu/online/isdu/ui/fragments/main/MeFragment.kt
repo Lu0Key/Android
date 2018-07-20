@@ -26,6 +26,10 @@ import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.*
 import cn.edu.sdu.online.isdu.ui.design.button.ImageButton
 import cn.edu.sdu.online.isdu.util.*
+import cn.edu.sdu.online.isdu.util.EnvVariables
+import cn.edu.sdu.online.isdu.util.FileUtil
+import cn.edu.sdu.online.isdu.util.ImageManager
+import cn.edu.sdu.online.isdu.util.Logger
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_me.*
 import org.json.JSONException
@@ -118,7 +122,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
                 startActivity(Intent(activity, StudyRoomActivity::class.java))
             }
             btn_msg.id -> {
-
+                startActivity(Intent(activity, MessageActivity::class.java))
             }
             btn_my_favorite.id -> {
                 startActivity(Intent(activity, CollectActivity::class.java))
@@ -297,9 +301,11 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
 
     }
 
+
     inner class TodoAdapter : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
 
-            override fun getItemCount(): Int = todoList.size
+        override fun getItemCount(): Int = todoList.size
+
 
             override fun onBindViewHolder(holder: ViewHolder, position: Int) {
                 val item = todoList[position]

@@ -81,8 +81,8 @@
 
         <activity android:name=".ui.activity.CreatePostActivity" />
         <activity android:name=".ui.activity.StudyRoomTableActivity" />
-        <activity android:name=".ui.activity.PostDetailActivity"></activity>
         <activity android:name=".ui.activity.CollectActivity" />
+        <activity android:name=".ui.activity.PostDetailActivity"/>
     </application>
 
 </manifest>

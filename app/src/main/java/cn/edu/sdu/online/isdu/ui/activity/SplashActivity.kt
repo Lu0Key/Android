@@ -53,6 +53,8 @@ class SplashActivity : AppCompatActivity() {
 
 
 
+
+
     private fun showSplash() {
         handler = Handler()
         splashHandler = SplashHandler()

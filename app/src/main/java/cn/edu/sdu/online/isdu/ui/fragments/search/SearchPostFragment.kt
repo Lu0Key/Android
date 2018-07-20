@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.bean.User
 
@@ -23,12 +24,19 @@ import cn.edu.sdu.online.isdu.bean.User
  ****************************************************
  */
 
-class SearchPostFragment : Fragment() {
+class SearchPostFragment : LazyLoadFragment() {
 
     private var dataList: MutableList<Post> = ArrayList()
     private var adapter: MyAdapter? = null
     private var loadingLayout: View? = null
     private var recyclerView: RecyclerView? = null
+    private var search : String? = null
+    //private var isLoadComplete = false
+
+    fun setSearch(search: String?){
+        this.search = search
+        //isLoadComplete = false
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_search_post, container, false)

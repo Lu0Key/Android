@@ -47,6 +47,16 @@ import kotlin.collections.LinkedHashMap
  ****************************************************
  */
 
+/**
+ ****************************************************
+ * @author zsj
+ * Last Modifier: ZSJ
+ * Last Modify Time: 2018/7/19
+ *
+ * 新建帖子页面
+ ****************************************************
+ */
+
 class CreatePostActivity : NormActivity(), View.OnClickListener {
 
     private var btnAlbum: View? = null
