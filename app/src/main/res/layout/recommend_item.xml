@@ -7,7 +7,10 @@
     android:layout_marginLeft="4dp"
     android:layout_marginRight="4dp"
     android:layout_marginTop="0dp"
-    android:background="@drawable/light_card_background">
+    android:background="@drawable/light_card_background"
+    android:foreground="?attr/selectableItemBackground"
+    android:focusable="true"
+    android:clickable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,6 +32,7 @@
                 android:text="置顶"
                 android:textSize="10sp"
                 android:textColor="@color/colorWhite"
+                android:visibility="gone"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/red_rect"
                 android:paddingLeft="8dp"
@@ -83,8 +87,7 @@
                 android:textColor="@color/colorSecondaryText"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="20dp"
-                android:textSize="12sp"
-                android:text="User Name"/>
+                android:textSize="12sp"/>
 
             <!--评论小图标-->
             <ImageView

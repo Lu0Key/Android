@@ -233,7 +233,7 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
         jsonObj.put("time", System.currentTimeMillis())
 
         params.put("data", jsonObj.toString())
-        post("http://202.194.15.133:8384/post/upload", params, hashMap)
+        post(ServerInfo.uploadPostUrl, params, hashMap)
     }
 
 

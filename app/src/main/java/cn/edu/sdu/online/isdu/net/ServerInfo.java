@@ -51,6 +51,8 @@ public class ServerInfo {
         return "https://sduonline.cn/isdu/news/api/index.php?site=" + site;
     }
 
+    public static final String uploadPostUrl = "http://202.194.15.133:8384/post/upload";
+
     /**
      *
      * @param index 版块ID
@@ -112,11 +114,11 @@ public class ServerInfo {
     }
 
     public static String getPostList(int uid, int startId) {
-        return "http://211.87.226.186:8384/post/getPostList10?startId=" + startId + "&userId=" + uid;
+        return "http://202.194.15.133:8384/post/getPostList10?startId=" + startId + "&userId=" + uid;
     }
 
     public static String getPost(int id) {
-        return "http://211.87.226.186:8384/post/detail";
+        return "http://202.194.15.133:8384/post/detail/?id=" + id;
     }
 
     public static String getLibraryInfoUrl(String id){

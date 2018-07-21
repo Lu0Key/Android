@@ -136,10 +136,14 @@
                 app:rt_editor_image_bottom="10"
                 app:rt_editor_text_size="16"/>
 
+            <!--评论区-->
+
+
         </LinearLayout>
     </ScrollView>
 
 
+    <!--OperateBar-->
     <LinearLayout
         android:id="@+id/operate_bar"
         android:orientation="horizontal"

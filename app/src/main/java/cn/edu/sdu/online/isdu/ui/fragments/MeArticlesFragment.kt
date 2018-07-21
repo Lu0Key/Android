@@ -28,8 +28,10 @@ import kotlinx.android.synthetic.main.activity_my_home_page.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
 
 /**
@@ -51,6 +53,12 @@ class MeArticlesFragment : LazyLoadFragment() {
     private var pullRefreshLayout: SpringView? = null
 
     private var uid = -1
+
+    private var lastId = 0
+
+    public fun setUid(uid: Int) {
+        this.uid = uid
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_me_articles, container, false)
@@ -75,12 +83,13 @@ class MeArticlesFragment : LazyLoadFragment() {
         recyclerView!!.adapter = adapter
     }
 
-    override fun isLoadComplete(): Boolean {
-        return super.isLoadComplete()
-    }
+//    override fun isLoadComplete(): Boolean {
+//        return super.isLoadComplete()
+//    }
 
     override fun loadData() {
-        NetworkAccess.buildRequest(ServerInfo.getPostList(uid, dataList[dataList.size - 1].postId),
+        NetworkAccess.buildRequest(ServerInfo.getPostList(uid,
+                if (dataList.size > 0) dataList[0].postId + 1 else 0),
                 object : Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
                         Logger.log(e)
@@ -98,7 +107,7 @@ class MeArticlesFragment : LazyLoadFragment() {
                             val str = response?.body()?.string()
                             val jsonObj = JSONObject(str)
 
-                            val jsonArr = jsonObj.getJSONArray("obj")
+                            val jsonArr = JSONArray(jsonObj.getString("obj"))
 
                             for (i in 0 until jsonArr.length()) {
                                 val obj = jsonArr.getJSONObject(i)
@@ -111,7 +120,7 @@ class MeArticlesFragment : LazyLoadFragment() {
                                 post.uid = obj.getString("uid")
                                 post.title = obj.getString("title")
                                 post.time = obj.getLong("time")
-                                post.content = obj.getString("content")
+//                                post.content = obj.getString("content")
 
                                 list.add(post)
                             }
@@ -141,7 +150,10 @@ class MeArticlesFragment : LazyLoadFragment() {
 
     private fun publishLoadData(list: List<Post>) {
         if (list.isNotEmpty()) {
-            dataList.addAll(list)
+            for (i in list.size - 1 downTo 0) {
+                dataList.add(list[i])
+            }
+//            dataList.addAll(list)
             adapter!!.notifyDataSetChanged()
         }
     }
@@ -157,28 +169,22 @@ class MeArticlesFragment : LazyLoadFragment() {
         // 下拉刷新监听器
         pullRefreshLayout!!.setListener(object : SpringView.OnFreshListener {
             override fun onLoadmore() {
-                val onRefreshListener = OnRefreshListener { result, data ->
-                    dataList.add(Post())
-
-                    adapter!!.notifyDataSetChanged()
-                    pullRefreshLayout!!.onFinishFreshAndLoad()
-                    recyclerView!!.smoothScrollBy(0, 250)
-                }
-
-                Handler().postDelayed({
-                    onRefreshListener.onRefresh(0, 0)
-                }, 2000)
+//                val onRefreshListener = OnRefreshListener { result, data ->
+//                    dataList.add(Post())
+//
+//                    adapter!!.notifyDataSetChanged()
+//                    pullRefreshLayout!!.onFinishFreshAndLoad()
+//                    recyclerView!!.smoothScrollBy(0, 250)
+//                }
+//
+//                Handler().postDelayed({
+//                    onRefreshListener.onRefresh(0, 0)
+//                }, 2000)
             }
 
             override fun onRefresh() {
-
-                val onRefreshListener = OnRefreshListener { result, data ->
-                    pullRefreshLayout!!.onFinishFreshAndLoad()
-                }
-
-                Handler().postDelayed({
-                    onRefreshListener.onRefresh(0, 0)
-                }, 2000)
+                dataList.clear()
+                loadData()
             }
         })
 
@@ -193,11 +199,19 @@ class MeArticlesFragment : LazyLoadFragment() {
             val item = dataList!![position]
             holder.cardView.setOnClickListener {
                 context!!.startActivity(Intent(context, PostDetailActivity::class.java)
-                        .putExtra("id", item.postId))
+                        .putExtra("id", item.postId)
+                        .putExtra("uid", item.uid)
+                        .putExtra("title", item.title)
+                        .putExtra("time", item.time))
             }
             holder.titleView.text = item.title
             holder.commentNumber.text = item.commentsNumbers.toString()
             holder.content.text = item.content
+            holder.releaseTime.text = if (System.currentTimeMillis() - item.time < 60 * 1000)
+                "刚刚" else (if (System.currentTimeMillis() - item.time < 24 * 60 * 60 * 1000)
+                    "${(System.currentTimeMillis() - item.time) / 24} 小时前" else (
+                    if (System.currentTimeMillis() - item.time < 48 * 60 * 60 * 1000) "昨天 ${SimpleDateFormat("HH:mm").format(item.time)}"
+                    else SimpleDateFormat("yyyy-MM-dd HH:mm").format(item.time)))
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

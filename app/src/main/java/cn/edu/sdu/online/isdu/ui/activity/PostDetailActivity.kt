@@ -26,13 +26,12 @@ import kotlinx.android.synthetic.main.edit_area.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.text.SimpleDateFormat
 
 class PostDetailActivity : SlideActivity(), View.OnClickListener {
-
-    private var postId: Int = 0 // 帖子ID
 
     private var url: String = "" // URL
 
@@ -51,11 +50,18 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var editText: EditText? = null // 编辑区域的文本框
     private var btnSend: View? = null
 
+    private var uid = ""
+    private var title = ""
+    private var time = 0L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_detail)
 
         url = ServerInfo.getPost(intent.getIntExtra("id", 0))
+        uid = intent.getStringExtra("uid") ?: ""
+        title = intent.getStringExtra("title") ?: ""
+        time = intent.getLongExtra("time", 0L)
 
         initView()
 
@@ -108,7 +114,20 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 showSoftKeyboard()
             }
             btn_send.id -> {
-                editArea!!.clearFocus()
+                NetworkAccess.buildRequest(ServerInfo.uploadPostUrl, object : Callback {
+                    override fun onFailure(call: Call?, e: IOException?) {
+                        runOnUiThread {
+                            editArea!!.clearFocus()
+                        }
+                    }
+
+                    override fun onResponse(call: Call?, response: Response?) {
+                        runOnUiThread {
+                            editArea!!.clearFocus()
+                        }
+                    }
+                })
+
             }
         }
     }
@@ -127,27 +146,44 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
      * 获取帖子内容
      */
     private fun getPostData() {
-        NetworkAccess.cache(url) { success, cachePath ->
+        NetworkAccess
+                .cache(url) { success, cachePath ->
             if (success) {
-                val json = JSONObject(FileUtil.getStringFromFile(cachePath))
+                if (FileUtil.getStringFromFile(cachePath) != "") {
+                    val json = JSONObject(FileUtil.getStringFromFile(cachePath))
 
-                getUserData(json.getString("uid"))
+                    getUserData(uid)
 
-                val data = JSONObject(json.getString("obj"))
+                    val data = JSONObject(json.getString("obj"))
+                    val editDataList = ArrayList<RichTextEditor.EditData>()
+                    val content = JSONArray(data.getString("content"))
+                    for (i in 0 until content.length()) {
+                        val obj = content.getJSONObject(i)
+                        val data = RichTextEditor.EditData()
+                        if (obj.getInt("type") == 0) {
+                            data.imageName = obj.getString("content")
+                        } else {
+                            data.inputStr = obj.getString("content")
+                        }
+                        editDataList.add(data)
+                    }
 
-                val editDataList = ArrayList<RichTextEditor.EditData>()
 
-                runOnUiThread {
-                    txtDate!!.text =
-                            "发表于 ${SimpleDateFormat("yyyy-MM-dd HH:mm").format(json.getLong("time"))}"
 
-                    txtContent!!.setData(editDataList)
+                    runOnUiThread {
+                        txtTitle!!.text = title
+                        txtDate!!.text =
+                                "发表于 ${SimpleDateFormat("yyyy-MM-dd HH:mm").format(time)}"
+
+                        txtContent!!.setData(editDataList)
+                    }
                 }
 
 
-
             } else {
-                Toast.makeText(this, "获取内容出错", Toast.LENGTH_SHORT).show()
+                runOnUiThread {
+                    Toast.makeText(this, "获取内容出错", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -158,8 +194,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private fun getUserData(id: String) {
         NetworkAccess.cache(ServerInfo.getUserInfo(id, "nickname"), "nickname") {success, cachePath ->
             if (success) {
-                val obj = JSONObject(FileUtil.getStringFromFile(cachePath))
-                runOnUiThread { txtNickname!!.text = obj.getString("nickname") }
+                val obj = FileUtil.getStringFromFile(cachePath)
+                runOnUiThread { txtNickname!!.text = obj }
             } else {
                 Toast.makeText(this, "获取用户信息失败", Toast.LENGTH_SHORT).show()
             }
@@ -170,9 +206,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 val obj = FileUtil.getStringFromFile(cachePath)
                 val bmp = ImageManager.convertStringToBitmap(obj)
                 runOnUiThread {
-                    Glide.with(this)
-                            .load(bmp)
-                            .into(circleImageView!!)
+                    circleImageView!!.setImageBitmap(bmp)
                 }
             } else {
                 Toast.makeText(this, "获取用户信息失败", Toast.LENGTH_SHORT).show()
