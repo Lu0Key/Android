@@ -66,6 +66,7 @@
         <activity android:name=".ui.activity.SearchBookActivity" />
         <activity android:name=".ui.activity.MessageActivity" />
         <activity android:name=".ui.activity.NewsActivity" />
+        <activity android:name=".ui.activity.BindLibraryActivity"/>
         <activity
             android:name=".ui.activity.DownloadActivity"
             android:launchMode="singleInstance" />

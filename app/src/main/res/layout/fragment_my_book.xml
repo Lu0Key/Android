@@ -80,6 +80,7 @@
                 android:textSize="18sp"/>
 
             <TextView
+                android:id="@+id/reb_all"
                 android:clickable="true"
                 android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
@@ -95,7 +96,7 @@
                 android:text="一键续借" />
         </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
                 <android.support.v7.widget.RecyclerView
@@ -105,6 +106,37 @@
                     android:layout_marginTop="8dp">
                 </android.support.v7.widget.RecyclerView>
 
+                <TextView
+                    android:id="@+id/network_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:text="网络错误"
+                    android:gravity="center"
+                    android:textColor="@color/colorPurpleDark"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:id="@+id/nobook"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:text="您还未借阅图书"
+                    android:gravity="center"
+                    android:textColor="@color/colorPurpleDark"
+                    android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/unbind"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:text="尚未登录/绑定校园卡\n点我登录\绑定"
+                android:gravity="center"
+                android:textColor="@color/colorPurpleDark"
+                android:textSize="18sp"
+                android:clickable="true"
+                android:focusable="true"/>
 
             <!--<TextView-->
             <!--android:id="@+id/update_bar"-->
@@ -120,7 +152,7 @@
             <!--android:textSize="12sp"-->
             <!--android:textColor="@color/colorWhite"-->
             <!--android:layout_centerHorizontal="true"/>-->
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
 
