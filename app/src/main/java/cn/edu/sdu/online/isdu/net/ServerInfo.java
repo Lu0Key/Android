@@ -119,4 +119,22 @@ public class ServerInfo {
         return "http://211.87.226.186:8384/post/detail";
     }
 
+    public static String getLibraryInfoUrl(String id){
+        return url + "library/info?id=" + id;
+    }
+    public static final String getBindUrl(String uid,String cardNumber, String pwd) {
+        return url + "library/bind?id=" + uid + "&cardNumber=" + cardNumber + "&password=" + pwd;
+    }
+    public static final String getBookListUrl(String uid) {
+        return url + "library/borrowed?id=" + uid ;
+    }
+    public static final String searchBookUrl(String bookName){
+        return url + "library/search?name=" + bookName ;
+    }
+    public static final String renewBookUrl(int uid){
+        return url + "library/renew?id=" + uid ;
+    }
+    public static final String renewOneBookUrl(int uid,String bookId,String checkCode){
+        return url + "library/renewOne?id=" + uid + "&bookId="+ bookId + "&verifyId=" + checkCode;
+    }
 }
