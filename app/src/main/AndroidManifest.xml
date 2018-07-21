@@ -21,11 +21,7 @@
             android:name=".ui.activity.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ui.activity.EditProfileActivity" />
         <activity android:name=".ui.activity.MyHomePageActivity" />
@@ -82,7 +78,13 @@
         <activity android:name=".ui.activity.CreatePostActivity" />
         <activity android:name=".ui.activity.StudyRoomTableActivity" />
         <activity android:name=".ui.activity.CollectActivity" />
-        <activity android:name=".ui.activity.PostDetailActivity"/>
+        <activity android:name=".ui.activity.PostDetailActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

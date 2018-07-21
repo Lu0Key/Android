@@ -58,4 +58,5 @@ dependencies {
     implementation 'com.youngfeng.android:snake:0.3.0'
     annotationProcessor 'com.youngfeng.android:snake-compiler:0.3.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+    implementation 'top.zibin:Luban:1.1.8'
 }

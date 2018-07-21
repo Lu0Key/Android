@@ -10,7 +10,7 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 
-class chatFragment : Fragment(){
+class ChatFragment : Fragment(){
 
     private var loadingLayout: View? = null
     private var recyclerView: RecyclerView? = null

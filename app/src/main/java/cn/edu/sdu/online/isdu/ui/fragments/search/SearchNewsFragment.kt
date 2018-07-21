@@ -18,6 +18,7 @@ import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.NewsActivity
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
+import okhttp3.Call
 import org.json.JSONArray
 import java.util.regex.Pattern
 
@@ -46,6 +47,10 @@ class SearchNewsFragment : LazyLoadFragment() {
     private val section = listOf("sduOnline","underGraduate","sduYouth","sduView")
     private val sectionName = listOf("学生在线", "本科生院", "青春山大", "山大视点")
 
+    private var lastSearchString = ""
+
+    private var searchCall: Call? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_search_news, container, false)
 
@@ -63,8 +68,10 @@ class SearchNewsFragment : LazyLoadFragment() {
 
     fun setSearch(search: String?){
         this.search = search
-        if (userVisibleHint){
+        if (userVisibleHint && (isLoadComplete || lastSearchString != search)){
+            if (searchCall != null && !searchCall!!.isCanceled) searchCall!!.cancel()
             isLoadComplete = false
+            lastSearchString = search!!
             loadData()
         }
     }
@@ -75,7 +82,7 @@ class SearchNewsFragment : LazyLoadFragment() {
         blankView = view.findViewById(R.id.blank_view)
     }
 
-    override fun isLoadComplete(): Boolean = isLoadComplete
+    override fun isLoadComplete(): Boolean = isLoadComplete && lastSearchString == search
 
     /*
     override fun loadData() {
@@ -129,8 +136,9 @@ class SearchNewsFragment : LazyLoadFragment() {
             publishData()
             return
         }
+        if (search == null) return
         val pattern = Pattern.compile(search, Pattern.CASE_INSENSITIVE)
-        NetworkAccess.cache(ServerInfo.getNewsUrl(index)) { success, cachePath ->
+        searchCall = NetworkAccess.cache(ServerInfo.getNewsUrl(index)) { success, cachePath ->
             if (success) {
                 try {
                     val str = FileUtil.getStringFromFile(cachePath)

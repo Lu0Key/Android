@@ -3,9 +3,13 @@ package cn.edu.sdu.online.isdu.ui.activity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.EditText
@@ -19,9 +23,11 @@ import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextEditor
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
+import cn.edu.sdu.online.isdu.util.Permissions
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
@@ -30,6 +36,8 @@ import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_create_post.*
 import kotlinx.android.synthetic.main.edit_operation_bar.*
 import okhttp3.*
+import top.zibin.luban.Luban
+import top.zibin.luban.OnCompressListener
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -66,6 +74,8 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
     private var btnDone: TextView? = null
     private var btnBack: View? = null
 
+    private var dialog: ProgressDialog? = null
+
     private val imageManager = ImageManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +83,11 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
         setContentView(R.layout.activity_create_post)
 
         initView()
+
+        dialog = ProgressDialog(this, false)
+        dialog!!.setMessage("正在上传")
+        dialog!!.setButton(null, null)
+        dialog!!.setCancelable(false)
 
 
         if (User.staticUser == null) User.staticUser = User.load()
@@ -124,11 +139,25 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
                 imageManager.selectFromGallery(this)
             }
             operate_camera.id -> {
-                imageManager.captureByCamera(this)
+                if (ContextCompat.checkSelfPermission(this, Permissions.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this,
+                            arrayOf(Permissions.CAMERA), 2)
+                } else {
+                    imageManager.captureByCamera(this)
+                }
+
             }
             btn_done.id -> {
-                val list = richEditText!!.buildEditData()
-                performUpload(list)
+                if (editTitle!!.text.toString() == "" &&
+                        richEditText!!.buildEditData().size == 1 &&
+                        richEditText!!.buildEditData()[0].imagePath == null &&
+                        richEditText!!.buildEditData()[0].inputStr == "") {
+                    Toast.makeText(this, "内容和标题不能为空", Toast.LENGTH_SHORT).show()
+                } else {
+                    val list = richEditText!!.buildEditData()
+                    performUpload(list, editTitle!!.text.toString())
+                }
             }
             btn_back.id -> {
                 if (editTitle!!.text.toString() == "" &&
@@ -162,14 +191,11 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
     }
 
     /**
-     * 上传帖子策略：
-     * 向服务器申请上传，获得返回的帖子ID值
-     * 遍历列表，依次上传图片，并保存服务端返回的图片URL
-     * 再构造Post的对象列表，转为JSONArray后再上传服务器
      *
      * @param list 富文本编辑器生成的数据列表
      */
-    private fun performUpload(list: List<RichTextEditor.EditData>) {
+    private fun performUpload(list: List<RichTextEditor.EditData>, title: String) {
+        dialog!!.show()
         // 预处理图片列表
         val hashMap = handleImages(list) // 获取优化后的图片散列表
 
@@ -178,20 +204,14 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
             hashMapList.add(entry.value)
         }
 
-
-        val dataObj = org.json.JSONObject()
-        dataObj.put("uid", User.staticUser.uid)
-
-        Log.d("AAA", JSON.toJSONString(hashMapList))
-
-
         val params = HashMap<String, String>()
 
-        val jsonArray = org.json.JSONArray()
+        val jsonArray = JSONArray()
 
         for (i in 0 until list.size) {
             val data = list[i] // Get each data
-            val obj = org.json.JSONObject()
+//            val obj = org.json.JSONObject()
+            val obj = JSONObject()
             if (data.imagePath != null && data.imagePath != "") {
                 // Image
                 obj.put("type", 0)
@@ -202,15 +222,18 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
                 obj.put("content", data.inputStr)
             }
 
-            jsonArray.put(obj)
+            jsonArray.add(obj)
         }
         // Create Complete!
 
+        val jsonObj = JSONObject()
+        jsonObj.put("uid", User.staticUser.uid)
+        jsonObj.put("obj", jsonArray.toJSONString())
+        jsonObj.put("title", title)
+        jsonObj.put("time", System.currentTimeMillis())
 
-        params.put("uid", User.staticUser.uid.toString())
-        params.put("data", jsonArray.toString())
-        Log.d("AAA", JSON.toJSONString(params))
-        post("http://202.194.15.133:8384/upload/img", JSON.toJSONString(params), hashMap)
+        params.put("data", jsonObj.toString())
+        post("http://202.194.15.133:8384/post/upload", params, hashMap)
     }
 
 
@@ -276,16 +299,85 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
         when (requestCode) {
             ImageManager.TAKE_PHOTO -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    richEditText!!.insertImage(BitmapFactory.decodeFile(imageManager.imagePath),
-                            imageManager.imagePath)
+                    Luban.with(this)
+                            .load(File(imageManager.imagePath))
+                            .ignoreBy(100)
+                            .setTargetDir(File(imageManager.imagePath).parentFile.absolutePath)
+                            .setCompressListener(object : OnCompressListener {
+                                private var dialog: ProgressDialog? = null
+
+                                override fun onSuccess(file: File?) {
+                                    runOnUiThread {
+                                        richEditText!!.insertImage(BitmapFactory.decodeFile(file!!.absolutePath),
+                                                file.absolutePath)
+                                        dialog?.dismiss()
+                                    }
+                                }
+
+                                override fun onError(e: Throwable?) {
+                                    Logger.log(e)
+                                    runOnUiThread {
+                                        Toast.makeText(this@CreatePostActivity, "插入图片失败",
+                                                Toast.LENGTH_SHORT).show()
+                                        dialog?.dismiss()
+                                    }
+                                }
+
+                                override fun onStart() {
+                                    runOnUiThread {
+                                        dialog = ProgressDialog(this@CreatePostActivity)
+                                        dialog?.setMessage("正在插入图片")
+                                        dialog?.setButton(null, null)
+                                        dialog?.setCancelable(false)
+                                        dialog?.show()
+                                    }
+                                }
+                            }).launch()
+
                 }
             }
             ImageManager.OPEN_GALLERY -> {
                 if (resultCode == Activity.RESULT_OK) {
                     imageManager.handleImage(data, this)
-                    richEditText!!.insertImage(BitmapFactory.decodeFile(imageManager.imagePath),
-                            imageManager.imagePath)
+
+                    Luban.with(this)
+                            .load(File(imageManager.imagePath))
+                            .ignoreBy(100)
+                            .setTargetDir(File(imageManager.imagePath).parentFile.absolutePath)
+                            .setCompressListener(object : OnCompressListener {
+                                private var dialog: ProgressDialog? = null
+
+                                override fun onSuccess(file: File?) {
+                                    runOnUiThread {
+                                        richEditText!!.insertImage(BitmapFactory.decodeFile(file!!.absolutePath),
+                                                file.absolutePath)
+                                        dialog?.dismiss()
+                                    }
+                                }
+
+                                override fun onError(e: Throwable?) {
+                                    Logger.log(e)
+                                    runOnUiThread {
+                                        Toast.makeText(this@CreatePostActivity, "插入图片失败",
+                                                Toast.LENGTH_SHORT).show()
+                                        dialog?.dismiss()
+                                    }
+                                }
+
+                                override fun onStart() {
+                                    runOnUiThread {
+                                        dialog = ProgressDialog(this@CreatePostActivity)
+                                        dialog?.setMessage("正在插入图片")
+                                        dialog?.setButton(null, null)
+                                        dialog?.setCancelable(false)
+                                        dialog?.show()
+                                    }
+                                }
+                            }).launch()
                 }
+            }
+            2 -> {
+
             }
         }
     }
@@ -298,7 +390,7 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
     /**
      *
      */
-    private fun post(actionUrl: String, params: String, hashMap: HashMap<String, String>) {
+    private fun post(actionUrl: String, params: HashMap<String, String>, hashMap: HashMap<String, String>) {
         Thread(Runnable {
             try {
                 val BOUNDARY = "--------------et567z"
@@ -327,7 +419,7 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
                 sb.append(BOUNDARY)
                 sb.append("\r\n")
                 sb.append("Content-Disposition: form-data; name=\"" + "data" + "\"\r\n\r\n")
-                sb.append(params)
+                sb.append(params.get("data"))
                 sb.append("\r\n")
 
                 //上传图片部分
@@ -354,12 +446,14 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
                     outStream.write(split.toString().toByteArray())
                     outStream.write(content, 0, content.size)
                     outStream.write("\r\n".toByteArray())
-                    val endData = ("--$BOUNDARY--\r\n").toByteArray()
-                    //数据结束标志
-                    outStream.write(endData)
+
                     Log.d("AAA", "Image ${entry.key} Success")
                 }
+                val endData = ("--$BOUNDARY--\r\n").toByteArray()
+                //数据结束标志
+                outStream.write(endData)
 
+                outStream.flush()
 
 
                 //返回状态判断
@@ -377,8 +471,6 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
                     }
                 }
 
-
-                outStream.flush()
                 outStream.close()
 
                 conn.disconnect()
@@ -386,6 +478,8 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
             } catch (e: Exception) {
                 Logger.log(e)
                 e.printStackTrace()
+            } finally {
+                dialog!!.dismiss()
             }
         }).start()
 

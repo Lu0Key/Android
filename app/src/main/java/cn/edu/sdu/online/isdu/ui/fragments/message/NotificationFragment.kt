@@ -17,7 +17,7 @@ import cn.edu.sdu.online.isdu.bean.News
 import cn.edu.sdu.online.isdu.ui.activity.NewsActivity
 
 
-class notificationFragment : Fragment(){
+class NotificationFragment : Fragment(){
 
     private var dataList: MutableList<News> = arrayListOf<News>()
     private var adapter: MyAdapter? = null
@@ -58,7 +58,7 @@ class notificationFragment : Fragment(){
     }
 
      fun publishData() {
-         Log.w("messageFragment","publishData")
+         Log.w("MessageFragment","publishData")
          if(dataList.size!= 0){
              recyclerView!!.visibility = View.VISIBLE
              loadingLayout!!.visibility = View.GONE

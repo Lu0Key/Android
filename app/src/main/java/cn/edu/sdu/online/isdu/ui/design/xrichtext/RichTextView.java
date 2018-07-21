@@ -31,6 +31,7 @@ import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import cn.edu.sdu.online.isdu.GlideApp;
@@ -296,6 +297,24 @@ public class RichTextView extends ScrollView {
         options.inJustDecodeBounds = false;
         options.inSampleSize = sampleSize;
         return BitmapFactory.decodeFile(filePath, options);
+    }
+
+    public void setData(final List<RichTextEditor.EditData> dataList) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                allLayout.removeAllViews();
+                for (int i = 0; i < dataList.size(); i++) {
+                    RichTextEditor.EditData data = dataList.get(i);
+                    if (data.imageName != null &&
+                            !data.imageName.equals("")) {
+                        addImageViewAtIndex(i, data.imageName);
+                    } else {
+                        addTextViewAtIndex(i, data.inputStr);
+                    }
+                }
+            }
+        });
     }
 
     /**

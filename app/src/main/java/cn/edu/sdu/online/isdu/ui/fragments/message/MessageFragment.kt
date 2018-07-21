@@ -17,7 +17,7 @@ import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
 
 
-class messageFragment : Fragment(){
+class MessageFragment : Fragment(){
 
     private var dataList: MutableList<Post> = arrayListOf<Post>()
     private var adapter: MyAdapter? = null
@@ -28,7 +28,7 @@ class messageFragment : Fragment(){
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        Log.w("messageFragment","onCreateView")
+        Log.w("MessageFragment","onCreateView")
         val view = inflater.inflate(R.layout.fragment_message, container, false)
         initView(view)
         loadData()
@@ -61,7 +61,7 @@ class messageFragment : Fragment(){
     }
 
     fun publishData() {
-        Log.w("messageFragment","publishData")
+        Log.w("MessageFragment","publishData")
         if(dataList.size!= 0){
             recyclerView!!.visibility = View.VISIBLE
             loadingLayout!!.visibility = View.GONE
@@ -100,11 +100,10 @@ class messageFragment : Fragment(){
                     //TODO(启动帖子详情的putExtra)
                 Log.w("messageFragmentClick",position.toString())
             }
-            holder.title_flag.text = post.title_flag
-            holder.titleView.text = post.title
-            //TODO contentLayout
-            holder.user_name.text = post.userName
-            holder.comments_number.text = post.comments_numbers.toString()
+//            holder.title_flag.text = post.title_flag
+//            holder.titleView.text = post.title
+//            holder.user_name.text = post.userName
+//            holder.comments_number.text = post.comments_numbers.toString()
 
             val timeDelta:Long = System.currentTimeMillis()-post.time
             if(((timeDelta/1000/60).toInt())<1){

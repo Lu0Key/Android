@@ -9,11 +9,10 @@ import android.support.v4.view.ViewPager
 import android.view.View
 import android.widget.ImageView
 import cn.edu.sdu.online.isdu.R
-import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.ui.fragments.message.chatFragment
-import cn.edu.sdu.online.isdu.ui.fragments.message.messageFragment
-import cn.edu.sdu.online.isdu.ui.fragments.message.notificationFragment
+import cn.edu.sdu.online.isdu.ui.fragments.message.ChatFragment
+import cn.edu.sdu.online.isdu.ui.fragments.message.MessageFragment
+import cn.edu.sdu.online.isdu.ui.fragments.message.NotificationFragment
 import kotlinx.android.synthetic.main.activity_message.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -39,7 +38,7 @@ import java.io.Serializable
 class MessageActivity : SlideActivity(), View.OnClickListener , Serializable {
 
     private var backBtn : ImageView?= null
-    private val mFragments = listOf(messageFragment(), chatFragment(), notificationFragment())
+    private val mFragments = listOf(MessageFragment(), ChatFragment(), NotificationFragment())
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
     private val mDataList = listOf("消息", "聊天","通知")
     private var viewPager: ViewPager? = null // ViewPager

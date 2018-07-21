@@ -45,6 +45,9 @@ class SearchUserFragment : LazyLoadFragment() {
     private var isLoadComplete = false
     private var isLoading = false
 
+    private var lastSearchString = ""
+    private var searchCall: Call? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_search_user, container, false)
         initView(view)
@@ -67,8 +70,11 @@ class SearchUserFragment : LazyLoadFragment() {
 
     fun setSearch(search: String?){
         this.search = search
-        if(userVisibleHint && isLoadComplete){
+        if(userVisibleHint && (isLoadComplete || search != lastSearchString)){
+            if (searchCall != null && !searchCall!!.isCanceled) searchCall!!.cancel()
             isLoadComplete = false
+
+            lastSearchString = search!!
             loadData()
         }
     }
@@ -79,7 +85,7 @@ class SearchUserFragment : LazyLoadFragment() {
             isLoading = true
             onLoading()
             var url = ServerInfo.searchUserbyNickName(search)
-            NetworkAccess.buildRequest(url, object : Callback {
+            searchCall = NetworkAccess.buildRequest(url, object : Callback {
                 override fun onFailure(call: Call?, e: IOException?) {
                     activity!!.runOnUiThread {
                         Logger.log(e)
@@ -120,9 +126,8 @@ class SearchUserFragment : LazyLoadFragment() {
         }
     }
 
-    override fun isLoadComplete(): Boolean {
-        return isLoadComplete
-    }
+    override fun isLoadComplete(): Boolean = isLoadComplete && lastSearchString == search
+
 
     override fun publishData() {
         if(dataList.size != 0){

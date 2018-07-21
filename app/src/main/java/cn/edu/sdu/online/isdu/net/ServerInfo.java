@@ -111,4 +111,12 @@ public class ServerInfo {
         return "http://sduonline.cn/isdu/studyroom/api/?campus=" + campus + "&building=" + building + "&date=" + date;
     }
 
+    public static String getPostList(int uid, int startId) {
+        return "http://211.87.226.186:8384/post/getPostList10?startId=" + startId + "&userId=" + uid;
+    }
+
+    public static String getPost(int id) {
+        return "http://211.87.226.186:8384/post/detail";
+    }
+
 }
