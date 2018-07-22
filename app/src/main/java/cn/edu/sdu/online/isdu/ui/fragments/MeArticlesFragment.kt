@@ -80,7 +80,7 @@ class MeArticlesFragment : LazyLoadFragment(), PostViewable {
 
     override fun removeItem(item: Any?) {
         for (i in 0 until  dataList.size) {
-            if (dataList[i].postId == item as Int) dataList.removeAt(i)
+            if (dataList[i].postId == item as Int) dataList.remove(dataList[i])
         }
         adapter?.notifyDataSetChanged()
     }
@@ -165,10 +165,10 @@ class MeArticlesFragment : LazyLoadFragment(), PostViewable {
 
     private fun publishLoadData(list: List<Post>) {
         if (list.isNotEmpty()) {
-            for (i in list.size - 1 downTo 0) {
-                dataList.add(list[i])
-            }
-//            dataList.addAll(list)
+//            for (i in list.size - 1 downTo 0) {
+//                dataList.add(list[i])
+//            }
+            dataList.addAll(list)
             adapter!!.notifyDataSetChanged()
         }
     }
