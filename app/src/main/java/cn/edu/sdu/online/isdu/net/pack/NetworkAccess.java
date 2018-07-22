@@ -270,10 +270,28 @@ public class NetworkAccess {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
-                    FileWriter fw = new FileWriter(cacheFile);
-                    JSONObject jsonObject = new JSONObject(response.body().string());
-                    fw.write(jsonObject.getString(key));
-                    fw.close();
+                    if (key != null && !"".equals(key)) {
+                        FileWriter fw = new FileWriter(cacheFile);
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        fw.write(jsonObject.getString(key));
+                        fw.close();
+                    } else {
+                        InputStream is = response.body().byteStream();
+                        BufferedInputStream bis = new BufferedInputStream(is);
+                        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cacheFile));
+
+                        int len = 0;
+                        byte[] b = new byte[2048];
+                        while ((len = bis.read(b)) > 0) {
+                            bos.write(b, 0, len);
+                        }
+
+                        bos.flush();
+                        bos.close();
+                        bis.close();
+                        is.close();
+                    }
+
                     if (listener != null)
                         listener.onFinish(true, cacheFile.getAbsolutePath());
                 } catch (Exception e) {

@@ -160,11 +160,19 @@ class ViewImageActivity : NormActivity() {
             textView!!.text = "正在加载..."
             NetworkAccess.cache(url, cacheKey) { success, cachePath ->
                 if (success) {
-                    val bmp = ImageManager.loadStringFromFile(cachePath)
-                    runOnUiThread {
-                        draggableImageView!!.setImageBitmap(bmp)
-                        loadingLayout!!.visibility = View.GONE
+                    if (isString) {
+                        val bmp = ImageManager.loadStringFromFile(cachePath)
+                        runOnUiThread {
+                            draggableImageView!!.setImageBitmap(bmp)
+                            loadingLayout!!.visibility = View.GONE
+                        }
+                    } else {
+                        runOnUiThread {
+                            draggableImageView!!.setImageBitmap(BitmapFactory.decodeFile(cachePath))
+                            loadingLayout!!.visibility = View.GONE
+                        }
                     }
+
                 } else {
                     runOnUiThread {
                         loadingLayout!!.visibility = View.VISIBLE
