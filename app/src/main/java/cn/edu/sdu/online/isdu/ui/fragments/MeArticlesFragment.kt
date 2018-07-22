@@ -79,9 +79,11 @@ class MeArticlesFragment : LazyLoadFragment(), PostViewable {
     }
 
     override fun removeItem(item: Any?) {
+        var j = 0
         for (i in 0 until  dataList.size) {
-            if (dataList[i].postId == item as Int) dataList.remove(dataList[i])
+            if (dataList[i].postId == item as Int) j = i
         }
+        dataList.removeAt(j)
         adapter?.notifyDataSetChanged()
     }
 
