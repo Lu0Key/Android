@@ -48,6 +48,7 @@ public class ImageManager {
 
     private Uri imageUri;
     public String imagePath;
+    public File croppedImage;
 
     private Uri fromUri, destUri; // 用于裁剪的URI
 
@@ -101,7 +102,7 @@ public class ImageManager {
 
     private void initCrop(Context context) {
         //获取打开文件的URI
-        File croppedImage = new File(Environment.getExternalStorageDirectory() + "/iSDU/thumb/" +
+        croppedImage = new File(Environment.getExternalStorageDirectory() + "/iSDU/thumb/" +
                 System.currentTimeMillis() + "_c.jpg");
 
         if (!croppedImage.exists()) {
@@ -164,7 +165,7 @@ public class ImageManager {
 
     }
 
-    private String getImagePath(Uri uri, String selection, Context context) {
+    public String getImagePath(Uri uri, String selection, Context context) {
         String path = null;
         Cursor cursor = context.getContentResolver().query(uri,
                 null, selection, null, null);
@@ -180,7 +181,7 @@ public class ImageManager {
     public void openCrop(Activity activity) {
         UCrop.of(fromUri, destUri)
                 .withAspectRatio(1, 1)
-                .withMaxResultSize(640, 640)
+                .withMaxResultSize(800, 800)
                 .start(activity);
     }
 
@@ -223,6 +224,13 @@ public class ImageManager {
         bitmap.compress(Bitmap.CompressFormat.PNG, quality, baos);
         byte[] b = baos.toByteArray();
         return Base64.encodeToString(b, Base64.DEFAULT);
+    }
+
+    public static byte[] convertBitmapToByteArray(Bitmap bitmap) {
+        if (bitmap == null) return new byte[0];
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        return baos.toByteArray();
     }
 
     /**

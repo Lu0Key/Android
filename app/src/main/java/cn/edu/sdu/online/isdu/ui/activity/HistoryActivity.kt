@@ -12,7 +12,7 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.History
-import cn.edu.sdu.online.isdu.util.DataBase.DAO_history
+import cn.edu.sdu.online.isdu.util.DataBase.DAOHistory
 
 
 import kotlinx.android.synthetic.main.activity_history.*
@@ -25,12 +25,12 @@ class HistoryActivity : SlideActivity(), View.OnClickListener {
     private var btnBack: ImageView? = null
     private var btnClear:TextView? = null
     private var blankView: TextView? = null
-    private var dao_history:DAO_history? = null
+    private var dao_history: DAOHistory? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
         initView()
-        dao_history= DAO_history(this)
+        dao_history= DAOHistory(this)
         initData()
         blankView!!.visibility = if (dataList.isEmpty()) View.VISIBLE else View.GONE
         initRecyclerView()

@@ -2,6 +2,7 @@ package cn.edu.sdu.online.isdu.ui.activity
 
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,6 +15,8 @@ import kotlinx.android.synthetic.main.activity_create_schedule.*
 import kotlin.coroutines.experimental.coroutineContext
 import android.widget.TextView
 import android.widget.BaseAdapter
+import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.TimeDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.WeekDialog
 import cn.edu.sdu.online.isdu.util.EnvVariables
@@ -49,9 +52,9 @@ class CreateScheduleActivity : SlideActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_schedule)
-
         initView()
         updateData()
+
     }
 
     override fun onClick(v: View?) {

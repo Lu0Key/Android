@@ -82,7 +82,15 @@
 
         <activity android:name=".ui.activity.CreatePostActivity" />
         <activity android:name=".ui.activity.StudyRoomTableActivity" />
-        <activity android:name=".ui.activity.PostDetailActivity"/>
+        <activity android:name=".ui.activity.CollectActivity" />
+        <activity android:name=".ui.activity.BindLibraryActivity" />
+        <activity android:name=".ui.activity.PostDetailActivity">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
     </application>
 
 </manifest>

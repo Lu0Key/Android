@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.EditText
@@ -16,6 +17,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.NormActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
@@ -23,6 +25,7 @@ import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
+import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import com.yalantis.ucrop.UCrop
@@ -31,6 +34,9 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import top.zibin.luban.Luban
+import top.zibin.luban.OnCompressListener
+import java.io.File
 import java.io.IOException
 
 /**
@@ -45,7 +51,7 @@ import java.io.IOException
  ****************************************************
  */
 
-class EditProfileActivity : SlideActivity() {
+class EditProfileActivity : NormActivity() {
 
     private var editUserName: EditText? = null
     private var editGender: TextView? = null

@@ -15,32 +15,64 @@ public class Post {
     public static final int TYPE_TEXT = 0;
     public static final int TYPE_IMAGE = 1;
 
+    private int postId; // 帖子ID
     private int type; // 论坛内容类型
-    private String title_flag;//
+    private String titleFlag;//
     private String title;
-    private String userName;
-    private int comments_numbers;
+    private String uid;
+    private int commentsNumbers;
     private Long time;
     private String content; // 具体内容
+    private int likeNumber;
+    private int collectNumber;
 
     public Post() {}
 
-    public Post(int type, String title_flag, String title, String userName, int comments_numbers, Long time, String content) {
+    public Post(int type, String content) {
         this.type = type;
-        this.title_flag = title_flag;
+        this.content = content;
+    }
+
+    public Post(int type, String titleFlag, String title, String uid, int commentsNumbers, Long time, String content) {
+        this.type = type;
+        this.titleFlag = titleFlag;
         this.title = title;
-        this.userName = userName;
-        this.comments_numbers = comments_numbers;
+        this.uid = uid;
+        this.commentsNumbers = commentsNumbers;
         this.time = time;
         this.content = content;
     }
 
-    public String getTitle_flag() {
-        return title_flag;
+    public int getPostId() {
+        return postId;
     }
 
-    public void setTitle_flag(String title_flag) {
-        this.title_flag = title_flag;
+    public void setPostId(int postId) {
+        this.postId = postId;
+    }
+
+    public int getLikeNumber() {
+        return likeNumber;
+    }
+
+    public void setLikeNumber(int likeNumber) {
+        this.likeNumber = likeNumber;
+    }
+
+    public int getCollectNumber() {
+        return collectNumber;
+    }
+
+    public void setCollectNumber(int collectNumber) {
+        this.collectNumber = collectNumber;
+    }
+
+    public String getTitleFlag() {
+        return titleFlag;
+    }
+
+    public void setTitleFlag(String titleFlag) {
+        this.titleFlag = titleFlag;
     }
 
     public String getTitle() {
@@ -51,20 +83,20 @@ public class Post {
         this.title = title;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUid() {
+        return uid;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
-    public int getComments_numbers() {
-        return comments_numbers;
+    public int getCommentsNumbers() {
+        return commentsNumbers;
     }
 
-    public void setComments_numbers(int comments_numbers) {
-        this.comments_numbers = comments_numbers;
+    public void setCommentsNumbers(int commentsNumbers) {
+        this.commentsNumbers = commentsNumbers;
     }
 
     public Long getTime() {

@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import cn.edu.sdu.online.isdu.bean.History;
 
 //浏览历史数据库工具类
-public class DAO_history {
-    private DBO_history dbo_history;
+public class DAOHistory {
+    private DBOHistory dbo_history;
     private SQLiteDatabase database;
-    public DAO_history(Context context){
-        dbo_history=new DBO_history(context);
+    public DAOHistory(Context context){
+        dbo_history=new DBOHistory(context);
     }
     public void close(){
         database.close();

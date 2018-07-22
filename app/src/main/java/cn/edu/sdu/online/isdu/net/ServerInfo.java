@@ -68,6 +68,10 @@ public class ServerInfo {
         return "https://sduonline.cn/isdu/news/api/index.php?site=" + site;
     }
 
+    public static final String uploadPostUrl = "http://202.194.15.133:8384/post/upload";
+
+    public static String postCommentUrl = "http://202.194.15.133:8384/comment/add";
+
     /**
      *
      * @param index 版块ID
@@ -128,4 +132,30 @@ public class ServerInfo {
         return "http://sduonline.cn/isdu/studyroom/api/?campus=" + campus + "&building=" + building + "&date=" + date;
     }
 
+    public static String getPostList(int uid, int startId) {
+        return "http://202.194.15.133:8384/post/getPostList10?startId=" + startId + "&userId=" + uid;
+    }
+
+    public static String getPost(int id) {
+        return "http://202.194.15.133:8384/post/detail/?id=" + id;
+    }
+
+    public static String getLibraryInfoUrl(String id){
+        return url + "library/info?id=" + id;
+    }
+    public static final String getBindUrl(String uid,String cardNumber, String pwd) {
+        return url + "library/bind?id=" + uid + "&cardNumber=" + cardNumber + "&password=" + pwd;
+    }
+    public static final String getBookListUrl(String uid) {
+        return url + "library/borrowed?id=" + uid ;
+    }
+    public static final String searchBookUrl(String bookName){
+        return url + "library/search?name=" + bookName ;
+    }
+    public static final String renewBookUrl(int uid){
+        return url + "library/renew?id=" + uid ;
+    }
+    public static final String renewOneBookUrl(int uid,String bookId,String checkCode){
+        return url + "library/renewOne?id=" + uid + "&bookId="+ bookId + "&verifyId=" + checkCode;
+    }
 }

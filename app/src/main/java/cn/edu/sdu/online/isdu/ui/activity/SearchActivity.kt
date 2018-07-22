@@ -48,6 +48,7 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
     private val mDataList = listOf("帖子", "资讯", "用户")
     private val mFragments = listOf(SearchPostFragment(), SearchNewsFragment(), SearchUserFragment())
 
+    private var lastSearchString = "" // 上一次搜索
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +57,7 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
         initView()
         initFragments()
         initIndicator()
-        magicIndicator!!.visibility=View.INVISIBLE
+        magicIndicator!!.visibility = View.INVISIBLE
     }
     private fun initView() {
         btnBack = findViewById(R.id.btn_back)
@@ -85,12 +86,12 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                 finish()
             }
             R.id.btn_search -> {
-                Log.w("cl","btn_search")
-                magicIndicator!!.visibility=View.VISIBLE
-                if(editSearch!!.text.toString()!=""){
-                    (mFragments[0]as SearchPostFragment).setSearch(editSearch!!.text.toString())
-                    (mFragments[1]as SearchNewsFragment).setSearch(editSearch!!.text.toString())
-                    (mFragments[2]as SearchUserFragment).setSearch(editSearch!!.text.toString())
+                magicIndicator!!.visibility = View.VISIBLE
+                if (editSearch!!.text.toString() != "" && lastSearchString != editSearch!!.text.toString()){
+                    lastSearchString = editSearch!!.text.toString()
+                    (mFragments[0] as SearchPostFragment).setSearch(editSearch!!.text.toString())
+                    (mFragments[1] as SearchNewsFragment).setSearch(editSearch!!.text.toString())
+                    (mFragments[2] as SearchUserFragment).setSearch(editSearch!!.text.toString())
                 }
             }
         }

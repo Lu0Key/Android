@@ -51,4 +51,8 @@
         <item name="colorAccent">@color/colorPurpleDark</item>
     </style>
 
+    <style name="popupAnimTranslate">
+        <item name="android:windowEnterAnimation">@anim/popup_translate_in</item>
+        <item name="android:windowExitAnimation">@anim/popup_translate_out</item>
+    </style>
 </resources>

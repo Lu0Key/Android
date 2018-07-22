@@ -4,35 +4,36 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginBottom="4dp"
-    android:layout_marginTop="12dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="4dp"
+    android:paddingTop="12dp"
     android:background="@color/colorWhite"
     android:orientation="vertical">
 
     <!--借阅书籍的详情-->
     <LinearLayout
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
 
 
         <!--图书信息-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="4dp">
             <!--书名-->
             <TextView
                 android:id="@+id/book_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:textSize="16sp"
+                android:textSize="18sp"
+                android:textColor="@color/colorPrimaryText"
                 android:text="《滚滚长江东逝水》"/>
 
             <!--图书编号和借阅地点-->
@@ -47,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorSecondaryText"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:layout_marginEnd="24dp"
                     android:text="索书号"/>
                 <TextView
@@ -56,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorSecondaryText"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:layout_marginEnd="24dp"
                     android:text="ID Number123123"/>
             </LinearLayout>
@@ -67,8 +68,8 @@
                 android:layout_marginTop="4dp">
 
                 <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:src="@drawable/ic_location"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"/>
@@ -77,7 +78,7 @@
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textColor="@color/colorSecondaryText"
                     android:inputType= "textMultiLine"
                     android:text="软件园馆借书处"/>
@@ -92,54 +93,53 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:text="出版发行项："/>
                 <TextView
                     android:id="@+id/press"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:text="上海三联书店,2016"/>
             </LinearLayout>
 
             <!--保有量和剩余数量-->
             <LinearLayout
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:src="@drawable/ic_time"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"/>
                 <TextView
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textColor="@color/colorPurpleDark"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="保有量："/>
                 <TextView
                     android:id="@+id/all"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textColor="@color/colorPurpleDark"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="47"/>
                 <TextView
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textColor="@color/colorPurpleDark"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
+                    android:layout_gravity="center_vertical"
                     android:text="剩余数："/>
                 <TextView
                     android:id="@+id/canbor"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textColor="@color/colorPurpleDark"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="1"/>
 
             </LinearLayout>
@@ -153,9 +153,7 @@
         android:layout_marginRight="4dp"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginTop="12dp"
         android:background="#dcdcdc"/>
-
-
 
 </LinearLayout>

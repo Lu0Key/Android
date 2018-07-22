@@ -26,7 +26,7 @@ class BindLibraryActivity : SlideActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_bindlibrary)
+        setContentView(R.layout.activity_bind_library)
 
         initView()
     }
