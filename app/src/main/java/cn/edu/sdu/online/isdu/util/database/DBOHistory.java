@@ -1,4 +1,4 @@
-package cn.edu.sdu.online.isdu.util.DataBase;
+package cn.edu.sdu.online.isdu.util.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

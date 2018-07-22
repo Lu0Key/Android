@@ -25,6 +25,7 @@ import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextView
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
+import cn.edu.sdu.online.isdu.util.WeakReferences
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_history.view.*
 import kotlinx.android.synthetic.main.activity_post_detail.*
@@ -35,6 +36,7 @@ import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 
 class PostDetailActivity : SlideActivity(), View.OnClickListener {
@@ -53,6 +55,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var btnLike: View? = null
     private var btnCollect: View? = null
 
+    private var commentLine: TextView? = null
+
     private var editArea: View? = null // 隐藏的编辑区域
     private var editText: EditText? = null // 编辑区域的文本框
     private var btnSend: View? = null
@@ -62,6 +66,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var title = ""
     private var time = 0L
     private var commentIds = ""
+    private var tag = ""
 
     private var window: BasePopupWindow? = null
 
@@ -74,6 +79,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         uid = intent.getStringExtra("uid") ?: ""
         title = intent.getStringExtra("title") ?: ""
         time = intent.getLongExtra("time", 0L)
+        tag = intent.getStringExtra("tag") ?: ""
 
         if (User.staticUser == null) User.staticUser = User.load()
 
@@ -96,6 +102,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         btnLike = btn_like
         btnCollect = btn_collect
         btnOptions = btn_options
+        commentLine = comment_line
 
         btnComment!!.setOnClickListener(this)
         btnSend!!.setOnClickListener(this)
@@ -210,6 +217,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                                         runOnUiThread {
                                                             Toast.makeText(this@PostDetailActivity,
                                                                     "删除成功", Toast.LENGTH_SHORT).show()
+
+                                                            WeakReferences.postViewableWeakReference?.get()?.removeItem(postId)
+
                                                             finish()
                                                         }
                                                     } else {
@@ -302,14 +312,20 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         editDataList.add(data)
                     }
 
-
-
                     runOnUiThread {
                         txtTitle!!.text = title
                         txtDate!!.text =
                                 "发表于 ${SimpleDateFormat("yyyy-MM-dd HH:mm").format(time)}"
 
                         txtContent!!.setData(editDataList)
+
+                        val commentList = data.getString("comment").split("-")
+
+                        var commentCounter = 0
+                        for (com in commentList)
+                            if (com != "") commentCounter++
+
+                        commentLine!!.text = "${commentCounter} 条评论"
                         
                         txtContent!!.setOnRtImageClickListener {imagePath ->  
                             if (imagePath.startsWith("http")) {
@@ -341,7 +357,10 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 val obj = FileUtil.getStringFromFile(cachePath)
                 runOnUiThread { txtNickname!!.text = obj }
             } else {
-                Toast.makeText(this, "获取用户信息失败", Toast.LENGTH_SHORT).show()
+                runOnUiThread {
+                    Toast.makeText(this, "获取用户信息失败", Toast.LENGTH_SHORT).show()
+                }
+
             }
         }
 
@@ -353,7 +372,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                     circleImageView!!.setImageBitmap(bmp)
                 }
             } else {
-                Toast.makeText(this, "获取用户信息失败", Toast.LENGTH_SHORT).show()
+                runOnUiThread {
+                    Toast.makeText(this, "获取用户信息失败", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

@@ -1,4 +1,4 @@
-package cn.edu.sdu.online.isdu.util.DataBase;
+package cn.edu.sdu.online.isdu.util.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -34,15 +34,16 @@ public class DAOHistory {
         ArrayList<History> historyList=new ArrayList<>();
         database=dbo_history.getReadableDatabase();
         Cursor c=database.rawQuery("SELECT * FROM tb_history",null);
-        c.moveToLast();
-        do{
-            historyList.add(new History(
-                    c.getString(c.getColumnIndex("title")),
-                    c.getString(c.getColumnIndex("subject")),
-                    c.getLong(c.getColumnIndex("time")),
-                    c.getString(c.getColumnIndex("url"))));
+        if(c.moveToLast()){
+            do{
+                historyList.add(new History(
+                        c.getString(c.getColumnIndex("title")),
+                        c.getString(c.getColumnIndex("subject")),
+                        c.getLong(c.getColumnIndex("time")),
+                        c.getString(c.getColumnIndex("url"))));
 
-        }while (c.moveToPrevious());
+            }while (c.moveToPrevious());
+        }
         c.close();
         return historyList;
     }

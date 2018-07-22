@@ -18,11 +18,13 @@ import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.interfaces.OnRefreshListener
+import cn.edu.sdu.online.isdu.interfaces.PostViewable
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
 import cn.edu.sdu.online.isdu.util.Logger
+import cn.edu.sdu.online.isdu.util.WeakReferences
 import com.liaoinstan.springview.widget.SpringView
 import kotlinx.android.synthetic.main.activity_my_home_page.*
 import okhttp3.Call
@@ -31,6 +33,7 @@ import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
 
@@ -44,7 +47,7 @@ import kotlin.collections.ArrayList
  ****************************************************
  */
 
-class MeArticlesFragment : LazyLoadFragment() {
+class MeArticlesFragment : LazyLoadFragment(), PostViewable {
 
     private var recyclerView: RecyclerView? = null
     private var adapter: MyAdapter? = null
@@ -68,6 +71,18 @@ class MeArticlesFragment : LazyLoadFragment() {
         initPullRefreshLayout()
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adapter?.notifyDataSetChanged()
+    }
+
+    override fun removeItem(item: Any?) {
+        for (i in 0 until  dataList.size) {
+            if (dataList[i].postId == item as Int) dataList.removeAt(i)
+        }
+        adapter?.notifyDataSetChanged()
     }
 
     private fun initView(view: View) {
@@ -198,11 +213,13 @@ class MeArticlesFragment : LazyLoadFragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = dataList!![position]
             holder.cardView.setOnClickListener {
+                WeakReferences.postViewableWeakReference = WeakReference(this@MeArticlesFragment)
                 context!!.startActivity(Intent(context, PostDetailActivity::class.java)
                         .putExtra("id", item.postId)
                         .putExtra("uid", item.uid)
                         .putExtra("title", item.title)
-                        .putExtra("time", item.time))
+                        .putExtra("time", item.time)
+                        .putExtra("tag", TAG))
             }
             holder.titleView.text = item.title
             holder.commentNumber.text = item.commentsNumbers.toString()
@@ -245,5 +262,9 @@ class MeArticlesFragment : LazyLoadFragment() {
         super.onViewStateRestored(savedInstanceState)
         if (savedInstanceState?.getInt("uid") != null)
             uid = savedInstanceState.getInt("uid")
+    }
+
+    companion object {
+        const val TAG = "MeArticleFragment"
     }
 }

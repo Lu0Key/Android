@@ -12,10 +12,13 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.Collect
+import cn.edu.sdu.online.isdu.interfaces.PostViewable
+import cn.edu.sdu.online.isdu.util.WeakReferences
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CollectActivity : SlideActivity() {
+class CollectActivity : SlideActivity(), PostViewable {
     private var collectList: MutableList<Collect> = ArrayList()
 
     private var btnCollectBack: View? = null
@@ -48,8 +51,12 @@ class CollectActivity : SlideActivity() {
         recyclerView!!.adapter = adapter
     }
 
+    override fun removeItem(item: Any?) {
+//        collectList.remove(item as Collect)
+//        adapter?.notifyDataSetChanged()
+    }
 
-//    private fun fileRead(): List<Collect> {
+    //    private fun fileRead(): List<Collect> {
 //        val fileReader = FileReader(Environment.getExternalStorageDirectory().toString() + "/iSDU/cache")
 //        val bufferedReader = BufferedReader(fileReader)
 //        val fileStringBuffer = StringBuffer()
@@ -89,8 +96,10 @@ class CollectActivity : SlideActivity() {
                                 .putExtra("url", collect.collectUrl))
                     }
                     Collect.TYPE_POST -> {
+                        WeakReferences.postViewableWeakReference = WeakReference(this@CollectActivity)
                         startActivity(Intent(this@CollectActivity, PostDetailActivity::class.java)
-                                .putExtra("url", collect.collectUrl))
+                                .putExtra("url", collect.collectUrl)
+                                .putExtra("tag", TAG))
                     }
                 }
             }
@@ -100,6 +109,9 @@ class CollectActivity : SlideActivity() {
 
     }
 
+    companion object {
+        const val TAG = "CollectActivity"
+    }
 
 }
 
