@@ -106,25 +106,25 @@
                     android:layout_marginTop="8dp">
                 </android.support.v7.widget.RecyclerView>
 
-                <TextView
-                    android:id="@+id/network_error"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:text="网络错误"
-                    android:gravity="center"
-                    android:textColor="@color/colorPurpleDark"
-                    android:textSize="18sp"/>
+            <TextView
+                android:id="@+id/network_error"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:text="网络错误"
+                android:gravity="center"
+                android:textColor="@color/colorPurpleDark"
+                android:textSize="18sp"/>
 
-                <TextView
-                    android:id="@+id/nobook"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:text="您还未借阅图书"
-                    android:gravity="center"
-                    android:textColor="@color/colorPurpleDark"
-                    android:textSize="18sp"/>
+            <TextView
+                android:id="@+id/nobook"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:text="您还未借阅图书"
+                android:gravity="center"
+                android:textColor="@color/colorPurpleDark"
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/unbind"
@@ -137,24 +137,18 @@
                 android:textSize="18sp"
                 android:clickable="true"
                 android:focusable="true"/>
-
-            <!--<TextView-->
-            <!--android:id="@+id/update_bar"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="@drawable/fade_purple_rect"-->
-            <!--android:paddingLeft="20dp"-->
-            <!--android:paddingRight="20dp"-->
-            <!--android:paddingTop="4dp"-->
-            <!--android:paddingBottom="4dp"-->
-            <!--android:layout_marginTop="4dp"-->
-            <!--android:layout_marginBottom="0dp"-->
-            <!--android:textSize="12sp"-->
-            <!--android:textColor="@color/colorWhite"-->
-            <!--android:layout_centerHorizontal="true"/>-->
+            <TextView
+                android:id="@+id/loading_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:text="加载中"
+                android:gravity="center"
+                android:textColor="@color/colorPurpleDark"
+                android:textSize="18sp"
+                android:clickable="true"
+                android:focusable="true"/>
         </RelativeLayout>
     </LinearLayout>
-
-
 
 </LinearLayout>
