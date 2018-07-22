@@ -53,6 +53,8 @@ public class ServerInfo {
 
     public static final String uploadPostUrl = "http://202.194.15.133:8384/post/upload";
 
+    public static String postCommentUrl = "http://202.194.15.133:8384/comment/add";
+
     /**
      *
      * @param index 版块ID

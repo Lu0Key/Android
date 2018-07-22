@@ -1,11 +1,13 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
-import android.os.FileUriExposedException
 import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
@@ -15,12 +17,14 @@ import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.ui.design.popupwindow.BasePopupWindow
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextEditor
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextView
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
-import com.bumptech.glide.Glide
+import cn.edu.sdu.online.isdu.util.Logger
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.activity_history.view.*
 import kotlinx.android.synthetic.main.activity_post_detail.*
 import kotlinx.android.synthetic.main.edit_area.*
 import okhttp3.Call
@@ -41,6 +45,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var txtNickname: TextView? = null
     private var txtDate: TextView? = null
     private var posterLayout: View? = null
+    private var btnOptions: View? = null
 
     private var btnComment: View? = null
     private var btnLike: View? = null
@@ -51,17 +56,23 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var btnSend: View? = null
 
     private var uid = ""
+    private var postId = 0
     private var title = ""
     private var time = 0L
+
+    private var window: BasePopupWindow? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_detail)
 
-        url = ServerInfo.getPost(intent.getIntExtra("id", 0))
+        postId = intent.getIntExtra("id", 0)
+        url = ServerInfo.getPost(postId)
         uid = intent.getStringExtra("uid") ?: ""
         title = intent.getStringExtra("title") ?: ""
         time = intent.getLongExtra("time", 0L)
+
+        if (User.staticUser == null) User.staticUser = User.load()
 
         initView()
 
@@ -81,9 +92,11 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         btnComment = btn_comment
         btnLike = btn_like
         btnCollect = btn_collect
+        btnOptions = btn_options
 
         btnComment!!.setOnClickListener(this)
         btnSend!!.setOnClickListener(this)
+        posterLayout!!.setOnClickListener(this)
 
         editText!!.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
@@ -96,6 +109,16 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         comment_blank_view.setOnClickListener {
             editText!!.clearFocus()
 
+        }
+
+        if (User.staticUser.studentNumber == null) {
+            // 未登录
+            operate_bar!!.visibility = View.GONE
+        } else if (User.staticUser.uid.toString() == uid) {
+            // 本用户的帖子
+            btnOptions!!.setOnClickListener(this)
+        } else {
+            btnOptions!!.visibility = View.INVISIBLE
         }
     }
 
@@ -114,9 +137,20 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 showSoftKeyboard()
             }
             btn_send.id -> {
-                NetworkAccess.buildRequest(ServerInfo.uploadPostUrl, object : Callback {
+                if (editText!!.text.toString() == "") {
+                    // 防止空评论
+                    Toast.makeText(this, "评论不能为空", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                val keys = arrayListOf("content", "userId", "postId", "fatherCommentId", "time")
+                val values = arrayListOf(editText!!.text.toString(),
+                        User.staticUser.uid.toString(), postId.toString(), "-1", System.currentTimeMillis().toString())
+                NetworkAccess.buildRequest(ServerInfo.postCommentUrl, keys, values, object : Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
+                        Logger.log(e)
                         runOnUiThread {
+                            Toast.makeText(this@PostDetailActivity, "网络错误", Toast.LENGTH_SHORT).show()
                             editArea!!.clearFocus()
                         }
                     }
@@ -128,6 +162,47 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                     }
                 })
 
+            }
+            btn_options.id -> {
+                editArea!!.clearFocus()
+                // 弹出弹窗
+                window = object : BasePopupWindow(this, R.layout.popup_post_detail,
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
+                    override fun initView() {
+
+                    }
+
+                    override fun initEvent() {
+                        getContentView().findViewById<View>(R.id.btn_delete).setOnClickListener {
+
+                        }
+
+                        getContentView().findViewById<View>(R.id.btn_cancel).setOnClickListener {
+                            popupWindow.dismiss()
+                        }
+                    }
+
+                    override fun initWindow() {
+                        super.initWindow()
+                        val instance = popupWindow
+                        instance.setOnDismissListener {
+                            val lp = getWindow().attributes
+                            lp.alpha = 1f
+                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                            getWindow().attributes = lp
+                        }
+                    }
+                }
+                window!!.popupWindow.animationStyle = R.style.popupAnimTranslate
+                window!!.showAtLocation(base_view, Gravity.BOTTOM, 0, 0)
+                val lp = getWindow().attributes
+                lp.alpha = 0.5f
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                getWindow().attributes = lp
+            }
+            poster_layout.id -> {
+                if (uid != "") startActivity(Intent(this, MyHomePageActivity::class.java)
+                        .putExtra("id", uid.toInt()))
             }
         }
     }
@@ -176,6 +251,16 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                 "发表于 ${SimpleDateFormat("yyyy-MM-dd HH:mm").format(time)}"
 
                         txtContent!!.setData(editDataList)
+                        
+                        txtContent!!.setOnRtImageClickListener {imagePath ->  
+                            if (imagePath.startsWith("http")) {
+                                // 网络图片
+                                startActivity(Intent(this@PostDetailActivity, ViewImageActivity::class.java)
+                                        .putExtra("url", imagePath))
+                            } else {
+                                // 本地图片
+                            }
+                        }
                     }
                 }
 

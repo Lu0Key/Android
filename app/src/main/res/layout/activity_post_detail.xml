@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/base_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -43,9 +44,15 @@
             android:textColor="@color/colorPrimaryText"
             android:textSize="18sp"/>
 
-        <View
+        <!--三点选项-->
+        <ImageView
+            android:id="@+id/btn_options"
             android:layout_width="50dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="50dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_action_circle"
+            android:focusable="true"
+            android:clickable="true"/>
     </LinearLayout>
 
 
@@ -88,6 +95,8 @@
                 android:orientation="horizontal"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/design_image_button_background"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:focusable="true"
                 android:clickable="true">
 
@@ -137,7 +146,29 @@
                 app:rt_editor_text_size="16"/>
 
             <!--评论区-->
+            <TextView
+                android:id="@+id/comment_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1300条评论"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/colorSeparateLine"/>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/comment_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/post_comment_item" />
+            </RelativeLayout>
 
         </LinearLayout>
     </ScrollView>

@@ -158,7 +158,7 @@ class ViewImageActivity : NormActivity() {
         } else if (url != "") {
             loadingLayout!!.visibility = View.VISIBLE
             textView!!.text = "正在加载..."
-            NetworkAccess.cache(url, "avatar") { success, cachePath ->
+            NetworkAccess.cache(url, cacheKey) { success, cachePath ->
                 if (success) {
                     val bmp = ImageManager.loadStringFromFile(cachePath)
                     runOnUiThread {

@@ -89,7 +89,7 @@ class MeArticlesFragment : LazyLoadFragment() {
 
     override fun loadData() {
         NetworkAccess.buildRequest(ServerInfo.getPostList(uid,
-                if (dataList.size > 0) dataList[0].postId + 1 else 0),
+                if (dataList.size > 0) dataList[dataList.size - 1].postId - 1 else 0),
                 object : Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
                         Logger.log(e)
@@ -120,7 +120,7 @@ class MeArticlesFragment : LazyLoadFragment() {
                                 post.uid = obj.getString("uid")
                                 post.title = obj.getString("title")
                                 post.time = obj.getLong("time")
-//                                post.content = obj.getString("content")
+                                post.content = obj.getString("info")
 
                                 list.add(post)
                             }
@@ -207,9 +207,10 @@ class MeArticlesFragment : LazyLoadFragment() {
             holder.titleView.text = item.title
             holder.commentNumber.text = item.commentsNumbers.toString()
             holder.content.text = item.content
+            holder.txtLike.text = item.likeNumber.toString()
             holder.releaseTime.text = if (System.currentTimeMillis() - item.time < 60 * 1000)
                 "刚刚" else (if (System.currentTimeMillis() - item.time < 24 * 60 * 60 * 1000)
-                    "${(System.currentTimeMillis() - item.time) / 24} 小时前" else (
+                    "${(System.currentTimeMillis() - item.time) / (60 * 60 * 1000)} 小时前" else (
                     if (System.currentTimeMillis() - item.time < 48 * 60 * 60 * 1000) "昨天 ${SimpleDateFormat("HH:mm").format(item.time)}"
                     else SimpleDateFormat("yyyy-MM-dd HH:mm").format(item.time)))
         }
@@ -226,11 +227,12 @@ class MeArticlesFragment : LazyLoadFragment() {
         inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
             val cardView: FrameLayout = v.findViewById(R.id.card_view)
             val titleView: TextView = v.findViewById(R.id.title_view) // 标题
-            val contentLayout: LinearLayout = v.findViewById(R.id.content_layout) // 内容Layout
-            val userName: TextView = v.findViewById(R.id.user_name) // 用户名
+//            val contentLayout: LinearLayout = v.findViewById(R.id.content_layout) // 内容Layout
+//            val userName: TextView = v.findViewById(R.id.user_name) // 用户名
             val commentNumber: TextView = v.findViewById(R.id.comments_number) // 评论数
             val releaseTime: TextView = v.findViewById(R.id.release_time) // 发布时间
             val content: TextView = v.findViewById(R.id.content)
+            val txtLike: TextView = v.findViewById(R.id.like_count)
         }
     }
 
