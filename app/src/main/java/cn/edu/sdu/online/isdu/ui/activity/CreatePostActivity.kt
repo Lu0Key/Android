@@ -149,13 +149,13 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
 
             }
             btn_done.id -> {
-                if (editTitle!!.text.toString() == "" &&
-                        richEditText!!.buildEditData().size == 1 &&
-                        richEditText!!.buildEditData()[0].imagePath == null &&
-                        richEditText!!.buildEditData()[0].inputStr == "") {
-                    Toast.makeText(this, "内容和标题不能为空", Toast.LENGTH_SHORT).show()
+                val list = richEditText!!.buildEditData()
+                if (editTitle!!.text.toString() == "" ||
+                        (list.isEmpty() || (list.size == 1 &&
+                                list[0].imagePath == null &&
+                                list[0].inputStr == ""))) {
+                    Toast.makeText(this, "标题和内容不能为空", Toast.LENGTH_SHORT).show()
                 } else {
-                    val list = richEditText!!.buildEditData()
                     performUpload(list, editTitle!!.text.toString())
                 }
             }
