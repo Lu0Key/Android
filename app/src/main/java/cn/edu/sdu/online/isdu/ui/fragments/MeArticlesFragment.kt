@@ -119,7 +119,7 @@ class MeArticlesFragment : LazyLoadFragment() {
                                 post.likeNumber = obj.getInt("likeNumber")
                                 post.uid = obj.getString("uid")
                                 post.title = obj.getString("title")
-                                post.time = obj.getLong("time")
+                                post.time = obj.getString("time").toLong()
                                 post.content = obj.getString("info")
 
                                 list.add(post)

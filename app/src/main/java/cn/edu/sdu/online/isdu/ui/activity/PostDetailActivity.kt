@@ -17,6 +17,8 @@ import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.ui.design.popupwindow.BasePopupWindow
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextEditor
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextView
@@ -59,6 +61,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var postId = 0
     private var title = ""
     private var time = 0L
+    private var commentIds = ""
 
     private var window: BasePopupWindow? = null
 
@@ -174,7 +177,63 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
                     override fun initEvent() {
                         getContentView().findViewById<View>(R.id.btn_delete).setOnClickListener {
+                            popupWindow.dismiss()
+                            editArea!!.clearFocus()
+                            val dialog = AlertDialog(this@PostDetailActivity)
+                            dialog.setTitle("删除帖子")
+                            dialog.setMessage("确定要删除帖子吗？该操作不可逆")
+                            dialog.setPositiveButton("删除") {
+                                val dialog1 = ProgressDialog(this@PostDetailActivity, false)
+                                dialog1.setMessage("正在删除")
+                                dialog1.setButton(null, null)
+                                dialog1.setCancelable(false)
+                                dialog1.show()
+                                dialog.dismiss()
+                                NetworkAccess.buildRequest(ServerInfo.deletePost, "id", postId.toString(),
+                                        object : Callback {
+                                            override fun onFailure(call: Call?, e: IOException?) {
+                                                Logger.log(e)
+                                                runOnUiThread {
+                                                    dialog1.dismiss()
+                                                    Toast.makeText(this@PostDetailActivity,
+                                                            "网络错误，删除失败", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
 
+                                            override fun onResponse(call: Call?, response: Response?) {
+                                                runOnUiThread {
+                                                    dialog1.dismiss()
+                                                }
+                                                try {
+                                                    val str = response?.body()?.string()
+                                                    if (str != null && str.contains("success")) {
+                                                        runOnUiThread {
+                                                            Toast.makeText(this@PostDetailActivity,
+                                                                    "删除成功", Toast.LENGTH_SHORT).show()
+                                                            finish()
+                                                        }
+                                                    } else {
+                                                        runOnUiThread {
+                                                            Toast.makeText(this@PostDetailActivity,
+                                                                    "删除失败", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    }
+                                                } catch (e: Exception) {
+                                                    Logger.log(e)
+                                                    runOnUiThread {
+                                                        Toast.makeText(this@PostDetailActivity,
+                                                                "网络错误，删除失败", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+                                            }
+                                        })
+                            }
+
+                            dialog.setNegativeButton("取消") {
+                                dialog.dismiss()
+                            }
+
+                            dialog.show()
                         }
 
                         getContentView().findViewById<View>(R.id.btn_cancel).setOnClickListener {
@@ -297,6 +356,10 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 Toast.makeText(this, "获取用户信息失败", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun getComments() {
+
     }
 
 }

@@ -51,7 +51,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigat
 class MainActivity : SlideActivity(), View.OnClickListener {
 
     private var fragments: MutableList<Fragment> = ArrayList() // Fragment列表
-    private var fragmentTags = listOf("HomeFragment", "NewsFragment", "MeFragment") // Fragment Tag
+//    private var fragmentTags = listOf("HomeFragment", "NewsFragment", "MeFragment") // Fragment Tag
     private val imgRes = listOf(R.drawable.home_selected, R.drawable.news_selected, R.drawable.me_selected)
     private val imgBackRes = listOf(R.drawable.home_back, R.drawable.news_back, R.drawable.me_back)
 
