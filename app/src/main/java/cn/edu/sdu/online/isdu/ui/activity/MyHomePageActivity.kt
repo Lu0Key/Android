@@ -204,8 +204,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun loadUserInfo() {
-        user = User.load(id)
-        publishUserInfo()
+//        user = User.load(id)
+//        publishUserInfo()
         AccountOp.getUserInformation(id)
     }
 
@@ -289,21 +289,25 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 
                 if (user == null) user = User()
 
-                if (intent.getStringExtra("json") != null) {
+                if (intent.getStringExtra("json") != null && intent.getStringExtra("json").trim() != "") {
                     try {
-                        val jsonObject = JSONObject(intent.getStringExtra("json"))
-                        user!!.nickName = jsonObject.getString("nickname")
-                        user!!.selfIntroduce = jsonObject.getString("sign")
-                        user!!.studentNumber = jsonObject.getString("studentnumber")
-                        user!!.uid = jsonObject.getInt("id")
-                        user!!.gender = if (jsonObject.getString("gender") == "男") User.GENDER_MALE
-                                        else (if (jsonObject.getString("gender") == "女") User.GENDER_FEMALE
-                                        else User.GENDER_SECRET)
-                        user!!.save(this@MyHomePageActivity)
+                        Thread(Runnable {
+                            val jsonObject = JSONObject(intent.getStringExtra("json"))
+                            user!!.nickName = jsonObject.getString("nickname")
+                            user!!.selfIntroduce = jsonObject.getString("sign")
+                            user!!.studentNumber = jsonObject.getString("studentnumber")
+                            user!!.avatarString = jsonObject.getString("avatar")
+                            user!!.uid = jsonObject.getInt("id")
+                            user!!.gender = if (jsonObject.getString("gender") == "男") User.GENDER_MALE
+                            else (if (jsonObject.getString("gender") == "女") User.GENDER_FEMALE
+                            else User.GENDER_SECRET)
+                            user!!.save(this@MyHomePageActivity)
 
-                        AccountOp.getUserAvatar(id)
+//                        AccountOp.getUserAvatar(id)
 
-                        publishUserInfo()
+                            runOnUiThread { publishUserInfo() }
+
+                        }).start()
                     } catch (e: Exception) {
                         Logger.log(e)
 //                        runOnUiThread {

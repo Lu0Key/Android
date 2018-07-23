@@ -94,6 +94,130 @@ public class NetworkAccess {
         return buildRequest(url, keys, values, callback);
     }
 
+    public static Call cache(String url, String key, String value, @Nullable final OnCacheFinishListener listener) {
+        File cacheDir = MyApplication.getContext().getCacheDir();
+
+        String s = url.substring(
+                (url.startsWith("http")) ? url.indexOf("/", 8) : url.indexOf("/")
+                , url.length());
+        char[] chars = s.toLowerCase().toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '/')
+                chars[i] = '_';
+            if (chars[i] == '?')
+                chars[i] = '.';
+            if (chars[i] == '&')
+                chars[i] = '_';
+        }
+
+
+        final File cacheFile = new File(cacheDir.getAbsolutePath() + "/" + new String(chars));
+
+        if (cacheFile.exists()) {
+            if (listener != null)
+                listener.onFinish(true, cacheFile.getAbsolutePath());
+        } else try {
+            cacheFile.createNewFile();
+        } catch (IOException e) {
+            Logger.log(e);
+        }
+
+        return buildRequest(url, key, value, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Logger.log(e);
+                if (listener != null)
+                    listener.onFinish(false, null);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    InputStream is = response.body().byteStream();
+                    BufferedInputStream bis = new BufferedInputStream(is);
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cacheFile));
+
+                    int len = 0;
+                    byte[] b = new byte[2048];
+                    while ((len = bis.read(b)) > 0) {
+                        bos.write(b, 0, len);
+                    }
+
+                    bos.flush();
+                    bos.close();
+                    bis.close();
+                    is.close();
+                    if (listener != null)
+                        listener.onFinish(true, cacheFile.getAbsolutePath());
+                } catch (Exception e) {
+                    Logger.log(e);
+                }
+            }
+        });
+    }
+
+    public static Call cache(String url, List<String> keys, List<String> values, @Nullable final OnCacheFinishListener listener) {
+        File cacheDir = MyApplication.getContext().getCacheDir();
+
+        String s = url.substring(
+                (url.startsWith("http")) ? url.indexOf("/", 8) : url.indexOf("/")
+                , url.length());
+        char[] chars = s.toLowerCase().toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '/')
+                chars[i] = '_';
+            if (chars[i] == '?')
+                chars[i] = '.';
+            if (chars[i] == '&')
+                chars[i] = '_';
+        }
+
+
+        final File cacheFile = new File(cacheDir.getAbsolutePath() + "/" + new String(chars));
+
+        if (cacheFile.exists()) {
+            if (listener != null)
+                listener.onFinish(true, cacheFile.getAbsolutePath());
+        } else try {
+            cacheFile.createNewFile();
+        } catch (IOException e) {
+            Logger.log(e);
+        }
+
+        return buildRequest(url, keys, values, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Logger.log(e);
+                if (listener != null)
+                    listener.onFinish(false, null);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    InputStream is = response.body().byteStream();
+                    BufferedInputStream bis = new BufferedInputStream(is);
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cacheFile));
+
+                    int len = 0;
+                    byte[] b = new byte[2048];
+                    while ((len = bis.read(b)) > 0) {
+                        bos.write(b, 0, len);
+                    }
+
+                    bos.flush();
+                    bos.close();
+                    bis.close();
+                    is.close();
+                    if (listener != null)
+                        listener.onFinish(true, cacheFile.getAbsolutePath());
+                } catch (Exception e) {
+                    Logger.log(e);
+                }
+            }
+        });
+    }
+
     public static Call cache(String url, @Nullable final OnCacheFinishListener listener) {
         File cacheDir = MyApplication.getContext().getCacheDir();
 

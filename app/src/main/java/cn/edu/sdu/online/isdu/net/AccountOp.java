@@ -22,6 +22,7 @@ import java.util.List;
 import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.bean.User;
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess;
+import cn.edu.sdu.online.isdu.util.FileUtil;
 import cn.edu.sdu.online.isdu.util.Logger;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -148,22 +149,40 @@ public class AccountOp {
      * 同步他人用户
      */
     public static void getUserInformation(final int id) {
-        NetworkAccess.buildRequest(ServerInfo.getUserInfo(id + "", "id-nickname-sign-studentnumber-gender"), new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Logger.log(e);
-            }
+//        NetworkAccess.buildRequest(ServerInfo.getUserInfo(id + "", "id-nickname-sign-studentnumber-gender"), new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                Logger.log(e);
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                try {
+//                    String json = response.body().string();
+//                    Intent intent = new Intent(ACTION_SYNC_USER_INFO)
+//                            .putExtra("id", id)
+//                            .putExtra("json", json);
+//                    localBroadcastManager.sendBroadcast(intent);
+//                } catch (Exception e) {
+//                    Logger.log(e);
+//                }
+//            }
+//        });
 
+        NetworkAccess.cache(ServerInfo.getUserInfo(id + "", "id-nickname-sign-studentnumber-gender-avatar"),
+                new NetworkAccess.OnCacheFinishListener() {
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    String json = response.body().string();
-                    Intent intent = new Intent(ACTION_SYNC_USER_INFO)
-                            .putExtra("id", id)
-                            .putExtra("json", json);
-                    localBroadcastManager.sendBroadcast(intent);
-                } catch (Exception e) {
-                    Logger.log(e);
+            public void onFinish(boolean success, String cachePath) {
+                if (success) {
+                    try {
+                        String json = FileUtil.getStringFromFile(cachePath);
+                        Intent intent = new Intent(ACTION_SYNC_USER_INFO)
+                                .putExtra("id", id)
+                                .putExtra("json", json);
+                        localBroadcastManager.sendBroadcast(intent);
+                    } catch (Exception e) {
+                        Logger.log(e);
+                    }
                 }
             }
         });

@@ -1,12 +1,14 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import com.bumptech.glide.Glide
 
 /**
@@ -29,9 +31,17 @@ class CalendarActivity : SlideActivity(), View.OnClickListener {
         setContentView(R.layout.activity_calendar)
         initView()
 
-        Glide.with(this)
-                .load(ServerInfo.calanderUrl)
-                .into(imageView!!)
+        NetworkAccess.cache(ServerInfo.calanderUrl) {success, cachePath ->
+            if (success) {
+                runOnUiThread {
+                    imageView!!.setImageBitmap(BitmapFactory.decodeFile(cachePath))
+                }
+            }
+        }
+
+//        Glide.with(this)
+//                .load(ServerInfo.calanderUrl)
+//                .into(imageView!!)
     }
 
     override fun onClick(v: View?) {

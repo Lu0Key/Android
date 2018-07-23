@@ -12,12 +12,18 @@ package cn.edu.sdu.online.isdu.net;
 public class ServerInfo {
 
     public static final String ipAddr = "202.194.15.132";
-    public static final String ipAddr133 = "211.87.226.186";
+    public static final String ipAddr133 = "202.194.15.133";
     public static final int port = 8384;
     public static final String url = "http://" + ipAddr + ":" + port + "/";
     public static final String envVarUrl = "http://" + ipAddr + ":8380/env_variables.html";
 
     public static final String calanderUrl = "http://202.194.15.133:8380/isdu/term/xl-2018-2019-1.png";
+
+    public static String getComments() {
+        return "http://" + ipAddr133 + ":8384/comment/get";
+    }
+
+    public static final String deleteComment = "http://" + ipAddr133 + ":8384/comment/delete";
 
     public static final String getUrlLogin(String num, String pwd) {
         return url + "/user/signIn?j_username=" + num + "&j_password=" + pwd;
