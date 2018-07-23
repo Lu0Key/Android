@@ -223,7 +223,9 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                                 try{
                                     val json = JSONObject(response?.body()?.string())
                                     if(json.getInt("code")==0){
+                                        activity!!.runOnUiThread {
                                             Toast.makeText(activity,"续借成功",Toast.LENGTH_LONG).show()
+                                        }
                                     }else{
                                             activity!!.runOnUiThread {
                                                 Toast.makeText(activity, "服务器发生错误", Toast.LENGTH_LONG).show()
