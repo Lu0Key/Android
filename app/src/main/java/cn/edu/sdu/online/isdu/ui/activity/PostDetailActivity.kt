@@ -32,9 +32,6 @@ import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.WeakReferences
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.activity_exam.*
-import kotlinx.android.synthetic.main.activity_history.view.*
-import kotlinx.android.synthetic.main.activity_news.*
 import kotlinx.android.synthetic.main.activity_post_detail.*
 import kotlinx.android.synthetic.main.edit_area.*
 import okhttp3.Call
@@ -105,6 +102,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 //        btnLike!!.setBackgroundResource(R.drawable.ic_like_yes)
 
         getPostData()
+        getIsCollect()
 
         commentRecyclerView!!.layoutManager = LinearLayoutManager(this)
         commentAdapter = MyAdapter()
@@ -129,6 +127,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         commentLine = comment_line
         commentRecyclerView = comment_recycler_view
         txtLike = like_count
+
+        btn_back.setOnClickListener { finish() }
 
         title_text_view.setOnClickListener {
             scroll_view.scrollTo(0, 0)

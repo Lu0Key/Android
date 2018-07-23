@@ -163,4 +163,6 @@ public class ServerInfo {
     public static final String renewOneBookUrl(int uid,String bookId,String checkCode){
         return url + "library/renewOne?id=" + uid + "&bookId="+ bookId + "&verifyId=" + checkCode;
     }
+
+    public static final String getCollectList = "http://" + ipAddr133 + ":8384/user/getCollect";
 }
