@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
@@ -59,8 +60,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var txtLike: TextView? = null
 
     private var btnComment: View? = null
-    private var btnLike: View? = null
-    private var btnCollect: View? = null
+    private var btnLike: ImageView? = null
+    private var btnCollect: ImageView? = null
 
     private var commentLine: TextView? = null
 
@@ -74,6 +75,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var userIdMap: HashMap<String, String> = HashMap()
     private var userNicknameMap: HashMap<String, String> = HashMap()
 
+    private var isLike = false // 是否点赞
 
     private var uid = ""
     private var postId = 0
@@ -99,6 +101,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         if (User.staticUser == null) User.staticUser = User.load()
 
         initView()
+
+//        btnLike!!.setBackgroundResource(R.drawable.ic_like_yes)
 
         getPostData()
 
@@ -306,10 +310,47 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         .putExtra("id", uid.toInt()))
             }
             btn_like.id -> {
+                NetworkAccess.buildRequest(ServerInfo.likePost + "?postId=$postId&userId=$uid",
+                        object : Callback {
+                            override fun onFailure(call: Call?, e: IOException?) {
+                                Logger.log(e)
+                                runOnUiThread {
+                                    Toast.makeText(this@PostDetailActivity, "点赞失败", Toast.LENGTH_SHORT).show()
+                                }
+                            }
 
+                            override fun onResponse(call: Call?, response: Response?) {
+                                try {
+                                    runOnUiThread {
+                                        isLike = !isLike
+                                        getLikeNumber()
+                                    }
+                                } catch (e: Exception) {
+                                    Logger.log(e)
+                                }
+                            }
+                        })
             }
             btn_collect.id -> {
-                
+                NetworkAccess.buildRequest(ServerInfo.collectPost + "?postId=$postId&userId=$uid",
+                        object : Callback {
+                            override fun onFailure(call: Call?, e: IOException?) {
+                                Logger.log(e)
+                                runOnUiThread {
+                                    Toast.makeText(this@PostDetailActivity, "收藏失败", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
+                            override fun onResponse(call: Call?, response: Response?) {
+                                try {
+                                    runOnUiThread {
+                                        getIsCollect()
+                                    }
+                                } catch (e: Exception) {
+                                    Logger.log(e)
+                                }
+                            }
+                        })
             }
         }
     }
@@ -322,6 +363,57 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private fun hideSoftKeyboard() {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(editText!!.windowToken, 0)
+    }
+
+    private fun getLikeNumber() {
+        NetworkAccess.buildRequest(ServerInfo.getIsLike(postId, uid), object : Callback {
+            override fun onFailure(call: Call?, e: IOException?) {
+                Logger.log(e)
+                isLike = false
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {
+                try {
+                    var str = response?.body()?.string()
+                    isLike = str == "true"
+                    runOnUiThread {
+                        btnLike!!.setImageResource(if (isLike) R.drawable.ic_like_yes else R.drawable.ic_like_no)
+                    }
+                } catch (e: Exception) {
+                    Logger.log(e)
+                }
+            }
+        })
+        NetworkAccess.buildRequest(ServerInfo.getLikeNumber(postId), object : Callback {
+            override fun onFailure(call: Call?, e: IOException?) {
+                Logger.log(e)
+                runOnUiThread {
+                    txtLike!!.text = "点赞 0 次"
+
+                }
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {
+                try {
+                    val str = response?.body()?.string()
+                    runOnUiThread {
+                        val strInt = str!!.toInt()
+                        var des = ""
+                        if (strInt < 1000)
+                            des = strInt.toString()
+                        else if (strInt < 10000) {
+                            des = "${(Math.floor((strInt / 1000).toDouble())).toString()} 千"
+                        } else {
+                            des = "${(Math.floor((strInt / 10000).toDouble())).toString()} 万"
+                        }
+                        txtLike!!.text = "点赞 $des 次"
+//                        btnLike!!.setImageResource(if (isLike) R.drawable.ic_like_yes else R.drawable.ic_like_no)
+                    }
+                } catch (e: Exception) {
+                    Logger.log(e)
+                }
+            }
+        })
     }
 
     /**
@@ -339,7 +431,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         val data = JSONObject(json.getString("obj"))
                         val editDataList = ArrayList<RichTextEditor.EditData>()
                         val content = JSONArray(data.getString("content"))
-//                        val likeCount = data.getInt("likeNumber")
+
+                        getLikeNumber()
 
                         for (i in 0 until content.length()) {
                             val obj = content.getJSONObject(i)
@@ -364,7 +457,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                             val commentStr = data.getString("comment")
                             val commentList = commentStr.split("-").subList(0, commentStr.split("-").size - 1)
                             this.commentList.clear()
-                            getComments(0, commentList)
+                            getComments(commentList.size - 1, commentList)
 
 //                        var commentCounter = 0
 //                        for (com in commentList)
@@ -425,6 +518,30 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         }
     }
 
+    /**
+     * 获取是否收藏
+     */
+    private fun getIsCollect() {
+        NetworkAccess.buildRequest(ServerInfo.getIsCollect(postId, uid), object : Callback {
+            override fun onFailure(call: Call?, e: IOException?) {
+                Logger.log(e)
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {
+                try {
+                    val str = response?.body()?.string()
+                    runOnUiThread {
+                        btnCollect!!.setImageResource(if (str == "true") R.drawable.ic_collect_yes else R.drawable.ic_collect_no)
+                        if (str == "true")
+                            Toast.makeText(this@PostDetailActivity, "已收藏", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Logger.log(e)
+                }
+            }
+        })
+    }
+
     private fun requestUserInfoMap(uid: String) {
         NetworkAccess.cache(ServerInfo.getUserInfo(uid, "nickname"), "nickname") {success, cachePath ->
             if (success) {
@@ -445,7 +562,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun getComments(index: Int, list: List<String>) {
-        if (index == list.size) return
+        if (index < 0) return
         NetworkAccess.buildRequest(ServerInfo.getComments(), "id", list[index], object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 Logger.log(e)
@@ -474,7 +591,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
                     runOnUiThread {
                         commentAdapter?.notifyDataSetChanged()
-                        getComments(index + 1, list)
+                        getComments(index - 1, list)
                     }
 
                 } catch (e: Exception) {
