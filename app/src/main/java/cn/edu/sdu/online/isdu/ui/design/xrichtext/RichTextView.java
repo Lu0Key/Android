@@ -226,7 +226,7 @@ public class RichTextView extends ScrollView {
         //如果是网络图片
         if (imagePath.startsWith("http://") || imagePath.startsWith("https://")){
 
-            GlideApp.with(getContext()).asBitmap().load(imagePath).dontAnimate()
+            GlideApp.with(getContext()).asBitmap().load(imagePath).dontAnimate().placeholder(R.drawable.img_blank_image)
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {

@@ -78,7 +78,6 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimaryText"
                 android:background="@color/colorWhite"
-                android:text="This is a test post"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="8dp"
@@ -113,7 +112,6 @@
                     android:id="@+id/txt_nickname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="i山大开发-Jzz"
                     android:layout_gravity="center_vertical"
                     android:textColor="@color/colorPrimaryText" />
 
@@ -124,7 +122,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="发表于 2018-09-07 19:30"
                 android:layout_marginTop="4dp"
                 android:textSize="12sp"/>
 
@@ -151,7 +148,6 @@
                 android:id="@+id/comment_line"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="1300条评论"
                 android:paddingStart="8dp"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"

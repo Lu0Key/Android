@@ -90,7 +90,9 @@ class ViewImageActivity : NormActivity() {
                             bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
                             fos.flush()
                             fos.close()
-                            Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                            runOnUiThread {
+                                Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                            }
                         } else if (url != "") {
                             if (cacheKey == "") {
                                 NetworkAccess.cache(url) { success, cachePath ->
@@ -103,9 +105,13 @@ class ViewImageActivity : NormActivity() {
                                         bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
                                         fos.flush()
                                         fos.close()
-                                        Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                        runOnUiThread {
+                                            Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                        }
                                     } else {
-                                        Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                                        runOnUiThread {
+                                            Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                                        }
                                     }
                                 }
                             } else {
@@ -119,9 +125,13 @@ class ViewImageActivity : NormActivity() {
                                         bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
                                         fos.flush()
                                         fos.close()
-                                        Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                        runOnUiThread {
+                                            Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                        }
                                     } else {
-                                        Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                                        runOnUiThread {
+                                            Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                                        }
                                     }
                                 }
                             }
@@ -131,15 +141,22 @@ class ViewImageActivity : NormActivity() {
                             bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
                             fos.flush()
                             fos.close()
-                            Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                            runOnUiThread {
+                                Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                            }
                         }
 
-                        decorateWindow()
+                        runOnUiThread {
+                            decorateWindow()
+                        }
 
                     }
                     "取消" -> {
                         dialog.dismiss()
-                        decorateWindow()
+                        runOnUiThread {
+                            decorateWindow()
+                        }
+
                     }
                 }
             }

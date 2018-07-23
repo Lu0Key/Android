@@ -12,7 +12,7 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.History
-import cn.edu.sdu.online.isdu.util.DataBase.DAOHistory
+import cn.edu.sdu.online.isdu.util.database.DAOHistory
 
 
 import kotlinx.android.synthetic.main.activity_history.*

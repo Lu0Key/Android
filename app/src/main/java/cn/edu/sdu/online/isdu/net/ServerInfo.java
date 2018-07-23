@@ -6,16 +6,18 @@ package cn.edu.sdu.online.isdu.net;
  * Last Modifier: ZSJ
  * Last Modify Time: 2018/6/15
  *
- * 服务器信息
  ****************************************************
  */
 
 public class ServerInfo {
 
     public static final String ipAddr = "202.194.15.132";
+    public static final String ipAddr133 = "211.87.226.186";
     public static final int port = 8384;
     public static final String url = "http://" + ipAddr + ":" + port + "/";
     public static final String envVarUrl = "http://" + ipAddr + ":8380/env_variables.html";
+
+    public static final String calanderUrl = "http://202.194.15.133:8380/isdu/term/xl-2018-2019-1.png";
 
     public static final String getUrlLogin(String num, String pwd) {
         return url + "/user/signIn?j_username=" + num + "&j_password=" + pwd;
@@ -50,9 +52,9 @@ public class ServerInfo {
         return "https://sduonline.cn/isdu/news/api/index.php?site=" + site;
     }
 
-    public static final String uploadPostUrl = "http://202.194.15.133:8384/post/upload";
+    public static final String uploadPostUrl = "http://" + ipAddr133 + ":8384/post/upload";
 
-    public static String postCommentUrl = "http://202.194.15.133:8384/comment/add";
+    public static String postCommentUrl = "http://" + ipAddr133 + ":8384/comment/add";
 
     /**
      *
@@ -115,12 +117,14 @@ public class ServerInfo {
     }
 
     public static String getPostList(int uid, int startId) {
-        return "http://202.194.15.133:8384/post/getPostList10?startId=" + startId + "&userId=" + uid;
+        return "http://" + ipAddr133 + ":8384/post/getPostList10?startId=" + startId + "&userId=" + uid;
     }
 
     public static String getPost(int id) {
-        return "http://202.194.15.133:8384/post/detail/?id=" + id;
+        return "http://" + ipAddr133 + ":8384/post/detail/?id=" + id;
     }
+
+    public static final String deletePost = "http://" + ipAddr133 + ":8384/post/delete";
 
     public static String getLibraryInfoUrl(String id){
         return url + "library/info?id=" + id;

@@ -17,12 +17,15 @@ import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
+import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.ui.design.popupwindow.BasePopupWindow
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextEditor
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextView
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
+import cn.edu.sdu.online.isdu.util.WeakReferences
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_history.view.*
 import kotlinx.android.synthetic.main.activity_post_detail.*
@@ -33,6 +36,7 @@ import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 
 class PostDetailActivity : SlideActivity(), View.OnClickListener {
@@ -51,6 +55,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var btnLike: View? = null
     private var btnCollect: View? = null
 
+    private var commentLine: TextView? = null
+
     private var editArea: View? = null // 隐藏的编辑区域
     private var editText: EditText? = null // 编辑区域的文本框
     private var btnSend: View? = null
@@ -59,6 +65,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var postId = 0
     private var title = ""
     private var time = 0L
+    private var commentIds = ""
+    private var tag = ""
 
     private var window: BasePopupWindow? = null
 
@@ -71,6 +79,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         uid = intent.getStringExtra("uid") ?: ""
         title = intent.getStringExtra("title") ?: ""
         time = intent.getLongExtra("time", 0L)
+        tag = intent.getStringExtra("tag") ?: ""
 
         if (User.staticUser == null) User.staticUser = User.load()
 
@@ -93,6 +102,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         btnLike = btn_like
         btnCollect = btn_collect
         btnOptions = btn_options
+        commentLine = comment_line
 
         btnComment!!.setOnClickListener(this)
         btnSend!!.setOnClickListener(this)
@@ -174,7 +184,66 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
                     override fun initEvent() {
                         getContentView().findViewById<View>(R.id.btn_delete).setOnClickListener {
+                            popupWindow.dismiss()
+                            editArea!!.clearFocus()
+                            val dialog = AlertDialog(this@PostDetailActivity)
+                            dialog.setTitle("删除帖子")
+                            dialog.setMessage("确定要删除帖子吗？该操作不可逆")
+                            dialog.setPositiveButton("删除") {
+                                val dialog1 = ProgressDialog(this@PostDetailActivity, false)
+                                dialog1.setMessage("正在删除")
+                                dialog1.setButton(null, null)
+                                dialog1.setCancelable(false)
+                                dialog1.show()
+                                dialog.dismiss()
+                                NetworkAccess.buildRequest(ServerInfo.deletePost, "id", postId.toString(),
+                                        object : Callback {
+                                            override fun onFailure(call: Call?, e: IOException?) {
+                                                Logger.log(e)
+                                                runOnUiThread {
+                                                    dialog1.dismiss()
+                                                    Toast.makeText(this@PostDetailActivity,
+                                                            "网络错误，删除失败", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
 
+                                            override fun onResponse(call: Call?, response: Response?) {
+                                                runOnUiThread {
+                                                    dialog1.dismiss()
+                                                }
+                                                try {
+                                                    val str = response?.body()?.string()
+                                                    if (str != null && str.contains("success")) {
+                                                        runOnUiThread {
+                                                            Toast.makeText(this@PostDetailActivity,
+                                                                    "删除成功", Toast.LENGTH_SHORT).show()
+
+                                                            WeakReferences.postViewableWeakReference?.get()?.removeItem(postId)
+
+                                                            finish()
+                                                        }
+                                                    } else {
+                                                        runOnUiThread {
+                                                            Toast.makeText(this@PostDetailActivity,
+                                                                    "删除失败", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    }
+                                                } catch (e: Exception) {
+                                                    Logger.log(e)
+                                                    runOnUiThread {
+                                                        Toast.makeText(this@PostDetailActivity,
+                                                                "网络错误，删除失败", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+                                            }
+                                        })
+                            }
+
+                            dialog.setNegativeButton("取消") {
+                                dialog.dismiss()
+                            }
+
+                            dialog.show()
                         }
 
                         getContentView().findViewById<View>(R.id.btn_cancel).setOnClickListener {
@@ -243,14 +312,20 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         editDataList.add(data)
                     }
 
-
-
                     runOnUiThread {
                         txtTitle!!.text = title
                         txtDate!!.text =
                                 "发表于 ${SimpleDateFormat("yyyy-MM-dd HH:mm").format(time)}"
 
                         txtContent!!.setData(editDataList)
+
+                        val commentList = data.getString("comment").split("-")
+
+                        var commentCounter = 0
+                        for (com in commentList)
+                            if (com != "") commentCounter++
+
+                        commentLine!!.text = "${commentCounter} 条评论"
                         
                         txtContent!!.setOnRtImageClickListener {imagePath ->  
                             if (imagePath.startsWith("http")) {
@@ -282,7 +357,10 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 val obj = FileUtil.getStringFromFile(cachePath)
                 runOnUiThread { txtNickname!!.text = obj }
             } else {
-                Toast.makeText(this, "获取用户信息失败", Toast.LENGTH_SHORT).show()
+                runOnUiThread {
+                    Toast.makeText(this, "获取用户信息失败", Toast.LENGTH_SHORT).show()
+                }
+
             }
         }
 
@@ -294,9 +372,15 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                     circleImageView!!.setImageBitmap(bmp)
                 }
             } else {
-                Toast.makeText(this, "获取用户信息失败", Toast.LENGTH_SHORT).show()
+                runOnUiThread {
+                    Toast.makeText(this, "获取用户信息失败", Toast.LENGTH_SHORT).show()
+                }
             }
         }
+    }
+
+    private fun getComments() {
+
     }
 
 }

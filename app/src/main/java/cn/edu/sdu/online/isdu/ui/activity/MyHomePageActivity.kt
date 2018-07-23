@@ -93,6 +93,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         if (id != User.load().uid) setGuestView()
 
         loadUserInfo()
+
     }
 
     override fun onClick(v: View?) {

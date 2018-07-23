@@ -14,12 +14,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Post
+import cn.edu.sdu.online.isdu.interfaces.PostViewable
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
+import cn.edu.sdu.online.isdu.util.WeakReferences
+import java.lang.ref.WeakReference
 
 
-class MessageFragment : Fragment(){
+class MessageFragment : Fragment(), PostViewable {
 
-    private var dataList: MutableList<Post> = arrayListOf<Post>()
+    private var dataList: MutableList<Post> = arrayListOf()
     private var adapter: MyAdapter? = null
     private var loadingLayout: View? = null
     private var recyclerView: RecyclerView? = null
@@ -28,7 +31,6 @@ class MessageFragment : Fragment(){
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        Log.w("MessageFragment","onCreateView")
         val view = inflater.inflate(R.layout.fragment_message, container, false)
         initView(view)
         loadData()
@@ -49,19 +51,21 @@ class MessageFragment : Fragment(){
     }
 
      fun isLoadComplete(): Boolean {
-         //TODO 消息碎片加载判定
-        return isLoadComplete
+         return isLoadComplete
     }
 
      fun loadData() {
          onLoading()
-         //TODO 消息碎片数据加载
         isLoadComplete = true
         publishData()
     }
 
+    override fun removeItem(item: Any?) {
+//        dataList.remove(item as Post)
+//        adapter?.notifyDataSetChanged()
+    }
+
     fun publishData() {
-        Log.w("MessageFragment","publishData")
         if(dataList.size!= 0){
             recyclerView!!.visibility = View.VISIBLE
             loadingLayout!!.visibility = View.GONE
@@ -96,9 +100,10 @@ class MessageFragment : Fragment(){
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val post = mDataList[position]
             holder.itemLayout.setOnClickListener {
-                activity!!.startActivity(Intent(activity, PostDetailActivity::class.java))
-                    //TODO(启动帖子详情的putExtra)
-                Log.w("messageFragmentClick",position.toString())
+                WeakReferences.postViewableWeakReference = WeakReference(this@MessageFragment)
+                activity!!.startActivity(Intent(activity, PostDetailActivity::class.java)
+                        .putExtra("tag", TAG))
+
             }
 //            holder.title_flag.text = post.title_flag
 //            holder.titleView.text = post.title
@@ -130,5 +135,9 @@ class MessageFragment : Fragment(){
             var comments_number: TextView = view.findViewById(R.id.comments_number)
             var release_time: TextView = view.findViewById(R.id.release_time)
         }
+    }
+
+    companion object {
+        const val TAG = "MessageFragment"
     }
 }
