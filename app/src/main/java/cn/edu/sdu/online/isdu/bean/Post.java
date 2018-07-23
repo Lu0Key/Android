@@ -33,7 +33,8 @@ public class Post {
         this.content = content;
     }
 
-    public Post(int type, String titleFlag, String title, String uid, int commentsNumbers, Long time, String content) {
+    public Post(int postId, int type, String titleFlag, String title, String uid, int commentsNumbers, Long time, String content, int likeNumber, int collectNumber) {
+        this.postId = postId;
         this.type = type;
         this.titleFlag = titleFlag;
         this.title = title;
@@ -41,6 +42,8 @@ public class Post {
         this.commentsNumbers = commentsNumbers;
         this.time = time;
         this.content = content;
+        this.likeNumber = likeNumber;
+        this.collectNumber = collectNumber;
     }
 
     public int getPostId() {
@@ -122,4 +125,6 @@ public class Post {
     public void setContent(String content) {
         this.content = content;
     }
+
+
 }

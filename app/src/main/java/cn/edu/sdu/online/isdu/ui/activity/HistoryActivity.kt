@@ -1,5 +1,8 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -9,16 +12,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.History
+import cn.edu.sdu.online.isdu.bean.Post
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.database.DAOHistory
+import com.alibaba.fastjson.JSONObject
 
 
 import kotlinx.android.synthetic.main.activity_history.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import java.io.IOException
+import java.lang.ref.WeakReference
 
 
-class HistoryActivity : SlideActivity(), View.OnClickListener {
+class HistoryActivity : SlideActivity(), View.OnClickListener{
     private var dataList = arrayListOf<History>()
     private var mAdapter: MyAdapter? = null
     private var recyclerView: RecyclerView? = null
@@ -45,6 +59,19 @@ class HistoryActivity : SlideActivity(), View.OnClickListener {
         btnClear!!.setOnClickListener(this)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        dao_history!!.close();
+    }
+
+  //override fun onResume() {
+  //    super.onResume()
+  //    dataList.clear()
+  //    initData()
+  //    Log.w("ha",dataList.size.toString())
+  //    blankView!!.visibility = if (dataList.isEmpty()) View.VISIBLE else View.GONE
+  //    mAdapter!!.notifyDataSetChanged()
+  //}
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.btn_back -> {
@@ -63,12 +90,13 @@ class HistoryActivity : SlideActivity(), View.OnClickListener {
         dataList=dao_history!!.history
     }
     private fun initRecyclerView() {
-        mAdapter = MyAdapter(dataList)
+        mAdapter = MyAdapter(dataList,this@HistoryActivity)
         recyclerView!!.layoutManager = LinearLayoutManager(this@HistoryActivity)
         recyclerView!!.adapter = mAdapter
     }
 
-    class MyAdapter(private val dataList: List<History>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+    class MyAdapter(private val dataList: List<History>,context: Context) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+        private val context =context
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.history_item, parent, false)
             return ViewHolder(view)
@@ -94,8 +122,39 @@ class HistoryActivity : SlideActivity(), View.OnClickListener {
             }else {
                 holder.historyTime.text =(((timeDelta/1000/60/60/24/365).toInt()).toString() + "年前")
             }
-            holder.itemLayout.setOnClickListener(){
-                Log.w("click",dataList[position].url)
+            try{
+                val json = JSONObject.parseObject(history.url)
+                val post = json.toJavaObject(Post::class.java)
+                holder.itemLayout.setOnClickListener(){
+                    NetworkAccess.buildRequest(ServerInfo.getPost(post.postId),
+                        object : Callback {
+                            override fun onResponse(call: Call?, response: Response?) {
+                                if(response?.body()?.string()?.get(2)=='c'){
+                                    (context as Activity).runOnUiThread{
+                                        context.startActivity(Intent(context, PostDetailActivity::class.java)
+                                                .putExtra("id",post.postId)
+                                                .putExtra("uid", post.uid)
+                                                .putExtra("title", post.title)
+                                                .putExtra("time", 0L)
+                                                .putExtra("tag", "HistoryActivity"))
+                                    }
+                                }else{
+                                    (context as Activity).runOnUiThread{
+                                        context.startActivity(Intent(context, NotFindPostActivity::class.java))
+                                    }
+                                }
+                            }
+
+                            override fun onFailure(call: Call?, e: IOException?) {
+                                (context as Activity).runOnUiThread {
+                                    Toast.makeText(context,"网络错误",Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    )
+                }
+            }catch (e : Exception){
+                Logger.log(e)
             }
         }
 

@@ -10,10 +10,13 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.bean.History
+import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
@@ -26,6 +29,7 @@ import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.WeakReferences
+import cn.edu.sdu.online.isdu.util.database.DAOHistory
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_history.view.*
 import kotlinx.android.synthetic.main.activity_post_detail.*
@@ -54,6 +58,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var btnComment: View? = null
     private var btnLike: View? = null
     private var btnCollect: View? = null
+    private var backBtn : ImageView?= null
 
     private var commentLine: TextView? = null
 
@@ -85,6 +90,22 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
         initView()
 
+        //写数据库纪录浏览
+        val dao = DAOHistory(this)
+        dao.newHistory(History(title,"帖子",
+                System.currentTimeMillis(),
+                com.alibaba.fastjson.JSONObject.toJSONString(Post(postId,
+                        0,
+                        "",
+                        title,
+                        uid,
+                        0,
+                        System.currentTimeMillis(),
+                        "",
+                        0,
+                        0))))
+        dao.close()
+
         getPostData()
     }
 
@@ -102,8 +123,10 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         btnLike = btn_like
         btnCollect = btn_collect
         btnOptions = btn_options
+        backBtn = btn_back
         commentLine = comment_line
 
+        backBtn!!.setOnClickListener(this)
         btnComment!!.setOnClickListener(this)
         btnSend!!.setOnClickListener(this)
         posterLayout!!.setOnClickListener(this)
@@ -272,6 +295,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             poster_layout.id -> {
                 if (uid != "") startActivity(Intent(this, MyHomePageActivity::class.java)
                         .putExtra("id", uid.toInt()))
+            }
+            btn_back.id -> {
+                finish()
             }
         }
     }

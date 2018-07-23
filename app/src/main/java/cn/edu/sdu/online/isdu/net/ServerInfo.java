@@ -12,7 +12,7 @@ package cn.edu.sdu.online.isdu.net;
 public class ServerInfo {
 
     public static final String ipAddr = "202.194.15.132";
-    public static final String ipAddr133 = "211.87.226.186";
+    public static final String ipAddr133 = "202.194.15.133";
     public static final int port = 8384;
     public static final String url = "http://" + ipAddr + ":" + port + "/";
     public static final String envVarUrl = "http://" + ipAddr + ":8380/env_variables.html";
