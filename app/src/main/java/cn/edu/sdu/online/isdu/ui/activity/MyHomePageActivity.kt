@@ -22,6 +22,7 @@ import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
 import cn.edu.sdu.online.isdu.net.AccountOp.ACTION_SYNC_USER_AVATAR
 import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.viewpager.NoScrollViewPager
 import cn.edu.sdu.online.isdu.ui.fragments.MeArticlesFragment
@@ -64,8 +65,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var collapsingToolbar: CollapsingToolbarLayout? = null
     private var toolBar: Toolbar? = null
     private var appBarLayout: AppBarLayout? = null // AppBarLayout实例
-    private var MyFollower: TextView? = null
-    private var FollowMe: TextView? = null
+    private var myFollower: TextView? = null
+    private var followMe: TextView? = null
     private var btnEditProfile: ImageView? = null // 编辑个人资料
     private var txtMyFollower: TextView? = null // 我关注的人
     private var txtFollowMe: TextView? = null // 关注我的人
@@ -93,6 +94,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         if (id != User.load().uid) setGuestView()
 
         loadUserInfo()
+        getUserLikes()
 
     }
 
@@ -120,8 +122,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         btnEditProfile = findViewById(R.id.btn_edit_profile)
         txtMyFollower = findViewById(R.id.my_follower_count)
         txtFollowMe = findViewById(R.id.following_me_count)
-        MyFollower = findViewById(R.id.my_follower)
-        FollowMe = findViewById(R.id.who_follow_me)
+        myFollower = findViewById(R.id.my_follower)
+        followMe = findViewById(R.id.who_follow_me)
         userName = findViewById(R.id.user_name)
         collapsingToolbar = findViewById(R.id.collapsing_toolbar)
         btnBack = findViewById(R.id.btn_back)
@@ -156,6 +158,16 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         btnEditProfile!!.setOnClickListener(this)
         circleImageView!!.setOnClickListener(this)
         backgroundImage!!.setOnClickListener(this)
+
+        layout_my_like.setOnClickListener {
+            startActivity(Intent(this, MyLikeActivity::class.java)
+                    .putExtra("uid", id.toString()))
+        }
+
+        layout_like_me.setOnClickListener {
+            startActivity(Intent(this, LikeMeActivity::class.java)
+                    .putExtra("uid", id.toString()))
+        }
 
     }
 
@@ -204,9 +216,41 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun loadUserInfo() {
-//        user = User.load(id)
-//        publishUserInfo()
         AccountOp.getUserInformation(id)
+    }
+
+    /**
+     * 获取关注和被关注的数量
+     */
+    private fun getUserLikes() {
+        NetworkAccess.cache(ServerInfo.getLikeMe(id.toString())) {success, cachePath ->
+            if (success) {
+                try {
+                    val str = JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj")
+                    var count = 0
+                    for (i in 0 until str.length) {
+                        if (str[i] == '-') count++
+                    }
+                    runOnUiThread {
+                        txtFollowMe!!.text = count.toString()
+                    }
+                } catch (e: Exception) {}
+            }
+        }
+        NetworkAccess.cache(ServerInfo.getMyLike(id.toString())) {success, cachePath ->
+            if (success) {
+                try {
+                    val str = JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj")
+                    var count = 0
+                    for (i in 0 until str.length) {
+                        if (str[i] == '-') count++
+                    }
+                    runOnUiThread {
+                        txtMyFollower!!.text = count.toString()
+                    }
+                } catch (e: Exception) {}
+            }
+        }
     }
 
     private fun publishUserInfo() {
@@ -226,8 +270,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      */
     private fun setGuestView() {
         btnEditProfile!!.visibility = View.GONE
-        FollowMe!!.text="关注TA的人"
-        MyFollower!!.text="TA关注的人"
+        followMe!!.text="关注TA的人"
+        myFollower!!.text="TA关注的人"
     }
 
     override fun onResume() {

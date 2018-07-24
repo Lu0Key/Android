@@ -73,6 +73,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var userNicknameMap: HashMap<String, String> = HashMap()
 
     private var isLike = false // 是否点赞
+    private var showCollectToast = false  // 是否显示已经收藏
 
     private var uid = ""
     private var postId = 0
@@ -332,6 +333,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         })
             }
             btn_collect.id -> {
+                showCollectToast = true
                 NetworkAccess.buildRequest(ServerInfo.collectPost + "?postId=$postId&userId=$uid",
                         object : Callback {
                             override fun onFailure(call: Call?, e: IOException?) {
@@ -532,8 +534,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                     val str = response?.body()?.string()
                     runOnUiThread {
                         btnCollect!!.setImageResource(if (str == "true") R.drawable.ic_collect_yes else R.drawable.ic_collect_no)
-                        if (str == "true")
-                            Toast.makeText(this@PostDetailActivity, "已收藏", Toast.LENGTH_SHORT).show()
+                        if ((str == "true") && showCollectToast)
+                            Toast.makeText(this@PostDetailActivity, "收藏成功", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
                     Logger.log(e)

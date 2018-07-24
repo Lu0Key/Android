@@ -10,6 +10,9 @@ public class Collect {
     private String collectUrl;
     private int collectType;
     private long collectTime;
+    private int id;
+    private int uid;
+
 
     public Collect() {}
 
@@ -52,5 +55,22 @@ public class Collect {
 
     public void setCollectTime(long collectTime) {
         this.collectTime = collectTime;
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
+    public int getId() {
+
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

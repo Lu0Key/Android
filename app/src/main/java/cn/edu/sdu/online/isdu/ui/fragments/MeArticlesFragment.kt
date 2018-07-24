@@ -58,6 +58,7 @@ class MeArticlesFragment : LazyLoadFragment(), PostViewable {
     private var uid = -1
 
     private var lastId = 0
+    private var needOffset = false // 是否需要列表位移
 
     fun setUid(uid: Int) {
         this.uid = uid
@@ -98,14 +99,6 @@ class MeArticlesFragment : LazyLoadFragment(), PostViewable {
 
         adapter = MyAdapter(dataList, context!!)
         recyclerView!!.adapter = adapter
-    }
-
-//    override fun isLoadComplete(): Boolean {
-//        return super.isLoadComplete()
-//    }
-
-    private fun loadData(startId: Int) {
-//        NetworkAccess.buildRequest()
     }
 
     override fun loadData() {
@@ -171,11 +164,10 @@ class MeArticlesFragment : LazyLoadFragment(), PostViewable {
 
     private fun publishLoadData(list: List<Post>) {
         if (list.isNotEmpty()) {
-//            for (i in list.size - 1 downTo 0) {
-//                dataList.add(list[i])
-//            }
             dataList.addAll(list)
             adapter!!.notifyDataSetChanged()
+            if (needOffset)
+                recyclerView!!.smoothScrollBy(0, 100)
         }
     }
 
@@ -191,10 +183,12 @@ class MeArticlesFragment : LazyLoadFragment(), PostViewable {
         pullRefreshLayout!!.setListener(object : SpringView.OnFreshListener {
             override fun onLoadmore() {
                 loadData()
+                needOffset = true
             }
 
             override fun onRefresh() {
                 dataList.clear()
+                needOffset = false
                 loadData()
             }
         })
