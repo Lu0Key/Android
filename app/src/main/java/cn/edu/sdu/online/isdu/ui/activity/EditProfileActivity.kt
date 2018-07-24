@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -34,6 +36,8 @@ import cn.edu.sdu.online.isdu.util.Permissions
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.ViewTarget
+import com.bumptech.glide.request.transition.Transition
 import com.yalantis.ucrop.UCrop
 import de.hdodenhof.circleimageview.CircleImageView
 import okhttp3.Call
@@ -155,7 +159,12 @@ class EditProfileActivity : NormActivity() {
         Glide.with(this)
                 .load(user.avatarUrl)
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
-                .into(avatar!!)
+                .into(object : ViewTarget<CircleImageView, Drawable>(avatar!!) {
+                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                        finalBitmap = (resource as BitmapDrawable).bitmap
+                        this.view.setImageBitmap(finalBitmap)
+                    }
+                })
         editUserName!!.setText(user.nickName)
 
         when (user.gender) {
@@ -220,7 +229,7 @@ class EditProfileActivity : NormActivity() {
                 userObj.put("studentnumber", User.staticUser.studentNumber)
                 userObj.put("j_password", User.staticUser.passwordMD5)
                 userObj.put("nickname", editUserName!!.text.toString())
-                userObj.put("avatarUrl", "${ServerInfo.avatarUrl}/head_${User.staticUser.uid}.jpg")
+                userObj.put("avatar", "${ServerInfo.avatarUrl}/head_${User.staticUser.uid}.jpg")
                 userObj.put("sign", editIntroduction!!.text.toString())
 
                 hashMap["userInfo"] = userObj.toString()
@@ -259,8 +268,8 @@ class EditProfileActivity : NormActivity() {
                 sb.append("--")
                 sb.append(BOUNDARY)
                 sb.append("\r\n")
-                sb.append("Content-Disposition: form-data; name=\"" + "data" + "\"\r\n\r\n")
-                sb.append(params.get("data"))
+                sb.append("Content-Disposition: form-data; name=\"" + "userInfo" + "\"\r\n\r\n")
+                sb.append(params.get("userInfo"))
                 sb.append("\r\n")
 
                 //上传图片部分

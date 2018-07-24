@@ -117,7 +117,7 @@ class MyLikeActivity : SlideActivity() {
                                 user.uid = id.toInt()
                                 user.nickName = obj.getString("nickname")
                                 user.selfIntroduce = obj.getString("sign")
-                                user.avatarUrl = obj.getString("avatarUrl")
+                                user.avatarUrl = obj.getString("avatar")
 //                                user.isLiked = myLikeList.contains(user.uid.toString())
                                 user.isLiked = true
 

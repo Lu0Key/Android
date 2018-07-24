@@ -112,7 +112,7 @@ public class AccountOp {
                 User.staticUser.setPasswordMD5(jsonObject.getString("j_password"));
                 User.staticUser.setNickName(jsonObject.getString("nickname"));
                 User.staticUser.setName(jsonObject.getString("name"));
-                User.staticUser.setAvatarUrl(jsonObject.getString("avatarUrl"));
+                User.staticUser.setAvatarUrl(jsonObject.getString("avatar"));
 
                 String genderString = jsonObject.getString("gender");
                 if (genderString.equals("男")) {
@@ -149,7 +149,7 @@ public class AccountOp {
      * 同步他人用户
      */
     public static void getUserInformation(final int id) {
-        NetworkAccess.cache(ServerInfo.getUserInfo(id + "", "id-nickname-sign-studentnumber-gender-avatarUrl"),
+        NetworkAccess.cache(ServerInfo.getUserInfo(id + "", "id-nickname-sign-studentnumber-gender-avatar"),
                 new NetworkAccess.OnCacheFinishListener() {
             @Override
             public void onFinish(boolean success, String cachePath) {
@@ -170,7 +170,7 @@ public class AccountOp {
     }
 
     public static void getUserAvatar(final int id) {
-        NetworkAccess.cache(ServerInfo.getUserInfo(id + "", "avatarUrl"), "avatarUrl", new NetworkAccess.OnCacheFinishListener() {
+        NetworkAccess.cache(ServerInfo.getUserInfo(id + "", "avatar"), "avatar", new NetworkAccess.OnCacheFinishListener() {
             @Override
             public void onFinish(boolean success, String cachePath) {
                 if (success) {

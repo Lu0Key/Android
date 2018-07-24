@@ -507,7 +507,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             }
         }
 
-        NetworkAccess.cache(ServerInfo.getUserInfo(id, "avatarUrl"), "avatarUrl") {success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getUserInfo(id, "avatar"), "avatar") {success, cachePath ->
             if (success) {
                 val obj = FileUtil.getStringFromFile(cachePath)
 //                val bmp = ImageManager.convertStringToBitmap(obj)
@@ -559,7 +559,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 commentAdapter?.notifyDataSetChanged()
             }
         }
-        NetworkAccess.cache(ServerInfo.getUserInfo(uid, "avatarUrl"), "avatarUrl") {success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getUserInfo(uid, "avatar"), "avatar") {success, cachePath ->
             if (success) {
                 userIdMap[uid] = cachePath
             }

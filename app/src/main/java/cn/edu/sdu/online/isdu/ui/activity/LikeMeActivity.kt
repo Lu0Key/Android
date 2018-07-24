@@ -113,7 +113,7 @@ class LikeMeActivity : SlideActivity() {
                                         .writeTimeout(10, TimeUnit.SECONDS)
                                         .build()
                                 val request = Request.Builder()
-                                        .url(ServerInfo.getUserInfo(id, "avatarUrl-nickname-sign"))
+                                        .url(ServerInfo.getUserInfo(id, "avatar-nickname-sign"))
                                         .get()
                                         .build()
                                 val response = client.newCall(request).execute()
@@ -124,7 +124,7 @@ class LikeMeActivity : SlideActivity() {
                                 user.uid = id.toInt()
                                 user.nickName = obj.getString("nickname")
                                 user.selfIntroduce = obj.getString("sign")
-                                user.avatarUrl = obj.getString("avatarUrl")
+                                user.avatarUrl = obj.getString("avatar")
                                 user.isLiked = myLikeList.contains(user.uid.toString())
 
                                 dataList.add(user)

@@ -120,7 +120,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                 startActivity(Intent(this, ViewImageActivity::class.java)
                         .putExtra("url", ServerInfo.getUserInfo(user?.uid.toString(), "avatar"))
                         .putExtra("key", "avatar")
-                        .putExtra("isString", true))
+                        .putExtra("isString", false))
             }
             btn_follow.id -> {
                 if (User.staticUser.uid.toString() != "")
@@ -427,7 +427,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                             user!!.nickName = jsonObject.getString("nickname")
                             user!!.selfIntroduce = jsonObject.getString("sign")
                             user!!.studentNumber = jsonObject.getString("studentnumber")
-                            user!!.avatarUrl = jsonObject.getString("avatarUrl")
+                            user!!.avatarUrl = jsonObject.getString("avatar")
                             user!!.uid = jsonObject.getInt("id")
                             user!!.gender = if (jsonObject.getString("gender") == "男") User.GENDER_MALE
                             else (if (jsonObject.getString("gender") == "女") User.GENDER_FEMALE
