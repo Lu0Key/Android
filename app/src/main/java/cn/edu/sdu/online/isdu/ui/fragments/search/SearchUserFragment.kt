@@ -155,8 +155,7 @@ class SearchUserFragment : LazyLoadFragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.searchuser_item, parent, false)
-            val h = ViewHolder(view)
-            return h
+            return ViewHolder(view)
         }
 
         override fun getItemCount(): Int = dataList.size
