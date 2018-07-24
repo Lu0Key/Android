@@ -31,6 +31,8 @@ import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.WeakReferences
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_post_detail.*
 import kotlinx.android.synthetic.main.edit_area.*
@@ -99,8 +101,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         if (User.staticUser == null) User.staticUser = User.load()
 
         initView()
-
-//        btnLike!!.setBackgroundResource(R.drawable.ic_like_yes)
 
         getPostData()
         getIsCollect()
@@ -507,12 +507,16 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             }
         }
 
-        NetworkAccess.cache(ServerInfo.getUserInfo(id, "avatar"), "avatar") {success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getUserInfo(id, "avatarUrl"), "avatarUrl") {success, cachePath ->
             if (success) {
                 val obj = FileUtil.getStringFromFile(cachePath)
-                val bmp = ImageManager.convertStringToBitmap(obj)
+//                val bmp = ImageManager.convertStringToBitmap(obj)
                 runOnUiThread {
-                    circleImageView!!.setImageBitmap(bmp)
+                    Glide.with(this)
+                            .load(obj)
+                            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                            .into(circleImageView!!)
+//                    circleImageView!!.setImageBitmap(bmp)
                 }
             } else {
                 runOnUiThread {
@@ -555,7 +559,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 commentAdapter?.notifyDataSetChanged()
             }
         }
-        NetworkAccess.cache(ServerInfo.getUserInfo(uid, "avatar"), "avatar") {success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getUserInfo(uid, "avatarUrl"), "avatarUrl") {success, cachePath ->
             if (success) {
                 userIdMap[uid] = cachePath
             }
@@ -653,10 +657,14 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             val comment = commentList[position]
 
             Thread(Runnable {
-                val bmp = ImageManager.convertStringToBitmap(FileUtil.getStringFromFile(userIdMap[comment.uid]))
+                val bmp = FileUtil.getStringFromFile(userIdMap[comment.uid])
                 runOnUiThread {
-                    if (bmp != null)
-                        holder.circleImageView.setImageBitmap(bmp)
+                    if (bmp != null && bmp != "")
+//                        holder.circleImageView.setImageBitmap(bmp)
+                        Glide.with(this@PostDetailActivity)
+                                .load(bmp)
+                                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                                .into(holder.circleImageView)
                 }
             }).start()
 

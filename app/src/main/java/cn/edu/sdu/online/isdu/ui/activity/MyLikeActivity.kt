@@ -18,6 +18,9 @@ import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_my_like.*
 import okhttp3.OkHttpClient
@@ -114,7 +117,7 @@ class MyLikeActivity : SlideActivity() {
                                 user.uid = id.toInt()
                                 user.nickName = obj.getString("nickname")
                                 user.selfIntroduce = obj.getString("sign")
-                                user.avatarString = obj.getString("avatar")
+                                user.avatarUrl = obj.getString("avatarUrl")
 //                                user.isLiked = myLikeList.contains(user.uid.toString())
                                 user.isLiked = true
 
@@ -154,13 +157,17 @@ class MyLikeActivity : SlideActivity() {
             val item = dataList[position]
             holder.txtUserName.text = item.nickName
             holder.txtSign.text = item.selfIntroduce
-            Thread(Runnable {
-                val bmp = ImageManager.convertStringToBitmap(item.avatarString)
-                runOnUiThread {
-                    holder.circleImageView.setImageBitmap(bmp)
-                }
-            }).start()
+//            Thread(Runnable {
+//                val bmp = ImageManager.convertStringToBitmap(item.avatarString)
+//                runOnUiThread {
+//                    holder.circleImageView.setImageBitmap(bmp)
+//                }
+//            }).start()
 
+            Glide.with(this@MyLikeActivity)
+                    .load(item.avatarUrl)
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                    .into(holder.circleImageView)
 
             holder.itemLayout.setOnClickListener {
                 startActivity(Intent(this@MyLikeActivity, MyHomePageActivity::class.java)

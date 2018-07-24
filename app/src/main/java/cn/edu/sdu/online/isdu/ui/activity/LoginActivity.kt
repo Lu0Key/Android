@@ -93,8 +93,7 @@ class LoginActivity : SlideActivity(), View.OnClickListener {
                 val json = response?.body()?.string()
                 try {
                     val jsonObj = JSONObject(json)
-
-                    Log.d("AAA", json)
+                    // TODO("检查并更换此处的JsonString")
 
                     if (!jsonObj.isNull("status") && jsonObj.getString("status") == "failed") {
                         runOnUiThread {

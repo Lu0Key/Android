@@ -220,7 +220,7 @@ public class RichTextView extends ScrollView {
     public void addImageViewAtIndex(final int index, final String imagePath) {
         imagePaths.add(imagePath);
         RelativeLayout imageLayout = createImageLayout();
-        final DataImageView imageView = (DataImageView) imageLayout.findViewById(R.id.edit_imageView);
+        final DataImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
         imageView.setAbsolutePath(imagePath);
 
         //如果是网络图片
@@ -235,7 +235,10 @@ public class RichTextView extends ScrollView {
                             if (rtImageHeight > 0) {
                                 imageHeight = rtImageHeight;
                             } else {
-                                imageHeight = allLayout.getWidth() * resource.getHeight() / resource.getWidth();
+//                                imageHeight = allLayout.getWidth() * resource.getHeight() / resource.getWidth();
+                                // 修正图片宽高
+                                imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
+                                        * resource.getHeight() / resource.getWidth();
                             }
                             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                                     LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
@@ -262,7 +265,9 @@ public class RichTextView extends ScrollView {
             if (rtImageHeight > 0) {
                 imageHeight = rtImageHeight;
             } else {
-                imageHeight = allLayout.getWidth() * bmp.getHeight() / bmp.getWidth();
+//                imageHeight = allLayout.getWidth() * bmp.getHeight() / bmp.getWidth();
+                imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
+                        * bmp.getHeight() / bmp.getWidth();
             }
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                     LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中

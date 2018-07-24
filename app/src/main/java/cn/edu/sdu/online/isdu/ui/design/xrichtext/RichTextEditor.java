@@ -251,7 +251,6 @@ public class RichTextEditor extends ScrollView {
 			//Log.i("", "###editData: "+editData);
 			if (editData.imagePath != null){
 				if (onRtImageDeleteListener != null){
-					//TODO 通过接口回调，在笔记编辑界面处理图片的删除操作
 					onRtImageDeleteListener.onRtImageDelete(editData.imagePath);
 				}
 				//SDCardUtil.deleteFile(editData.imagePath);
@@ -432,7 +431,7 @@ public class RichTextEditor extends ScrollView {
 		int imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
                 * bmp.getHeight() / bmp.getWidth();
 		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-//				LayoutParams.MATCH_PARENT, rtImageHeight);//TODO 固定图片高度500，考虑自定义属性
+//				LayoutParams.MATCH_PARENT, rtImageHeight);
                 allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight(), imageHeight);
 		lp.bottomMargin = rtImageBottom;
 		imageView.setLayoutParams(lp);

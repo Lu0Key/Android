@@ -31,16 +31,23 @@ import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.Permissions
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.yalantis.ucrop.UCrop
 import de.hdodenhof.circleimageview.CircleImageView
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import org.json.JSONObject
 import top.zibin.luban.Luban
 import top.zibin.luban.OnCompressListener
+import java.io.DataOutputStream
 import java.io.File
 import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
 
 /**
  ****************************************************
@@ -145,8 +152,10 @@ class EditProfileActivity : NormActivity() {
             User.staticUser = User.load()
             user = User.staticUser
         }
-        finalBitmap = ImageManager.convertStringToBitmap(user.avatarString)
-        avatar!!.setImageBitmap(finalBitmap)
+        Glide.with(this)
+                .load(user.avatarUrl)
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                .into(avatar!!)
         editUserName!!.setText(user.nickName)
 
         when (user.gender) {
@@ -205,38 +214,115 @@ class EditProfileActivity : NormActivity() {
                 progressDialog!!.setButton(null, null)
                 progressDialog!!.show()
 
-                val keys = listOf("studentNumber", "j_password", "nickname", "avatar", "sign")
-                val values = listOf(User.staticUser.studentNumber, User.staticUser.passwordMD5,
-                        editUserName!!.text.toString(), ImageManager.convertBitmapToString(finalBitmap),
-                        editIntroduction!!.text.toString())
+                // 构建用户信息上传内容
+                val hashMap = HashMap<String, String>()
+                val userObj = JSONObject()
+                userObj.put("studentnumber", User.staticUser.studentNumber)
+                userObj.put("j_password", User.staticUser.passwordMD5)
+                userObj.put("nickname", editUserName!!.text.toString())
+                userObj.put("avatarUrl", "${ServerInfo.avatarUrl}/head_${User.staticUser.uid}.jpg")
+                userObj.put("sign", editIntroduction!!.text.toString())
 
-                val callback = object : Callback {
-                    override fun onFailure(call: Call?, e: IOException?) {
-                        runOnUiThread {
-                            progressDialog!!.dismiss()
-                            Toast.makeText(this@EditProfileActivity,
-                                    "网络出错", Toast.LENGTH_SHORT).show()
-                            Logger.log(e)
-                        }
-                    }
+                hashMap["userInfo"] = userObj.toString()
 
-                    override fun onResponse(call: Call?, response: Response?) {
-                        runOnUiThread {
-                            progressDialog!!.dismiss()
-                            User.staticUser.nickName = editUserName!!.text.toString()
-                            User.staticUser.avatarString = ImageManager.convertBitmapToString(finalBitmap)
-                            User.staticUser.selfIntroduce = editIntroduction!!.text.toString()
-                            User.staticUser.save(this@EditProfileActivity)
-                            Toast.makeText(this@EditProfileActivity,
-                                    "更新成功", Toast.LENGTH_SHORT).show()
-                            finish()
-                        }
-                    }
-                }
-                NetworkAccess.buildRequest(ServerInfo.urlUpdate, keys, values, callback)
+                post(ServerInfo.urlUpdate, hashMap)
             }
 
         }
+    }
+
+    private fun post(actionUrl: String, params: HashMap<String, String>) {
+        Thread(Runnable {
+            try {
+                val BOUNDARY = "--------------et567z"
+                //数据分隔线
+                val MULTIPART_FORM_DATA = "Multipart/form-data"
+                val url = URL(actionUrl)
+
+                val conn = url.openConnection() as HttpURLConnection
+                conn.doInput = true
+                //允许输入
+                conn.doOutput = true
+                //允许输出
+                conn.useCaches = false
+                //不使用Cache
+                conn.requestMethod = "POST"
+                conn.setRequestProperty("Connection", "Keep-Alive")
+                conn.setRequestProperty("Charset", "UTF-8")
+                conn.setRequestProperty("Content-Type", "$MULTIPART_FORM_DATA;boundary=$BOUNDARY")
+
+                //获取map对象里面的数据，并转化为string
+                val sb = StringBuilder()
+                //上传的表单参数部分，不需要更改
+//            for (entry in params.entries) {
+                //构建表单字段内容
+                sb.append("--")
+                sb.append(BOUNDARY)
+                sb.append("\r\n")
+                sb.append("Content-Disposition: form-data; name=\"" + "data" + "\"\r\n\r\n")
+                sb.append(params.get("data"))
+                sb.append("\r\n")
+
+                //上传图片部分
+                val outStream = DataOutputStream(conn.outputStream)
+                outStream.write(sb.toString().toByteArray())
+                //发送表单字段数据
+
+                //调用自定义方法获取图片文件的byte数组
+                val content = ImageManager.convertBitmapToByteArray(finalBitmap)
+                //再次设置报头信息
+                val split = StringBuilder()
+                split.append("--")
+                split.append(BOUNDARY)
+                split.append("\r\n")
+
+                //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!非常重要
+                //此处将图片的name设置为file ,filename不做限制，不需要管
+                split.append("Content-Disposition: form-data;name=\"file\";filename=\"head_${User.staticUser.uid}.jpg\"\r\n")
+                //这里的Content-Type非常重要，一定要是图片的格式，例如image/jpeg或者image/jpg
+                //服务器端对根据图片结尾进行判断图片格式到底是什么,因此务必保证这里类型正确
+                split.append("Content-Type: image/jpg\r\n\r\n")
+                outStream.write(split.toString().toByteArray())
+                outStream.write(content, 0, content.size)
+                outStream.write("\r\n".toByteArray())
+
+                val endData = ("--$BOUNDARY--\r\n").toByteArray()
+                //数据结束标志
+                outStream.write(endData)
+
+                outStream.flush()
+
+
+                //返回状态判断
+                val cah = conn.responseCode
+
+                runOnUiThread {
+                    if (cah == 200) {
+                        Toast.makeText(this, "更新成功", Toast.LENGTH_SHORT).show()
+                        finish()
+                    } else if (cah == 400) {
+                        Toast.makeText(this, "发布失败(400)", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "发布失败($cah)", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                outStream.close()
+
+                conn.disconnect()
+
+            } catch (e: Exception) {
+                Logger.log(e)
+                runOnUiThread {
+                    Toast.makeText(this, "更新信息", Toast.LENGTH_SHORT).show()
+                }
+            } finally {
+                runOnUiThread {
+                    progressDialog?.dismiss()
+                }
+            }
+        }).start()
     }
 
     override fun onBackPressed() {

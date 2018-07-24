@@ -30,6 +30,9 @@ import cn.edu.sdu.online.isdu.util.EnvVariables
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_me.*
 import org.json.JSONException
@@ -233,7 +236,12 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
         if (User.staticUser.studentNumber != null && User.staticUser.studentNumber != "") {
             // 加载登录后信息
             val user = User.staticUser
-            circleImageView?.setImageBitmap(ImageManager.convertStringToBitmap(user.avatarString))
+//            circleImageView?.setImageBitmap(ImageManager.convertStringToBitmap(user.avatarString))
+            if (circleImageView != null)
+                Glide.with(context!!)
+                        .load(user.avatarUrl)
+                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                        .into(circleImageView!!)
             userName?.text = user.nickName
             userId?.text = "学号:${user.studentNumber}"
             userId?.visibility = View.VISIBLE

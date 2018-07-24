@@ -30,8 +30,13 @@ import cn.edu.sdu.online.isdu.ui.fragments.MeArticlesFragment
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
+import com.bumptech.glide.Glide
+import com.bumptech.glide.TransitionOptions
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.zhouwei.blurlibrary.EasyBlur
 import de.hdodenhof.circleimageview.CircleImageView
+import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_my_home_page.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -320,10 +325,11 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         if (user != null) {
             userName!!.text = user!!.nickName
             txtSign!!.text = "个人签名：${user!!.selfIntroduce}"
-            val bmp = ImageManager.convertStringToBitmap(user!!.avatarString)
-            if (bmp != null) {
-                fillBackgroundImage(bmp)
-                fillAvatarImage(bmp)
+//            val bmp = ImageManager.convertStringToBitmap(user!!.avatarString)
+            val avatarUrl = user!!.avatarUrl
+            if (avatarUrl != null && avatarUrl != "") {
+                fillBackgroundImage(avatarUrl)
+                fillAvatarImage(avatarUrl)
             }
         }
     }
@@ -348,29 +354,41 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         loadUserInfo()
     }
 
-    private fun fillBackgroundImage(bmp: Bitmap?) {
+    private fun fillBackgroundImage(bmp: String?) {
         backgroundImage!!.tag = null
         if (bmp != null) {
-            val bitmap = EasyBlur.with(this)
-                    .bitmap(bmp)
-                    .policy(EasyBlur.BlurPolicy.RS_BLUR)
-                    .radius(15)
-                    .scale(2)
-                    .blur()
-            backgroundImage!!.setImageBitmap(bitmap)
+//            val bitmap = EasyBlur.with(this)
+//                    .bitmap(bmp)
+//                    .policy(EasyBlur.BlurPolicy.RS_BLUR)
+//                    .radius(15)
+//                    .scale(2)
+//                    .blur()
+//            backgroundImage!!.setImageBitmap(bitmap)
+            Glide.with(this)
+                    .load(bmp)
+                    .apply(RequestOptions.bitmapTransform(BlurTransformation(30)))
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                    .into(backgroundImage!!)
         } else {
             backgroundImage!!.setImageBitmap(null)
         }
 
     }
 
-    private fun fillAvatarImage(bmp: Bitmap?) {
-        if (bmp == null) {
+    private fun fillAvatarImage(bmp: String?) {
+//        if (bmp == null) {
+//            circleImageView!!.setImageBitmap(null)
+//            miniCircleImageView!!.setImageBitmap(null)
+//        } else {
+//            circleImageView!!.setImageBitmap(bmp)
+//            miniCircleImageView!!.setImageBitmap(bmp)
+//        }
+        if (bmp == null || bmp == "") {
             circleImageView!!.setImageBitmap(null)
             miniCircleImageView!!.setImageBitmap(null)
         } else {
-            circleImageView!!.setImageBitmap(bmp)
-            miniCircleImageView!!.setImageBitmap(bmp)
+            Glide.with(this).load(bmp).apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL)).into(circleImageView!!)
+            Glide.with(this).load(bmp).apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL)).into(miniCircleImageView!!)
         }
     }
 
@@ -409,7 +427,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                             user!!.nickName = jsonObject.getString("nickname")
                             user!!.selfIntroduce = jsonObject.getString("sign")
                             user!!.studentNumber = jsonObject.getString("studentnumber")
-                            user!!.avatarString = jsonObject.getString("avatar")
+                            user!!.avatarUrl = jsonObject.getString("avatarUrl")
                             user!!.uid = jsonObject.getInt("id")
                             user!!.gender = if (jsonObject.getString("gender") == "男") User.GENDER_MALE
                             else (if (jsonObject.getString("gender") == "女") User.GENDER_FEMALE
@@ -439,16 +457,17 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                 }
 
 
-            } else if (intent.action == ACTION_SYNC_USER_AVATAR) {
-                if (intent.getStringExtra("cache_path") != null) {
-                    user!!.avatarString = FileUtil.getStringFromFile(
-                            intent.getStringExtra("cache_path"))
-                    user!!.save(this@MyHomePageActivity)
-                    publishUserInfo()
-                } else {
-                    publishUserInfo()
-                }
             }
+//            else if (intent.action == ACTION_SYNC_USER_AVATAR) {
+//                if (intent.getStringExtra("cache_path") != null) {
+//                    user!!.avatarUrl = FileUtil.getStringFromFile(
+//                            intent.getStringExtra("cache_path"))
+//                    user!!.save(this@MyHomePageActivity)
+//                    publishUserInfo()
+//                } else {
+//                    publishUserInfo()
+//                }
+//            }
         }
     }
 
@@ -456,14 +475,14 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         if (myBroadcastReceiver == null) {
             val intentFilter1 = IntentFilter(AccountOp.ACTION_USER_LOG_OUT)
             val intentFilter2 = IntentFilter(AccountOp.ACTION_SYNC_USER_INFO)
-            val intentFilter3 = IntentFilter(AccountOp.ACTION_SYNC_USER_AVATAR)
+//            val intentFilter3 = IntentFilter(AccountOp.ACTION_SYNC_USER_AVATAR)
             myBroadcastReceiver = UserSyncBroadcastReceiver(this)
             AccountOp.localBroadcastManager.registerReceiver(myBroadcastReceiver!!,
                     intentFilter1)
             AccountOp.localBroadcastManager.registerReceiver(myBroadcastReceiver!!,
                     intentFilter2)
-            AccountOp.localBroadcastManager.registerReceiver(myBroadcastReceiver!!,
-                    intentFilter3)
+//            AccountOp.localBroadcastManager.registerReceiver(myBroadcastReceiver!!,
+//                    intentFilter3)
         }
     }
 

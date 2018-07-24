@@ -18,6 +18,9 @@ import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import de.hdodenhof.circleimageview.CircleImageView
 import okhttp3.*
 import org.json.JSONArray
@@ -121,7 +124,7 @@ class SearchUserFragment : LazyLoadFragment() {
                                         val obj = jsonArray.getJSONObject(k)
                                         val item = LikeUser()
                                         item.nickName = obj.getString("nickname")
-                                        item.avatarString = obj.getString("avatar")
+                                        item.avatarUrl = obj.getString("avatarUrl")
                                         item.selfIntroduce = obj.getString("sign")
                                         item.uid = obj.getInt("id")
 //                                        item.isLiked = myLikeList.contains(item.uid.toString())
@@ -186,8 +189,10 @@ class SearchUserFragment : LazyLoadFragment() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val user = dataList[position]
-            val bmp = ImageManager.convertStringToBitmap(user.avatarString)
-            holder.circleImageView.setImageBitmap(bmp)
+            Glide.with(context!!)
+                    .load(user.avatarUrl)
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                    .into(holder.circleImageView)
             holder.userName.text = user.nickName
             holder.userSign.text = user.selfIntroduce
 

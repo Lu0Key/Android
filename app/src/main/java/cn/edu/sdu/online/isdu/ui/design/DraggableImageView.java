@@ -151,20 +151,22 @@ public class DraggableImageView extends View {
             // 先缩放X轴，再缩放y轴
             mWidth = mImageWidth;
             mHeight = mImageHeight;
-            float curScale = 1.0f; // curScale记录了大图片缩小后的缩放倍数
+            float curScale; // curScale记录了大图片缩小后的缩放倍数
             if (mImageWidth > mScreenWidth) {
                 mWidth = mScreenWidth;
                 curScale = mWidth / mImageWidth;
                 mHeight = curScale * mHeight;
-                dragMaxScale = 1 / curScale;
-            }
+                dragMaxScale = 2 / curScale;
+                dragMinScale = 0.5f / curScale;
+        }
             if (mHeight > mScreenHeight) {
                 if (mWidth < mScreenWidth) {
                     mWidth = mScreenWidth;
                     curScale = mWidth / mImageWidth;
 
                     mHeight = curScale * mHeight;
-                    dragMaxScale = 1 / curScale;
+                    dragMaxScale = 2 / curScale;
+                    dragMinScale = 0.5f / curScale;
                 }
             }
 

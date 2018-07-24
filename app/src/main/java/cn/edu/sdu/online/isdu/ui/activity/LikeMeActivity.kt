@@ -18,6 +18,9 @@ import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_like_me.*
 import kotlinx.android.synthetic.main.fragment_me.*
@@ -110,7 +113,7 @@ class LikeMeActivity : SlideActivity() {
                                         .writeTimeout(10, TimeUnit.SECONDS)
                                         .build()
                                 val request = Request.Builder()
-                                        .url(ServerInfo.getUserInfo(id, "avatar-nickname-sign"))
+                                        .url(ServerInfo.getUserInfo(id, "avatarUrl-nickname-sign"))
                                         .get()
                                         .build()
                                 val response = client.newCall(request).execute()
@@ -121,7 +124,7 @@ class LikeMeActivity : SlideActivity() {
                                 user.uid = id.toInt()
                                 user.nickName = obj.getString("nickname")
                                 user.selfIntroduce = obj.getString("sign")
-                                user.avatarString = obj.getString("avatar")
+                                user.avatarUrl = obj.getString("avatarUrl")
                                 user.isLiked = myLikeList.contains(user.uid.toString())
 
                                 dataList.add(user)
@@ -145,6 +148,10 @@ class LikeMeActivity : SlideActivity() {
         }
     }
 
+    private fun getUserAvatars() {
+
+    }
+
     inner class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -160,13 +167,17 @@ class LikeMeActivity : SlideActivity() {
             val item = dataList[position]
             holder.txtUserName.text = item.nickName
             holder.txtSign.text = item.selfIntroduce
-            Thread(Runnable {
-                val bmp = ImageManager.convertStringToBitmap(item.avatarString)
-                runOnUiThread {
-                    holder.circleImageView.setImageBitmap(bmp)
-                }
-            }).start()
+//            Thread(Runnable {
+//                val bmp = ImageManager.convertStringToBitmap(item.avatarString)
+//                runOnUiThread {
+//                    holder.circleImageView.setImageBitmap(bmp)
+//                }
+//            }).start()
 
+            Glide.with(this@LikeMeActivity)
+                    .load(item.avatarUrl)
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                    .into(holder.circleImageView)
 
             holder.itemLayout.setOnClickListener {
                 startActivity(Intent(this@LikeMeActivity, MyHomePageActivity::class.java)
