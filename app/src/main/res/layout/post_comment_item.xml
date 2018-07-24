@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_layout"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@drawable/design_image_button_background">
 
     <!--用户信息区域-->
     <LinearLayout
@@ -16,7 +20,8 @@
             android:id="@+id/circle_image_view"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:src="@mipmap/ic_launcher"/>
+            android:clickable="true"
+            android:focusable="true"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -26,16 +31,16 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/txt_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="i山大开发-Jzz"
                 android:textSize="14sp"
                 android:textColor="@color/colorPrimaryText"/>
 
             <TextView
+                android:id="@+id/txt_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="13分钟前"
                 android:textSize="12sp"/>
         </LinearLayout>
     </LinearLayout>
@@ -51,13 +56,14 @@
         android:visibility="gone"/>
 
     <TextView
+        android:id="@+id/txt_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="淘宝就是个毒瘤淘宝就是个毒瘤淘宝就是个毒瘤淘宝就是个毒瘤淘宝就是个毒瘤淘宝就是个毒瘤淘宝就是个毒瘤淘宝就是个毒瘤淘宝就是个毒瘤淘宝就是个毒瘤"
         android:lineSpacingMultiplier="1.2"
         android:layout_marginTop="12dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:textColor="@color/colorPrimaryText"
         android:textSize="16sp"/>
 

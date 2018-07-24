@@ -19,6 +19,24 @@ public class ServerInfo {
 
     public static final String calanderUrl = "http://202.194.15.133:8380/isdu/term/xl-2018-2019-1.png";
 
+    public static String getComments() {
+        return "http://" + ipAddr133 + ":8384/comment/get";
+    }
+
+    public static final String deleteComment = "http://" + ipAddr133 + ":8384/comment/delete";
+
+    public static final String getLikeNumber(int postId) {
+        return "http://" + ipAddr133 + ":8384/post/getLike?postId=" + postId;
+    }
+    public static final String likePost = "http://" + ipAddr133 + ":8384/post/like/";
+    public static final String getIsLike(int postId, String uid) {
+        return "http://" + ipAddr133 + ":8384/post/isLike?postId=" + postId + "&userId=" + uid;
+    }
+    public static final String collectPost = "http://" + ipAddr133 + ":8384/post/collect";
+    public static final String getIsCollect(int postId, String uid) {
+        return "http://" + ipAddr133 + ":8384/post/isCollect?postId=" + postId + "&userId=" + uid;
+    }
+
     public static final String getUrlLogin(String num, String pwd) {
         return url + "/user/signIn?j_username=" + num + "&j_password=" + pwd;
     }
@@ -144,4 +162,6 @@ public class ServerInfo {
     public static final String renewOneBookUrl(int uid,String bookId,String checkCode){
         return url + "library/renewOne?id=" + uid + "&bookId="+ bookId + "&verifyId=" + checkCode;
     }
+
+    public static final String getCollectList = "http://" + ipAddr133 + ":8384/user/getCollect";
 }

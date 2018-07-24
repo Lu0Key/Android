@@ -1,6 +1,7 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 import android.content.Intent
+import android.net.Network
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -12,8 +13,15 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.Collect
+import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.interfaces.PostViewable
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
+import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.WeakReferences
+import org.json.JSONArray
+import org.json.JSONObject
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,7 +39,34 @@ class CollectActivity : SlideActivity(), PostViewable {
 
         initView()
 
-        initRecyclerView()
+        // 判断登录
+        Thread(Runnable {
+            if (User.staticUser == null) User.staticUser = User.load()
+            if (User.staticUser.studentNumber == null) {
+                val dialog = AlertDialog(this)
+                dialog.setTitle("未登录")
+                dialog.setMessage("请登录后重试")
+                dialog.setCancelOnTouchOutside(false)
+                dialog.setCancelable(false)
+                dialog.setPositiveButton("登录") {
+                    dialog.dismiss()
+                    startActivity(Intent(this, LoginActivity::class.java))
+                    finish()
+                }
+                dialog.setNegativeButton("返回") {
+                    finish()
+                    dialog.dismiss()
+                }
+                dialog.show()
+            } else {
+                runOnUiThread {
+                    initRecyclerView()
+                }
+                getData()
+            }
+
+
+        }).start()
 
     }
 
@@ -46,28 +81,42 @@ class CollectActivity : SlideActivity(), PostViewable {
 
     private fun initRecyclerView() {
         recyclerView!!.layoutManager = LinearLayoutManager(this)
-//        collectList = fileRead()
         adapter = CollectAdapter()
         recyclerView!!.adapter = adapter
     }
 
     override fun removeItem(item: Any?) {
-//        collectList.remove(item as Collect)
-//        adapter?.notifyDataSetChanged()
+
     }
 
-    //    private fun fileRead(): List<Collect> {
-//        val fileReader = FileReader(Environment.getExternalStorageDirectory().toString() + "/iSDU/cache")
-//        val bufferedReader = BufferedReader(fileReader)
-//        val fileStringBuffer = StringBuffer()
-//        while (bufferedReader.readLine() != null) {
-//            val fileString = bufferedReader.readLine()
-//            fileStringBuffer.append(fileString)
-//        }
-//        val fileReadList = JSON.parseArray(fileStringBuffer.toString())
-//        bufferedReader.close()
-//        return fileReadList
-//    }
+    private fun getData() {
+        if (User.staticUser == null) User.staticUser = User.load()
+        if (User.staticUser.studentNumber == null) return
+        NetworkAccess.cache(ServerInfo.getCollectList + "?userId=" + User.staticUser.uid) {success, cachePath ->
+            if (success) {
+                try {
+                    val jsonStr = JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj")
+                    val arr = JSONArray(jsonStr)
+                    for (i in 0 until arr.length()) {
+                        val obj = arr.getJSONObject(i)
+                        val collect = Collect()
+                        collect.collectTitle = obj.getString("title")
+                        collect.collectTime = obj.getString("time").toLong()
+                        collect.collectUrl = ServerInfo.getPost(obj.getInt("id"))
+                        collectList.add(collect)
+                    }
+
+                    runOnUiThread {
+                        adapter?.notifyDataSetChanged()
+                    }
+                } catch (e: Exception) {
+                    // 未获取到信息
+                }
+            } else {
+
+            }
+        }
+    }
 
     inner class CollectAdapter :
             RecyclerView.Adapter<CollectAdapter.ViewHolder>() {

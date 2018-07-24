@@ -59,7 +59,7 @@ class MeArticlesFragment : LazyLoadFragment(), PostViewable {
 
     private var lastId = 0
 
-    public fun setUid(uid: Int) {
+    fun setUid(uid: Int) {
         this.uid = uid
     }
 
@@ -103,6 +103,10 @@ class MeArticlesFragment : LazyLoadFragment(), PostViewable {
 //    override fun isLoadComplete(): Boolean {
 //        return super.isLoadComplete()
 //    }
+
+    private fun loadData(startId: Int) {
+//        NetworkAccess.buildRequest()
+    }
 
     override fun loadData() {
         NetworkAccess.buildRequest(ServerInfo.getPostList(uid,
@@ -186,17 +190,7 @@ class MeArticlesFragment : LazyLoadFragment(), PostViewable {
         // 下拉刷新监听器
         pullRefreshLayout!!.setListener(object : SpringView.OnFreshListener {
             override fun onLoadmore() {
-//                val onRefreshListener = OnRefreshListener { result, data ->
-//                    dataList.add(Post())
-//
-//                    adapter!!.notifyDataSetChanged()
-//                    pullRefreshLayout!!.onFinishFreshAndLoad()
-//                    recyclerView!!.smoothScrollBy(0, 250)
-//                }
-//
-//                Handler().postDelayed({
-//                    onRefreshListener.onRefresh(0, 0)
-//                }, 2000)
+                loadData()
             }
 
             override fun onRefresh() {
