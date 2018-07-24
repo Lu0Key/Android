@@ -1,5 +1,6 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,6 +11,7 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.widget.EditText
@@ -28,6 +30,7 @@ import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
+import cn.edu.sdu.online.isdu.util.Permissions
 import com.yalantis.ucrop.UCrop
 import de.hdodenhof.circleimageview.CircleImageView
 import okhttp3.Call
@@ -100,7 +103,14 @@ class EditProfileActivity : NormActivity() {
             dialog.setOnItemSelectListener {
                 itemName ->
                 if (itemName == "相机拍摄") {
-                    imageManager!!.captureByCamera(this)
+                    // 重要：首先确认权限
+                    if (ContextCompat.checkSelfPermission(this, Permissions.CAMERA) !=
+                            PackageManager.PERMISSION_GRANTED) {
+                        Permissions.requestPermission(this, Permissions.CAMERA)
+                    } else {
+                        imageManager!!.captureByCamera(this)
+                    }
+
                     dialog.dismiss()
                 } else {
                     imageManager!!.selectFromGallery(this)
@@ -239,6 +249,14 @@ class EditProfileActivity : NormActivity() {
                 imageManager?.selectFromGallery(this)
             } else {
                 Toast.makeText(this, "权限拒绝，无法打开相册", Toast.LENGTH_SHORT).show()
+            }
+            2 -> {
+                // 权限确认
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    imageManager?.captureByCamera(this)
+                } else {
+                    Toast.makeText(this, "权限拒绝，无法打开相机", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

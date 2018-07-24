@@ -311,7 +311,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         .putExtra("id", uid.toInt()))
             }
             btn_like.id -> {
-                NetworkAccess.buildRequest(ServerInfo.likePost + "?postId=$postId&userId=$uid",
+                if (User.staticUser != null &&
+                        User.staticUser.studentNumber != null)
+                NetworkAccess.buildRequest(ServerInfo.likePost + "?postId=$postId&userId=${User.staticUser.uid}",
                         object : Callback {
                             override fun onFailure(call: Call?, e: IOException?) {
                                 Logger.log(e)
@@ -334,7 +336,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             }
             btn_collect.id -> {
                 showCollectToast = true
-                NetworkAccess.buildRequest(ServerInfo.collectPost + "?postId=$postId&userId=$uid",
+                NetworkAccess.buildRequest(ServerInfo.collectPost + "?postId=$postId&userId=${User.staticUser.uid}",
                         object : Callback {
                             override fun onFailure(call: Call?, e: IOException?) {
                                 Logger.log(e)
@@ -368,7 +370,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun getLikeNumber() {
-        NetworkAccess.buildRequest(ServerInfo.getIsLike(postId, uid), object : Callback {
+        NetworkAccess.buildRequest(ServerInfo.getIsLike(postId, User.staticUser.uid.toString()), object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 Logger.log(e)
                 isLike = false
@@ -524,7 +526,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
      * 获取是否收藏
      */
     private fun getIsCollect() {
-        NetworkAccess.buildRequest(ServerInfo.getIsCollect(postId, uid), object : Callback {
+        NetworkAccess.buildRequest(ServerInfo.getIsCollect(postId, User.staticUser.uid.toString()), object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 Logger.log(e)
             }
