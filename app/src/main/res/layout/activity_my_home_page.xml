@@ -91,6 +91,23 @@
                             android:layout_gravity="center_vertical"
                             android:clickable="true"
                             android:focusable="true" />
+
+                        <TextView
+                            android:id="@+id/btn_follow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="关注"
+                            android:background="@drawable/purple_stroke_rect_colorchanged"
+                            android:textColor="@color/colorPurpleDark"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:focusable="true"
+                            android:clickable="true"
+                            android:layout_gravity="center_vertical"
+                            android:visibility="gone"
+                            android:layout_marginStart="8dp"/>
                     </LinearLayout>
 
 

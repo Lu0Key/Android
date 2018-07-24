@@ -79,21 +79,27 @@ class LikeMeActivity : SlideActivity() {
                                 if (id != "") idList.add(id)
                             }
 
-                            // 获取我的关注列表
-                            val client = OkHttpClient.Builder()
-                                    .connectTimeout(10, TimeUnit.SECONDS)
-                                    .writeTimeout(10, TimeUnit.SECONDS)
-                                    .readTimeout(10, TimeUnit.SECONDS)
-                                    .build()
-                            val request = Request.Builder()
-                                    .url(ServerInfo.getMyLike(uid))
-                                    .get()
-                                    .build()
-                            val response = client.newCall(request).execute()
-                            val myLikeStr = JSONObject(response?.body()?.string()).getString("obj")
+                            var myLikeList: List<String> = ArrayList()
+                            if (User.staticUser == null || User.staticUser.studentNumber == null) {
 
-                            val myLikeList = myLikeStr.split("-").subList(0,
-                                    if (myLikeStr != "") myLikeStr.split("-").size - 1 else 0)
+                            } else {
+                                // 获取我的关注列表
+                                val client = OkHttpClient.Builder()
+                                        .connectTimeout(10, TimeUnit.SECONDS)
+                                        .writeTimeout(10, TimeUnit.SECONDS)
+                                        .readTimeout(10, TimeUnit.SECONDS)
+                                        .build()
+                                val request = Request.Builder()
+                                        .url(ServerInfo.getMyLike(User.staticUser.uid.toString()))
+                                        .get()
+                                        .build()
+                                val response = client.newCall(request).execute()
+                                val myLikeStr = JSONObject(response?.body()?.string()).getString("obj")
+
+                                myLikeList = myLikeStr.split("-").subList(0,
+                                        if (myLikeStr != "") myLikeStr.split("-").size - 1 else 0)
+                            }
+
 
                             // 同线程依次获取用户信息
                             dataList.clear()
@@ -167,26 +173,48 @@ class LikeMeActivity : SlideActivity() {
                         .putExtra("id", item.uid))
             }
 
-            if (item.uid.toString() == uid) {
+            if (User.staticUser == null || User.staticUser.studentNumber == null) {
                 holder.btnFollow.visibility = View.INVISIBLE
             } else {
-                holder.btnFollow.visibility = View.VISIBLE
+                if (item.uid.toString() == User.staticUser.uid.toString()) {
+                    holder.btnFollow.visibility = View.INVISIBLE
+                } else {
+                    holder.btnFollow.visibility = View.VISIBLE
+                }
+            }
+
+
+            holder.btnFollow.setOnClickListener {
+                if (User.staticUser.uid.toString() != "")
+                    Thread(Runnable {
+                        try {
+                            val client = OkHttpClient.Builder()
+                                    .connectTimeout(10, TimeUnit.SECONDS)
+                                    .writeTimeout(10, TimeUnit.SECONDS)
+                                    .readTimeout(10, TimeUnit.SECONDS)
+                                    .build()
+                            val request = Request.Builder()
+                                    .url(ServerInfo.userLike(User.staticUser.uid.toString(), item.uid.toString()))
+                                    .get()
+                                    .build()
+                            client.newCall(request).execute()
+
+                            item.isLiked = !item.isLiked
+                            runOnUiThread { adapter?.notifyDataSetChanged() }
+                        } catch (e: Exception) {
+                            Logger.log(e)
+                        }
+                    }).start()
             }
 
             if (item.isLiked) {
                 holder.btnFollow.text = "已关注"
                 holder.btnFollow.setTextColor(0xFF717EDB.toInt())
                 holder.btnFollow.setBackgroundResource(R.drawable.purple_stroke_rect_colorchanged)
-                holder.btnFollow.setOnClickListener {
-                    // 取消关注
-                }
             } else {
                 holder.btnFollow.text = "关注"
                 holder.btnFollow.setTextColor(0xFF808080.toInt())
                 holder.btnFollow.setBackgroundResource(R.drawable.text_button_background)
-                holder.btnFollow.setOnClickListener {
-                    // 加关注
-                }
             }
         }
 

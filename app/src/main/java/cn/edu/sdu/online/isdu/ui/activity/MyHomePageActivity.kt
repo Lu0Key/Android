@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
+import android.net.Network
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -41,7 +42,10 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
+import okhttp3.*
 import org.json.JSONObject
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 /**
  ****************************************************
@@ -76,6 +80,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var backgroundImage: ImageView? = null
     private var circleImageView: CircleImageView? = null
     private var txtSign: TextView? = null // 个人签名
+    private var btnFollow: TextView? = null // 关注按钮
 
     private var user: User? = null
     private var id: Int = -1
@@ -112,7 +117,61 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                         .putExtra("key", "avatar")
                         .putExtra("isString", true))
             }
+            btn_follow.id -> {
+                if (User.staticUser.uid.toString() != "")
+                    Thread(Runnable {
+                        try {
+                            val client = OkHttpClient.Builder()
+                                    .connectTimeout(10, TimeUnit.SECONDS)
+                                    .writeTimeout(10, TimeUnit.SECONDS)
+                                    .readTimeout(10, TimeUnit.SECONDS)
+                                    .build()
+                            val request = Request.Builder()
+                                    .url(ServerInfo.userLike(User.staticUser.uid.toString(), id.toString()))
+                                    .get()
+                                    .build()
+                            client.newCall(request).execute()
+
+                            getLiked()
+                        } catch (e: Exception) {
+                            Logger.log(e)
+                        }
+                    }).start()
+            }
         }
+    }
+
+    /**
+     * 获取是否关注
+     */
+    private fun getLiked() {
+        NetworkAccess.buildRequest(ServerInfo.getMyLike(User.staticUser.uid.toString()), object : Callback {
+            override fun onFailure(call: Call?, e: IOException?) {
+                Logger.log(e)
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {
+                try {
+                    val str = JSONObject(response?.body()?.string()).getString("obj")
+                    val list = str.split("-")
+                    if (list.contains(id.toString())) {
+                        runOnUiThread {
+                            btnFollow!!.text = "已关注"
+                            btnFollow!!.setTextColor(0xFF717EDB.toInt())
+                            btnFollow!!.setBackgroundResource(R.drawable.purple_stroke_rect_colorchanged)
+                        }
+                    } else {
+                        runOnUiThread {
+                            btnFollow!!.text = "关注"
+                            btnFollow!!.setTextColor(0xFF808080.toInt())
+                            btnFollow!!.setBackgroundResource(R.drawable.text_button_background)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Logger.log(e)
+                }
+            }
+        })
     }
 
     private fun initView() {
@@ -132,6 +191,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         backgroundImage = findViewById(R.id.background_image)
         circleImageView = findViewById(R.id.circle_image_view)
         txtSign = findViewById(R.id.txt_sign)
+        btnFollow = findViewById(R.id.btn_follow)
 
         viewPager!!.setAppBarLayout(appBarLayout)
 
@@ -158,6 +218,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         btnEditProfile!!.setOnClickListener(this)
         circleImageView!!.setOnClickListener(this)
         backgroundImage!!.setOnClickListener(this)
+        btnFollow!!.setOnClickListener(this)
 
         layout_my_like.setOnClickListener {
             startActivity(Intent(this, MyLikeActivity::class.java)
@@ -251,6 +312,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                 } catch (e: Exception) {}
             }
         }
+
+        getLiked()
     }
 
     private fun publishUserInfo() {
@@ -270,6 +333,12 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      */
     private fun setGuestView() {
         btnEditProfile!!.visibility = View.GONE
+        if (User.staticUser == null ||
+                User.staticUser.studentNumber == null) {
+            btnFollow!!.visibility = View.GONE
+        } else {
+            btnFollow!!.visibility = View.VISIBLE
+        }
         followMe!!.text="关注TA的人"
         myFollower!!.text="TA关注的人"
     }

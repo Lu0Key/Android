@@ -19,11 +19,11 @@ import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import de.hdodenhof.circleimageview.CircleImageView
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
+import okhttp3.*
 import org.json.JSONArray
+import org.json.JSONObject
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 /**
  ****************************************************
@@ -40,7 +40,7 @@ class SearchUserFragment : LazyLoadFragment() {
     private var loadingLayout: View? = null
     private var recyclerView: RecyclerView? = null
     private var blankView: TextView? = null
-    private var dataList = ArrayList<User>()
+    private var dataList = ArrayList<LikeUser>()
     private var search : String? = null
     private var isLoadComplete = false
     private var isLoading = false
@@ -95,22 +95,46 @@ class SearchUserFragment : LazyLoadFragment() {
                 override fun onResponse(call: Call?, response: Response?) {
                     val json = response?.body()?.string()
                     try {
-                        dataList.clear()
-                        if (json == "[]") {
-                        } else {
-                            val jsonArray = JSONArray(json)
-                            for (k in 0 until jsonArray.length()) {
-                                val obj = jsonArray.getJSONObject(k)
-                                val item = User(
-                                        obj.getString("nickname"),
-                                        obj.getString("studentnumber"),
-                                        obj.getString("avatar"),
-                                        obj.getString("sign"),
-                                        obj.getInt("id")
-                                )
-                                dataList.add(item)
+                        Thread(Runnable {
+                            synchronized(dataList) {
+                                dataList.clear()
+                                if (json == "[]") {
+                                } else {
+                                    // 获取我的关注列表
+//                                    val client = OkHttpClient.Builder()
+//                                            .connectTimeout(10, TimeUnit.SECONDS)
+//                                            .writeTimeout(10, TimeUnit.SECONDS)
+//                                            .readTimeout(10, TimeUnit.SECONDS)
+//                                            .build()
+//                                    val request = Request.Builder()
+//                                            .url(ServerInfo.getMyLike(User.staticUser.uid.toString()))
+//                                            .get()
+//                                            .build()
+//                                    val response = client.newCall(request).execute()
+//                                    val myLikeStr = JSONObject(response?.body()?.string()).getString("obj")
+//
+//                                    val myLikeList = myLikeStr.split("-").subList(0,
+//                                            if (myLikeStr != "") myLikeStr.split("-").size - 1 else 0)
+
+                                    val jsonArray = JSONArray(json)
+                                    for (k in 0 until jsonArray.length()) {
+                                        val obj = jsonArray.getJSONObject(k)
+                                        val item = LikeUser()
+                                        item.nickName = obj.getString("nickname")
+                                        item.avatarString = obj.getString("avatar")
+                                        item.selfIntroduce = obj.getString("sign")
+                                        item.uid = obj.getInt("id")
+//                                        item.isLiked = myLikeList.contains(item.uid.toString())
+                                        dataList.add(item)
+                                    }
+                                    activity!!.runOnUiThread {
+                                        isLoadComplete = true
+                                        publishData()
+                                    }
+                                }
                             }
-                        }
+                        }).start()
+
                     } catch (e: Exception) {
                         Logger.log(e)
                         activity!!.runOnUiThread {
@@ -161,24 +185,64 @@ class SearchUserFragment : LazyLoadFragment() {
         override fun getItemCount(): Int = dataList.size
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-//            var user : User? = null
-//            var i = 0
-//            while(dataSet.iterator().hasNext()&& i<=position && dataSet.size>0){
-//                user = dataSet.iterator().next()
-//                i++
-//            }
             val user = dataList[position]
             val bmp = ImageManager.convertStringToBitmap(user.avatarString)
             holder.circleImageView.setImageBitmap(bmp)
             holder.userName.text = user.nickName
             holder.userSign.text = user.selfIntroduce
-            holder.btnfollow.setOnClickListener {
-                Log.w("click","follow")
+
+            holder.btnFollow.visibility = View.INVISIBLE
+
+//            if (User.staticUser == null || User.staticUser.studentNumber == null) {
+//                holder.btnFollow.visibility = View.INVISIBLE
+//            } else {
+//                if (user.uid.toString() == User.staticUser.uid.toString()) {
+//                    holder.btnFollow.visibility = View.INVISIBLE
+//                } else {
+//                    holder.btnFollow.visibility = View.VISIBLE
+//                }
+//            }
+
+            holder.btnFollow.setOnClickListener {
+                if (User.staticUser == null || User.staticUser.studentNumber == null) {
+
+                } else {
+                    Thread(Runnable {
+                        try {
+                            val client = OkHttpClient.Builder()
+                                    .connectTimeout(10, TimeUnit.SECONDS)
+                                    .writeTimeout(10, TimeUnit.SECONDS)
+                                    .readTimeout(10, TimeUnit.SECONDS)
+                                    .build()
+                            val request = Request.Builder()
+                                    .url(ServerInfo.userLike(User.staticUser.uid.toString(), user.uid.toString()))
+                                    .get()
+                                    .build()
+                            client.newCall(request).execute()
+
+                            user.isLiked = !user.isLiked
+                            activity!!.runOnUiThread { notifyDataSetChanged() }
+                        } catch (e: Exception) {
+                            Logger.log(e)
+                        }
+                    }).start()
+                }
+
             }
             holder.itemLayout.setOnClickListener {
                 //(activity as SearchActivity).editSearch!!.setText("")
                 //clear()
                 startActivity(Intent(context, MyHomePageActivity::class.java).putExtra("id", user.uid))
+            }
+
+            if (user.isLiked) {
+                holder.btnFollow.text = "已关注"
+                holder.btnFollow.setTextColor(0xFF717EDB.toInt())
+                holder.btnFollow.setBackgroundResource(R.drawable.purple_stroke_rect_colorchanged)
+            } else {
+                holder.btnFollow.text = "关注"
+                holder.btnFollow.setTextColor(0xFF808080.toInt())
+                holder.btnFollow.setBackgroundResource(R.drawable.text_button_background)
             }
         }
 
@@ -186,8 +250,13 @@ class SearchUserFragment : LazyLoadFragment() {
             var circleImageView: CircleImageView = view.findViewById(R.id.circle_image_view)
             var userName: TextView = view.findViewById(R.id.user_name)
             var userSign: TextView = view.findViewById(R.id.user_sign)
-            var btnfollow: TextView = view.findViewById(R.id.btn_follow)
+            var btnFollow: TextView = view.findViewById(R.id.btn_follow)
             var itemLayout: View = view.findViewById(R.id.item_layout)
         }
+    }
+
+
+    inner class LikeUser : User() {
+        var isLiked = false
     }
 }
