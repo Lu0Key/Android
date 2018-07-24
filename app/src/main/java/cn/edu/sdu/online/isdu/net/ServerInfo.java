@@ -164,4 +164,8 @@ public class ServerInfo {
     }
 
     public static final String getCollectList = "http://" + ipAddr133 + ":8384/user/getCollect";
+
+    public static final String searchPost (String key){
+        return "http://" + ipAddr133 + ":8384/post/query?key=" + key;
+    }
 }

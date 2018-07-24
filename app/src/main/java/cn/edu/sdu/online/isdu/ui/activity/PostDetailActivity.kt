@@ -57,6 +57,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var txtDate: TextView? = null
     private var posterLayout: View? = null
     private var btnOptions: View? = null
+    private var txtLike: TextView? = null
 
     private var btnComment: View? = null
     private var btnLike: ImageView? = null

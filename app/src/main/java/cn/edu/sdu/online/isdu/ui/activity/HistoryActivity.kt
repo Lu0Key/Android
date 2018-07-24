@@ -40,6 +40,7 @@ class HistoryActivity : SlideActivity(), View.OnClickListener{
     private var btnClear:TextView? = null
     private var blankView: TextView? = null
     private var dao_history: DAOHistory? = null
+    private var isFirst = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
@@ -64,14 +65,17 @@ class HistoryActivity : SlideActivity(), View.OnClickListener{
         dao_history!!.close();
     }
 
-  //override fun onResume() {
-  //    super.onResume()
-  //    dataList.clear()
-  //    initData()
-  //    Log.w("ha",dataList.size.toString())
-  //    blankView!!.visibility = if (dataList.isEmpty()) View.VISIBLE else View.GONE
-  //    mAdapter!!.notifyDataSetChanged()
-  //}
+    //override fun onResume() {
+    //    super.onResume()
+    //    if(isFirst){
+    //        isFirst = false
+    //    }else{
+    //        initData()
+    //        Log.w("ah","")
+    //        blankView!!.visibility = if (dataList.isEmpty()) View.VISIBLE else View.GONE
+    //        mAdapter!!.notifyDataSetChanged()
+    //    }
+    //}
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.btn_back -> {
@@ -90,19 +94,22 @@ class HistoryActivity : SlideActivity(), View.OnClickListener{
         dataList=dao_history!!.history
     }
     private fun initRecyclerView() {
-        mAdapter = MyAdapter(dataList,this@HistoryActivity)
-        recyclerView!!.layoutManager = LinearLayoutManager(this@HistoryActivity)
+        recyclerView!!.layoutManager = LinearLayoutManager(this)
+        mAdapter = MyAdapter(dataList,this)
         recyclerView!!.adapter = mAdapter
     }
 
-    class MyAdapter(private val dataList: List<History>,context: Context) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+    class MyAdapter(private var dataList: List<History>,context: Context) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
         private val context =context
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.history_item, parent, false)
             return ViewHolder(view)
         }
 
-        override fun getItemCount(): Int = dataList.size
+        override fun getItemCount():Int{
+            Log.w("adapter",dataList.size.toString())
+            return dataList.size
+        }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val history = dataList[position]
