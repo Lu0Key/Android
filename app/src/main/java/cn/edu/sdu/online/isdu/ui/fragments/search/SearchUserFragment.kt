@@ -124,7 +124,7 @@ class SearchUserFragment : LazyLoadFragment() {
                                         val obj = jsonArray.getJSONObject(k)
                                         val item = LikeUser()
                                         item.nickName = obj.getString("nickname")
-                                        item.avatarUrl = obj.getString("avatarUrl")
+                                        item.avatarUrl = obj.getString("avatar")
                                         item.selfIntroduce = obj.getString("sign")
                                         item.uid = obj.getInt("id")
 //                                        item.isLiked = myLikeList.contains(item.uid.toString())
@@ -184,6 +184,8 @@ class SearchUserFragment : LazyLoadFragment() {
                     .inflate(R.layout.search_user_item, parent, false)
             return ViewHolder(view)
         }
+
+        override fun getItemId(position: Int): Long = position.toLong()
 
         override fun getItemCount(): Int = dataList.size
 

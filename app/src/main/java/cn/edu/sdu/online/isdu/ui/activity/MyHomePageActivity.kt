@@ -132,6 +132,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                             client.newCall(request).execute()
 
                             getLiked()
+                            getUserLikes()
                         } catch (e: Exception) {
                             Logger.log(e)
                         }
@@ -360,7 +361,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 //            backgroundImage!!.setImageBitmap(bitmap)
             Glide.with(this)
                     .load(bmp)
-                    .apply(RequestOptions.bitmapTransform(BlurTransformation(30)))
+                    .apply(RequestOptions.bitmapTransform(BlurTransformation(40)))
                     .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                     .into(backgroundImage!!)
         } else {
