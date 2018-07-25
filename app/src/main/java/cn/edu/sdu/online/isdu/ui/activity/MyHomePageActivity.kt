@@ -3,8 +3,6 @@ package cn.edu.sdu.online.isdu.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Bitmap
-import android.net.Network
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -12,7 +10,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -21,20 +18,16 @@ import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
-import cn.edu.sdu.online.isdu.net.AccountOp.ACTION_SYNC_USER_AVATAR
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.viewpager.NoScrollViewPager
-import cn.edu.sdu.online.isdu.ui.fragments.MeArticlesFragment
+import cn.edu.sdu.online.isdu.ui.fragments.MePostsFragment
 import cn.edu.sdu.online.isdu.util.FileUtil
-import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import com.bumptech.glide.Glide
-import com.bumptech.glide.TransitionOptions
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.zhouwei.blurlibrary.EasyBlur
 import de.hdodenhof.circleimageview.CircleImageView
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_my_home_page.*
@@ -67,8 +60,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var magicIndicator: MagicIndicator? = null
     private var viewPager: NoScrollViewPager? = null
     private val mDataList = listOf("帖子", "评论", "关注") // Indicator 数据
-    private val mFragments = listOf(MeArticlesFragment(),
-            MeArticlesFragment(), MeArticlesFragment()) // Fragment 数组
+    private val mFragments = listOf(MePostsFragment(),
+            MePostsFragment(), MePostsFragment()) // Fragment 数组
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
 
     private var collapsingToolbar: CollapsingToolbarLayout? = null
@@ -118,9 +111,10 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
             }
             background_image.id, circle_image_view.id -> {
                 startActivity(Intent(this, ViewImageActivity::class.java)
-                        .putExtra("url", ServerInfo.getUserInfo(user?.uid.toString(), "avatar"))
-                        .putExtra("key", "avatar")
-                        .putExtra("isString", false))
+                        .putExtra("url", user?.avatarUrl))
+//                        .putExtra("url", ServerInfo.getUserInfo(user?.uid.toString(), "avatar"))
+//                        .putExtra("key", "avatar")
+//                        .putExtra("isString", false))
             }
             btn_follow.id -> {
                 if (User.staticUser.uid.toString() != "")

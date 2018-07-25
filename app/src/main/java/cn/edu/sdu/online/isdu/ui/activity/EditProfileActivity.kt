@@ -234,6 +234,8 @@ class EditProfileActivity : NormActivity() {
 
                 hashMap["userInfo"] = userObj.toString()
 
+                Log.d("AAA", "userInfo=${userObj.toString()}")
+
                 post(ServerInfo.urlUpdate, hashMap)
             }
 
@@ -275,6 +277,8 @@ class EditProfileActivity : NormActivity() {
                 //上传图片部分
                 val outStream = DataOutputStream(conn.outputStream)
                 outStream.write(sb.toString().toByteArray())
+
+                Log.d("AAA", "FormData=${sb.toString()}")
                 //发送表单字段数据
 
                 //调用自定义方法获取图片文件的byte数组

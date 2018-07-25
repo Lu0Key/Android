@@ -458,19 +458,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
                             txtContent!!.setData(editDataList)
 
-                            val commentStr = data.getString("comment")
-                            val commentList = commentStr.split("-").subList(0, commentStr.split("-").size - 1)
-                            this.commentList.clear()
-                            getComments(commentList.size - 1, commentList)
-
-//                        var commentCounter = 0
-//                        for (com in commentList)
-//                            if (com != "") {
-//                                commentCounter++
-//                            }
-
-                            commentLine!!.text = "${commentList.size} 条评论"
-
                             txtContent!!.setOnRtImageClickListener {imagePath ->
                                 if (imagePath.startsWith("http")) {
                                     // 网络图片
@@ -480,6 +467,15 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                     // 本地图片
                                 }
                             }
+
+                            val commentStr = data.getString("comment")
+                            // 获取评论ID串
+                            val commentList = commentStr.split("-").subList(0, commentStr.split("-").size - 1)
+                            this.commentList.clear()
+                            getComments(commentList.size - 1, commentList) // 获取评论
+
+                            commentLine!!.text = "${commentList.size} 条评论"
+
                         }
                     }
 
@@ -569,8 +565,17 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         }
     }
 
+    /**
+     * 获取评论
+     * 一次性从服务器获取全部评论
+     *
+     * @param index 评论在list中的序号
+     * @param list 评论ID列表
+     */
     private fun getComments(index: Int, list: List<String>) {
         if (index < 0) return
+
+
         NetworkAccess.buildRequest(ServerInfo.getComments(), "id", list[index], object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 Logger.log(e)
@@ -595,7 +600,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         requestUserInfoMap(comment.uid)
                     }
 
-                    if (!commentList.contains(comment)) commentList.add(comment)
+                    if (!commentList.contains(comment)) commentList.add(comment) // 防止重复添加Comment
+                    // 也可以使用线程锁（（那就别用OKHTTP了））
 
                     runOnUiThread {
                         commentAdapter?.notifyDataSetChanged()
@@ -607,6 +613,10 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 }
             }
         })
+    }
+
+    private fun loadComments() {
+
     }
 
     private fun deleteComment(comment: PostComment) {

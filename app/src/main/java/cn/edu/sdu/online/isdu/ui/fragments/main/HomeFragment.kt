@@ -45,7 +45,7 @@ class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
 
     private val mDataList = listOf("推荐", "关注", "热榜", "校内相关") // Indicator 数据
     private val mFragments = listOf(HomeRecommendFragment(),
-            HomeRecommendFragment(), HomeRecommendFragment(), HomeRecommendFragment()) // Fragment 数组
+            HomeLikeFragment(), HomeHotFragment(), HomeSchoolFragment()) // Fragment 数组
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

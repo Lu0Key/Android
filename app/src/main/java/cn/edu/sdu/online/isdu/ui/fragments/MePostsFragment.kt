@@ -3,30 +3,23 @@ package cn.edu.sdu.online.isdu.ui.fragments
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.Post
-import cn.edu.sdu.online.isdu.bean.User
-import cn.edu.sdu.online.isdu.interfaces.OnRefreshListener
 import cn.edu.sdu.online.isdu.interfaces.PostViewable
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
-import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
 import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.WeakReferences
 import com.liaoinstan.springview.widget.SpringView
-import kotlinx.android.synthetic.main.activity_my_home_page.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -41,13 +34,13 @@ import kotlin.collections.ArrayList
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/5/26
+ * Last Modify Time: 2018/7/25
  *
- * 个人主页我的文章碎片
+ * 个人主页我的帖子碎片
  ****************************************************
  */
 
-class MeArticlesFragment : LazyLoadFragment(), PostViewable {
+class MePostsFragment : LazyLoadFragment(), PostViewable {
 
     private var recyclerView: RecyclerView? = null
     private var adapter: MyAdapter? = null
@@ -203,7 +196,7 @@ class MeArticlesFragment : LazyLoadFragment(), PostViewable {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = dataList!![position]
             holder.cardView.setOnClickListener {
-                WeakReferences.postViewableWeakReference = WeakReference(this@MeArticlesFragment)
+                WeakReferences.postViewableWeakReference = WeakReference(this@MePostsFragment)
                 context!!.startActivity(Intent(context, PostDetailActivity::class.java)
                         .putExtra("id", item.postId)
                         .putExtra("uid", item.uid)

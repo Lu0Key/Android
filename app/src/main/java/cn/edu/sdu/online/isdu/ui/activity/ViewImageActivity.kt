@@ -13,6 +13,7 @@ import android.view.Window
 import android.widget.*
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.BaseActivity
+import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.NormActivity
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.DraggableImageView
@@ -193,8 +194,8 @@ class ViewImageActivity : NormActivity() {
                             }
                         }
                         runOnUiThread {
-                            Glide.with(this)
-                                    .load(FileUtil.getStringFromFile(cachePath))
+                            Glide.with(MyApplication.getContext())
+                                    .load(cachePath)
                                     .into(target)
 
                             loadingLayout!!.visibility = View.GONE

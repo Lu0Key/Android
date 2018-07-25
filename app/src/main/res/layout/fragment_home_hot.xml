@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,17 +8,16 @@
     <com.liaoinstan.springview.widget.SpringView
         android:id="@+id/pull_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:header="@layout/load_layout"
-        app:footer="@layout/load_layout">
+        android:layout_height="match_parent">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="8dp">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp">
 
-            </android.support.v7.widget.RecyclerView>
+        </android.support.v7.widget.RecyclerView>
 
     </com.liaoinstan.springview.widget.SpringView>
 
@@ -46,4 +44,4 @@
         <!--android:textSize="18sp"-->
         <!--android:textColor="@color/colorPurpleDark"-->
         <!--android:gravity="center"/>-->
-</FrameLayout>
+</RelativeLayout>
