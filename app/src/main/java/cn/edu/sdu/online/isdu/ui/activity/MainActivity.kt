@@ -117,8 +117,6 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         User.staticUser = User.load()
     }
 
-
-
     private fun initFragment() {
         if (fragments.isEmpty()) {
             fragments.add(HomeFragment())

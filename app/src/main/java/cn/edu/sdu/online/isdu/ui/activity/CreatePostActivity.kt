@@ -477,7 +477,6 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
 
             } catch (e: Exception) {
                 Logger.log(e)
-                e.printStackTrace()
             } finally {
                 dialog!!.dismiss()
             }

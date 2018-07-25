@@ -94,13 +94,10 @@ class LoginActivity : SlideActivity(), View.OnClickListener {
                 try {
                     val jsonObj = JSONObject(json)
 
-                    Log.d("AAA", json)
-
                     if (!jsonObj.isNull("status") && jsonObj.getString("status") == "failed") {
                         runOnUiThread {
                             Toast.makeText(this@LoginActivity, "学号或密码错误", Toast.LENGTH_SHORT).show()
                         }
-
                     } else {
                         // 初始化用户缓存
                         User.staticUser.studentNumber = num

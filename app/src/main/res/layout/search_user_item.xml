@@ -43,7 +43,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimaryText"
-                android:text="用户名"
                 android:textSize="18sp" />
 
             <!--签名-->
@@ -51,7 +50,6 @@
                 android:id="@+id/user_sign"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="个性签名"
                 android:layout_marginTop="8dp"
                 android:textColor="@color/colorSecondaryText"/>
         </LinearLayout>

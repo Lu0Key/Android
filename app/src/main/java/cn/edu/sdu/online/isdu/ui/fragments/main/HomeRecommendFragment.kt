@@ -18,6 +18,7 @@ import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.ui.design.recyclerviewpack.PullRefreshLayout
 import cn.edu.sdu.online.isdu.interfaces.OnRefreshListener
+import com.liaoinstan.springview.widget.SpringView
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -35,10 +36,10 @@ class HomeRecommendFragment : Fragment() {
 
     private var recyclerView: RecyclerView? = null
     private var adapter: MyAdapter? = null
-    private var updateBar: TextView? = null
-    private var pullRefreshLayout: PullRefreshLayout? = null
+//    private var updateBar: TextView? = null
+    private var pullRefreshLayout: SpringView? = null
     private var dataList: MutableList<Post> = ArrayList()
-    private var blankView: TextView? = null
+//    private var blankView: TextView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home_recommend, container, false)
@@ -54,12 +55,12 @@ class HomeRecommendFragment : Fragment() {
      */
     private fun initView(view: View) {
         recyclerView = view.findViewById(R.id.recycler_view)
-        updateBar = view.findViewById(R.id.update_bar)
+//        updateBar = view.findViewById(R.id.update_bar)
         pullRefreshLayout = view.findViewById(R.id.pull_refresh_layout)
-        blankView = view.findViewById(R.id.blank_view)
+//        blankView = view.findViewById(R.id.blank_view)
 
-        updateBar!!.translationY = -100f
-        blankView!!.visibility = View.GONE
+//        updateBar!!.translationY = -100f
+//        blankView!!.visibility = View.GONE
     }
 
     /**
@@ -77,34 +78,43 @@ class HomeRecommendFragment : Fragment() {
      */
     private fun initPullRefreshLayout() {
         // 下拉刷新监听器
-        pullRefreshLayout!!.setOnRefreshListener {
-
-            val onRefreshListener = OnRefreshListener { result, data ->
-                showUpdateBar(Random().nextInt(20))
-                pullRefreshLayout!!.setRefreshing(false)
-
-                blankView!!.visibility = if (dataList.isEmpty()) View.VISIBLE else View.GONE
+        pullRefreshLayout!!.setListener(object : SpringView.OnFreshListener {
+            override fun onLoadmore() {
+                // 上拉加载更多
             }
 
-            Handler().postDelayed({
-                onRefreshListener.onRefresh(0, 0)
-            }, 2000)
-        }
-
-        // 上拉加载监听器
-        pullRefreshLayout!!.setOnLoadListener {
-
-            val onRefreshListener = OnRefreshListener { result, data ->
-                adapter!!.notifyDataSetChanged()
-                pullRefreshLayout!!.setLoading(false)
-                recyclerView!!.smoothScrollBy(0, 250)
+            override fun onRefresh() {
+                // 下拉刷新
             }
-
-            Handler().postDelayed({
-                onRefreshListener.onRefresh(0, 0)
-            }, 2000)
-
-        }
+        })
+//        pullRefreshLayout!!.setOnRefreshListener {
+//
+//            val onRefreshListener = OnRefreshListener { result, data ->
+//                showUpdateBar(Random().nextInt(20))
+//                pullRefreshLayout!!.setRefreshing(false)
+//
+//                blankView!!.visibility = if (dataList.isEmpty()) View.VISIBLE else View.GONE
+//            }
+//
+//            Handler().postDelayed({
+//                onRefreshListener.onRefresh(0, 0)
+//            }, 2000)
+//        }
+//
+//        // 上拉加载监听器
+//        pullRefreshLayout!!.setOnLoadListener {
+//
+//            val onRefreshListener = OnRefreshListener { result, data ->
+//                adapter!!.notifyDataSetChanged()
+//                pullRefreshLayout!!.setLoading(false)
+//                recyclerView!!.smoothScrollBy(0, 250)
+//            }
+//
+//            Handler().postDelayed({
+//                onRefreshListener.onRefresh(0, 0)
+//            }, 2000)
+//
+//        }
     }
 
     /**
@@ -115,36 +125,36 @@ class HomeRecommendFragment : Fragment() {
     private fun showUpdateBar(updateNumber: Int) {
         if (updateNumber < 0) return
 
-        if (updateNumber == 0) {
-            updateBar!!.text = "没有更新内容"
-        } else updateBar!!.text = "推荐引擎有 $updateNumber 条更新"
+//        if (updateNumber == 0) {
+//            updateBar!!.text = "没有更新内容"
+//        } else updateBar!!.text = "推荐引擎有 $updateNumber 条更新"
 
-        showUpdateBar()
+//        showUpdateBar()
 
-        Handler().postDelayed({hideUpdateBar()}, 3000)
+//        Handler().postDelayed({hideUpdateBar()}, 3000)
     }
 
     /**
      * 隐藏更新条
      */
     private fun hideUpdateBar() {
-        val animator = ObjectAnimator.ofFloat(updateBar!!, "translationY", 0f, -100f)
+//        val animator = ObjectAnimator.ofFloat(updateBar!!, "translationY", 0f, -100f)
 
-        animator.duration = 300
-        animator.interpolator = DecelerateInterpolator()
-        animator.start()
+//        animator.duration = 300
+//        animator.interpolator = DecelerateInterpolator()
+//        animator.start()
     }
 
     /**
      * 显示更新条
      */
-    private fun showUpdateBar() {
-        val animator = ObjectAnimator.ofFloat(updateBar!!, "translationY", -100f, 0f)
-
-        animator.duration = 300
-        animator.interpolator = DecelerateInterpolator()
-        animator.start()
-    }
+//    private fun showUpdateBar() {
+//        val animator = ObjectAnimator.ofFloat(updateBar!!, "translationY", -100f, 0f)
+//
+//        animator.duration = 300
+//        animator.interpolator = DecelerateInterpolator()
+//        animator.start()
+//    }
 
     class MyAdapter(dataList: List<Post>?, context: Context) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 

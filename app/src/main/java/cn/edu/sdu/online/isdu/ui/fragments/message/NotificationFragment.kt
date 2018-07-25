@@ -52,7 +52,6 @@ class NotificationFragment : Fragment(){
 
      fun loadData() {
          onLoading()
-         //TODO 消息碎片数据加载
          isLoadComplete = true
          publishData()
     }
@@ -94,7 +93,6 @@ class NotificationFragment : Fragment(){
             val news = mDataList[position]
             holder.itemLayout.setOnClickListener {
                 activity!!.startActivity(Intent(activity, NewsActivity::class.java))
-                //TODO(启动通知详情的putExtra)
                 Log.w("notificationItemClick",position.toString())
             }
             holder.title.text = news.title

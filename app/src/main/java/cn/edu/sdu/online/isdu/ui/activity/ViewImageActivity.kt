@@ -2,18 +2,18 @@ package cn.edu.sdu.online.isdu.ui.activity
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.view.View
 import android.view.Window
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.BaseActivity
+import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.NormActivity
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.DraggableImageView
@@ -21,6 +21,10 @@ import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Phone
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.ViewTarget
+import com.bumptech.glide.request.transition.Transition
 import kotlinx.android.synthetic.main.activity_view_image.*
 import java.io.File
 import java.io.FileInputStream
@@ -184,8 +188,16 @@ class ViewImageActivity : NormActivity() {
                             loadingLayout!!.visibility = View.GONE
                         }
                     } else {
+                        val target = object : ViewTarget<DraggableImageView, Drawable>(draggableImageView!!) {
+                            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                                this.view.setImageBitmap((resource as BitmapDrawable).bitmap)
+                            }
+                        }
                         runOnUiThread {
-                            draggableImageView!!.setImageBitmap(BitmapFactory.decodeFile(cachePath))
+                            Glide.with(MyApplication.getContext())
+                                    .load(cachePath)
+                                    .into(target)
+
                             loadingLayout!!.visibility = View.GONE
                         }
                     }

@@ -17,6 +17,8 @@ public class ServerInfo {
     public static final String url = "http://" + ipAddr + ":" + port + "/";
     public static final String envVarUrl = "http://" + ipAddr + ":8380/env_variables.html";
 
+    public static final String avatarUrl = "http://" + ipAddr + ":8380/isdu/avatar";
+
     public static final String calanderUrl = "http://202.194.15.133:8380/isdu/term/xl-2018-2019-1.png";
 
     public static String getComments() {
@@ -164,6 +166,18 @@ public class ServerInfo {
     }
 
     public static final String getCollectList = "http://" + ipAddr133 + ":8384/user/getCollect";
+
+    public static String getLikeMe(String uid) {
+        return "http://202.194.15.133:8384/user/getLikeMe?userId=" + uid;
+    }
+
+    public static String getMyLike(String uid) {
+        return "http://202.194.15.133:8384/user/getLike?userId=" + uid;
+    }
+
+    public static String userLike(String userId, String beLikeUserId) {
+        return "http://202.194.15.133:8384/user/like?userId=" + userId + "&beLikeUserId=" + beLikeUserId;
+    }
 
     public static final String searchPost (String key){
         return "http://" + ipAddr133 + ":8384/post/query?key=" + key;

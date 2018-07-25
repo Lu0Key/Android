@@ -28,7 +28,7 @@ public class ChildViewPager extends ViewPager {
             case MotionEvent.ACTION_MOVE:
                 // 若连续快速滑动，则不触发ACTION_DOWN和ACTION_UP，直接进入ACTION_MOVE处理
                 // 即还处于动画中时一定进入的是ACTION_MOVE
-                if (flag) {
+//                if (flag) {
                     if (x - mLastMotionX > 5 && getCurrentItem() == 0) {
                         flag = false;
                         getParent().requestDisallowInterceptTouchEvent(false);
@@ -38,11 +38,14 @@ public class ChildViewPager extends ViewPager {
                         flag = false;
                         getParent().requestDisallowInterceptTouchEvent(false);
                     }
-                }
+//                }
                 break;
             case MotionEvent.ACTION_UP:
+                mLastMotionX = x;
+                getParent().requestDisallowInterceptTouchEvent(false);
+                break;
             case MotionEvent.ACTION_CANCEL:
-                getParent().requestDisallowInterceptTouchEvent(true);
+                getParent().requestDisallowInterceptTouchEvent(false);
                 break;
             default:
                 break;

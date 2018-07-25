@@ -34,6 +34,8 @@ import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.WeakReferences
 import com.bumptech.glide.Glide
 import cn.edu.sdu.online.isdu.util.database.DAOHistory
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_post_detail.*
 import kotlinx.android.synthetic.main.edit_area.*
@@ -76,6 +78,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var userNicknameMap: HashMap<String, String> = HashMap()
 
     private var isLike = false // 是否点赞
+    private var showCollectToast = false  // 是否显示已经收藏
 
     private var uid = ""
     private var postId = 0
@@ -329,7 +332,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         .putExtra("id", uid.toInt()))
             }
             btn_like.id -> {
-                NetworkAccess.buildRequest(ServerInfo.likePost + "?postId=$postId&userId=$uid",
+                if (User.staticUser != null &&
+                        User.staticUser.studentNumber != null)
+                NetworkAccess.buildRequest(ServerInfo.likePost + "?postId=$postId&userId=${User.staticUser.uid}",
                         object : Callback {
                             override fun onFailure(call: Call?, e: IOException?) {
                                 Logger.log(e)
@@ -351,7 +356,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         })
             }
             btn_collect.id -> {
-                NetworkAccess.buildRequest(ServerInfo.collectPost + "?postId=$postId&userId=$uid",
+                showCollectToast = true
+                NetworkAccess.buildRequest(ServerInfo.collectPost + "?postId=$postId&userId=${User.staticUser.uid}",
                         object : Callback {
                             override fun onFailure(call: Call?, e: IOException?) {
                                 Logger.log(e)
@@ -385,7 +391,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun getLikeNumber() {
-        NetworkAccess.buildRequest(ServerInfo.getIsLike(postId, uid), object : Callback {
+        NetworkAccess.buildRequest(ServerInfo.getIsLike(postId, User.staticUser.uid.toString()), object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 Logger.log(e)
                 isLike = false
@@ -473,19 +479,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
                             txtContent!!.setData(editDataList)
 
-                            val commentStr = data.getString("comment")
-                            val commentList = commentStr.split("-").subList(0, commentStr.split("-").size - 1)
-                            this.commentList.clear()
-                            getComments(commentList.size - 1, commentList)
-
-//                        var commentCounter = 0
-//                        for (com in commentList)
-//                            if (com != "") {
-//                                commentCounter++
-//                            }
-
-                            commentLine!!.text = "${commentList.size} 条评论"
-
                             txtContent!!.setOnRtImageClickListener {imagePath ->
                                 if (imagePath.startsWith("http")) {
                                     // 网络图片
@@ -495,6 +488,15 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                     // 本地图片
                                 }
                             }
+
+                            val commentStr = data.getString("comment")
+                            // 获取评论ID串
+                            val commentList = commentStr.split("-").subList(0, commentStr.split("-").size - 1)
+                            this.commentList.clear()
+                            getComments(commentList.size - 1, commentList) // 获取评论
+
+                            commentLine!!.text = "${commentList.size} 条评论"
+
                         }
                     }
 
@@ -525,9 +527,13 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         NetworkAccess.cache(ServerInfo.getUserInfo(id, "avatar"), "avatar") {success, cachePath ->
             if (success) {
                 val obj = FileUtil.getStringFromFile(cachePath)
-                val bmp = ImageManager.convertStringToBitmap(obj)
+//                val bmp = ImageManager.convertStringToBitmap(obj)
                 runOnUiThread {
-                    circleImageView!!.setImageBitmap(bmp)
+                    Glide.with(this)
+                            .load(obj)
+                            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                            .into(circleImageView!!)
+//                    circleImageView!!.setImageBitmap(bmp)
                 }
             } else {
                 runOnUiThread {
@@ -541,7 +547,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
      * 获取是否收藏
      */
     private fun getIsCollect() {
-        NetworkAccess.buildRequest(ServerInfo.getIsCollect(postId, uid), object : Callback {
+        NetworkAccess.buildRequest(ServerInfo.getIsCollect(postId, User.staticUser.uid.toString()), object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 Logger.log(e)
             }
@@ -551,8 +557,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                     val str = response?.body()?.string()
                     runOnUiThread {
                         btnCollect!!.setImageResource(if (str == "true") R.drawable.ic_collect_yes else R.drawable.ic_collect_no)
-                        if (str == "true")
-                            Toast.makeText(this@PostDetailActivity, "已收藏", Toast.LENGTH_SHORT).show()
+                        if ((str == "true") && showCollectToast)
+                            Toast.makeText(this@PostDetailActivity, "收藏成功", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
                     Logger.log(e)
@@ -580,8 +586,17 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         }
     }
 
+    /**
+     * 获取评论
+     * 一次性从服务器获取全部评论
+     *
+     * @param index 评论在list中的序号
+     * @param list 评论ID列表
+     */
     private fun getComments(index: Int, list: List<String>) {
         if (index < 0) return
+
+
         NetworkAccess.buildRequest(ServerInfo.getComments(), "id", list[index], object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 Logger.log(e)
@@ -606,7 +621,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         requestUserInfoMap(comment.uid)
                     }
 
-                    if (!commentList.contains(comment)) commentList.add(comment)
+                    if (!commentList.contains(comment)) commentList.add(comment) // 防止重复添加Comment
+                    // 也可以使用线程锁（（那就别用OKHTTP了））
 
                     runOnUiThread {
                         commentAdapter?.notifyDataSetChanged()
@@ -618,6 +634,10 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 }
             }
         })
+    }
+
+    private fun loadComments() {
+
     }
 
     private fun deleteComment(comment: PostComment) {
@@ -668,10 +688,14 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             val comment = commentList[position]
 
             Thread(Runnable {
-                val bmp = ImageManager.convertStringToBitmap(FileUtil.getStringFromFile(userIdMap[comment.uid]))
+                val bmp = FileUtil.getStringFromFile(userIdMap[comment.uid])
                 runOnUiThread {
-                    if (bmp != null)
-                        holder.circleImageView.setImageBitmap(bmp)
+                    if (bmp != null && bmp != "")
+//                        holder.circleImageView.setImageBitmap(bmp)
+                        Glide.with(this@PostDetailActivity)
+                                .load(bmp)
+                                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                                .into(holder.circleImageView)
                 }
             }).start()
 

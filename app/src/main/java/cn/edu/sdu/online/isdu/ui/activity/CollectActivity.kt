@@ -97,12 +97,16 @@ class CollectActivity : SlideActivity(), PostViewable {
                 try {
                     val jsonStr = JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj")
                     val arr = JSONArray(jsonStr)
+                    collectList.clear()
                     for (i in 0 until arr.length()) {
                         val obj = arr.getJSONObject(i)
                         val collect = Collect()
                         collect.collectTitle = obj.getString("title")
                         collect.collectTime = obj.getString("time").toLong()
                         collect.collectUrl = ServerInfo.getPost(obj.getInt("id"))
+                        collect.collectContent = obj.getString("info")
+                        collect.id = obj.getInt("id")
+                        collect.uid = obj.getString("uid").toInt()
                         collectList.add(collect)
                     }
 
@@ -147,7 +151,10 @@ class CollectActivity : SlideActivity(), PostViewable {
                     Collect.TYPE_POST -> {
                         WeakReferences.postViewableWeakReference = WeakReference(this@CollectActivity)
                         startActivity(Intent(this@CollectActivity, PostDetailActivity::class.java)
-                                .putExtra("url", collect.collectUrl)
+                                .putExtra("id", collect.id)
+                                .putExtra("uid", collect.uid.toString())
+                                .putExtra("title", collect.collectTitle)
+                                .putExtra("time", collect.collectTime)
                                 .putExtra("tag", TAG))
                     }
                 }
