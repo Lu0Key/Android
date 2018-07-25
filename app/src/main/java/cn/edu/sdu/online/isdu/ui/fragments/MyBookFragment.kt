@@ -247,12 +247,14 @@ class MyBookFragment : Fragment(), View.OnClickListener {
 
     private fun initData(){
         dataList.clear()
-        adapter!!.notifyDataSetChanged()
-        recyclerView!!.visibility = View.GONE
-        netWorkError!!.visibility = View.GONE
-        noBook!!.visibility = View.GONE
-        unBind!!.visibility = View.GONE
-        loading_layout!!.visibility = View.VISIBLE
+        activity!!.runOnUiThread {
+            adapter!!.notifyDataSetChanged()
+            recyclerView!!.visibility = View.GONE
+            netWorkError!!.visibility = View.GONE
+            noBook!!.visibility = View.GONE
+            unBind!!.visibility = View.GONE
+            loading_layout!!.visibility = View.VISIBLE
+        }
         Log.w("mbf",ServerInfo.getBookListUrl(User.staticUser.uid.toString()))
         NetworkAccess.buildRequest(ServerInfo.getBookListUrl(User.staticUser.uid.toString()),
                 object : Callback {

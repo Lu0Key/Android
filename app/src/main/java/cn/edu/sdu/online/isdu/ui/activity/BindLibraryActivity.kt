@@ -45,7 +45,7 @@ class BindLibraryActivity : SlideActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.btn_back -> {finish()}
-            R.id.btn_login -> {
+            R.id.btn_bind -> {
                 val stuNum = txtCardNumber!!.text.toString()
                 val stuPwd = txtPassword!!.text.toString()
 
