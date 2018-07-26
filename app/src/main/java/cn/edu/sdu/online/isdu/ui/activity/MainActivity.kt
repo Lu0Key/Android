@@ -68,6 +68,15 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // 检查是否初次加载
+        val sp = getSharedPreferences("app", Context.MODE_PRIVATE)
+        if (!sp.getBoolean("first_load_1.0.0", false)) {
+            val editor = sp.edit()
+            editor.putBoolean("first_load_1.0.0", true)
+            editor.apply()
+            startActivity(Intent(this, GuideActivity::class.java))
+        }
+
         // 请求关键权限
         Permissions.requestPermission(this, Permissions.VIBRATE)
         Permissions.requestPermission(this, Permissions.INTERNET)
@@ -80,7 +89,7 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         mViewPager = view_pager
 
         initFragment()
-        mPagerAdapter = FragAdapter(supportFragmentManager, fragments)
+        mPagerAdapter = FragAdapter(supportFragmentManager)
         mViewPager!!.adapter = mPagerAdapter
 
         initMagicIndicator()
@@ -210,13 +219,11 @@ class MainActivity : SlideActivity(), View.OnClickListener {
     /**
      * 自定义ViewPager适配器类
      */
-    class FragAdapter(fm: FragmentManager, fragments: List<Fragment>) : FragmentPagerAdapter(fm) {
-        private val mFragments = fragments
-        private val mDataList = listOf("主页", "资讯", "个人中心")
+    inner class FragAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-        override fun getItem(position: Int): Fragment = mFragments[position]
+        override fun getItem(position: Int): Fragment = fragments[position]
 
-        override fun getCount(): Int = mFragments.size
+        override fun getCount(): Int = fragments.size
 
         override fun getPageTitle(position: Int): CharSequence? {
             return mDataList[position]

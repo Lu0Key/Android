@@ -108,20 +108,20 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         initView()
 
         //写数据库纪录浏览
-        val dao = DAOHistory(this)
-        dao.newHistory(History(title,"帖子",
-                System.currentTimeMillis(),
-                com.alibaba.fastjson.JSONObject.toJSONString(Post(postId,
-                        0,
-                        "",
-                        title,
-                        uid,
-                        0,
-                        System.currentTimeMillis(),
-                        "",
-                        0,
-                        0))))
-        dao.close()
+//        val dao = DAOHistory(this)
+//        dao.newHistory(History(title,"帖子",
+//                System.currentTimeMillis(),
+//                JSON.toJSONString(Post(postId,
+//                        0,
+//                        "",
+//                        title,
+//                        uid,
+//                        0,
+//                        System.currentTimeMillis(),
+//                        "",
+//                        0,
+//                        0))))
+//        dao.close()
 
 //        btnLike!!.setBackgroundResource(R.drawable.ic_like_yes)
 
@@ -209,7 +209,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                     Toast.makeText(this, "评论不能为空", Toast.LENGTH_SHORT).show()
                     return
                 }
-
                 val keys = arrayListOf("content", "userId", "postId", "fatherCommentId", "time")
                 val values = arrayListOf(editText!!.text.toString(),
                         User.staticUser.uid.toString(), postId.toString(), fatherCommentId.toString(),

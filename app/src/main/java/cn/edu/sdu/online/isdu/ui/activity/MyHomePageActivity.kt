@@ -270,9 +270,9 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      * 初始化推荐、关注、热榜和校内相关碎片
      */
     private fun initFragments() {
-        for (fragment in mFragments) {
-            (fragment as MePostsFragment).setUid(id)
-        }
+//        for (fragment in mFragments) {
+        (mFragments[0] as MePostsFragment).setUid(id)
+//        }
         mViewPagerAdapter = FragAdapter(supportFragmentManager, mFragments)
         viewPager!!.adapter = mViewPagerAdapter
     }

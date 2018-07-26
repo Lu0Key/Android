@@ -62,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="校园卡密码"
-                android:inputType="textPassword"
+                android:inputType="numberPassword"
                 android:letterSpacing="0.1"
                 android:textSize="18sp"/>
         </android.support.design.widget.TextInputLayout>
