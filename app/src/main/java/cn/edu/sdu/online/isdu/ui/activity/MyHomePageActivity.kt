@@ -22,6 +22,7 @@ import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.viewpager.NoScrollViewPager
+import cn.edu.sdu.online.isdu.ui.fragments.MeCommentFragment
 import cn.edu.sdu.online.isdu.ui.fragments.MePostsFragment
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
@@ -60,8 +61,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var magicIndicator: MagicIndicator? = null
     private var viewPager: NoScrollViewPager? = null
     private val mDataList = listOf("帖子", "评论", "关注") // Indicator 数据
-    private val mFragments = listOf(MePostsFragment(),
-            MePostsFragment(), MePostsFragment()) // Fragment 数组
+    private val mFragments: List<Fragment> = listOf(MePostsFragment(),
+            MeCommentFragment(), MePostsFragment()) // Fragment 数组
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
 
     private var collapsingToolbar: CollapsingToolbarLayout? = null
@@ -270,7 +271,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      */
     private fun initFragments() {
         for (fragment in mFragments) {
-            fragment.setUid(id)
+            (fragment as MePostsFragment).setUid(id)
         }
         mViewPagerAdapter = FragAdapter(supportFragmentManager, mFragments)
         viewPager!!.adapter = mViewPagerAdapter

@@ -1,5 +1,7 @@
 package cn.edu.sdu.online.isdu.bean;
 
+import java.util.Objects;
+
 /**
  ****************************************************
  * @author zsj
@@ -121,5 +123,19 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return postId == post.postId;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(postId);
     }
 }

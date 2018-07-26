@@ -179,4 +179,20 @@ public class ServerInfo {
     public static String userLike(String userId, String beLikeUserId) {
         return "http://202.194.15.133:8384/user/like?userId=" + userId + "&beLikeUserId=" + beLikeUserId;
     }
+
+    public static String queryPost(String key) {
+        return "http://" + ipAddr133 + ":8384/post/query?key=" + key;
+    }
+
+    public static String getHotPostList(double value) {
+        return "http://" + ipAddr133 + ":8384/post/getHotTen?startValue=" + value;
+    }
+
+    public static String getSchoolAboutList(int id) {
+        return "http://" + ipAddr133 + ":8384/post/getSchoolAboutTen?startId=" + id;
+    }
+
+    public static String getNotice(String uid) {
+        return "http://" + ipAddr133 + ":8384/notice/getNotice?userId=" + uid;
+    }
 }

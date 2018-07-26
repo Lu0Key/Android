@@ -93,7 +93,13 @@
             <!-- </intent-filter> -->
         </activity>
         <activity android:name=".ui.activity.LikeMeActivity" />
-        <activity android:name=".ui.activity.MyLikeActivity"></activity>
+        <activity android:name=".ui.activity.MyLikeActivity" />
+        <activity android:name=".ui.activity.GuideActivity" />
+
+        <service
+            android:name=".service.MessageService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

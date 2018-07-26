@@ -1,5 +1,6 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -15,6 +16,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.PostComment
 import cn.edu.sdu.online.isdu.bean.User
@@ -508,7 +510,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 val obj = FileUtil.getStringFromFile(cachePath)
 //                val bmp = ImageManager.convertStringToBitmap(obj)
                 runOnUiThread {
-                    Glide.with(this)
+                    Glide.with(MyApplication.getContext())
                             .load(obj)
                             .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                             .into(circleImageView!!)
@@ -671,7 +673,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 runOnUiThread {
                     if (bmp != null && bmp != "")
 //                        holder.circleImageView.setImageBitmap(bmp)
-                        Glide.with(this@PostDetailActivity)
+                        Glide.with(MyApplication.getContext())
                                 .load(bmp)
                                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                                 .into(holder.circleImageView)

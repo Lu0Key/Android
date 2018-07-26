@@ -38,9 +38,9 @@ import java.io.Serializable
 class MessageActivity : SlideActivity(), View.OnClickListener , Serializable {
 
     private var backBtn : ImageView?= null
-    private val mFragments = listOf(MessageFragment(), ChatFragment(), NotificationFragment())
+    private val mFragments = listOf(NotificationFragment(), ChatFragment())
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
-    private val mDataList = listOf("消息", "聊天","通知")
+    private val mDataList = listOf("通知", "聊天")
     private var viewPager: ViewPager? = null // ViewPager
     private var magicIndicator: MagicIndicator? = null // Magic Indicator
 
@@ -109,7 +109,7 @@ class MessageActivity : SlideActivity(), View.OnClickListener , Serializable {
 
     class FragAdapter(fm: FragmentManager, fragments: List<Fragment>) : FragmentPagerAdapter(fm) {
         private val mFragments = fragments
-        private val mDataList = listOf("消息", "聊天","通知")// Indicator 数据
+        private val mDataList = listOf("通知", "聊天")// Indicator 数据
 
         override fun getItem(position: Int): Fragment = mFragments[position]
 

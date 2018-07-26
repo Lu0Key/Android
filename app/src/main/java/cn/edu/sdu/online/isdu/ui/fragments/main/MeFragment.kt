@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_me.*
 import org.json.JSONException
 import org.json.JSONObject
+import q.rorbin.badgeview.QBadgeView
 import java.io.Serializable
 
 /**
@@ -126,6 +128,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
             }
             btn_msg.id -> {
                 startActivity(Intent(activity, MessageActivity::class.java))
+                setMsgBadge(false)
             }
             btn_my_favorite.id -> {
                 startActivity(Intent(activity, CollectActivity::class.java))
@@ -164,6 +167,20 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
     override fun onDestroy() {
         super.onDestroy()
         unRegBroadcastReceiver()
+    }
+
+    fun setMsgBadge(show: Boolean) {
+        if (show) {
+            QBadgeView(context)
+                    .setBadgeGravity(Gravity.TOP or Gravity.RIGHT)
+                    .bindTarget(btnMsg)
+                    .setShowShadow(false)
+        } else {
+            QBadgeView(context)
+                    .setBadgeGravity(Gravity.TOP or Gravity.RIGHT)
+                    .bindTarget(btnMsg)
+                    .hide(false)
+        }
     }
 
     /**

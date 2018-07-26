@@ -200,16 +200,6 @@ class SearchUserFragment : LazyLoadFragment() {
 
             holder.btnFollow.visibility = View.INVISIBLE
 
-//            if (User.staticUser == null || User.staticUser.studentNumber == null) {
-//                holder.btnFollow.visibility = View.INVISIBLE
-//            } else {
-//                if (user.uid.toString() == User.staticUser.uid.toString()) {
-//                    holder.btnFollow.visibility = View.INVISIBLE
-//                } else {
-//                    holder.btnFollow.visibility = View.VISIBLE
-//                }
-//            }
-
             holder.btnFollow.setOnClickListener {
                 if (User.staticUser == null || User.staticUser.studentNumber == null) {
 

@@ -23,8 +23,10 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.Common
 import android.view.LayoutInflater
 import android.widget.*
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.bean.Message
 import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.service.MessageService
 import cn.edu.sdu.online.isdu.util.*
 import cn.edu.sdu.online.isdu.util.download.Download
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
@@ -87,6 +89,15 @@ class MainActivity : SlideActivity(), View.OnClickListener {
 
         // 同步用户信息
         AccountOp.syncUserInformation()
+
+        // 开启消息轮询服务
+        startService(Intent(this, MessageService::class.java)
+                .putExtra("uid", User.staticUser.uid.toString()))
+        Message.addOnMessageListener {
+            if (fragments.size == 3) {
+                (fragments[2] as MeFragment).setMsgBadge(true)
+            }
+        }
     }
 
     override fun onResume() {
