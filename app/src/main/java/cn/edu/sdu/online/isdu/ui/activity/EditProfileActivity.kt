@@ -21,9 +21,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.NormActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.net.AccountOp
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
@@ -159,6 +161,7 @@ class EditProfileActivity : NormActivity() {
         Glide.with(this)
                 .load(user.avatarUrl)
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                .apply(RequestOptions.skipMemoryCacheOf(true))
                 .into(object : ViewTarget<CircleImageView, Drawable>(avatar!!) {
                     override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
                         finalBitmap = (resource as BitmapDrawable).bitmap
@@ -234,8 +237,6 @@ class EditProfileActivity : NormActivity() {
 
                 hashMap["userInfo"] = userObj.toString()
 
-                Log.d("AAA", "userInfo=${userObj.toString()}")
-
                 post(ServerInfo.urlUpdate, hashMap)
             }
 
@@ -278,7 +279,7 @@ class EditProfileActivity : NormActivity() {
                 val outStream = DataOutputStream(conn.outputStream)
                 outStream.write(sb.toString().toByteArray())
 
-                Log.d("AAA", "FormData=${sb.toString()}")
+                Log.d("AAA", "FormData=$sb")
                 //发送表单字段数据
 
                 //调用自定义方法获取图片文件的byte数组
@@ -310,8 +311,13 @@ class EditProfileActivity : NormActivity() {
                 //返回状态判断
                 val cah = conn.responseCode
 
+                // 为了不使用原先缓存，用Glide清除一下图片缓存
+                Glide.get(MyApplication.getContext()).clearDiskCache()
                 runOnUiThread {
                     if (cah == 200) {
+                        // 更新本地用户信息
+                        AccountOp.syncUserInformation()
+
                         Toast.makeText(this, "更新成功", Toast.LENGTH_SHORT).show()
                         finish()
                     } else if (cah == 400) {

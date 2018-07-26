@@ -177,6 +177,7 @@ class LikeMeActivity : SlideActivity() {
             Glide.with(this@LikeMeActivity)
                     .load(item.avatarUrl)
                     .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                    .apply(RequestOptions.skipMemoryCacheOf(true))
                     .into(holder.circleImageView)
 
             holder.itemLayout.setOnClickListener {

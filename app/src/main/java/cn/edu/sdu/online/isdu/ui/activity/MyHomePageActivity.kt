@@ -353,16 +353,10 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private fun fillBackgroundImage(bmp: String?) {
         backgroundImage!!.tag = null
         if (bmp != null) {
-//            val bitmap = EasyBlur.with(this)
-//                    .bitmap(bmp)
-//                    .policy(EasyBlur.BlurPolicy.RS_BLUR)
-//                    .radius(15)
-//                    .scale(2)
-//                    .blur()
-//            backgroundImage!!.setImageBitmap(bitmap)
             Glide.with(this)
                     .load(bmp)
                     .apply(RequestOptions.bitmapTransform(BlurTransformation(40)))
+                    .apply(RequestOptions.skipMemoryCacheOf(true))
                     .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                     .into(backgroundImage!!)
         } else {
@@ -372,19 +366,18 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun fillAvatarImage(bmp: String?) {
-//        if (bmp == null) {
-//            circleImageView!!.setImageBitmap(null)
-//            miniCircleImageView!!.setImageBitmap(null)
-//        } else {
-//            circleImageView!!.setImageBitmap(bmp)
-//            miniCircleImageView!!.setImageBitmap(bmp)
-//        }
         if (bmp == null || bmp == "") {
             circleImageView!!.setImageBitmap(null)
             miniCircleImageView!!.setImageBitmap(null)
         } else {
-            Glide.with(this).load(bmp).apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL)).into(circleImageView!!)
-            Glide.with(this).load(bmp).apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL)).into(miniCircleImageView!!)
+            Glide.with(this).load(bmp)
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                    .apply(RequestOptions.skipMemoryCacheOf(true))
+                    .into(circleImageView!!)
+            Glide.with(this)
+                    .load(bmp).apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                    .apply(RequestOptions.skipMemoryCacheOf(true))
+                    .into(miniCircleImageView!!)
         }
     }
 

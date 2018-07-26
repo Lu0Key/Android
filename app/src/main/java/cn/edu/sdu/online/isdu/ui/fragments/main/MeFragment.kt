@@ -173,12 +173,11 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
     fun setMsgBadge(show: Boolean) {
         if (show) {
             QBadgeView(context)
-                    .setBadgeGravity(Gravity.TOP or Gravity.RIGHT)
-                    .bindTarget(btnMsg)
-                    .setShowShadow(false)
+                    .setBadgeGravity(Gravity.TOP or Gravity.END)
+                    .bindTarget(btnMsg).isShowShadow = false
         } else {
             QBadgeView(context)
-                    .setBadgeGravity(Gravity.TOP or Gravity.RIGHT)
+                    .setBadgeGravity(Gravity.TOP or Gravity.END)
                     .bindTarget(btnMsg)
                     .hide(false)
         }
@@ -258,6 +257,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
             if (circleImageView != null)
                 Glide.with(context!!)
                         .load(user.avatarUrl)
+                        .apply(RequestOptions.skipMemoryCacheOf(true))
                         .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                         .into(circleImageView!!)
             userName?.text = user.nickName

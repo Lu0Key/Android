@@ -17,6 +17,7 @@ import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.util.FileUtil
+import cn.edu.sdu.online.isdu.util.Logger
 import com.liaoinstan.springview.widget.SpringView
 import org.json.JSONArray
 import org.json.JSONObject
@@ -92,19 +93,24 @@ class HomeHotFragment : LazyLoadFragment() {
         super.loadData()
         NetworkAccess.cache(ServerInfo.getHotPostList(lastHotValue)) {success, cachePath ->
             if (success) {
-                val str = FileUtil.getStringFromFile(cachePath)
-                val arr = JSONArray(JSONObject(str).getJSONArray("obj"))
-                for (i in 0 until arr.length()) {
-                    val obj = arr.getJSONObject(i)
-                    val post = Post()
-                    post.uid = obj.getString("uid")
-                    post.commentsNumbers = obj.getInt("commentNumber")
-                    post.postId = obj.getInt("id")
-                    post.likeNumber = obj.getInt("likeNumber")
-                    post.content = obj.getString("info")
-                    post.title = obj.getString("title")
-                    if (!dataList.contains(post)) dataList.add(post)
+                try {
+                    val str = FileUtil.getStringFromFile(cachePath)
+                    val arr = JSONArray(JSONObject(str).getJSONArray("obj"))
+                    for (i in 0 until arr.length()) {
+                        val obj = arr.getJSONObject(i)
+                        val post = Post()
+                        post.uid = obj.getString("uid")
+                        post.commentsNumbers = obj.getInt("commentNumber")
+                        post.postId = obj.getInt("id")
+                        post.likeNumber = obj.getInt("likeNumber")
+                        post.content = obj.getString("info")
+                        post.title = obj.getString("title")
+                        if (!dataList.contains(post)) dataList.add(post)
+                    }
+                } catch (e: Exception) {
+                    Logger.log(e)
                 }
+
                 activity?.runOnUiThread {
                     adapter?.notifyDataSetChanged()
                 }

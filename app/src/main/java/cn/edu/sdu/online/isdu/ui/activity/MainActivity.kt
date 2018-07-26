@@ -3,6 +3,7 @@ package cn.edu.sdu.online.isdu.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -22,11 +23,13 @@ import android.support.v4.view.ViewPager
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView
 import android.view.LayoutInflater
 import android.widget.*
+import cn.edu.sdu.online.isdu.app.BuildConfig
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.Message
 import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.service.MessageService
+import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.util.*
 import cn.edu.sdu.online.isdu.util.download.Download
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
@@ -70,9 +73,9 @@ class MainActivity : SlideActivity(), View.OnClickListener {
 
         // 检查是否初次加载
         val sp = getSharedPreferences("app", Context.MODE_PRIVATE)
-        if (!sp.getBoolean("first_load_1.0.0", false)) {
+        if (!sp.getBoolean("first_load_${BuildConfig.VERSION_NAME}", false)) {
             val editor = sp.edit()
-            editor.putBoolean("first_load_1.0.0", true)
+            editor.putBoolean("first_load_${BuildConfig.VERSION_NAME}", true)
             editor.apply()
             startActivity(Intent(this, GuideActivity::class.java))
         }

@@ -194,4 +194,8 @@ public class ServerInfo {
     public static String getNotice(String uid) {
         return "http://" + ipAddr133 + ":8384/notice/getNotice?userId=" + uid;
     }
+
+    public static String getMyComment10(String uid) {
+        return "http://" + ipAddr133 + ":8384/user/getComment?userId=" + uid;
+    }
 }

@@ -54,6 +54,7 @@ class FeedbackActivity : SlideActivity(), View.OnClickListener{
             }
         }
     }
+
     private fun initView() {
         btnBack = findViewById(R.id.btn_back)
         btnFeedback = findViewById(R.id.btn_feedback)
