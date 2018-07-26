@@ -15,7 +15,7 @@ import java.util.List;
 public class Book {
 
     private String bookName; // 书名
-    private String idNumber; // 书本编号
+    private String idNumber; // 索书号
     private String bookPlace; // 借阅地点
     private String borrowDate; // 借阅日期
     private String backDate; // 应还日期
@@ -119,8 +119,12 @@ public class Book {
         this.canBor = canBor;
     }
 
-    public List<String> getBorPlace() {
-        return borPlace;
+    public String getBorPlace() {
+        String r="";
+        for(int i=0 ; i<borPlace.size() ; i++){
+            r=r+borPlace.get(i)+"\n";
+        }
+        return r;
     }
 
     public void setBorPlace(List<String> borPlace) {

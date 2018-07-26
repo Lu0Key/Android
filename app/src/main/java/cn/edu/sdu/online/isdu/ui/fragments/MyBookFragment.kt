@@ -56,8 +56,9 @@ class MyBookFragment : Fragment(), View.OnClickListener {
     private var progressDialog : ProgressDialog ?=  null
     private var rebAll: TextView? = null
     private var unBind: TextView? = null
+    private var loading_layout: TextView? = null
     private var yf = SimpleDateFormat("yyyy-MM-dd")
-    private var isBind =false
+    private var firstLoad = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -66,17 +67,9 @@ class MyBookFragment : Fragment(), View.OnClickListener {
         recyclerView!!.visibility = View.GONE
         noBook!!.visibility = View.GONE
         netWorkError!!.visibility = View.GONE
+        unBind!!.visibility = View.GONE
+        loading_layout!!.visibility = View.VISIBLE
 
-        checkState()
-        if(isBind){
-            initData()
-        }else{
-            recyclerView!!.visibility = View.GONE
-            noBook!!.visibility = View.GONE
-            netWorkError!!.visibility = View.GONE
-            unBind!!.visibility = View.VISIBLE
-            rebAll!!.visibility = View.GONE
-        }
         initRecyclerView()
         return (view)
     }
@@ -88,6 +81,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
         searchBar = view.findViewById(R.id.search_bar)
         rebAll = view.findViewById(R.id.reb_all)
         unBind = view.findViewById(R.id.unbind)
+        loading_layout = view.findViewById(R.id.loading_layout)
 
         searchBar!!.setOnClickListener(this)
         rebAll!!.setOnClickListener(this)
@@ -97,21 +91,35 @@ class MyBookFragment : Fragment(), View.OnClickListener {
     private fun checkState(){
         if (User.staticUser == null) User.staticUser = User.load()
         if (User.staticUser.studentNumber == null) {
-            val dialog = AlertDialog(activity as Context)
-            dialog.setTitle("无数据")
-            dialog.setMessage("请登录后重试")
-            dialog.setCancelOnTouchOutside(false)
-            dialog.setCancelable(false)
-            dialog.setPositiveButton("登录") {
-                dialog.dismiss()
-                startActivity(Intent(activity, LoginActivity::class.java))
-            }
-            dialog.setNegativeButton("返回") {
-                dialog.dismiss()
-            }
-            dialog.show()
+            login()
         }
-
+        if(User.staticUser.studentNumber != null){
+            checkIsBind()
+        }
+    }
+    private fun login(){
+        val dialog = AlertDialog(activity!!)
+        dialog.setTitle("无数据")
+        dialog.setMessage("请登录后重试")
+        dialog.setCancelOnTouchOutside(false)
+        dialog.setCancelable(false)
+        dialog.setPositiveButton("登录") {
+            dialog.dismiss()
+            startActivity(Intent(activity, LoginActivity::class.java))
+        }
+        dialog.setNegativeButton("返回") {
+            dialog.dismiss()
+            recyclerView!!.visibility = View.GONE
+            noBook!!.visibility = View.GONE
+            netWorkError!!.visibility = View.GONE
+            unBind!!.visibility = View.VISIBLE
+            loading_layout!!.visibility = View.GONE
+        }
+        dialog.show()
+        Log.w("cs","dialog")
+    }
+    private fun checkIsBind(){
+        Log.w("cs",ServerInfo.getLibraryInfoUrl(User.staticUser.uid.toString()))
         NetworkAccess.buildRequest(ServerInfo.getLibraryInfoUrl(User.staticUser.uid.toString()),
                 object : Callback {
                     override fun onFailure(call: Call?, e: IOException?){
@@ -121,37 +129,27 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                             noBook!!.visibility = View.GONE
                             netWorkError!!.visibility = View.VISIBLE
                             unBind!!.visibility = View.GONE
+                            loading_layout!!.visibility = View.GONE
                         }
                     }
                     override fun onResponse(call: Call?, response: Response?){
                         try{
                             val json =JSONObject(response?.body()?.string())
                             if (json.getInt("code") == -1) {
-                                isBind = false
                                 //未绑定
-                                val dialog = AlertDialog(activity!!)
-                                dialog.setTitle("无数据")
-                                dialog.setMessage("绑定用户图书馆系统后重试")
-                                dialog.setCancelOnTouchOutside(false)
-                                dialog.setCancelable(false)
-                                dialog.setPositiveButton("绑定") {
-                                    dialog.dismiss()
-                                    startActivity(Intent(activity, BindLibraryActivity::class.java))
-
+                                User.staticUser.bind = false
+                                activity!!.runOnUiThread {
+                                    bind()
                                 }
-                                dialog.setNegativeButton("返回") {
-                                    dialog.dismiss()
-                                }
-                                dialog.show()
-
                                 activity!!.runOnUiThread {
                                     recyclerView!!.visibility = View.GONE
                                     noBook!!.visibility = View.GONE
                                     netWorkError!!.visibility = View.GONE
                                     unBind!!.visibility = View.VISIBLE
+                                    loading_layout!!.visibility = View.GONE
                                 }
                             }else{
-                                isBind = true
+                                User.staticUser.bind = true
                                 initData()
                             }
                         }catch (e: Exception){
@@ -160,7 +158,51 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                     }
                 })
     }
+    private fun bind(){
+        val dialog = AlertDialog(activity!!)
+        dialog.setTitle("无数据")
+        dialog.setMessage("绑定用户图书馆系统后重试")
+        dialog.setCancelOnTouchOutside(false)
+        dialog.setCancelable(false)
+        dialog.setPositiveButton("绑定") {
+            startActivity(Intent(activity, BindLibraryActivity::class.java))
+            dialog.dismiss()
+        }
+        dialog.setNegativeButton("返回") {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
 
+    override fun onResume() {
+        Log.w("mbf","onResume")
+        super.onResume()
+        if(firstLoad){
+            firstLoad = false
+            checkState()
+        }else{
+            if (User.staticUser == null) User.staticUser = User.load()
+            if(User.staticUser.studentNumber != null){
+                if(User.staticUser.bind == true){
+                    initData()
+                }else{
+                    recyclerView!!.visibility = View.GONE
+                    noBook!!.visibility = View.GONE
+                    netWorkError!!.visibility = View.GONE
+                    unBind!!.visibility = View.VISIBLE
+                    rebAll!!.visibility = View.GONE
+                    loading_layout!!.visibility = View.GONE
+                }
+            }else{
+                recyclerView!!.visibility = View.GONE
+                noBook!!.visibility = View.GONE
+                netWorkError!!.visibility = View.GONE
+                unBind!!.visibility = View.VISIBLE
+                rebAll!!.visibility = View.GONE
+                loading_layout!!.visibility = View.GONE
+            }
+        }
+    }
     override fun onClick(v: View?) {
         when(v!!.id){
             search_bar.id->{
@@ -180,20 +222,16 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                             override fun onResponse(call: Call?, response: Response?) {
                                 try{
                                     val json = JSONObject(response?.body()?.string())
-                                    if(json.getInt("code") == -1){
+                                    if(json.getInt("code")==0){
                                         activity!!.runOnUiThread {
-                                            Toast.makeText(activity,"服务器发生错误\n续借失败",Toast.LENGTH_LONG).show()
+                                            Toast.makeText(activity,"续借成功",Toast.LENGTH_LONG).show()
                                         }
-                                    }else if(json.getInt("code") == 1){
-                                        activity!!.runOnUiThread{
-                                            Toast.makeText(activity,"全部续借成功",Toast.LENGTH_LONG).show()
-                                        }
-                                        initData()
                                     }else{
-                                        activity!!.runOnUiThread{
-                                            Toast.makeText(activity,"不到续借时间，不得续借！",Toast.LENGTH_LONG).show()
-                                        }
+                                            activity!!.runOnUiThread {
+                                                Toast.makeText(activity, "服务器发生错误", Toast.LENGTH_LONG).show()
+                                            }
                                     }
+
                                 }catch (e : Exception){
                                     Logger.log(e)
                                 }
@@ -208,6 +246,15 @@ class MyBookFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initData(){
+        dataList.clear()
+        activity!!.runOnUiThread {
+            adapter!!.notifyDataSetChanged()
+            recyclerView!!.visibility = View.GONE
+            netWorkError!!.visibility = View.GONE
+            noBook!!.visibility = View.GONE
+            unBind!!.visibility = View.GONE
+            loading_layout!!.visibility = View.VISIBLE
+        }
         Log.w("mbf",ServerInfo.getBookListUrl(User.staticUser.uid.toString()))
         NetworkAccess.buildRequest(ServerInfo.getBookListUrl(User.staticUser.uid.toString()),
                 object : Callback {
@@ -218,19 +265,21 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                             netWorkError!!.visibility = View.VISIBLE
                             noBook!!.visibility = View.GONE
                             unBind!!.visibility = View.GONE
+                            loading_layout!!.visibility = View.GONE
                         }
                     }
                     override fun onResponse(call: Call?, response: Response?){
                         try{
                             dataList.clear()
                             val json =JSONObject(response?.body()?.string())
-                            if (json.getInt("code") == 1) {
+                            if(json.getInt("code")==1){
                                 //没借书
                                 activity!!.runOnUiThread{
                                     recyclerView!!.visibility = View.GONE
                                     netWorkError!!.visibility = View.GONE
                                     unBind!!.visibility = View.GONE
                                     noBook!!.visibility = View.VISIBLE
+                                    loading_layout!!.visibility = View.GONE
                                 }
                             }else if(json.getInt("code")==2){
                                 activity!!.runOnUiThread{
@@ -271,11 +320,11 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                                     netWorkError!!.visibility = View.GONE
                                     noBook!!.visibility = View.GONE
                                     unBind!!.visibility = View.GONE
+                                    loading_layout!!.visibility = View.GONE
                                     adapter!!.notifyDataSetChanged()
                                 }
                             }
                         }catch (e: Exception){
-                            Log.w("mbf",e)
                             Logger.log(e)
                         }
                     }
@@ -315,6 +364,9 @@ class MyBookFragment : Fragment(), View.OnClickListener {
             holder.backDate.text = book.backDate
             holder.remainDays.text = book.remainDays.toString()
             holder.borrowTimes.text = book.borrowTimes.toString()
+            if(book.borrowTimes == 0){
+                holder.renew.visibility = View.GONE
+            }
             holder.renew.setOnClickListener {
                 Log.w("mbf",ServerInfo.renewOneBookUrl(User.staticUser.uid , book.id , book.checkCode))
                 NetworkAccess.buildRequest(ServerInfo.renewOneBookUrl(User.staticUser.uid , book.id , book.checkCode),
@@ -334,7 +386,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                                             Toast.makeText(activity, "服务器发生错误\n" +
                                                     "续借失败", Toast.LENGTH_LONG).show()
                                         }
-                                    } else if(json.getInt("code") == 1) {
+                                    } else if(json.getInt("code") == 0) {
                                         activity!!.runOnUiThread {
                                             Toast.makeText(activity, "续借成功", Toast.LENGTH_LONG).show()
                                         }
@@ -342,7 +394,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                                     }
                                     else{
                                         activity!!.runOnUiThread{
-                                            Toast.makeText(activity,"不到续借时间，不得续借！",Toast.LENGTH_LONG).show()
+                                            Toast.makeText(activity,json.getString("status"),Toast.LENGTH_LONG).show()
                                         }
                                     }
                                 }catch (e : Exception){
@@ -374,5 +426,4 @@ class MyBookFragment : Fragment(), View.OnClickListener {
             val renew : TextView = v.findViewById(R.id.renew) //续借
         }
     }
-
 }

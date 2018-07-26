@@ -27,6 +27,7 @@ import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.*
 import cn.edu.sdu.online.isdu.ui.design.button.ImageButton
 import cn.edu.sdu.online.isdu.util.*
+import cn.edu.sdu.online.isdu.ui.fragments.MyBookFragment
 import cn.edu.sdu.online.isdu.util.EnvVariables
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager

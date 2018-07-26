@@ -19,6 +19,8 @@ import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.PostComment
+import cn.edu.sdu.online.isdu.bean.History
+import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
@@ -33,6 +35,7 @@ import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.WeakReferences
 import com.bumptech.glide.Glide
+import cn.edu.sdu.online.isdu.util.database.DAOHistory
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import de.hdodenhof.circleimageview.CircleImageView
@@ -103,6 +106,24 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         if (User.staticUser == null) User.staticUser = User.load()
 
         initView()
+
+        //写数据库纪录浏览
+        val dao = DAOHistory(this)
+        dao.newHistory(History(title,"帖子",
+                System.currentTimeMillis(),
+                com.alibaba.fastjson.JSONObject.toJSONString(Post(postId,
+                        0,
+                        "",
+                        title,
+                        uid,
+                        0,
+                        System.currentTimeMillis(),
+                        "",
+                        0,
+                        0))))
+        dao.close()
+
+//        btnLike!!.setBackgroundResource(R.drawable.ic_like_yes)
 
         getPostData()
         getIsCollect()

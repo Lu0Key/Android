@@ -43,6 +43,7 @@ public class User extends LitePalSupport {
     private String major; // 专业
     private String depart; // 学院
     private int uid; // ID号，非学号
+    private Boolean Bind; //是否绑定校园卡
 
     public static User staticUser; // 全局用户实例
 
@@ -247,5 +248,14 @@ public class User extends LitePalSupport {
 
     public void setUid(int uid) {
         this.uid = uid;
+    }
+
+    
+    public Boolean getBind() {
+        return Bind;
+    }
+
+    public void setBind(Boolean bind) {
+        Bind = bind;
     }
 }

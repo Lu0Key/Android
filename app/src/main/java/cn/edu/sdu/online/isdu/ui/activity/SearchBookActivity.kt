@@ -18,6 +18,7 @@ import cn.edu.sdu.online.isdu.bean.Book
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.util.Logger
+import kotlinx.android.synthetic.main.recommend_item.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -34,6 +35,7 @@ class SearchBookActivity : AlphaActivity(), View.OnClickListener {
     private var editSearch: EditText? = null
     private var btnSearch: TextView? = null
     private var bookName: String? =null
+    private var error:TextView? = null
     private val dataList: MutableList<Book> = java.util.ArrayList()
 
     private var recyclerView: RecyclerView? = null
@@ -60,6 +62,7 @@ class SearchBookActivity : AlphaActivity(), View.OnClickListener {
         loading_layout = findViewById(R.id.loading_layout)
         blank_view = findViewById(R.id.blank_view)
         recyclerView = findViewById(R.id.recycler_view)
+        error= findViewById(R.id.error)
 
         btnBack!!.setOnClickListener(this)
         btnSearch!!.setOnClickListener(this)
@@ -86,6 +89,7 @@ class SearchBookActivity : AlphaActivity(), View.OnClickListener {
                     recyclerView!!.visibility = View.VISIBLE
                     loading_layout?.visibility = View.GONE
                     blank_view?.visibility = View.GONE
+                    error!!.visibility = View.GONE
                     if(adapter!=null){
                         Log.w("sba","notifyDataSetChanged")
                         adapter!!.notifyDataSetChanged()
@@ -100,12 +104,13 @@ class SearchBookActivity : AlphaActivity(), View.OnClickListener {
         recyclerView!!.visibility = View.GONE
         loading_layout?.visibility = View.VISIBLE
         blank_view?.visibility = View.GONE
+        error!!.visibility = View.GONE
         var url = ServerInfo.searchBookUrl(bookName)
         NetworkAccess.buildRequest(url,object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 Logger.log(e)
                 runOnUiThread{
-                    Toast.makeText(this@SearchBookActivity, "网络错误", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@SearchBookActivity, "网络错误", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -135,6 +140,7 @@ class SearchBookActivity : AlphaActivity(), View.OnClickListener {
                                 recyclerView!!.visibility = View.VISIBLE
                                 loading_layout?.visibility = View.GONE
                                 blank_view?.visibility = View.GONE
+                                error!!.visibility = View.GONE
                                 if(adapter!=null){
                                     Log.w("sba","notifyDataSetChanged")
                                     adapter!!.notifyDataSetChanged()
@@ -147,6 +153,15 @@ class SearchBookActivity : AlphaActivity(), View.OnClickListener {
                             recyclerView!!.visibility = View.GONE
                             loading_layout!!.visibility = View.GONE
                             blank_view!!.visibility = View.VISIBLE
+                            error!!.visibility = View.GONE
+                        }
+                    }else{
+                        runOnUiThread {
+                            error!!.text = json.getString("status")
+                            recyclerView!!.visibility = View.GONE
+                            loading_layout!!.visibility = View.GONE
+                            blank_view!!.visibility = View.GONE
+                            error!!.visibility = View.VISIBLE
                         }
                     }
                 }catch (e: Exception){
@@ -170,11 +185,10 @@ class SearchBookActivity : AlphaActivity(), View.OnClickListener {
             holder.bookName.text = book.bookName
             holder.idNumber.text = book.idNumber
             if(book.getBorPlace().isEmpty()){
-                holder.bookPlace.text="书刊没有复本\n可能正在订购中或者处理中"
+                holder.bookPlace.text="书刊没有复本\n" +
+                        "可能正在订购中或者处理中"
             }else{
-                val sb = StringBuilder()
-                for (bp in book.borPlace) sb.append("$bp, ")
-                holder.bookPlace.text = sb.toString().substring(0, sb.length - 2)
+                holder.bookPlace.text = book.getBorPlace()
             }
             holder.press.text = book.press
             holder.all.text = book.all.toString()

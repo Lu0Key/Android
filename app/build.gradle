@@ -23,7 +23,6 @@ android {
         }
     }
 }
-
 allprojects {
     repositories {
         jcenter()
@@ -54,6 +53,7 @@ dependencies {
     implementation('com.github.bumptech.glide:glide:4.7.1') {
         exclude group: "com.android.support"
     }
+    implementation 'com.alibaba:fastjson:1.2.47'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.youngfeng.android:snake:0.3.0'
     annotationProcessor 'com.youngfeng.android:snake-compiler:0.3.0'

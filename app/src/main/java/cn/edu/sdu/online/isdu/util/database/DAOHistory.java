@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import java.util.ArrayList;
 
 import cn.edu.sdu.online.isdu.bean.History;
@@ -16,6 +17,7 @@ public class DAOHistory {
         dbo_history=new DBOHistory(context);
     }
     public void close(){
+        dbo_history.close();
         database.close();
     }
     //在浏览体帖子时调用以纪录浏览历史

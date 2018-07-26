@@ -51,7 +51,6 @@ public class ServerInfo {
     public static String getUserInfo(String id, String key) {
         return url + "/user/getInformation?id=" + id + "&key=" + key;
     }
-
     public static final String urlUpdate = url + "/user/update";
 
     public static String getNewsUrl(int index) {

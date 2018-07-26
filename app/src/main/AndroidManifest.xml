@@ -66,6 +66,7 @@
         <activity android:name=".ui.activity.SearchBookActivity" />
         <activity android:name=".ui.activity.MessageActivity" />
         <activity android:name=".ui.activity.NewsActivity" />
+        <activity android:name=".ui.activity.BindLibraryActivity"/>
         <activity
             android:name=".ui.activity.DownloadActivity"
             android:launchMode="singleInstance" />
@@ -82,7 +83,7 @@
         <activity android:name=".ui.activity.CreatePostActivity" />
         <activity android:name=".ui.activity.StudyRoomTableActivity" />
         <activity android:name=".ui.activity.CollectActivity" />
-        <activity android:name=".ui.activity.BindLibraryActivity" />
+        <activity android:name=".ui.activity.NotFindPostActivity" />
         <activity android:name=".ui.activity.PostDetailActivity">
 
             <!-- <intent-filter> -->
