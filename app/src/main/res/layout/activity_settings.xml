@@ -79,7 +79,8 @@
                 app:wideButtonItemName="默认下载位置"
                 app:wideButtonCanSwitch="false"
                 app:wideButtonItemId="download_location"
-                app:wideButtonShowArrow="false">
+                app:wideButtonShowArrow="false"
+                android:visibility="gone">
 
             </cn.edu.sdu.online.isdu.ui.design.button.WideButton>
 
@@ -91,7 +92,8 @@
                 android:text="消息提醒"
                 android:gravity="center_vertical"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp"/>
+                android:paddingEnd="16dp"
+                android:visibility="gone"/>
 
             <!--新消息-->
             <cn.edu.sdu.online.isdu.ui.design.button.WideButton
@@ -101,7 +103,8 @@
                 app:wideButtonItemName="新消息提醒"
                 app:wideButtonCanSwitch="true"
                 app:wideButtonItemId="alarm_message"
-                app:wideButtonShowArrow="false">
+                app:wideButtonShowArrow="false"
+                android:visibility="gone">
 
             </cn.edu.sdu.online.isdu.ui.design.button.WideButton>
 
@@ -113,7 +116,8 @@
                 app:wideButtonItemName="新资讯提醒"
                 app:wideButtonCanSwitch="true"
                 app:wideButtonItemId="alarm_news"
-                app:wideButtonShowArrow="false">
+                app:wideButtonShowArrow="false"
+                android:visibility="gone">
 
             </cn.edu.sdu.online.isdu.ui.design.button.WideButton>
 
@@ -125,7 +129,8 @@
                 app:wideButtonItemName="日程提醒方式"
                 app:wideButtonCanSwitch="false"
                 app:wideButtonItemId="alarm_schedule"
-                app:wideButtonShowArrow="false">
+                app:wideButtonShowArrow="false"
+                android:visibility="gone">
 
             </cn.edu.sdu.online.isdu.ui.design.button.WideButton>
 
@@ -137,7 +142,8 @@
                 android:text="云同步"
                 android:gravity="center_vertical"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp"/>
+                android:paddingEnd="16dp"
+                android:visibility="gone"/>
 
             <!--同步-->
             <cn.edu.sdu.online.isdu.ui.design.button.WideButton
@@ -148,7 +154,8 @@
                 app:wideButtonComment="同步设置、日程，防丢失"
                 app:wideButtonCanSwitch="true"
                 app:wideButtonItemId="cloud_sync"
-                app:wideButtonShowArrow="false">
+                app:wideButtonShowArrow="false"
+                android:visibility="gone">
 
             </cn.edu.sdu.online.isdu.ui.design.button.WideButton>
 
