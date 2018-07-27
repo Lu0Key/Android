@@ -14,12 +14,9 @@ import java.util.Objects;
 
 public class Post {
 
-    public static final int TYPE_TEXT = 0;
-    public static final int TYPE_IMAGE = 1;
-
     private int postId; // 帖子ID
     private int type; // 论坛内容类型
-    private String titleFlag;//
+    private String titleFlag;
     private String title;
     private String uid;
     private int commentsNumbers;

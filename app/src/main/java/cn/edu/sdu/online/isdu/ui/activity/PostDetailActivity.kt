@@ -19,7 +19,6 @@ import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.PostComment
-import cn.edu.sdu.online.isdu.bean.History
 import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
@@ -36,6 +35,7 @@ import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.WeakReferences
 import com.bumptech.glide.Glide
 import cn.edu.sdu.online.isdu.util.database.DAOHistory
+import cn.edu.sdu.online.isdu.util.history.History
 import com.alibaba.fastjson.JSON
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -93,6 +93,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
     private var window: BasePopupWindow? = null
 
+    private val post = Post() // 该浏览页面的帖子实例
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_detail)
@@ -109,20 +111,11 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         initView()
 
         //写数据库纪录浏览
-//        val dao = DAOHistory(this)
-//        dao.newHistory(History(title,"帖子",
-//                System.currentTimeMillis(),
-//                JSON.toJSONString(Post(postId,
-//                        0,
-//                        "",
-//                        title,
-//                        uid,
-//                        0,
-//                        System.currentTimeMillis(),
-//                        "",
-//                        0,
-//                        0))))
-//        dao.close()
+        post.postId = postId
+        post.uid = uid
+        post.title = title
+        post.time = time
+//        History.newHistory(post)
 
 
         getPostData()
@@ -415,7 +408,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 Logger.log(e)
                 runOnUiThread {
                     txtLike!!.text = "点赞 0 次"
-
+                    post.likeNumber = 0
+                    History.newHistory(post)
                 }
             }
 
@@ -434,6 +428,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         }
                         txtLike!!.text = "点赞 $des 次"
 //                        btnLike!!.setImageResource(if (isLike) R.drawable.ic_like_yes else R.drawable.ic_like_no)
+
+                        post.likeNumber = strInt
+                        History.newHistory(post)
                     }
                 } catch (e: Exception) {
                     Logger.log(e)
@@ -465,11 +462,18 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                             val data = RichTextEditor.EditData()
                             if (obj.getInt("type") == 0) {
                                 data.imageName = obj.getString("content")
+                                if (data.inputStr != "" && (post.content == null || post.content == ""))
+                                    post.content = "[图片]"
                             } else {
                                 data.inputStr = obj.getString("content")
+                                if (data.inputStr != "" && (post.content == null || post.content == ""))
+                                    post.content = data.inputStr
                             }
                             editDataList.add(data)
                         }
+
+                        // 写入浏览记录
+                        History.newHistory(post)
 
                         runOnUiThread {
                             txtTitle!!.text = title
@@ -494,7 +498,13 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                             // 获取评论ID串
                             val commentList = commentStr.split("-").subList(0, commentStr.split("-").size - 1)
                             this.commentList.clear()
+
+                            // 写入历史浏览
+                            post.commentsNumbers = commentList.size
+                            History.newHistory(post)
+
                             getComments(commentList.size - 1, commentList) // 获取评论
+
 
                             commentLine!!.text = "${commentList.size} 条评论"
 
@@ -637,9 +647,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         })
     }
 
-    private fun loadComments() {
-
-    }
 
     private fun deleteComment(comment: PostComment) {
         NetworkAccess.buildRequest(ServerInfo.deleteComment, "id", comment.id.toString(), object : Callback {

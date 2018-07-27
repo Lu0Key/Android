@@ -148,10 +148,6 @@ class LikeMeActivity : SlideActivity() {
         }
     }
 
-    private fun getUserAvatars() {
-
-    }
-
     inner class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
