@@ -28,7 +28,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.EditProfileActivity" />
-        <activity android:name=".ui.activity.MyHomePageActivity" />
+        <activity android:name=".ui.activity.MyHomePageActivity"
+            android:launchMode="singleTop"/>
         <activity android:name=".ui.activity.ScheduleActivity" />
 
         <!-- UCrop Activity -->

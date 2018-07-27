@@ -36,7 +36,7 @@ class MessageService : Service() {
                     Message.msgList.addAll(msgList)
                     Message.saveMsgList()
                 } catch (e: Exception) {
-                    Logger.log(e)
+                    e.printStackTrace()
                 }
                 Thread.sleep(10000)
             } catch (e: Exception) {

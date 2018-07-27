@@ -195,7 +195,11 @@ public class ServerInfo {
         return "http://" + ipAddr133 + ":8384/notice/getNotice?userId=" + uid;
     }
 
-    public static String getMyComment10(String uid) {
-        return "http://" + ipAddr133 + ":8384/user/getComment?userId=" + uid;
+    public static String getMyComment10(String uid, int startId) {
+        return "http://" + ipAddr133 + ":8384/user/getComment10?userId=" + uid + "&startId=" + startId;
+    }
+
+    public static String getRecommend10(double startValue) {
+        return "http://" + ipAddr133 + ":8384/post/getRecommendTen?startValue=" + startValue;
     }
 }

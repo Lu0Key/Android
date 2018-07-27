@@ -304,7 +304,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
                     Schedule.localScheduleList =
                             Schedule.loadCourse(JSONObject(jsonString).getJSONArray("obj"))
 
-                    if (EnvVariables.currentWeek == -1)
+                    if (EnvVariables.currentWeek <= 0)
                         EnvVariables.currentWeek = EnvVariables.calculateWeekIndex(System.currentTimeMillis())
                     todoList = Schedule.localScheduleList[EnvVariables.currentWeek - 1][EnvVariables.getCurrentDay() - 1]
 

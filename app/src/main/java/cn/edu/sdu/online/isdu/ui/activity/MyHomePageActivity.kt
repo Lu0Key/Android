@@ -22,8 +22,8 @@ import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.viewpager.NoScrollViewPager
-import cn.edu.sdu.online.isdu.ui.fragments.MeCommentFragment
-import cn.edu.sdu.online.isdu.ui.fragments.MePostsFragment
+import cn.edu.sdu.online.isdu.ui.fragments.me.MeCommentFragment
+import cn.edu.sdu.online.isdu.ui.fragments.me.MePostsFragment
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import com.bumptech.glide.Glide
@@ -60,9 +60,9 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 
     private var magicIndicator: MagicIndicator? = null
     private var viewPager: NoScrollViewPager? = null
-    private val mDataList = listOf("帖子", "评论", "关注") // Indicator 数据
+    private val mDataList = listOf("帖子", "评论"/*, "关注"*/) // Indicator 数据
     private val mFragments: List<Fragment> = listOf(MePostsFragment(),
-            MeCommentFragment(), MePostsFragment()) // Fragment 数组
+            MeCommentFragment()/*, MePostsFragment()*/) // Fragment 数组
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
 
     private var collapsingToolbar: CollapsingToolbarLayout? = null
@@ -272,8 +272,9 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private fun initFragments() {
 //        for (fragment in mFragments) {
         (mFragments[0] as MePostsFragment).setUid(id)
+        (mFragments[1] as MeCommentFragment).setUid(id)
 //        }
-        mViewPagerAdapter = FragAdapter(supportFragmentManager, mFragments)
+        mViewPagerAdapter = FragAdapter(supportFragmentManager)
         viewPager!!.adapter = mViewPagerAdapter
     }
 
@@ -386,9 +387,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     /**
      * 自定义ViewPager适配器类
      */
-    class FragAdapter(fm: FragmentManager, fragments: List<Fragment>) : FragmentPagerAdapter(fm) {
-        private val mFragments = fragments
-        private val mDataList = listOf("帖子", "评论", "关注") // Indicator 数据
+    inner class FragAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment = mFragments[position]
 

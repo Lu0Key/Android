@@ -1,32 +1,26 @@
 package cn.edu.sdu.online.isdu.ui.fragments.main
 
-import android.animation.*
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.Post
-import cn.edu.sdu.online.isdu.ui.design.recyclerviewpack.PullRefreshLayout
-import cn.edu.sdu.online.isdu.interfaces.OnRefreshListener
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
-import cn.edu.sdu.online.isdu.ui.fragments.MePostsFragment
-import cn.edu.sdu.online.isdu.util.WeakReferences
+import cn.edu.sdu.online.isdu.util.FileUtil
+import cn.edu.sdu.online.isdu.util.Logger
 import com.liaoinstan.springview.widget.SpringView
-import java.lang.ref.WeakReference
+import org.json.JSONArray
+import org.json.JSONObject
 import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -49,6 +43,7 @@ class HomeRecommendFragment : LazyLoadFragment() {
 //    private var blankView: TextView? = null
 
     private var lastValue = 0.0
+    private var needOffset = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home_recommend, container, false)
@@ -91,41 +86,65 @@ class HomeRecommendFragment : LazyLoadFragment() {
             override fun onLoadmore() {
                 // 上拉加载更多
                 lastValue = if (dataList.isEmpty()) 0.0 else calculateValue(dataList[dataList.size - 1])
+                needOffset = true
+                loadData()
             }
 
             override fun onRefresh() {
                 // 下拉刷新
                 lastValue = 0.0
                 dataList.clear()
+                needOffset = false
+                loadData()
             }
         })
 
     }
 
-    private fun calculateValue(post: Post) : Double = post.likeNumber + post.commentsNumbers / 100 +
-            (1 / post.postId) % 10000.0
-
-    /**
-     * 显示更新条
-     *
-     * @param updateNumber 更新内容的数量，大于等于0
-     */
-    private fun showUpdateBar(updateNumber: Int) {
-        if (updateNumber < 0) return
-
+    private fun calculateValue(post: Post) : Double{
+        return 2 * post.likeNumber + post.commentsNumbers + 0.0001 * (post.time / 1000)
     }
 
-    /**
-     * 隐藏更新条
-     */
-    private fun hideUpdateBar() {
+    override fun loadData() {
+        NetworkAccess.cache(ServerInfo.getRecommend10(lastValue)) {success, cachePath ->
+            if (success) {
+                try {
+                    val arr = JSONArray(JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj"))
+                    for (i in 0 until arr.length()) {
+                        val obj = arr.getJSONObject(i)
+                        val post = Post()
+                        post.uid = obj.getString("uid")
+                        post.commentsNumbers = obj.getInt("commentNumber")
+                        post.postId = obj.getInt("id")
+                        post.time = obj.getString("time").toLong()
+                        post.title = obj.getString("title")
+                        post.likeNumber = obj.getInt("likeNumber")
+                        post.content = obj.getString("info")
 
+                        if (!dataList.contains(post))
+                            dataList.add(post)
+
+                        lastValue = calculateValue(post)
+                    }
+                } catch (e: Exception) {
+                    Logger.log(e)
+                }
+            } else {
+
+            }
+
+            activity?.runOnUiThread {
+                adapter?.notifyDataSetChanged()
+                if (needOffset) recyclerView?.smoothScrollBy(0, 50)
+                pullRefreshLayout!!.onFinishFreshAndLoad()
+            }
+        }
     }
 
     inner class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = dataList!![position]
+            val item = dataList[position]
             holder.cardView.setOnClickListener {
                 context!!.startActivity(Intent(context, PostDetailActivity::class.java)
                         .putExtra("id", item.postId)

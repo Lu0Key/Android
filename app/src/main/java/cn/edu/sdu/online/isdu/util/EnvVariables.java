@@ -51,7 +51,7 @@ public class EnvVariables {
                     Logger.log(e);
                     startWeek = 1;
                     endWeek = 20;
-                    firstWeekTimeMillis = 1520179200000L; // 加载默认值
+                    firstWeekTimeMillis = 1536508800000L; // 加载默认值
                     save(context);
                 }
 
@@ -72,7 +72,7 @@ public class EnvVariables {
         } else {
             startWeek = sp.getInt("start_week", 1);
             endWeek = sp.getInt("end_week", 20);
-            firstWeekTimeMillis = sp.getLong("first_week_time_millis", 1520179200000L);
+            firstWeekTimeMillis = sp.getLong("first_week_time_millis", 1536508800000L);
 
             currentWeek = calculateWeekIndex(System.currentTimeMillis());
         }
@@ -88,7 +88,7 @@ public class EnvVariables {
         } else {
             editor.putInt("start_week", 1);
             editor.putInt("end_week", 20);
-            editor.putLong("first_week_time_millis", 1520179200000L);
+            editor.putLong("first_week_time_millis", 1536508800000L);
         }
         editor.apply();
     }
@@ -96,7 +96,7 @@ public class EnvVariables {
     public static int calculateWeekIndex(long timeMillis) {
         long delta = (timeMillis - firstWeekTimeMillis) / 1000L;
 
-        if (delta < 0) return 0;
+        if (delta < 0) return 1;
 
         int daily = 24 * 60 * 60;
         int days = (int) Math.ceil(((double) delta) / ((double) daily));

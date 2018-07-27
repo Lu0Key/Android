@@ -1,4 +1,4 @@
-package cn.edu.sdu.online.isdu.ui.fragments
+package cn.edu.sdu.online.isdu.ui.fragments.me
 
 import android.content.Context
 import android.content.Intent

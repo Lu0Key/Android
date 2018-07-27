@@ -1,6 +1,5 @@
-package cn.edu.sdu.online.isdu.ui.fragments
+package cn.edu.sdu.online.isdu.ui.fragments.me
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -8,26 +7,29 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
-import cn.edu.sdu.online.isdu.bean.Post
+import cn.edu.sdu.online.isdu.app.MyApplication
+import cn.edu.sdu.online.isdu.bean.PostComment
 import cn.edu.sdu.online.isdu.interfaces.PostViewable
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
 import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.WeakReferences
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.liaoinstan.springview.widget.SpringView
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
+import de.hdodenhof.circleimageview.CircleImageView
+import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 /**
@@ -44,7 +46,7 @@ class MeCommentFragment : LazyLoadFragment(), PostViewable {
 
     private var recyclerView: RecyclerView? = null
     private var adapter: MyAdapter? = null
-    private var dataList: MutableList<Post> = ArrayList()
+    private var dataList: MutableList<PostComment> = ArrayList()
 
     private var pullRefreshLayout: SpringView? = null
 
@@ -52,6 +54,9 @@ class MeCommentFragment : LazyLoadFragment(), PostViewable {
 
     private var lastId = 0
     private var needOffset = false // 是否需要列表位移
+
+    private var userNickname = ""
+    private var userAvatarUrl = ""
 
     fun setUid(uid: Int) {
         this.uid = uid
@@ -95,7 +100,7 @@ class MeCommentFragment : LazyLoadFragment(), PostViewable {
     }
 
     override fun loadData() {
-        NetworkAccess.buildRequest(ServerInfo.getPostList(uid,
+        NetworkAccess.buildRequest(ServerInfo.getMyComment10(uid.toString(),
                 if (dataList.size > 0) dataList[dataList.size - 1].postId - 1 else 0),
                 object : Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
@@ -110,7 +115,7 @@ class MeCommentFragment : LazyLoadFragment(), PostViewable {
                             pullRefreshLayout!!.onFinishFreshAndLoad()
                         }
                         try {
-                            val list = ArrayList<Post>()
+                            val list = ArrayList<PostComment>()
                             val str = response?.body()?.string()
                             val jsonObj = JSONObject(str)
 
@@ -118,18 +123,17 @@ class MeCommentFragment : LazyLoadFragment(), PostViewable {
 
                             for (i in 0 until jsonArr.length()) {
                                 val obj = jsonArr.getJSONObject(i)
-                                val post = Post()
+                                val post = PostComment()
 
-                                post.postId = obj.getInt("id")
-                                post.commentsNumbers = obj.getInt("commentNumber")
-                                post.collectNumber = obj.getInt("collectNumber")
-                                post.likeNumber = obj.getInt("likeNumber")
-                                post.uid = obj.getString("uid")
-                                post.title = obj.getString("title")
+                                post.postId = obj.getInt("postId")
+                                post.fatherId = obj.getInt("fatherCommenrId")
+                                post.id = obj.getInt("id")
+                                post.uid = obj.getString("userId")
                                 post.time = obj.getString("time").toLong()
-                                post.content = obj.getString("info")
+                                post.content = obj.getString("content")
 
-                                list.add(post)
+                                if (!dataList.contains(post))
+                                    list.add(post)
                             }
 
                             activity!!.runOnUiThread {
@@ -145,7 +149,7 @@ class MeCommentFragment : LazyLoadFragment(), PostViewable {
     /**
      * 下拉刷新发布最新帖子信息
      */
-    private fun publishNewData(list: List<Post>) {
+    private fun publishNewData(list: List<PostComment>) {
         if (list.isEmpty()) {
 
         } else {
@@ -155,7 +159,7 @@ class MeCommentFragment : LazyLoadFragment(), PostViewable {
         }
     }
 
-    private fun publishLoadData(list: List<Post>) {
+    private fun publishLoadData(list: List<PostComment>) {
         if (list.isNotEmpty()) {
             dataList.addAll(list)
             adapter!!.notifyDataSetChanged()
@@ -191,46 +195,96 @@ class MeCommentFragment : LazyLoadFragment(), PostViewable {
 
     inner class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
+        val userNicknameMap = HashMap<String, String>()
+        val userAvatarMap = HashMap<String, String>()
+        val postTitleMap = HashMap<Int, String>()
+//        val postTimeMap = HashMap<Int, Long>()
+
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = dataList[position]
-            holder.cardView.setOnClickListener {
-                WeakReferences.postViewableWeakReference = WeakReference(this@MeCommentFragment)
-                context!!.startActivity(Intent(context, PostDetailActivity::class.java)
-                        .putExtra("id", item.postId)
-                        .putExtra("uid", item.uid)
-                        .putExtra("title", item.title)
-                        .putExtra("time", item.time)
-                        .putExtra("tag", TAG))
-            }
-            holder.titleView.text = item.title
-            holder.commentNumber.text = item.commentsNumbers.toString()
-            holder.content.text = item.content
-            holder.txtLike.text = item.likeNumber.toString()
-            holder.releaseTime.text = if (System.currentTimeMillis() - item.time < 60 * 1000)
-                "刚刚" else (if (System.currentTimeMillis() - item.time < 24 * 60 * 60 * 1000)
-                "${(System.currentTimeMillis() - item.time) / (60 * 60 * 1000)} 小时前" else (
-                    if (System.currentTimeMillis() - item.time < 48 * 60 * 60 * 1000) "昨天 ${SimpleDateFormat("HH:mm").format(item.time)}"
-                    else SimpleDateFormat("yyyy-MM-dd HH:mm").format(item.time)))
+            // 开启新线程获取信息
+            Thread(Runnable {
+                // 获取帖子信息
+                if (!postTitleMap.containsKey(item.postId)) {
+                    val client = OkHttpClient.Builder()
+                            .connectTimeout(10, TimeUnit.SECONDS)
+                            .writeTimeout(10, TimeUnit.SECONDS)
+                            .readTimeout(10, TimeUnit.SECONDS)
+                            .build()
+                    val request = Request.Builder()
+                            .url(ServerInfo.getPost(item.postId))
+                            .get()
+                            .build()
+                    val response = client.newCall(request).execute()
+
+                    val obj = JSONObject(JSONObject(response?.body()?.string()).getString("obj"))
+//                    postTitleMap[item.postId] = obj.getString("title")
+//                    postTimeMap[item.postId] = obj.getString("time").toLong()
+                }
+                // 获取用户信息
+                if (!userNicknameMap.containsKey(item.uid)) {
+                    val client = OkHttpClient.Builder()
+                            .connectTimeout(10, TimeUnit.SECONDS)
+                            .writeTimeout(10, TimeUnit.SECONDS)
+                            .readTimeout(10, TimeUnit.SECONDS)
+                            .build()
+                    val request = Request.Builder()
+                            .url(ServerInfo.getUserInfo(item.uid, "avatar-nickname"))
+                            .get()
+                            .build()
+                    val response = client.newCall(request).execute()
+
+                    val obj = JSONObject(response?.body()?.string())
+                    userNicknameMap[item.uid] = obj.getString("nickname")
+                    userAvatarMap[item.uid] = obj.getString("avatar")
+                }
+
+
+                activity!!.runOnUiThread {
+                    holder.itemLayout.setOnClickListener {
+                        WeakReferences.postViewableWeakReference = WeakReference(this@MeCommentFragment)
+                        context!!.startActivity(Intent(context, PostDetailActivity::class.java)
+                                .putExtra("id", item.postId)
+                                .putExtra("uid", item.uid)
+//                            .putExtra("title", item.title)
+                                .putExtra("time", item.time))
+                    }
+                    holder.content.text = "回复：${item.content}"
+//            holder.commentNumber.text = item.commentsNumbers.toString()
+                    holder.nickName.text = "${userNicknameMap[item.uid]}"
+                    Glide.with(MyApplication.getContext()).load(userAvatarMap[item.uid])
+                            .apply(RequestOptions.skipMemoryCacheOf(true))
+                            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                            .into(holder.circleImageView)
+
+                    holder.releaseTime.text = if (System.currentTimeMillis() - item.time < 60 * 1000)
+                        "刚刚" else (if (System.currentTimeMillis() - item.time < 24 * 60 * 60 * 1000)
+                        "${(System.currentTimeMillis() - item.time) / (60 * 60 * 1000)} 小时前" else (
+                            if (System.currentTimeMillis() - item.time < 48 * 60 * 60 * 1000) "昨天 ${SimpleDateFormat("HH:mm").format(item.time)}"
+                            else SimpleDateFormat("yyyy-MM-dd HH:mm").format(item.time)))
+                }
+
+            }).start()
+
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view =
                     LayoutInflater.from(parent.context).inflate(
-                            R.layout.recommend_item, parent, false)
+                            R.layout.post_comment_item, parent, false)
             return ViewHolder(v = view)
         }
 
         override fun getItemCount(): Int = dataList.size
 
         inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-            val cardView: FrameLayout = v.findViewById(R.id.card_view)
-            val titleView: TextView = v.findViewById(R.id.title_view) // 标题
+            val itemLayout: View = v.findViewById(R.id.item_layout)
+            val nickName: TextView = v.findViewById(R.id.txt_nickname) // 标题
             //            val contentLayout: LinearLayout = v.findViewById(R.id.content_layout) // 内容Layout
 //            val userName: TextView = v.findViewById(R.id.user_name) // 用户名
-            val commentNumber: TextView = v.findViewById(R.id.comments_number) // 评论数
-            val releaseTime: TextView = v.findViewById(R.id.release_time) // 发布时间
-            val content: TextView = v.findViewById(R.id.content)
-            val txtLike: TextView = v.findViewById(R.id.like_count)
+            val releaseTime: TextView = v.findViewById(R.id.txt_time) // 发布时间
+            val content: TextView = v.findViewById(R.id.txt_content)
+            val circleImageView: CircleImageView = v.findViewById(R.id.circle_image_view)
         }
     }
 

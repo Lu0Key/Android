@@ -217,18 +217,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.Post
-import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
-import cn.edu.sdu.online.isdu.ui.fragments.MePostsFragment
 import cn.edu.sdu.online.isdu.util.Logger
 import okhttp3.Call
 import okhttp3.Callback
@@ -236,7 +232,6 @@ import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
-import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 
 class SearchPostFragment : LazyLoadFragment(){
