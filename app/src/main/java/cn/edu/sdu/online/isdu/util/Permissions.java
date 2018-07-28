@@ -22,6 +22,7 @@ public class Permissions {
     public static final String CAMERA = Manifest.permission.CAMERA;
     public static final String READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE;
     public static final String WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    public static final String REQUEST_INSTALL_PACKAGES = Manifest.permission.REQUEST_INSTALL_PACKAGES;
 
     private static final String[] permissions = new String[] {VIBRATE, INTERNET,
             READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE};

@@ -189,6 +189,26 @@
                 app:wideButtonCanSwitch="false"
                 app:wideButtonItemId="bug_report" />
 
+            <!--#更新#-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:background="@color/colorThemeGrey"
+                android:text="更新"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
+
+            <!--反馈-->
+            <cn.edu.sdu.online.isdu.ui.design.button.WideButton
+                android:id="@+id/btn_check_update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:wideButtonItemName="检查新版本"
+                app:wideButtonCanSwitch="false"
+                app:wideButtonItemId="check_update"
+                app:wideButtonShowArrow="false" />
+
 
             <TextView
                 android:id="@+id/btn_logout"

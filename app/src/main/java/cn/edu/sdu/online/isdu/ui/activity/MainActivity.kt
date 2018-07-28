@@ -83,6 +83,7 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         // 请求关键权限
         Permissions.requestPermission(this, Permissions.VIBRATE)
         Permissions.requestPermission(this, Permissions.INTERNET)
+        Permissions.requestPermission(this, Permissions.REQUEST_INSTALL_PACKAGES)
 
         initApplication()
 

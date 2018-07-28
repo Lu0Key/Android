@@ -202,4 +202,6 @@ public class ServerInfo {
     public static String getRecommend10(double startValue) {
         return "http://" + ipAddr133 + ":8384/post/getRecommendTen?startValue=" + startValue;
     }
+
+    public static final String buildInfo = "http://" + ipAddr + ":8380/isdu/build/config.html";
 }
