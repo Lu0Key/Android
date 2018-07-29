@@ -22,6 +22,7 @@ import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Phone
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.ViewTarget
 import com.bumptech.glide.request.transition.Transition
@@ -188,18 +189,31 @@ class ViewImageActivity : NormActivity() {
                             loadingLayout!!.visibility = View.GONE
                         }
                     } else {
-                        val target = object : ViewTarget<DraggableImageView, Drawable>(draggableImageView!!) {
-                            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                                this.view.setImageBitmap((resource as BitmapDrawable).bitmap)
+                        if (cachePath.toLowerCase().endsWith(".gif#") ||
+                                cachePath.toLowerCase().endsWith(".gif")) {
+                            runOnUiThread {
+                                Glide.with(MyApplication.getContext())
+                                        .asGif()
+                                        .load(cachePath)
+                                        .into(draggableImageView!!)
+
+                                loadingLayout!!.visibility = View.GONE
+                            }
+                        } else {
+                            val target = object : ViewTarget<DraggableImageView, Drawable>(draggableImageView!!) {
+                                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                                    this.view.setImageBitmap((resource as BitmapDrawable).bitmap)
+                                }
+                            }
+                            runOnUiThread {
+                                Glide.with(MyApplication.getContext())
+                                        .load(cachePath)
+                                        .into(target)
+
+                                loadingLayout!!.visibility = View.GONE
                             }
                         }
-                        runOnUiThread {
-                            Glide.with(MyApplication.getContext())
-                                    .load(cachePath)
-                                    .into(target)
 
-                            loadingLayout!!.visibility = View.GONE
-                        }
                     }
 
                 } else {

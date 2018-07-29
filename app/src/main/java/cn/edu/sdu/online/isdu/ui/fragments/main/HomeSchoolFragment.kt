@@ -45,6 +45,7 @@ class HomeSchoolFragment : LazyLoadFragment() {
 
     private var lastValue = 0
     private var needOffset = false
+    private var loadComplete = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home_recommend, container, false)
@@ -88,6 +89,7 @@ class HomeSchoolFragment : LazyLoadFragment() {
                 // 上拉加载更多
                 lastValue = if (dataList.isEmpty()) 0 else dataList[dataList.size - 1].postId
                 needOffset = true
+                loadComplete = false
                 loadData()
             }
 
@@ -96,6 +98,7 @@ class HomeSchoolFragment : LazyLoadFragment() {
                 lastValue = 0
                 dataList.clear()
                 needOffset = false
+                loadComplete = false
                 loadData()
             }
         })
@@ -103,6 +106,7 @@ class HomeSchoolFragment : LazyLoadFragment() {
     }
 
     override fun loadData() {
+        if (loadComplete) return
         NetworkAccess.cache(ServerInfo.getSchoolAboutList(lastValue)) { success, cachePath ->
             if (success) {
                 try {
@@ -129,6 +133,8 @@ class HomeSchoolFragment : LazyLoadFragment() {
             } else {
 
             }
+
+            loadComplete = true
 
             activity?.runOnUiThread {
                 adapter?.notifyDataSetChanged()

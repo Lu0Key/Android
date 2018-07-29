@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 //import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
@@ -44,6 +45,7 @@ import java.util.concurrent.ExecutionException;
 
 import cn.edu.sdu.online.isdu.GlideApp;
 import cn.edu.sdu.online.isdu.R;
+import cn.edu.sdu.online.isdu.util.ImageManager;
 
 /**
  * Created by sendtion on 2016/6/24.
@@ -381,6 +383,41 @@ public class RichTextEditor extends ScrollView {
 		hideKeyBoard();
 	}
 
+	public void insertGif(GifDrawable drawable, String path) {
+        //lastFocusEdit获取焦点的EditText
+        String lastEditStr = lastFocusEdit.getText().toString();
+        int cursorIndex = lastFocusEdit.getSelectionStart();//获取光标所在位置
+        String editStr1 = lastEditStr.substring(0, cursorIndex).trim();//获取光标前面的字符串
+        String editStr2 = lastEditStr.substring(cursorIndex).trim();//获取光标后的字符串
+        int lastEditIndex = allLayout.indexOfChild(lastFocusEdit);//获取焦点的EditText所在位置
+
+        if (lastEditStr.length() == 0) {
+            //如果当前获取焦点的EditText为空，直接在EditText下方插入图片，并且插入空的EditText
+            addEditTextAtIndex(lastEditIndex + 1, "");
+            addGifAtIndex(lastEditIndex + 1, drawable, path);
+        } else if (editStr1.length() == 0) {
+            //如果光标已经顶在了editText的最前面，则直接插入图片，并且EditText下移即可
+            addGifAtIndex(lastEditIndex + 1, drawable, path);
+            //同时插入一个空的EditText，防止插入多张图片无法写文字
+            addEditTextAtIndex(lastEditIndex + 1, "");
+        } else if (editStr2.length() == 0) {
+            // 如果光标已经顶在了editText的最末端，则需要添加新的imageView和EditText
+            addEditTextAtIndex(lastEditIndex + 1, "");
+            addGifAtIndex(lastEditIndex + 1, drawable, path);
+        } else {
+            //如果光标已经顶在了editText的最中间，则需要分割字符串，分割成两个EditText，并在两个EditText中间插入图片
+            //把光标前面的字符串保留，设置给当前获得焦点的EditText（此为分割出来的第一个EditText）
+            lastFocusEdit.setText(editStr1);
+            //把光标后面的字符串放在新创建的EditText中（此为分割出来的第二个EditText）
+            addEditTextAtIndex(lastEditIndex + 1, editStr2);
+            //在第二个EditText的位置插入一个空的EditText，以便连续插入多张图片时，有空间写文字，第二个EditText下移
+            addEditTextAtIndex(lastEditIndex + 1, "");
+            //在空的EditText的位置插入图片布局，空的EditText下移
+            addGifAtIndex(lastEditIndex + 1, drawable, path);
+        }
+        hideKeyBoard();
+    }
+
 	/**
 	 * 隐藏小键盘
 	 */
@@ -415,6 +452,35 @@ public class RichTextEditor extends ScrollView {
 		lastFocusEdit.requestFocus();
 		lastFocusEdit.setSelection(editStr.length(), editStr.length());
 	}
+
+	public void addGifAtIndex(final int index, GifDrawable drawable, String path) {
+	    imagePaths.add(path);
+        RelativeLayout imageLayout = createImageLayout();
+        DataImageView imageView = (DataImageView) imageLayout.findViewById(R.id.edit_imageView);
+        GlideApp.with(getContext()).asGif().load(path).centerCrop().into(imageView);
+        imageView.setAbsolutePath(path);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);//裁剪剧中
+
+        Bitmap bmp = BitmapFactory.decodeFile(path);
+        // 调整imageView的高度，根据宽度等比获得高度
+        int imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
+                * bmp.getHeight() / bmp.getWidth();
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+//				LayoutParams.MATCH_PARENT, rtImageHeight);
+                allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight(), imageHeight);
+        lp.bottomMargin = rtImageBottom;
+        imageView.setLayoutParams(lp);
+
+        bmp.recycle();
+
+        // onActivityResult无法触发动画，此处post处理
+
+        /**********************************
+         * 若前一项为空则删除前一项
+         *********************************/
+
+        allLayout.addView(imageLayout, index);
+    }
 
 	/**
 	 * 在特定位置添加ImageView
@@ -589,7 +655,7 @@ public class RichTextEditor extends ScrollView {
 			} else if (itemView instanceof RelativeLayout) {
 				DataImageView item = (DataImageView) itemView.findViewById(R.id.edit_imageView);
 				itemData.imagePath = item.getAbsolutePath();
-				//itemData.bitmap = item.getBitmap();//去掉这个防止bitmap一直被占用，导致内存溢出
+				//itemData.bitmap = item.getBitmap(); //去掉这个防止bitmap一直被占用，导致内存溢出
 			}
 			dataList.add(itemData);
 		}

@@ -20,14 +20,19 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.util.Base64;
-
 import com.yalantis.ucrop.UCrop;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
+
+import cn.edu.sdu.online.isdu.GlideApp;
+import cn.edu.sdu.online.isdu.GlideRequest;
+import cn.edu.sdu.online.isdu.app.MyApplication;
 
 import static cn.edu.sdu.online.isdu.util.FileUtil.getStringFromFile;
 
@@ -230,7 +235,30 @@ public class ImageManager {
         if (bitmap == null) return new byte[0];
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
         return baos.toByteArray();
+    }
+
+    public static byte[] convertGifToByteArray(String filePath) {
+        try {
+            byte[] b = new byte[1024];
+            FileInputStream fis = new FileInputStream(filePath);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            int len = 0;
+            while ((len = bis.read(b)) > 0) {
+                baos.write(b, 0, len);
+            }
+
+            bis.close();
+            fis.close();
+
+            return baos.toByteArray();
+        } catch (Exception e) {
+            Logger.log(e);
+        }
+        return new byte[1];
     }
 
     /**

@@ -38,7 +38,7 @@ import cn.edu.sdu.online.isdu.util.Logger;
  ****************************************************
  */
 
-public class DraggableImageView extends View {
+public class DraggableImageView extends ImageView {
 
     public static float dragMinScale = 1f;
     public static float dragMaxScale = 4;

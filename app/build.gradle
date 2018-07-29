@@ -60,4 +60,5 @@ dependencies {
     annotationProcessor 'com.youngfeng.android:snake-compiler:0.3.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
     implementation 'top.zibin:Luban:1.1.8'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
 }

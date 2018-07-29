@@ -146,6 +146,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      * 获取是否关注
      */
     private fun getLiked() {
+        if (User.staticUser == null || User.staticUser.studentNumber == null) User.staticUser = User.load()
         NetworkAccess.buildRequest(ServerInfo.getMyLike(User.staticUser.uid.toString()), object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 Logger.log(e)

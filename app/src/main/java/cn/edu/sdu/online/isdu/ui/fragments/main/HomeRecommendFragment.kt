@@ -44,6 +44,7 @@ class HomeRecommendFragment : LazyLoadFragment() {
 
     private var lastValue = 0.0
     private var needOffset = false
+    private var loadComplete = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home_recommend, container, false)
@@ -77,6 +78,8 @@ class HomeRecommendFragment : LazyLoadFragment() {
         recyclerView!!.adapter = adapter
     }
 
+    override fun isLoadComplete(): Boolean = loadComplete
+
     /**
      * 初始化下拉刷新
      */
@@ -87,6 +90,7 @@ class HomeRecommendFragment : LazyLoadFragment() {
                 // 上拉加载更多
                 lastValue = if (dataList.isEmpty()) 0.0 else calculateValue(dataList[dataList.size - 1])
                 needOffset = true
+                loadComplete = false
                 loadData()
             }
 
@@ -95,6 +99,7 @@ class HomeRecommendFragment : LazyLoadFragment() {
                 lastValue = 0.0
                 dataList.clear()
                 needOffset = false
+                loadComplete = false
                 loadData()
             }
         })
@@ -102,10 +107,12 @@ class HomeRecommendFragment : LazyLoadFragment() {
     }
 
     private fun calculateValue(post: Post) : Double{
-        return 2 * post.likeNumber + post.commentsNumbers + 0.0001 * (post.time / 1000)
+        return post.likeNumber + 2.0 * post.commentsNumbers + (post.time % 100000000000 / 1000000) +
+                (post.time % 100000) / 100000
     }
 
     override fun loadData() {
+        if (isLoadComplete) return
         NetworkAccess.cache(ServerInfo.getRecommend10(lastValue)) {success, cachePath ->
             if (success) {
                 try {
@@ -132,6 +139,8 @@ class HomeRecommendFragment : LazyLoadFragment() {
             } else {
 
             }
+
+            loadComplete = true
 
             activity?.runOnUiThread {
                 adapter?.notifyDataSetChanged()

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -17,6 +18,7 @@ import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.BaseActivity
+import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.NormActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
@@ -31,6 +33,14 @@ import cn.edu.sdu.online.isdu.util.Permissions
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.gif.GifBitmapProvider
+import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.load.resource.gif.GifDrawableEncoder
+import com.bumptech.glide.load.resource.gif.GifDrawableResource
+import com.bumptech.glide.load.resource.transcode.GifDrawableBytesTranscoder
+import com.bumptech.glide.request.target.ViewTarget
+import com.bumptech.glide.request.transition.Transition
 
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_create_post.*
@@ -49,19 +59,11 @@ import kotlin.collections.LinkedHashMap
  ****************************************************
  * @author zsj
  * Last Modifier: ZSJ
- * Last Modify Time: 2018/7/20
+ * Last Modify Time: 2018/7/29
  *
  * 新建帖子页面
- ****************************************************
- */
-
-/**
- ****************************************************
- * @author zsj
- * Last Modifier: ZSJ
- * Last Modify Time: 2018/7/19
  *
- * 新建帖子页面
+ * 新增对GIF动画的判定
  ****************************************************
  */
 
@@ -251,7 +253,12 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
                 if (hashMap.containsKey(data.imagePath)) {
                     data.imageName = hashMap[data.imagePath]
                 } else {
-                    data.imageName = User.staticUser.uid.toString() + "_" + System.nanoTime().toString() + ".jpg"
+                    if (data.imagePath.toLowerCase().endsWith(".gif")) {
+                        // GIF特判
+                        data.imageName = User.staticUser.uid.toString() + "_" + System.nanoTime().toString() + ".gif"
+                    } else {
+                        data.imageName = User.staticUser.uid.toString() + "_" + System.nanoTime().toString() + ".jpg"
+                    }
                     hashMap[data.imagePath] = data.imageName
                 }
             }
@@ -340,7 +347,15 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
                 if (resultCode == Activity.RESULT_OK) {
                     imageManager.handleImage(data, this)
 
-                    Luban.with(this)
+                    if (imageManager.imagePath.toLowerCase().endsWith(".gif")) {
+                        val target = object : ViewTarget<RichTextEditor, GifDrawable>(richEditText!!) {
+                            override fun onResourceReady(resource: GifDrawable, transition: Transition<in GifDrawable>?) {
+                                richEditText!!.insertGif(resource, imageManager.imagePath)
+                            }
+                        }
+                        Glide.with(MyApplication.getContext()).asGif().load(imageManager.imagePath)
+                                .into(target)
+                    } else Luban.with(this)
                             .load(File(imageManager.imagePath))
                             .ignoreBy(100)
                             .setTargetDir(File(imageManager.imagePath).parentFile.absolutePath)
@@ -442,12 +457,17 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
                     split.append("Content-Disposition: form-data;name=\"file\";filename=\"${entry.value}\"\r\n")
                     //这里的Content-Type非常重要，一定要是图片的格式，例如image/jpeg或者image/jpg
                     //服务器端对根据图片结尾进行判断图片格式到底是什么,因此务必保证这里类型正确
-                    split.append("Content-Type: image/jpg\r\n\r\n")
+                    if (entry.value.toLowerCase().endsWith(".gif")) {
+                        // GIF特判
+                        split.append("Content-Type: image/gif\r\n\r\n")
+                    } else {
+                        split.append("Content-Type: image/jpg\r\n\r\n")
+                    }
+
                     outStream.write(split.toString().toByteArray())
                     outStream.write(content, 0, content.size)
                     outStream.write("\r\n".toByteArray())
 
-                    Log.d("AAA", "Image ${entry.key} Success")
                 }
                 val endData = ("--$BOUNDARY--\r\n").toByteArray()
                 //数据结束标志
@@ -501,6 +521,8 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
 //        }
 //        bufferedInputStream.close()
 //        return bytes!!
-        return ImageManager.convertBitmapToByteArray(BitmapFactory.decodeFile(filePath))
+        if (filePath.toLowerCase().endsWith(".gif")) {
+            return ImageManager.convertGifToByteArray(filePath)
+        } else return ImageManager.convertBitmapToByteArray(BitmapFactory.decodeFile(filePath))
     }
 }
