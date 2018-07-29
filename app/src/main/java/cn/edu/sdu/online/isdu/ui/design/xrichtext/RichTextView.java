@@ -237,7 +237,7 @@ public class RichTextView extends ScrollView {
         if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
             NetworkAccess.cache(imagePath, new NetworkAccess.OnCacheFinishListener() {
                 @Override
-                public void onFinish(boolean success, String cachePath) {
+                public void onFinish(boolean success, final String cachePath) {
                     if (success) {
                         if (cachePath.endsWith(".gif") || cachePath.endsWith(".gif#")) {
                             Drawable drawable = pl.droidsonroids.gif.GifDrawable.createFromPath(cachePath);
@@ -252,26 +252,33 @@ public class RichTextView extends ScrollView {
                                 imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
                                         * drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth();
                             }
-                            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                            final RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                                     LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
                             lp.bottomMargin = rtImageBottom;
-                            imageView.setLayoutParams(lp);
 
-                            if (rtImageHeight > 0) {
-                                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                            } else {
-                                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                            }
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    imageView.setLayoutParams(lp);
 
-                            Glide.with(MyApplication.getContext()).asGif().load(cachePath)
+                                    if (rtImageHeight > 0) {
+                                        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                    } else {
+                                        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                                    }
+
+                                    Glide.with(MyApplication.getContext()).asGif().load(cachePath)
 //                                            .placeholder(R.drawable.img_blank_image)
-                                    .apply(RequestOptions.placeholderOf(R.drawable.img_blank_image))
-                                    .apply(RequestOptions.errorOf(R.drawable.img_load_fail))
-                                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
+                                            .apply(RequestOptions.placeholderOf(R.drawable.img_blank_image))
+                                            .apply(RequestOptions.errorOf(R.drawable.img_load_fail))
+                                            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
 //                                            .error(R.drawable.img_load_fail)
-                                    .into(imageView);
+                                            .into(imageView);
+                                }
+                            });
+
                         } else {
-                            Bitmap bmp = BitmapFactory.decodeFile(cachePath);
+                            final Bitmap bmp = BitmapFactory.decodeFile(cachePath);
                             // Load as Bitmap
 //调整imageView的高度，根据宽度等比获得高度
                             int imageHeight ; //解决连续加载多张图片导致后续图片都跟第一张高度相同的问题
@@ -283,20 +290,27 @@ public class RichTextView extends ScrollView {
                                 imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
                                         * bmp.getHeight() / bmp.getWidth();
                             }
-                            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                            final RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                                     LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
                             lp.bottomMargin = rtImageBottom;
-                            imageView.setLayoutParams(lp);
 
-                            if (rtImageHeight > 0) {
-                                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                            } else {
-                                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                            }
-                            GlideApp.with(MyApplication.getContext()).load(bmp)
-                                    .placeholder(R.drawable.img_blank_image)
-                                    .error(R.drawable.img_load_fail)
-                                    .into(imageView);
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    imageView.setLayoutParams(lp);
+
+                                    if (rtImageHeight > 0) {
+                                        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                    } else {
+                                        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                                    }
+                                    GlideApp.with(MyApplication.getContext()).load(bmp)
+                                            .placeholder(R.drawable.img_blank_image)
+                                            .error(R.drawable.img_load_fail)
+                                            .into(imageView);
+                                }
+                            });
+
 //                            imageView.setImageBitmap(bmp);
                         }
                     }
