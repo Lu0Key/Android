@@ -29,6 +29,7 @@ public class News {
     private String url; // 新闻链接地址
     private List<String> extras; // 附件名称
     private List<String> extraUrl; // 附件下载地址
+    private String originUrl; // 新闻原始链接
 
     public News() {
         super();
@@ -106,6 +107,14 @@ public class News {
         this.newsContent = newsContent;
     }
 
+    public String getOriginUrl() {
+        return originUrl;
+    }
+
+    public void setOriginUrl(String originUrl) {
+        this.originUrl = originUrl;
+    }
+
     public static News loadFromString(String json) {
         News news = new News();
         try {
@@ -114,6 +123,7 @@ public class News {
             news.title = jsonObject.getString("title");
             news.date = jsonObject.getString("date");
             news.newsContent = jsonObject.getString("content");
+            news.originUrl = jsonObject.getString("url");
             if (jsonObject.getJSONArray("attachment") != null &&
                     jsonObject.getJSONArray("attachment").length() > 0) {
                 JSONArray jsonArray = jsonObject.getJSONArray("attachment");

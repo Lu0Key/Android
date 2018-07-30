@@ -15,14 +15,18 @@ import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.button.WideButton
+import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.InputDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
+import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.Settings
+import cn.edu.sdu.online.isdu.util.download.DownloadItem
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
@@ -51,6 +55,7 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
     private var btnFeedBack: WideButton? = null
     private var btnLogout: TextView? = null
     private var btnDownloadLocation: WideButton? = null
+    private var btnCheckUpdate: WideButton? = null
 
     private var btnBugReport: WideButton? = null
 
@@ -174,6 +179,56 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
                     }
                 })
             }
+            "check_update" -> {
+                val progDialog = ProgressDialog(this, false)
+                progDialog.setMessage("正在检查更新")
+                progDialog.setButton(null, null)
+                progDialog.show()
+                NetworkAccess.buildRequest(ServerInfo.buildInfo, object : Callback {
+                    override fun onFailure(call: Call?, e: IOException?) {
+                        runOnUiThread {
+                            progDialog.dismiss()
+                            Toast.makeText(this@SettingsActivity, "网络错误", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }
+
+                    override fun onResponse(call: Call?, response: Response?) {
+                        try {
+                            val obj = JSONObject(response?.body()?.string())
+                            if (BuildConfig.VERSION_CODE < obj.getInt("versionCode")) {
+                                runOnUiThread {
+                                    val dialog = AlertDialog(this@SettingsActivity)
+                                    dialog.setTitle("检测到新版本")
+                                    dialog.setMessage("新版本 ${obj.getString("versionName")}\n${obj.getString("versionDescription")}")
+                                    dialog.setPositiveButton("更新") {
+                                        DownloadItem(obj.getString("downloadUrl")).startDownload()
+                                        dialog.dismiss()
+                                    }
+                                    dialog.setNegativeButton("取消") {
+                                        dialog.dismiss()
+                                    }
+                                    dialog.show()
+                                }
+                            } else {
+                                runOnUiThread {
+                                    Toast.makeText(this@SettingsActivity, "已经是最新版本",
+                                            Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        } catch (e: Exception) {
+                            Logger.log(e)
+                            runOnUiThread {
+                                Toast.makeText(this@SettingsActivity, "未获取到信息",
+                                        Toast.LENGTH_SHORT).show()
+                            }
+
+                        } finally {
+                            runOnUiThread { progDialog.dismiss() }
+                        }
+                    }
+                })
+            }
         }
     }
 
@@ -204,6 +259,9 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnFeedBack = findViewById(R.id.btn_feedback)
         btnDownloadLocation = findViewById(R.id.btn_download_location)
         btnBugReport = findViewById(R.id.btn_bug_report)
+        btnCheckUpdate = findViewById(R.id.btn_check_update)
+
+        btnCheckUpdate!!.setTxtComment("版本号 ${BuildConfig.VERSION_NAME}")
 
         if (!BuildConfig.IS_TEST_VERSION) btnBugReport!!.visibility = View.GONE
 
@@ -219,6 +277,7 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnCloudSync!!.setOnItemSwitchListener(this)
         btnDownloadLocation!!.setOnItemClickListener(this)
         btnBugReport!!.setOnItemClickListener(this)
+        btnCheckUpdate!!.setOnItemClickListener(this)
 
         if (User.staticUser == null) User.staticUser = User.load()
         if (User.staticUser.studentNumber == null ||

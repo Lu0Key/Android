@@ -39,6 +39,12 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <style name="GuidePageTheme" parent="Theme.AppCompat">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+    </style>
+
     <!-- 自定义popupWindow_WorkingAge -->
     <style name="AnimBottom" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/popupwindow_enter_anim</item>
@@ -51,4 +57,8 @@
         <item name="colorAccent">@color/colorPurpleDark</item>
     </style>
 
+    <style name="popupAnimTranslate">
+        <item name="android:windowEnterAnimation">@anim/popup_translate_in</item>
+        <item name="android:windowExitAnimation">@anim/popup_translate_out</item>
+    </style>
 </resources>

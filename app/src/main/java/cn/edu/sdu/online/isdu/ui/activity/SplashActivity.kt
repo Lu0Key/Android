@@ -1,5 +1,6 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -7,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.AlphaAnimation
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
@@ -40,41 +42,18 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
+
         decorateWindow()
+
 
         showSplash()
 
-        img.visibility = View.INVISIBLE
 
     }
 
-    /******************************************
-     * 这是个彩蛋
-     * 冬冬nb！
-     * 点击Splash两次即可看到冬冬的照片
-     ******************************************/
-    var count = 0
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        when (event!!.action) {
-            MotionEvent.ACTION_DOWN -> {
-                count++
-                if (count == 2) {
-                    img.visibility = View.VISIBLE
-                    if (handler != null) {
-                        handler!!.removeCallbacks(splashHandler)
-                        splashHandler = null
-                        handler = null
-                    } else {
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
-                    }
-                }
-                count = count % 2
-            }
 
-        }
-        return super.onTouchEvent(event)
-    }
+
+
 
     private fun showSplash() {
         handler = Handler()
@@ -121,6 +100,6 @@ class SplashActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val PAGE_SHOW_TIME_MILLIS = 1500L // 展示TimeOut
+        const val PAGE_SHOW_TIME_MILLIS = 1000L // 展示TimeOut
     }
 }

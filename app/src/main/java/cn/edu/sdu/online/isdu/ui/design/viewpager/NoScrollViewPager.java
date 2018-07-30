@@ -82,7 +82,7 @@ public class NoScrollViewPager extends ViewPager {
                             }
                     }
 
-                    if (flag) return true;
+                    if (flag) return false;
 //                }
         }
         if (isScroll) {

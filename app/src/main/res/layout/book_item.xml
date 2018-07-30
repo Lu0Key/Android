@@ -171,6 +171,7 @@
 
                 <!--续借按钮-->
                 <TextView
+                    android:id="@+id/renew"
                     android:clickable="true"
                     android:layout_marginEnd="4dp"
                     android:layout_marginBottom="4dp"

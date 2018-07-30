@@ -1,10 +1,10 @@
-package cn.edu.sdu.online.isdu.util.DataBase;
+package cn.edu.sdu.online.isdu.util.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DBO_history extends SQLiteOpenHelper {
+public class DBOHistory extends SQLiteOpenHelper {
     private Context context;
     private static int VERSION=1;
     private static  final String DB_name ="History.db";
@@ -16,7 +16,7 @@ public class DBO_history extends SQLiteOpenHelper {
             "time integer,"+
             "url text"+
             ")";
-    public DBO_history(Context context){
+    public DBOHistory(Context context){
         super(context,DB_name,null,VERSION);
         this.context=context;
     }

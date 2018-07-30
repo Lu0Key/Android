@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
         android:name=".app.MyApplication"
@@ -28,7 +29,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.EditProfileActivity" />
-        <activity android:name=".ui.activity.MyHomePageActivity" />
+        <activity android:name=".ui.activity.MyHomePageActivity"
+            android:launchMode="singleTop"/>
         <activity android:name=".ui.activity.ScheduleActivity" />
 
         <!-- UCrop Activity -->
@@ -66,6 +68,7 @@
         <activity android:name=".ui.activity.SearchBookActivity" />
         <activity android:name=".ui.activity.MessageActivity" />
         <activity android:name=".ui.activity.NewsActivity" />
+        <activity android:name=".ui.activity.BindLibraryActivity"/>
         <activity
             android:name=".ui.activity.DownloadActivity"
             android:launchMode="singleInstance" />
@@ -81,7 +84,26 @@
 
         <activity android:name=".ui.activity.CreatePostActivity" />
         <activity android:name=".ui.activity.StudyRoomTableActivity" />
-        <activity android:name=".ui.activity.PostDetailActivity"></activity>
+        <activity android:name=".ui.activity.CollectActivity" />
+        <activity android:name=".ui.activity.NotFindPostActivity" />
+        <activity android:name=".ui.activity.PostDetailActivity">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity android:name=".ui.activity.LikeMeActivity" />
+        <activity android:name=".ui.activity.MyLikeActivity" />
+        <activity android:name=".ui.activity.GuideActivity"
+            android:theme="@style/GuidePageTheme"/>
+
+        <service
+            android:name=".service.MessageService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

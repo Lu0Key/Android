@@ -2,18 +2,18 @@ package cn.edu.sdu.online.isdu.ui.activity
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.view.View
 import android.view.Window
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.BaseActivity
+import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.NormActivity
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.DraggableImageView
@@ -21,6 +21,11 @@ import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Phone
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.ViewTarget
+import com.bumptech.glide.request.transition.Transition
 import kotlinx.android.synthetic.main.activity_view_image.*
 import java.io.File
 import java.io.FileInputStream
@@ -90,7 +95,9 @@ class ViewImageActivity : NormActivity() {
                             bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
                             fos.flush()
                             fos.close()
-                            Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                            runOnUiThread {
+                                Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                            }
                         } else if (url != "") {
                             if (cacheKey == "") {
                                 NetworkAccess.cache(url) { success, cachePath ->
@@ -103,9 +110,13 @@ class ViewImageActivity : NormActivity() {
                                         bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
                                         fos.flush()
                                         fos.close()
-                                        Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                        runOnUiThread {
+                                            Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                        }
                                     } else {
-                                        Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                                        runOnUiThread {
+                                            Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                                        }
                                     }
                                 }
                             } else {
@@ -119,9 +130,13 @@ class ViewImageActivity : NormActivity() {
                                         bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
                                         fos.flush()
                                         fos.close()
-                                        Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                        runOnUiThread {
+                                            Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                        }
                                     } else {
-                                        Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                                        runOnUiThread {
+                                            Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                                        }
                                     }
                                 }
                             }
@@ -131,15 +146,22 @@ class ViewImageActivity : NormActivity() {
                             bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
                             fos.flush()
                             fos.close()
-                            Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                            runOnUiThread {
+                                Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                            }
                         }
 
-                        decorateWindow()
+                        runOnUiThread {
+                            decorateWindow()
+                        }
 
                     }
                     "取消" -> {
                         dialog.dismiss()
-                        decorateWindow()
+                        runOnUiThread {
+                            decorateWindow()
+                        }
+
                     }
                 }
             }
@@ -158,13 +180,42 @@ class ViewImageActivity : NormActivity() {
         } else if (url != "") {
             loadingLayout!!.visibility = View.VISIBLE
             textView!!.text = "正在加载..."
-            NetworkAccess.cache(url, "avatar") { success, cachePath ->
+            NetworkAccess.cache(url, cacheKey) { success, cachePath ->
                 if (success) {
-                    val bmp = ImageManager.loadStringFromFile(cachePath)
-                    runOnUiThread {
-                        draggableImageView!!.setImageBitmap(bmp)
-                        loadingLayout!!.visibility = View.GONE
+                    if (isString) {
+                        val bmp = ImageManager.loadStringFromFile(cachePath)
+                        runOnUiThread {
+                            draggableImageView!!.setImageBitmap(bmp)
+                            loadingLayout!!.visibility = View.GONE
+                        }
+                    } else {
+                        if (cachePath.toLowerCase().endsWith(".gif#") ||
+                                cachePath.toLowerCase().endsWith(".gif")) {
+                            runOnUiThread {
+                                Glide.with(MyApplication.getContext())
+                                        .asGif()
+                                        .load(cachePath)
+                                        .into(draggableImageView!!)
+
+                                loadingLayout!!.visibility = View.GONE
+                            }
+                        } else {
+                            val target = object : ViewTarget<DraggableImageView, Drawable>(draggableImageView!!) {
+                                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                                    this.view.setImageBitmap((resource as BitmapDrawable).bitmap)
+                                }
+                            }
+                            runOnUiThread {
+                                Glide.with(MyApplication.getContext())
+                                        .load(cachePath)
+                                        .into(target)
+
+                                loadingLayout!!.visibility = View.GONE
+                            }
+                        }
+
                     }
+
                 } else {
                     runOnUiThread {
                         loadingLayout!!.visibility = View.VISIBLE
@@ -187,22 +238,22 @@ class ViewImageActivity : NormActivity() {
         decorateWindow()
     }
 
-    private fun decorateWindow() {
-        val decorView = window.decorView
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-        } else {
-            decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
-        }
-    }
+//    private fun decorateWindow() {
+//        val decorView = window.decorView
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+//                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+//        } else {
+//            decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
+//        }
+//    }
 
 }

@@ -3,6 +3,7 @@ package cn.edu.sdu.online.isdu.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -22,9 +23,13 @@ import android.support.v4.view.ViewPager
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView
 import android.view.LayoutInflater
 import android.widget.*
+import cn.edu.sdu.online.isdu.app.BuildConfig
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.bean.Message
 import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.service.MessageService
+import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.util.*
 import cn.edu.sdu.online.isdu.util.download.Download
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
@@ -51,7 +56,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigat
 class MainActivity : SlideActivity(), View.OnClickListener {
 
     private var fragments: MutableList<Fragment> = ArrayList() // Fragment列表
-    private var fragmentTags = listOf("HomeFragment", "NewsFragment", "MeFragment") // Fragment Tag
+//    private var fragmentTags = listOf("HomeFragment", "NewsFragment", "MeFragment") // Fragment Tag
     private val imgRes = listOf(R.drawable.home_selected, R.drawable.news_selected, R.drawable.me_selected)
     private val imgBackRes = listOf(R.drawable.home_back, R.drawable.news_back, R.drawable.me_back)
 
@@ -66,9 +71,19 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // 检查是否初次加载
+        val sp = getSharedPreferences("app", Context.MODE_PRIVATE)
+        if (!sp.getBoolean("first_load_${BuildConfig.VERSION_NAME}", false)) {
+            val editor = sp.edit()
+            editor.putBoolean("first_load_${BuildConfig.VERSION_NAME}", true)
+            editor.apply()
+            startActivity(Intent(this, GuideActivity::class.java))
+        }
+
         // 请求关键权限
         Permissions.requestPermission(this, Permissions.VIBRATE)
         Permissions.requestPermission(this, Permissions.INTERNET)
+        Permissions.requestPermission(this, Permissions.REQUEST_INSTALL_PACKAGES)
 
         initApplication()
 
@@ -78,13 +93,24 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         mViewPager = view_pager
 
         initFragment()
-        mPagerAdapter = FragAdapter(supportFragmentManager, fragments)
+        mPagerAdapter = FragAdapter(supportFragmentManager)
         mViewPager!!.adapter = mPagerAdapter
 
         initMagicIndicator()
 
+        mViewPager!!.currentItem = Settings.STARTUP_PAGE
+
         // 同步用户信息
         AccountOp.syncUserInformation()
+
+        // 开启消息轮询服务
+        startService(Intent(this, MessageService::class.java)
+                .putExtra("uid", User.staticUser.uid.toString()))
+        Message.addOnMessageListener {
+            if (fragments.size == 3) {
+                (fragments[2] as MeFragment).setMsgBadge(true)
+            }
+        }
     }
 
     override fun onResume() {
@@ -96,6 +122,7 @@ class MainActivity : SlideActivity(), View.OnClickListener {
      * 初始化整个应用需要的一些内容
      */
     private fun initApplication() {
+        Settings.load(this)
         EnvVariables.init(this)
         NotificationUtil.init(this)
 
@@ -113,8 +140,6 @@ class MainActivity : SlideActivity(), View.OnClickListener {
     private fun loadLocalUser() {
         User.staticUser = User.load()
     }
-
-
 
     private fun initFragment() {
         if (fragments.isEmpty()) {
@@ -198,13 +223,11 @@ class MainActivity : SlideActivity(), View.OnClickListener {
     /**
      * 自定义ViewPager适配器类
      */
-    class FragAdapter(fm: FragmentManager, fragments: List<Fragment>) : FragmentPagerAdapter(fm) {
-        private val mFragments = fragments
-        private val mDataList = listOf("主页", "资讯", "个人中心")
+    inner class FragAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-        override fun getItem(position: Int): Fragment = mFragments[position]
+        override fun getItem(position: Int): Fragment = fragments[position]
 
-        override fun getCount(): Int = mFragments.size
+        override fun getCount(): Int = fragments.size
 
         override fun getPageTitle(position: Int): CharSequence? {
             return mDataList[position]

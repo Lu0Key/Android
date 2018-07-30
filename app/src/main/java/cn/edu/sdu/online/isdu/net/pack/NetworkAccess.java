@@ -33,7 +33,7 @@ import okhttp3.Response;
 
 public class NetworkAccess {
 
-    public static void buildRequest(String url, Callback callback) {
+    public static Call buildRequest(String url, Callback callback) {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
@@ -45,10 +45,11 @@ public class NetworkAccess {
                     .build();
         Call call = okHttpClient.newCall(request);
         call.enqueue(callback);
+        return call;
     }
 
     @Deprecated
-    public static void buildRequest(String url, String str, Callback callback) {
+    public static Call buildRequest(String url, String str, Callback callback) {
         MediaType mediaType = MediaType.parse("text/html; charset=utf-8");
         Request request = new Request.Builder()
                 .url(url)
@@ -59,10 +60,12 @@ public class NetworkAccess {
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
-        okHttpClient.newCall(request).enqueue(callback);
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(callback);
+        return call;
     }
 
-    public static void buildRequest(String url, List<String> key, List<String> value, Callback callback) {
+    public static Call buildRequest(String url, List<String> key, List<String> value, Callback callback) {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
@@ -80,16 +83,18 @@ public class NetworkAccess {
                 .post(requestBody)
                 .build();
 
-        okHttpClient.newCall(request).enqueue(callback);
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(callback);
+        return call;
     }
 
-    public static void buildRequest(String url, String key, String value, Callback callback) {
+    public static Call buildRequest(String url, String key, String value, Callback callback) {
         List<String> keys = new ArrayList<>(); keys.add(key);
         List<String> values = new ArrayList<>(); values.add(value);
-        buildRequest(url, keys, values, callback);
+        return buildRequest(url, keys, values, callback);
     }
 
-    public static void cache(String url, @Nullable final OnCacheFinishListener listener) {
+    public static Call cache(String url, String key, String value, @Nullable final OnCacheFinishListener listener) {
         File cacheDir = MyApplication.getContext().getCacheDir();
 
         String s = url.substring(
@@ -117,7 +122,131 @@ public class NetworkAccess {
             Logger.log(e);
         }
 
-        buildRequest(url, new Callback() {
+        return buildRequest(url, key, value, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Logger.log(e);
+                if (listener != null)
+                    listener.onFinish(false, null);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    InputStream is = response.body().byteStream();
+                    BufferedInputStream bis = new BufferedInputStream(is);
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cacheFile));
+
+                    int len = 0;
+                    byte[] b = new byte[2048];
+                    while ((len = bis.read(b)) > 0) {
+                        bos.write(b, 0, len);
+                    }
+
+                    bos.flush();
+                    bos.close();
+                    bis.close();
+                    is.close();
+                    if (listener != null)
+                        listener.onFinish(true, cacheFile.getAbsolutePath());
+                } catch (Exception e) {
+                    Logger.log(e);
+                }
+            }
+        });
+    }
+
+    public static Call cache(String url, List<String> keys, List<String> values, @Nullable final OnCacheFinishListener listener) {
+        File cacheDir = MyApplication.getContext().getCacheDir();
+
+        String s = url.substring(
+                (url.startsWith("http")) ? url.indexOf("/", 8) : url.indexOf("/")
+                , url.length());
+        char[] chars = s.toLowerCase().toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '/')
+                chars[i] = '_';
+            if (chars[i] == '?')
+                chars[i] = '.';
+            if (chars[i] == '&')
+                chars[i] = '_';
+        }
+
+
+        final File cacheFile = new File(cacheDir.getAbsolutePath() + "/" + new String(chars));
+
+        if (cacheFile.exists()) {
+            if (listener != null)
+                listener.onFinish(true, cacheFile.getAbsolutePath());
+        } else try {
+            cacheFile.createNewFile();
+        } catch (IOException e) {
+            Logger.log(e);
+        }
+
+        return buildRequest(url, keys, values, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Logger.log(e);
+                if (listener != null)
+                    listener.onFinish(false, null);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    InputStream is = response.body().byteStream();
+                    BufferedInputStream bis = new BufferedInputStream(is);
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cacheFile));
+
+                    int len = 0;
+                    byte[] b = new byte[2048];
+                    while ((len = bis.read(b)) > 0) {
+                        bos.write(b, 0, len);
+                    }
+
+                    bos.flush();
+                    bos.close();
+                    bis.close();
+                    is.close();
+                    if (listener != null)
+                        listener.onFinish(true, cacheFile.getAbsolutePath());
+                } catch (Exception e) {
+                    Logger.log(e);
+                }
+            }
+        });
+    }
+
+    public static Call cache(String url, @Nullable final OnCacheFinishListener listener) {
+        File cacheDir = MyApplication.getContext().getCacheDir();
+
+        String s = url.substring(
+                (url.startsWith("http")) ? url.indexOf("/", 8) : url.indexOf("/")
+                , url.length());
+        char[] chars = s.toLowerCase().toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '/')
+                chars[i] = '_';
+            if (chars[i] == '?')
+                chars[i] = '.';
+            if (chars[i] == '&')
+                chars[i] = '_';
+        }
+
+
+        final File cacheFile = new File(cacheDir.getAbsolutePath() + "/" + new String(chars));
+
+        if (cacheFile.exists()) {
+            if (listener != null)
+                listener.onFinish(true, cacheFile.getAbsolutePath());
+        } else try {
+            cacheFile.createNewFile();
+        } catch (IOException e) {
+            Logger.log(e);
+        }
+
+        return buildRequest(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Logger.log(e);
@@ -157,7 +286,7 @@ public class NetworkAccess {
      * @param url
      * @param listener
      */
-    public static void cacheGrade(String url, @Nullable final OnCacheFinishListener listener) {
+    public static Call cacheGrade(String url, @Nullable final OnCacheFinishListener listener) {
         File cacheDir = MyApplication.getContext().getCacheDir();
 
         String s = (url.substring((ServerInfo.url).length(), url.length()));
@@ -184,78 +313,7 @@ public class NetworkAccess {
             Logger.log(e);
         }
 
-        buildRequest(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Logger.log(e);
-                if (listener != null)
-                    listener.onFinish(false, null);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    InputStream is = response.body().byteStream();
-                    BufferedInputStream bis = new BufferedInputStream(is);
-                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cacheFile));
-
-                    int len = 0;
-                    byte[] b = new byte[2048];
-                    while ((len = bis.read(b)) > 0) {
-                        bos.write(b, 0, len);
-                    }
-
-                    bos.flush();
-                    bos.close();
-                    bis.close();
-                    is.close();
-                    if (listener != null)
-                        listener.onFinish(true, cacheFile.getAbsolutePath());
-                } catch (Exception e) {
-                    Logger.log(e);
-                }
-            }
-        });
-
-    }
-
-    /**
-     * 成绩专用
-     * @param url
-     * @param listener
-     */
-    public static void cacheGrade(String url, @Nullable final OnCacheFinishListener listener) {
-        File cacheDir = new File(Environment.getExternalStorageDirectory() + "/iSDU/cache");
-        if (!cacheDir.exists()) {
-            if (!cacheDir.getParentFile().exists()) cacheDir.getParentFile().mkdirs();
-            cacheDir.mkdir();
-        }
-
-        String s = (url.substring((ServerInfo.url).length(), url.length()));
-        char[] chars = s.toLowerCase().toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            if (chars[i] == '/')
-                chars[i] = '_';
-            if (chars[i] == '?')
-                chars[i] = '.';
-            if (chars[i] == '&')
-                chars[i] = '_';
-        }
-
-
-        final File cacheFile = new File(cacheDir.getAbsolutePath() + "/" + new String(chars));
-
-        if (cacheFile.exists()) {
-            if (listener != null)
-                listener.onFinish(true, cacheFile.getAbsolutePath());
-        } else try {
-            cacheFile.createNewFile();
-            listener.onFinish(true, cacheFile.getAbsolutePath());
-        } catch (IOException e) {
-            Logger.log(e);
-        }
-
-        buildRequest(url, new Callback() {
+        return buildRequest(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Logger.log(e);
@@ -297,7 +355,7 @@ public class NetworkAccess {
      * @param key 需要查询的Key
      * @param listener 返回监听器
      */
-    public static void cache(String url, final String key, @Nullable final OnCacheFinishListener listener) {
+    public static Call cache(String url, final String key, @Nullable final OnCacheFinishListener listener) {
         File cacheDir = MyApplication.getContext().getCacheDir();
 
         String s = url.substring(
@@ -325,7 +383,7 @@ public class NetworkAccess {
             Logger.log(e);
         }
 
-        buildRequest(url, new Callback() {
+        return buildRequest(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Logger.log(e);
@@ -336,10 +394,28 @@ public class NetworkAccess {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
-                    FileWriter fw = new FileWriter(cacheFile);
-                    JSONObject jsonObject = new JSONObject(response.body().string());
-                    fw.write(jsonObject.getString(key));
-                    fw.close();
+                    if (key != null && !"".equals(key)) {
+                        FileWriter fw = new FileWriter(cacheFile);
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        fw.write(jsonObject.getString(key));
+                        fw.close();
+                    } else {
+                        InputStream is = response.body().byteStream();
+                        BufferedInputStream bis = new BufferedInputStream(is);
+                        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cacheFile));
+
+                        int len = 0;
+                        byte[] b = new byte[2048];
+                        while ((len = bis.read(b)) > 0) {
+                            bos.write(b, 0, len);
+                        }
+
+                        bos.flush();
+                        bos.close();
+                        bis.close();
+                        is.close();
+                    }
+
                     if (listener != null)
                         listener.onFinish(true, cacheFile.getAbsolutePath());
                 } catch (Exception e) {
@@ -350,7 +426,7 @@ public class NetworkAccess {
 
     }
 
-    public static void cache(String url, int startPos, @Nullable final OnCacheFinishListener listener){
+    public static Call cache(String url, int startPos, @Nullable final OnCacheFinishListener listener){
         File cacheDir = MyApplication.getContext().getCacheDir();
 
         String s = url.substring(
@@ -388,7 +464,7 @@ public class NetworkAccess {
         List<String> values = new ArrayList<>();
         values.add(startPos + "");
 
-        buildRequest(url, keys, values, new Callback() {
+        return buildRequest(url, keys, values, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Logger.log(e);

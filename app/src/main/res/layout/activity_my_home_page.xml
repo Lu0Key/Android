@@ -91,6 +91,23 @@
                             android:layout_gravity="center_vertical"
                             android:clickable="true"
                             android:focusable="true" />
+
+                        <TextView
+                            android:id="@+id/btn_follow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="关注"
+                            android:background="@drawable/purple_stroke_rect_colorchanged"
+                            android:textColor="@color/colorPurpleDark"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:focusable="true"
+                            android:clickable="true"
+                            android:layout_gravity="center_vertical"
+                            android:visibility="gone"
+                            android:layout_marginStart="8dp"/>
                     </LinearLayout>
 
 
@@ -115,6 +132,7 @@
 
                         <!--我关注的人-->
                         <LinearLayout
+                            android:id="@+id/layout_my_like"
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
@@ -124,7 +142,7 @@
                                 android:id="@+id/my_follower_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="36"
+                                android:text="0"
                                 android:textSize="20sp"
                                 android:textColor="@color/colorPurpleDark"
                                 android:layout_gravity="center_horizontal"/>
@@ -140,6 +158,7 @@
                         </LinearLayout>
                         <!--关注我的人-->
                         <LinearLayout
+                            android:id="@+id/layout_like_me"
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
@@ -149,7 +168,7 @@
                                 android:id="@+id/following_me_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="64"
+                                android:text="0"
                                 android:textSize="20sp"
                                 android:textColor="@color/colorPurpleDark"
                                 android:layout_gravity="center_horizontal"/>

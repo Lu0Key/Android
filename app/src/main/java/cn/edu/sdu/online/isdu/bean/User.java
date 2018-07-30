@@ -10,6 +10,7 @@ import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
 import java.util.List;
+import java.util.Objects;
 
 import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.net.AccountOp;
@@ -35,21 +36,23 @@ public class User extends LitePalSupport {
     private int gender; // 性别
     private String studentNumber; // 学号
     private String name; // 姓名
-    private String avatarString; // 头像字符串
+//    private String avatarString; // 头像字符串
+    private String avatarUrl; // 头像所在URL
     private String selfIntroduce; // 个人介绍
     private String passwordMD5; // MD5加密的教务密码
     private String major; // 专业
     private String depart; // 学院
     private int uid; // ID号，非学号
+    private Boolean Bind; //是否绑定校园卡
 
     public static User staticUser; // 全局用户实例
 
     public User() {}
 
-    public User(String nickName, String studentNumber, String avatarString, String selfIntroduce, int uid) {
+    public User(String nickName, String studentNumber, String avatarUrl, String selfIntroduce, int uid) {
         this.nickName = nickName;
         this.studentNumber = studentNumber;
-        this.avatarString = avatarString;
+//        this.avatarString = avatarString;
         this.selfIntroduce = selfIntroduce;
         this.uid = uid;
     }
@@ -133,13 +136,23 @@ public class User extends LitePalSupport {
         user.setMajor(major);
         user.setSelfIntroduce(selfIntroduce);
         user.setGender(gender);
-        user.setAvatarString(avatarString);
         user.setName(name);
         user.setNickName(nickName);
         user.setPasswordMD5(passwordMD5);
         user.setStudentNumber(studentNumber);
+        user.setAvatarUrl(avatarUrl);
         user.save(); // LitePal Save
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        User user = (User) o;
+        return Objects.equals(studentNumber, user.studentNumber) ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(studentNumber);
     }
 
     public void loginCache(Context context) {
@@ -147,6 +160,14 @@ public class User extends LitePalSupport {
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("student_number", studentNumber);
         editor.apply();
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public String getNickName() {
@@ -181,13 +202,13 @@ public class User extends LitePalSupport {
         this.name = name;
     }
 
-    public String getAvatarString() {
-        return avatarString;
-    }
-
-    public void setAvatarString(String avatarString) {
-        this.avatarString = avatarString;
-    }
+//    public String getAvatarString() {
+//        return avatarString;
+//    }
+//
+//    public void setAvatarString(String avatarString) {
+//        this.avatarString = avatarString;
+//    }
 
     public String getSelfIntroduce() {
         return selfIntroduce;
@@ -227,5 +248,14 @@ public class User extends LitePalSupport {
 
     public void setUid(int uid) {
         this.uid = uid;
+    }
+
+    
+    public Boolean getBind() {
+        return Bind;
+    }
+
+    public void setBind(Boolean bind) {
+        Bind = bind;
     }
 }

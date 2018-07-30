@@ -43,9 +43,9 @@ class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
     private var magicIndicator: MagicIndicator? = null // Magic Indicator
     private var viewPager: ViewPager? = null // ViewPager
 
-    private val mDataList = listOf("推荐", "关注", "热榜", "校内相关") // Indicator 数据
+    private val mDataList = listOf("推荐", "关注", "校内相关") // Indicator 数据
     private val mFragments = listOf(HomeRecommendFragment(),
-            HomeRecommendFragment(), HomeRecommendFragment(), HomeRecommendFragment()) // Fragment 数组
+            HomeRecommendFragment(), HomeSchoolFragment()) // Fragment 数组
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -120,7 +120,7 @@ class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
      * 初始化推荐、关注、热榜和校内相关碎片
      */
     private fun initFragments() {
-        mViewPagerAdapter = FragAdapter(childFragmentManager, mFragments)
+        mViewPagerAdapter = FragAdapter(childFragmentManager)
         viewPager!!.adapter = mViewPagerAdapter
     }
 
@@ -131,9 +131,7 @@ class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
     /**
      * 自定义ViewPager适配器类
      */
-    class FragAdapter(fm: FragmentManager, fragments: List<Fragment>) : FragmentPagerAdapter(fm) {
-        private val mFragments = fragments
-        private val mDataList = listOf("推荐", "关注", "热榜", "校内相关") // Indicator 数据
+    inner class FragAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment = mFragments[position]
 

@@ -6,16 +6,38 @@ package cn.edu.sdu.online.isdu.net;
  * Last Modifier: ZSJ
  * Last Modify Time: 2018/6/15
  *
- * 服务器信息
  ****************************************************
  */
 
 public class ServerInfo {
 
     public static final String ipAddr = "202.194.15.132";
+    public static final String ipAddr133 = "202.194.15.133";
     public static final int port = 8384;
     public static final String url = "http://" + ipAddr + ":" + port + "/";
     public static final String envVarUrl = "http://" + ipAddr + ":8380/env_variables.html";
+
+    public static final String avatarUrl = "http://" + ipAddr + ":8380/isdu/avatar";
+
+    public static final String calanderUrl = "http://202.194.15.133:8380/isdu/term/xl-2018-2019-1.png";
+
+    public static String getComments() {
+        return "http://" + ipAddr133 + ":8384/comment/get";
+    }
+
+    public static final String deleteComment = "http://" + ipAddr133 + ":8384/comment/delete";
+
+    public static final String getLikeNumber(int postId) {
+        return "http://" + ipAddr133 + ":8384/post/getLike?postId=" + postId;
+    }
+    public static final String likePost = "http://" + ipAddr133 + ":8384/post/like/";
+    public static final String getIsLike(int postId, String uid) {
+        return "http://" + ipAddr133 + ":8384/post/isLike?postId=" + postId + "&userId=" + uid;
+    }
+    public static final String collectPost = "http://" + ipAddr133 + ":8384/post/collect";
+    public static final String getIsCollect(int postId, String uid) {
+        return "http://" + ipAddr133 + ":8384/post/isCollect?postId=" + postId + "&userId=" + uid;
+    }
 
     public static final String getUrlLogin(String num, String pwd) {
         return url + "/user/signIn?j_username=" + num + "&j_password=" + pwd;
@@ -29,7 +51,6 @@ public class ServerInfo {
     public static String getUserInfo(String id, String key) {
         return url + "/user/getInformation?id=" + id + "&key=" + key;
     }
-
     public static final String urlUpdate = url + "/user/update";
 
     public static String getNewsUrl(int index) {
@@ -50,6 +71,10 @@ public class ServerInfo {
         }
         return "https://sduonline.cn/isdu/news/api/index.php?site=" + site;
     }
+
+    public static final String uploadPostUrl = "http://" + ipAddr133 + ":8384/post/upload";
+
+    public static String postCommentUrl = "http://" + ipAddr133 + ":8384/comment/add";
 
     /**
      *
@@ -111,4 +136,72 @@ public class ServerInfo {
         return "http://sduonline.cn/isdu/studyroom/api/?campus=" + campus + "&building=" + building + "&date=" + date;
     }
 
+    public static String getPostList(int uid, int startId) {
+        return "http://" + ipAddr133 + ":8384/post/getPostList10?startId=" + startId + "&userId=" + uid;
+    }
+
+    public static String getPost(int id) {
+        return "http://" + ipAddr133 + ":8384/post/detail/?id=" + id;
+    }
+
+    public static final String deletePost = "http://" + ipAddr133 + ":8384/post/delete";
+
+    public static String getLibraryInfoUrl(String id){
+        return url + "library/info?id=" + id;
+    }
+    public static final String getBindUrl(String uid,String cardNumber, String pwd) {
+        return url + "library/bind?id=" + uid + "&cardNumber=" + cardNumber + "&password=" + pwd;
+    }
+    public static final String getBookListUrl(String uid) {
+        return url + "library/borrowed?id=" + uid ;
+    }
+    public static final String searchBookUrl(String bookName){
+        return url + "library/search?name=" + bookName ;
+    }
+    public static final String renewBookUrl(int uid){
+        return url + "library/renew?id=" + uid ;
+    }
+    public static final String renewOneBookUrl(int uid,String bookId,String checkCode){
+        return url + "library/renewOne?id=" + uid + "&bookId="+ bookId + "&verifyId=" + checkCode;
+    }
+
+    public static final String getCollectList = "http://" + ipAddr133 + ":8384/user/getCollect";
+
+    public static String getLikeMe(String uid) {
+        return "http://202.194.15.133:8384/user/getLikeMe?userId=" + uid;
+    }
+
+    public static String getMyLike(String uid) {
+        return "http://202.194.15.133:8384/user/getLike?userId=" + uid;
+    }
+
+    public static String userLike(String userId, String beLikeUserId) {
+        return "http://202.194.15.133:8384/user/like?userId=" + userId + "&beLikeUserId=" + beLikeUserId;
+    }
+
+    public static String queryPost(String key) {
+        return "http://" + ipAddr133 + ":8384/post/query?key=" + key;
+    }
+
+    public static String getHotPostList(double value) {
+        return "http://" + ipAddr133 + ":8384/post/getHotTen?startValue=" + value;
+    }
+
+    public static String getSchoolAboutList(int id) {
+        return "http://" + ipAddr133 + ":8384/post/getSchoolAboutTen?startId=" + id;
+    }
+
+    public static String getNotice(String uid) {
+        return "http://" + ipAddr133 + ":8384/notice/getNotice?userId=" + uid;
+    }
+
+    public static String getMyComment10(String uid, int startId) {
+        return "http://" + ipAddr133 + ":8384/user/getComment10?userId=" + uid + "&startId=" + startId;
+    }
+
+    public static String getRecommend10(double startValue) {
+        return "http://" + ipAddr133 + ":8384/post/getRecommendTen?startValue=" + startValue;
+    }
+
+    public static final String buildInfo = "http://" + ipAddr + ":8380/isdu/build/config.html";
 }
