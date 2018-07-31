@@ -56,6 +56,7 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
     private var btnLogout: TextView? = null
     private var btnDownloadLocation: WideButton? = null
     private var btnCheckUpdate: WideButton? = null
+    private var btnAbout: WideButton? = null
 
     private var btnBugReport: WideButton? = null
 
@@ -229,6 +230,9 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
                     }
                 })
             }
+            "about" -> {
+                startActivity(Intent(this, AboutActivity::class.java))
+            }
         }
     }
 
@@ -260,6 +264,7 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnDownloadLocation = findViewById(R.id.btn_download_location)
         btnBugReport = findViewById(R.id.btn_bug_report)
         btnCheckUpdate = findViewById(R.id.btn_check_update)
+        btnAbout = findViewById(R.id.btn_about)
 
         btnCheckUpdate!!.setTxtComment("版本号 ${BuildConfig.VERSION_NAME}")
 
@@ -278,6 +283,7 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnDownloadLocation!!.setOnItemClickListener(this)
         btnBugReport!!.setOnItemClickListener(this)
         btnCheckUpdate!!.setOnItemClickListener(this)
+        btnAbout!!.setOnItemClickListener(this)
 
         if (User.staticUser == null) User.staticUser = User.load()
         if (User.staticUser.studentNumber == null ||

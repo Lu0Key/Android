@@ -243,14 +243,19 @@ public class RichTextView extends ScrollView {
                             Drawable drawable = pl.droidsonroids.gif.GifDrawable.createFromPath(cachePath);
                             // Load as GIF
                             //调整imageView的高度，根据宽度等比获得高度
-                            int imageHeight ; //解决连续加载多张图片导致后续图片都跟第一张高度相同的问题
+                            int imageHeight = 0; //解决连续加载多张图片导致后续图片都跟第一张高度相同的问题
                             if (rtImageHeight > 0) {
                                 imageHeight = rtImageHeight;
                             } else {
 //                                imageHeight = allLayout.getWidth() * resource.getHeight() / resource.getWidth();
                                 // 修正图片宽高
-                                imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
-                                        * drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth();
+                                try {
+                                    while (drawable == null) Thread.sleep(100);
+                                    imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
+                                            * drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth();
+                                } catch (Exception e) {
+                                    Logger.log(e);
+                                }
                             }
                             final RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                                     LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中

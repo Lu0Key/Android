@@ -3,6 +3,7 @@ package cn.edu.sdu.online.isdu.ui.activity
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.os.Message
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
@@ -55,6 +56,8 @@ class MessageActivity : SlideActivity(), View.OnClickListener , Serializable {
         initView()
         initFragments()
         initIndicator()
+
+        cn.edu.sdu.online.isdu.bean.Message.loadMsgList(this)
     }
 
     private fun initView() {

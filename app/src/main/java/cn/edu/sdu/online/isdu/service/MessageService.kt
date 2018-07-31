@@ -3,6 +3,7 @@ package cn.edu.sdu.online.isdu.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.widget.Toast
 import cn.edu.sdu.online.isdu.bean.Message
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.util.Logger
@@ -30,11 +31,16 @@ class MessageService : Service() {
                 val response = client.newCall(request).execute()
                 try {
                     val str = response?.body()?.string()
-                    val jsonString = str!!.substring(str.indexOf('['), str.indexOf(']') + 1)
+//                    val jsonString = str!!.substring(str.indexOf('['), str.indexOf(']') + 1)
+                    if (JSONObject(str).getString("status") == "success") {
+                        val jsonString = JSONObject(str).getString("obj")
+                        val msgList = JSON.parseArray(jsonString, Message::class.java)
+                        Message.msgList.addAll(msgList)
+                        Message.saveMsgList(this)
 
-                    val msgList = JSON.parseArray(jsonString, Message::class.java)
-                    Message.msgList.addAll(msgList)
-                    Message.saveMsgList()
+                        // 发送消息通知
+
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

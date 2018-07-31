@@ -15,6 +15,7 @@ import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
+import cn.edu.sdu.online.isdu.util.DateCalculate
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import com.liaoinstan.springview.widget.SpringView
@@ -165,11 +166,7 @@ class HomeRecommendFragment : LazyLoadFragment() {
             holder.commentNumber.text = item.commentsNumbers.toString()
             holder.content.text = item.content
             holder.txtLike.text = item.likeNumber.toString()
-            holder.releaseTime.text = if (System.currentTimeMillis() - item.time < 60 * 1000)
-                "刚刚" else (if (System.currentTimeMillis() - item.time < 24 * 60 * 60 * 1000)
-                "${(System.currentTimeMillis() - item.time) / (60 * 60 * 1000)} 小时前" else (
-                    if (System.currentTimeMillis() - item.time < 48 * 60 * 60 * 1000) "昨天 ${SimpleDateFormat("HH:mm").format(item.time)}"
-                    else SimpleDateFormat("yyyy-MM-dd HH:mm").format(item.time)))
+            holder.releaseTime.text = DateCalculate.getExpressionDate(item.time)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

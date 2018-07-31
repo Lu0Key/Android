@@ -29,8 +29,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.EditProfileActivity" />
-        <activity android:name=".ui.activity.MyHomePageActivity"
-            android:launchMode="singleTop"/>
+        <activity
+            android:name=".ui.activity.MyHomePageActivity"
+            android:launchMode="singleTop" />
         <activity android:name=".ui.activity.ScheduleActivity" />
 
         <!-- UCrop Activity -->
@@ -68,7 +69,7 @@
         <activity android:name=".ui.activity.SearchBookActivity" />
         <activity android:name=".ui.activity.MessageActivity" />
         <activity android:name=".ui.activity.NewsActivity" />
-        <activity android:name=".ui.activity.BindLibraryActivity"/>
+        <activity android:name=".ui.activity.BindLibraryActivity" />
         <activity
             android:name=".ui.activity.DownloadActivity"
             android:launchMode="singleInstance" />
@@ -97,13 +98,17 @@
         </activity>
         <activity android:name=".ui.activity.LikeMeActivity" />
         <activity android:name=".ui.activity.MyLikeActivity" />
-        <activity android:name=".ui.activity.GuideActivity"
-            android:theme="@style/GuidePageTheme"/>
+        <activity
+            android:name=".ui.activity.GuideActivity"
+            android:theme="@style/GuidePageTheme" />
 
         <service
             android:name=".service.MessageService"
             android:enabled="true"
             android:exported="true" />
+
+        <activity android:name=".ui.activity.AboutActivity" />
+        <activity android:name=".ui.activity.ClaimActivity"></activity>
     </application>
 
 </manifest>

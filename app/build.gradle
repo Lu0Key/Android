@@ -10,8 +10,8 @@ android {
         applicationId "cn.edu.sdu.online.isdu"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.0.3-beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         renderscriptTargetApi 20
         renderscriptSupportModeEnabled true

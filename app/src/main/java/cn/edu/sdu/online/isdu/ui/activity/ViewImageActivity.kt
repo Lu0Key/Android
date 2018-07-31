@@ -27,6 +27,7 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.ViewTarget
 import com.bumptech.glide.request.transition.Transition
 import kotlinx.android.synthetic.main.activity_view_image.*
+import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -105,9 +106,23 @@ class ViewImageActivity : NormActivity() {
                                         /********************************************
                                          *
                                          ********************************************/
-                                        val bmp = if (isString) ImageManager.convertStringToBitmap(FileUtil.getStringFromFile(cachePath)) else
-                                            BitmapFactory.decodeFile(cachePath)
-                                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                                        if (cachePath.toLowerCase().endsWith(".gif#") ||
+                                                cachePath.toLowerCase().endsWith(".gif")) {
+                                            val fis = FileInputStream(File(cachePath))
+                                            val bis = BufferedInputStream(fis)
+                                            var byte = ByteArray(1024)
+                                            var len = bis.read(byte)
+                                            while (len > 0) {
+                                                fos.write(byte, 0, len)
+                                                len = bis.read(byte)
+                                            }
+                                            fis.close()
+                                            bis.close()
+                                        } else {
+                                            val bmp = if (isString) ImageManager.convertStringToBitmap(FileUtil.getStringFromFile(cachePath)) else
+                                                BitmapFactory.decodeFile(cachePath)
+                                            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                                        }
                                         fos.flush()
                                         fos.close()
                                         runOnUiThread {

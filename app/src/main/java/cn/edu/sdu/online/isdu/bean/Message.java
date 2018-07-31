@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.util.Logger;
@@ -17,14 +18,16 @@ import cn.edu.sdu.online.isdu.util.Logger;
 public class Message {
     private String type;
     private String senderId;
+    private String senderNickname;
+    private String senderAvatar;
+    private String time;
+    private String content;
     private boolean isRead = false;
     private static List<OnMessageListener> listeners = new ArrayList<>();
 
     public static List<Message> msgList = new ArrayList<>();
 
-    public Message() {
-        super();
-    }
+    public Message() {}
 
     public String getType() {
         return type;
@@ -46,25 +49,48 @@ public class Message {
         return isRead;
     }
 
-    public void setRead(boolean read) {
+    public void setRead(boolean read, Context context) {
         isRead = read;
-        saveMsgList();
+        saveMsgList(context);
     }
 
-    public static void loadMsgList() {
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getSenderNickname() {
+        return senderNickname;
+    }
+
+    public void setSenderNickname(String senderNickname) {
+        this.senderNickname = senderNickname;
+    }
+
+    public String getSenderAvatar() {
+        return senderAvatar;
+    }
+
+    public void setSenderAvatar(String senderAvatar) {
+        this.senderAvatar = senderAvatar;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public static void loadMsgList(Context context) {
         msgList.clear();
-        SharedPreferences sp = MyApplication.getContext().getSharedPreferences("msg", Context.MODE_PRIVATE);
+        SharedPreferences sp = context.getSharedPreferences("msg", Context.MODE_PRIVATE);
         String str = sp.getString("json", "[]");
         try {
-//            JSONArray jsonArray = new JSONArray(str);
-//            for (int i = 0; i < jsonArray.length(); i++) {
-//                JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                Message msg = new Message();
-//                msg.setType(jsonObject.getString("type"));
-//                msg.setSenderId(jsonObject.getString("senderId"));
-//                msg.setRead(jsonObject.getBoolean("read"));
-//                msgList.add(msg);
-//            }
             msgList = JSON.parseArray(str, Message.class);
         } catch (Exception e) {
             Logger.log(e);
@@ -75,15 +101,30 @@ public class Message {
         listeners.add(listener);
     }
 
-    public static void saveMsgList() {
+    public static void saveMsgList(Context context) {
         SharedPreferences.Editor editor =
-                MyApplication.getContext().getSharedPreferences("msg", Context.MODE_PRIVATE).edit();
+                context.getSharedPreferences("msg", Context.MODE_PRIVATE).edit();
         editor.putString("json", JSON.toJSONString(msgList));
         editor.apply();
         for (OnMessageListener listener : listeners) {
             if (listener != null)
                 listener.onMessage();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Message message = (Message) o;
+        return Objects.equals(type, message.type) &&
+                Objects.equals(senderId, message.senderId);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(type, senderId);
     }
 
     public interface OnMessageListener {
