@@ -225,7 +225,7 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val grade = dataList[position]
             holder.cjText.text = grade.cj
-            holder.kcmText.text = grade.kcm
+            holder.kcmText.text = grade.kcm+"(学分:"+grade.xf+")"
             holder.pscjText.text = grade.pscj
             holder.qmcjText.text = grade.qmcj
             holder.ddText.text = grade.dd

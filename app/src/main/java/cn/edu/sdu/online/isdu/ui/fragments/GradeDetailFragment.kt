@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 
 import cn.edu.sdu.online.isdu.R
@@ -44,6 +45,7 @@ class GradeDetailFragment : Fragment() {
     private var progressDialog : ProgressDialog? = null
     private var judge : Boolean = false
     private var dialog : AlertDialog ?= null
+    private var layout : RelativeLayout ?= null
     private var tot : Int = 0
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -61,11 +63,13 @@ class GradeDetailFragment : Fragment() {
         textView = v.findViewById(R.id.text_view)
         zjdText = v.findViewById(R.id.jd_text)
         jdLayout = v.findViewById(R.id.jd_layout)
+        layout = v.findViewById(R.id.layout)
         progressDialog = ProgressDialog(context,false)
         progressDialog!!.setMessage("正在查询教学评估完成情况")
         progressDialog!!.setButton(null,null)
 
         progressDialog!!.show()
+        layout!!.visibility = View.GONE
     }
 
     private fun getInfo() {
@@ -77,6 +81,7 @@ class GradeDetailFragment : Fragment() {
                 try {
                     ++tot
                     judge = Grade.judgeEva(FileUtil.getStringFromFile(cachePath))
+
                     if (tot == 2) activity!!.runOnUiThread {
                         checkEducateEvaluate()
                     }
@@ -122,6 +127,7 @@ class GradeDetailFragment : Fragment() {
     private fun checkEducateEvaluate(){
         if (judge) {
             progressDialog!!.dismiss()
+            layout!!.visibility = View.VISIBLE
         }
         else {
             progressDialog!!.dismiss()
@@ -154,7 +160,7 @@ class GradeDetailFragment : Fragment() {
             val grade = dataList[position]
 
             holder.cjText.text = grade.cj
-            holder.kcmText.text = grade.kcm
+            holder.kcmText.text = grade.kcm+"(学分:"+grade.xf+")"
             holder.pscjText.text = grade.pscj
             holder.qmcjText.text = grade.qmcj
             holder.ddText.text = grade.dd

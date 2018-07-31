@@ -29,6 +29,7 @@ public class Grade {
      * pm:排名
      * zrs:总人数
      * dd:等第
+     * xf:学分
      */
 
     private double  jd, xf;
@@ -86,6 +87,10 @@ public class Grade {
     }
 
     public void setKcm(String kcm) { this.kcm = kcm; }
+
+    public double getXf() {
+        return xf;
+    }
 
     public String getPscj() {
         return pscj;
