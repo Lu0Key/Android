@@ -183,6 +183,15 @@ class EditProfileActivity : NormActivity() {
         editStudentNumber!!.text = user.studentNumber
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        // 递归删除缓存文件夹
+        val folder = File(Environment.getExternalStorageDirectory().toString() + "/iSDU/thumb")
+        if (folder.exists() && folder.isDirectory) {
+            folder.deleteOnExit()
+        }
+    }
+
     /**
      * 提交更新
      */

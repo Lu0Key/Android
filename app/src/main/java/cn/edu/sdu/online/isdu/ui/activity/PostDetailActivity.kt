@@ -18,6 +18,7 @@ import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.app.ThreadPool
 import cn.edu.sdu.online.isdu.bean.PostComment
 import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.bean.User
@@ -42,14 +43,14 @@ import com.bumptech.glide.request.RequestOptions
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_post_detail.*
 import kotlinx.android.synthetic.main.edit_area.*
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
+import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
@@ -76,7 +77,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
     private var commentRecyclerView: RecyclerView? = null
     private var commentAdapter: MyAdapter? = null
-    private var postCommentList = ArrayList<PostComment>()
+//    private var postCommentList = ArrayList<PostComment>()
     private var userIdMap: HashMap<String, String> = HashMap()
     private var userNicknameMap: HashMap<String, String> = HashMap()
 
@@ -87,11 +88,11 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var postId = 0
     private var title = ""
     private var time = 0L
-    private var fatherCommentId = -1
+    private var fatherCommentId = -1 // 父评论ID
     private var tag = ""
-    private var commentList = ArrayList<PostComment>()
+    private var commentList = LinkedList<PostComment>()
 
-    private var window: BasePopupWindow? = null
+    private var window: BasePopupWindow? = null // 右上角点击弹出窗口
 
     private val post = Post() // 该浏览页面的帖子实例
 
@@ -162,7 +163,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 editArea!!.visibility = View.GONE
                 operate_bar.visibility = View.VISIBLE
                 hideSoftKeyboard()
-                fatherCommentId = -1
             }
         }
 
@@ -193,7 +193,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             btn_comment.id -> {
                 editArea!!.visibility = View.VISIBLE
                 operate_bar.visibility = View.GONE
+                fatherCommentId = -1 // 评论帖子，将父评论ID设为-1
                 editText!!.requestFocus()
+                editText!!.hint = "评论帖子"
                 showSoftKeyboard()
             }
             btn_send.id -> {
@@ -422,9 +424,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         if (strInt < 1000)
                             des = strInt.toString()
                         else if (strInt < 10000) {
-                            des = "${(Math.floor((strInt / 1000).toDouble())).toString()} 千"
+                            des = "${(Math.floor((strInt / 1000).toDouble()))} 千"
                         } else {
-                            des = "${(Math.floor((strInt / 10000).toDouble())).toString()} 万"
+                            des = "${(Math.floor((strInt / 10000).toDouble()))} 万"
                         }
                         txtLike!!.text = "点赞 $des 次"
 //                        btnLike!!.setImageResource(if (isLike) R.drawable.ic_like_yes else R.drawable.ic_like_no)
@@ -598,6 +600,24 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     }
 
     /**
+     * 获取帖子内容
+     */
+    private fun getCommentContent(id: String): String {
+        val client = OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .build()
+        val formBody = FormBody.Builder().add("id", id).build()
+        val request = Request.Builder()
+                .url(ServerInfo.getComments())
+                .post(formBody)
+                .build()
+        val response = client.newCall(request).execute()
+        return JSONObject(response?.body()?.string()).getJSONObject("obj").getString("content")
+    }
+
+    /**
      * 获取评论
      * 一次性从服务器获取全部评论
      *
@@ -606,7 +626,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
      */
     private fun getComments(index: Int, list: List<String>) {
         if (index < 0) return
-
 
         NetworkAccess.buildRequest(ServerInfo.getComments(), "id", list[index], object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
@@ -695,7 +714,18 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val comment = commentList[position]
 
-            Thread(Runnable {
+            ThreadPool.execute {
+                if (comment.fatherId != -1) {
+                    // 获取父评论的内容
+                    try {
+                        val fatherCommentContent = getCommentContent(comment.fatherId.toString())
+                        runOnUiThread {
+                            holder.txtReply.text = "回复：$fatherCommentContent"
+                        }
+                    } catch (e: Exception) {
+
+                    }
+                }
                 val bmp = FileUtil.getStringFromFile(userIdMap[comment.uid])
                 runOnUiThread {
                     if (bmp != null && bmp != "")
@@ -705,11 +735,11 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                                 .into(holder.circleImageView)
                 }
-            }).start()
+            }
 
             holder.txtNickname.text = FileUtil.getStringFromFile(userNicknameMap[comment.uid])
 
-            holder.txtTime.text = SimpleDateFormat("yyyy-MM-dd HH:mm").format(comment.time)
+            holder.txtTime.text = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA).format(comment.time)
             holder.txtContent.text = comment.content
             if (comment.fatherId != -1) {
                 holder.txtReply.visibility = View.VISIBLE
@@ -723,13 +753,40 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
             holder.itemLayout.setOnClickListener {
                 if (comment.uid == User.staticUser.uid.toString()) {
-                    val dialog = OptionDialog(this@PostDetailActivity, listOf("删除评论"))
+                    val dialog = OptionDialog(this@PostDetailActivity, listOf("删除评论", "回复评论"))
                     dialog.setMessage("选择操作")
                     dialog.setCancelOnTouchOutside(true)
                     dialog.setOnItemSelectListener {itemName ->
                         when (itemName) {
                             "删除评论" -> {
                                 runOnUiThread { deleteComment(comment) }
+                                dialog.dismiss()
+                            }
+                            "回复评论" -> {
+                                runOnUiThread {
+                                    btnComment!!.callOnClick()
+                                    showSoftKeyboard()
+                                    editText!!.hint = "回复：${comment.content}"
+                                    fatherCommentId = comment.id
+                                }
+                                dialog.dismiss()
+                            }
+                        }
+                    }
+                    dialog.show()
+                } else {
+                    val dialog = OptionDialog(this@PostDetailActivity, listOf("回复评论"))
+                    dialog.setMessage("选择操作")
+                    dialog.setCancelOnTouchOutside(true)
+                    dialog.setOnItemSelectListener {itemName ->
+                        when (itemName) {
+                            "回复评论" -> {
+                                runOnUiThread {
+                                    btnComment!!.callOnClick()
+                                    showSoftKeyboard()
+                                    editText!!.hint = "回复：${comment.content}"
+                                    fatherCommentId = comment.id
+                                }
                                 dialog.dismiss()
                             }
                         }

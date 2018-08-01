@@ -197,8 +197,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 
         viewPager!!.setAppBarLayout(appBarLayout)
 
-        appBarLayout!!.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-            if ((verticalOffset == 0) or (Math.abs(verticalOffset) == Math.abs(appBarLayout.totalScrollRange))) {
+        appBarLayout!!.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            if ((verticalOffset == 0) or (Math.abs(verticalOffset) == Math.abs(appBarLayout!!.totalScrollRange))) {
                 viewPager!!.setScroll(true)
             } else {
                 viewPager!!.setScroll(false)
@@ -207,7 +207,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                 miniCircleImageView!!.visibility = View.VISIBLE
             else
                 miniCircleImageView!!.visibility = View.GONE
-        }
+        })
 
         toolBar!!.setOnClickListener { appBarLayout!!.setExpanded(true, true) }
         toolBar!!.setOnLongClickListener {

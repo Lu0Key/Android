@@ -15,6 +15,15 @@ public class PostComment {
         super();
     }
 
+    public PostComment(int id, int fatherId, long time, String uid, String content, int postId) {
+        this.id = id;
+        this.fatherId = fatherId;
+        this.time = time;
+        this.uid = uid;
+        this.content = content;
+        this.postId = postId;
+    }
+
     public int getPostId() {
         return postId;
     }

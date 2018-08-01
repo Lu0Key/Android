@@ -35,7 +35,7 @@ class MessageService : Service() {
                     if (JSONObject(str).getString("status") == "success") {
                         val jsonString = JSONObject(str).getString("obj")
                         val msgList = JSON.parseArray(jsonString, Message::class.java)
-                        Message.msgList.addAll(msgList)
+                        Message.newMsg(msgList)
                         Message.saveMsgList(this)
 
                         // 发送消息通知

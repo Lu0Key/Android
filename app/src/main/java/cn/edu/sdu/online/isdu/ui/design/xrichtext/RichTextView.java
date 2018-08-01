@@ -231,10 +231,21 @@ public class RichTextView extends ScrollView {
         imagePaths.add(imagePath);
         final RelativeLayout imageLayout = createImageLayout();
         final DataImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
+
+        final Bitmap zhanweiBmp = BitmapFactory.decodeResource(activity.getResources(),
+                R.drawable.img_blank_logo);
+        final RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
+                        * zhanweiBmp.getHeight() / zhanweiBmp.getWidth());//固定图片高度，记得设置裁剪剧中
+        layoutParams.bottomMargin = rtImageBottom;
+        imageView.setLayoutParams(layoutParams);
         imageView.setAbsolutePath(imagePath);
 
         //如果是网络图片
         if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+            imageView.setImageBitmap(zhanweiBmp);
+
             NetworkAccess.cache(imagePath, new NetworkAccess.OnCacheFinishListener() {
                 @Override
                 public void onFinish(boolean success, final String cachePath) {
@@ -279,6 +290,8 @@ public class RichTextView extends ScrollView {
                                             .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
 //                                            .error(R.drawable.img_load_fail)
                                             .into(imageView);
+
+                                    zhanweiBmp.recycle();
                                 }
                             });
 
@@ -321,80 +334,7 @@ public class RichTextView extends ScrollView {
                     }
                 }
             });
-            /*
-            if (imagePath.toLowerCase().endsWith(".gif")) {
-                    GlideApp.with(MyApplication.getContext()).asGif().load(imagePath)
-                            .into(new SimpleTarget<GifDrawable>() {
-                                @Override
-                                public void onResourceReady(@NonNull GifDrawable resource, @Nullable Transition<? super GifDrawable> transition) {
-                                    //调整imageView的高度，根据宽度等比获得高度
-                                    int imageHeight; //解决连续加载多张图片导致后续图片都跟第一张高度相同的问题
-                                    if (rtImageHeight > 0) {
-                                        imageHeight = rtImageHeight;
-                                    } else {
-//                                imageHeight = allLayout.getWidth() * resource.getHeight() / resource.getWidth();
-                                        // 修正图片宽高
-                                        imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
-                                                * resource.getIntrinsicHeight() / resource.getIntrinsicWidth();
-                                    }
-                                    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                                            LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
-                                    lp.bottomMargin = rtImageBottom;
-                                    imageView.setLayoutParams(lp);
-
-                                    if (rtImageHeight > 0) {
-                                        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                    } else {
-                                        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                                    }
-
-                                    Glide.with(MyApplication.getContext()).asGif().load(resource)
-                                            .apply(RequestOptions.placeholderOf(R.drawable.img_blank_image))
-                                            .apply(RequestOptions.errorOf(R.drawable.img_load_fail))
-                                            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
-                                            .into(imageView);
-                                }
-                            });
-
-            } else {
-                GlideApp.with(MyApplication.getContext()).asBitmap().load(imagePath).dontAnimate().placeholder(R.drawable.img_blank_image)
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                //调整imageView的高度，根据宽度等比获得高度
-                                int imageHeight ; //解决连续加载多张图片导致后续图片都跟第一张高度相同的问题
-                                if (rtImageHeight > 0) {
-                                    imageHeight = rtImageHeight;
-                                } else {
-//                                imageHeight = allLayout.getWidth() * resource.getHeight() / resource.getWidth();
-                                    // 修正图片宽高
-                                    imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
-                                            * resource.getHeight() / resource.getWidth();
-                                }
-                                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                                        LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
-                                lp.bottomMargin = rtImageBottom;
-                                imageView.setLayoutParams(lp);
-
-                                if (rtImageHeight > 0) {
-                                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                } else {
-                                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                                }
-//                            GlideApp.with(MyApplication.getContext()).load(resource)
-//                                    .placeholder(R.drawable.img_load_fail)
-//                                    .error(R.drawable.img_load_fail)
-//                                    .into(imageView);
-//                                allLayout.addView(imageLayout, index);
-                                imageView.setImageBitmap(resource);
-                                // 不能使用centerCrop，否则图片显示不全
-//							GlideApp.with(getContext()).load(imagePath)
-//									.placeholder(R.drawable.img_load_fail).error(R.drawable.img_load_fail)
-//									.override(Target.SIZE_ORIGINAL, imageHeight).into(imageView);
-                            }
-                        });*/
-            }
-        /*}*/ else { //如果是本地图片
+        } else { //如果是本地图片
 
             // 调整imageView的高度，根据宽度等比获得高度
             Bitmap bmp = BitmapFactory.decodeFile(imagePath);

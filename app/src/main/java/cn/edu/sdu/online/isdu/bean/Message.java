@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,7 +26,7 @@ public class Message {
     private boolean isRead = false;
     private static List<OnMessageListener> listeners = new ArrayList<>();
 
-    public static List<Message> msgList = new ArrayList<>();
+    public static LinkedList<Message> msgList = new LinkedList<>();
 
     public Message() {}
 
@@ -91,7 +92,7 @@ public class Message {
         SharedPreferences sp = context.getSharedPreferences("msg", Context.MODE_PRIVATE);
         String str = sp.getString("json", "[]");
         try {
-            msgList = JSON.parseArray(str, Message.class);
+            msgList.addAll(JSON.parseArray(str, Message.class));
         } catch (Exception e) {
             Logger.log(e);
         }
@@ -112,13 +113,25 @@ public class Message {
         }
     }
 
+    public static void newMsg(List<Message> msgList) {
+        for (Message msg : msgList) {
+            if (Message.msgList.contains(msg)) {
+                Message.msgList.remove(msg);
+            }
+        }
+        for (int i = 0; i < msgList.size(); i++) {
+            Message.msgList.addFirst(msgList.get(i));
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Message message = (Message) o;
         return Objects.equals(type, message.type) &&
-                Objects.equals(senderId, message.senderId);
+                Objects.equals(senderId, message.senderId) &&
+                Objects.equals(content, message.content);
     }
 
     @Override
