@@ -217,6 +217,14 @@
                 app:wideButtonCanSwitch="false"
                 app:wideButtonItemId="about"/>
 
+            <cn.edu.sdu.online.isdu.ui.design.button.WideButton
+                android:id="@+id/btn_license"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:wideButtonItemName="开源库协议"
+                app:wideButtonCanSwitch="false"
+                app:wideButtonItemId="license"/>
+
 
             <TextView
                 android:id="@+id/btn_logout"

@@ -8,10 +8,17 @@ import android.widget.*
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
+import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.button.WideButton
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
+import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.Settings
 import kotlinx.android.synthetic.main.activity_feedback.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import java.io.IOException
 
 /**
  ****************************************************
@@ -49,8 +56,26 @@ class FeedbackActivity : SlideActivity(), View.OnClickListener{
                 val feedback = textFeedback!!.text.toString()
                 val qq = textQQ!!.text.toString()
                 val phone = textPhone!!.text.toString()
-                Toast.makeText(this, "反馈成功",Toast.LENGTH_SHORT).show()
-                finish()
+//                Toast.makeText(this, "反馈成功",Toast.LENGTH_SHORT).show()
+                val keys = listOf("content", "device", "os", "qq", "phone")
+                val values = listOf(feedback, txtDevice!!.text.toString(),
+                        txtSystem!!.text.toString(), qq, phone)
+                NetworkAccess.buildRequest(ServerInfo.getFeedbackUrl(), keys, values,
+                        object : Callback {
+                            override fun onFailure(call: Call?, e: IOException?) {
+                                Logger.log(e)
+                                runOnUiThread {
+                                    Toast.makeText(this@FeedbackActivity, "网络错误",Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
+                            override fun onResponse(call: Call?, response: Response?) {
+                                runOnUiThread {
+                                    Toast.makeText(this@FeedbackActivity, "反馈成功",Toast.LENGTH_SHORT).show()
+                                    finish()
+                                }
+                            }
+                        })
             }
         }
     }

@@ -108,7 +108,8 @@
             android:exported="true" />
 
         <activity android:name=".ui.activity.AboutActivity" />
-        <activity android:name=".ui.activity.ClaimActivity"></activity>
+        <activity android:name=".ui.activity.ClaimActivity" />
+        <activity android:name=".ui.activity.LicenseActivity"></activity>
     </application>
 
 </manifest>

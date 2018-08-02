@@ -204,4 +204,8 @@ public class ServerInfo {
     }
 
     public static final String buildInfo = "http://" + ipAddr + ":8380/isdu/build/config.html";
+
+    public static String getFeedbackUrl() {
+        return "http://" + ipAddr133 + ":8384/addFeedBack";
+    }
 }
