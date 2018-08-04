@@ -98,6 +98,11 @@ class LoginActivity : SlideActivity(), View.OnClickListener {
                         runOnUiThread {
                             Toast.makeText(this@LoginActivity, "学号或密码错误", Toast.LENGTH_SHORT).show()
                         }
+                    } else if (!jsonObj.isNull("status") && jsonObj.getInt("status") == 500) {
+                        // 教务系统崩了，后台返回500
+                        runOnUiThread {
+                            Toast.makeText(this@LoginActivity, "服务器无响应", Toast.LENGTH_SHORT).show()
+                        }
                     } else {
                         // 初始化用户缓存
                         User.staticUser.studentNumber = num
