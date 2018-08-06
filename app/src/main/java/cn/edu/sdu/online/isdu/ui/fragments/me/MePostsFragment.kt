@@ -219,7 +219,7 @@ class MePostsFragment : LazyLoadFragment(), PostViewable {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view =
                     LayoutInflater.from(parent.context).inflate(
-                            R.layout.recommend_item, parent, false)
+                            R.layout.post_item, parent, false)
             return ViewHolder(v = view)
         }
 

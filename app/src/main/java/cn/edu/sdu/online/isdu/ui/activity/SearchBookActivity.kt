@@ -18,7 +18,7 @@ import cn.edu.sdu.online.isdu.bean.Book
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.util.Logger
-import kotlinx.android.synthetic.main.recommend_item.*
+import kotlinx.android.synthetic.main.post_item.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response

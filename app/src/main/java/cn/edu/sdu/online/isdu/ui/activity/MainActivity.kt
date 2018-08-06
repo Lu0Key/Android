@@ -88,13 +88,6 @@ class MainActivity : SlideActivity(), View.OnClickListener {
 
         initApplication()
 
-//        android.support.v7.app.AlertDialog.Builder(this, R.style.DialogTheme)
-//                .setTitle("TITLE")
-//                .setMessage("MESSAGE")
-//                .setPositiveButton("Pos", null)
-//                .setNegativeButton("Neg", null)
-//                .show()
-
         /* 获取实例 */
         magicIndicator = magic_indicator
         mViewPager = view_pager

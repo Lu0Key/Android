@@ -1,38 +1,23 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.interfaces.PostViewable
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
-import cn.edu.sdu.online.isdu.ui.fragments.me.MePostsFragment
-import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.WeakReferences
-import cn.edu.sdu.online.isdu.util.database.DAOHistory
 import cn.edu.sdu.online.isdu.util.history.History
-import com.alibaba.fastjson.JSONObject
 
 
 import kotlinx.android.synthetic.main.activity_history.*
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import java.io.IOException
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 
@@ -121,7 +106,7 @@ class HistoryActivity : SlideActivity(), View.OnClickListener, PostViewable{
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view =
                     LayoutInflater.from(parent.context).inflate(
-                            R.layout.recommend_item, parent, false)
+                            R.layout.post_item, parent, false)
             return ViewHolder(v = view)
         }
 

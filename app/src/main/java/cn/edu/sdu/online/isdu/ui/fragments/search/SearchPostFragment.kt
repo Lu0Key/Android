@@ -165,7 +165,7 @@
 //
 //        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 //            val view = LayoutInflater.from(parent.context)
-//                    .inflate(R.layout.recommend_item, parent, false)
+//                    .inflate(R.layout.post_item, parent, false)
 //            val h = ViewHolder(view)
 //            return h
 //        }
@@ -451,7 +451,7 @@ class SearchPostFragment : LazyLoadFragment(){
     }
     inner class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>(){
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.recommend_item,parent,false)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.post_item,parent,false)
             return ViewHolder(view)
         }
 

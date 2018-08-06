@@ -84,7 +84,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var isLike = false // 是否点赞
     private var showCollectToast = false  // 是否显示已经收藏
 
-    private var uid = ""
     private var postId = 0
     private var fatherCommentId = -1 // 父评论ID
     private var tag = ""
@@ -173,9 +172,10 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             // 未登录
             operate_bar!!.visibility = View.GONE
             btnOptions!!.visibility = View.INVISIBLE
-        } else if (User.staticUser.uid.toString() == uid) {
+        } else if (User.staticUser.uid.toString() == post.uid) {
             // 本用户的帖子
             btnOptions!!.setOnClickListener(this)
+            btnOptions!!.visibility = View.VISIBLE
         } else {
             btnOptions!!.visibility = View.INVISIBLE
         }
@@ -323,8 +323,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 getWindow().attributes = lp
             }
             poster_layout.id -> {
-                if (uid != "") startActivity(Intent(this, MyHomePageActivity::class.java)
-                        .putExtra("id", uid.toInt()))
+                if (post.uid != "") startActivity(Intent(this, MyHomePageActivity::class.java)
+                        .putExtra("id", post.uid.toInt()))
             }
             btn_like.id -> {
                 if (User.staticUser != null &&

@@ -11,17 +11,25 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
+import cn.edu.sdu.online.isdu.app.MyApplication
+import cn.edu.sdu.online.isdu.app.ThreadPool
 import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
+import cn.edu.sdu.online.isdu.ui.adapter.PostItemAdapter
 import cn.edu.sdu.online.isdu.util.DateCalculate
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
+import com.bumptech.glide.Glide
 import com.liaoinstan.springview.widget.SpringView
+import de.hdodenhof.circleimageview.CircleImageView
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
-import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 /**
@@ -37,7 +45,7 @@ import kotlin.collections.ArrayList
 class HomeRecommendFragment : LazyLoadFragment() {
 
     private var recyclerView: RecyclerView? = null
-    private var adapter: MyAdapter? = null
+    private var adapter: PostItemAdapter? = null
 //    private var updateBar: TextView? = null
     private var pullRefreshLayout: SpringView? = null
     private var dataList: MutableList<Post> = ArrayList()
@@ -61,19 +69,14 @@ class HomeRecommendFragment : LazyLoadFragment() {
      */
     private fun initView(view: View) {
         recyclerView = view.findViewById(R.id.recycler_view)
-//        updateBar = view.findViewById(R.id.update_bar)
         pullRefreshLayout = view.findViewById(R.id.pull_refresh_layout)
-//        blankView = view.findViewById(R.id.blank_view)
-
-//        updateBar!!.translationY = -100f
-//        blankView!!.visibility = View.GONE
     }
 
     /**
      * 初始化RecyclerView
      */
     private fun initRecyclerView() {
-        adapter = MyAdapter()
+        adapter = PostItemAdapter(activity!!, dataList)
 
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = adapter
@@ -150,11 +153,40 @@ class HomeRecommendFragment : LazyLoadFragment() {
             }
         }
     }
-
+/*
     inner class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+
+        private val uNicknameMap = HashMap<String, String>()
+        private val uAvatarMap = HashMap<String, String>()
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = dataList[position]
+
+            if (uNicknameMap.containsKey(item.uid)) {
+                holder.txtNickname.text = uNicknameMap[item.uid]
+                Glide.with(MyApplication.getContext())
+                        .load(uAvatarMap[item.uid])
+                        .into(holder.circleImageView)
+            } else {
+                NetworkAccess.cache(ServerInfo.getUserInfo(item.uid, "nickname-avatar")) { success, cachePath ->
+                    if (success) {
+                        try {
+                            val obj = JSONObject(FileUtil.getStringFromFile(cachePath))
+                            uNicknameMap[item.uid] = obj.getString("nickname")
+                            uAvatarMap[item.uid] = obj.getString("avatar")
+
+                            activity!!.runOnUiThread {
+                                holder.txtNickname.text = uNicknameMap[item.uid]
+                                Glide.with(MyApplication.getContext())
+                                        .load(uAvatarMap[item.uid])
+                                        .into(holder.circleImageView)
+                            }
+                        } catch (e: Exception) {}
+
+                    }
+                }
+            }
+
             holder.cardView.setOnClickListener {
                 context!!.startActivity(Intent(context, PostDetailActivity::class.java)
                         .putExtra("id", item.postId)
@@ -167,16 +199,23 @@ class HomeRecommendFragment : LazyLoadFragment() {
             holder.content.text = item.content
             holder.txtLike.text = item.likeNumber.toString()
             holder.releaseTime.text = DateCalculate.getExpressionDate(item.time)
+
+            holder.circleImageView.setOnClickListener {
+                startActivity(Intent(context, MyHomePageActivity::class.java)
+                        .putExtra("id", item.uid.toInt()))
+            }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view =
                     LayoutInflater.from(parent.context).inflate(
-                            R.layout.recommend_item, parent, false)
+                            R.layout.post_item, parent, false)
             return ViewHolder(v = view)
         }
 
-        override fun getItemCount(): Int = dataList?.size ?: 0
+        override fun getItemCount(): Int = dataList.size
+
+        override fun getItemId(position: Int): Long = position.toLong()
 
         inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
             val cardView: FrameLayout = v.findViewById(R.id.card_view)
@@ -187,7 +226,10 @@ class HomeRecommendFragment : LazyLoadFragment() {
             val releaseTime: TextView = v.findViewById(R.id.release_time) // 发布时间
             val content: TextView = v.findViewById(R.id.content)
             val txtLike: TextView = v.findViewById(R.id.like_count)
+            // 新增：用户信息区域
+            val circleImageView: CircleImageView = v.findViewById(R.id.circle_image_view)
+            val txtNickname: TextView = v.findViewById(R.id.txt_nickname)
         }
     }
-
+*/
 }
