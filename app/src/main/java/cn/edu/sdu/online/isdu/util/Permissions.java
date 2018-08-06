@@ -1,8 +1,10 @@
 package cn.edu.sdu.online.isdu.util;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
@@ -23,6 +25,7 @@ public class Permissions {
     public static final String READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE;
     public static final String WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     public static final String REQUEST_INSTALL_PACKAGES = Manifest.permission.REQUEST_INSTALL_PACKAGES;
+    public static final String REQUEST_SYSTEM_ALERT_WINDOW = Manifest.permission.SYSTEM_ALERT_WINDOW;
 
     private static final String[] permissions = new String[] {VIBRATE, INTERNET,
             READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE};

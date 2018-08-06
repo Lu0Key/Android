@@ -86,8 +86,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
     private var uid = ""
     private var postId = 0
-    private var title = ""
-    private var time = 0L
     private var fatherCommentId = -1 // 父评论ID
     private var tag = ""
     private var commentList = LinkedList<PostComment>()
@@ -102,9 +100,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
         postId = intent.getIntExtra("id", 0)
         url = ServerInfo.getPost(postId)
-        uid = intent.getStringExtra("uid") ?: ""
-        title = intent.getStringExtra("title") ?: ""
-        time = intent.getLongExtra("time", 0L)
+//        uid = intent.getStringExtra("uid") ?: ""
+//        title = intent.getStringExtra("title") ?: ""
+//        time = intent.getLongExtra("time", 0L)
         tag = intent.getStringExtra("tag") ?: ""
 
         if (User.staticUser == null) User.staticUser = User.load()
@@ -113,9 +111,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
         //写数据库纪录浏览
         post.postId = postId
-        post.uid = uid
-        post.title = title
-        post.time = time
+//        post.uid = uid
+//        post.title = title
+//        post.time = time
 //        History.newHistory(post)
 
 
@@ -174,6 +172,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         if (User.staticUser.studentNumber == null) {
             // 未登录
             operate_bar!!.visibility = View.GONE
+            btnOptions!!.visibility = View.INVISIBLE
         } else if (User.staticUser.uid.toString() == uid) {
             // 本用户的帖子
             btnOptions!!.setOnClickListener(this)
@@ -447,77 +446,87 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private fun getPostData() {
         NetworkAccess
                 .cache(url) { success, cachePath ->
-            if (success) {
-                    if (FileUtil.getStringFromFile(cachePath) != "") {
-                        val json = JSONObject(FileUtil.getStringFromFile(cachePath))
+                    try {
+                        if (success) {
+                            if (FileUtil.getStringFromFile(cachePath) != "") {
+                                val json = JSONObject(FileUtil.getStringFromFile(cachePath))
 
-                        getUserData(uid)
+                                val data = JSONObject(json.getString("obj"))
+                                val editDataList = ArrayList<RichTextEditor.EditData>()
+                                val content = JSONArray(data.getString("content"))
 
-                        val data = JSONObject(json.getString("obj"))
-                        val editDataList = ArrayList<RichTextEditor.EditData>()
-                        val content = JSONArray(data.getString("content"))
 
-                        getLikeNumber()
+                                post.title = data.getString("title")
+                                post.time = data.getString("time").toLong()
+                                post.uid = data.getString("userId")
 
-                        for (i in 0 until content.length()) {
-                            val obj = content.getJSONObject(i)
-                            val data = RichTextEditor.EditData()
-                            if (obj.getInt("type") == 0) {
-                                data.imageName = obj.getString("content")
-                                if (data.inputStr != "" && (post.content == null || post.content == ""))
-                                    post.content = "[图片]"
-                            } else {
-                                data.inputStr = obj.getString("content")
-                                if (data.inputStr != "" && (post.content == null || post.content == ""))
-                                    post.content = data.inputStr
-                            }
-                            editDataList.add(data)
-                        }
+                                getUserData(post.uid)
 
-                        // 写入浏览记录
-                        History.newHistory(post)
+                                getLikeNumber()
 
-                        runOnUiThread {
-                            txtTitle!!.text = title
-                            txtDate!!.text =
-                                    "发表于 ${SimpleDateFormat("yyyy-MM-dd HH:mm").format(time)}"
+                                for (i in 0 until content.length()) {
+                                    val obj = content.getJSONObject(i)
+                                    val data = RichTextEditor.EditData()
+                                    if (obj.getInt("type") == 0) {
+                                        data.imageName = obj.getString("content")
+                                        if (data.inputStr != "" && (post.content == null || post.content == ""))
+                                            post.content = "[图片]"
+                                    } else {
+                                        data.inputStr = obj.getString("content")
+                                        if (data.inputStr != "" && (post.content == null || post.content == ""))
+                                            post.content = data.inputStr
+                                    }
+                                    editDataList.add(data)
+                                }
+
+                                // 写入浏览记录
+                                History.newHistory(post)
+
+                                runOnUiThread {
+                                    txtTitle!!.text = post.title
+                                    txtDate!!.text =
+                                            "发表于 ${SimpleDateFormat("yyyy-MM-dd HH:mm").format(post.time)}"
 
 //                            txtLike!!.text = likeCount.toString()
 
-                            txtContent!!.setData(editDataList)
+                                    txtContent!!.setData(editDataList)
 
-                            txtContent!!.setOnRtImageClickListener {imagePath ->
-                                if (imagePath.startsWith("http")) {
-                                    // 网络图片
-                                    startActivity(Intent(this@PostDetailActivity, ViewImageActivity::class.java)
-                                            .putExtra("url", imagePath))
-                                } else {
-                                    // 本地图片
+                                    txtContent!!.setOnRtImageClickListener {imagePath ->
+                                        if (imagePath.startsWith("http")) {
+                                            // 网络图片
+                                            startActivity(Intent(this@PostDetailActivity, ViewImageActivity::class.java)
+                                                    .putExtra("url", imagePath))
+                                        } else {
+                                            // 本地图片
+                                        }
+                                    }
+
+                                    val commentStr = data.getString("comment")
+                                    // 获取评论ID串
+                                    val commentList = commentStr.split("-").subList(0, commentStr.split("-").size - 1)
+                                    this.commentList.clear()
+
+                                    // 写入历史浏览
+                                    post.commentsNumbers = commentList.size
+                                    History.newHistory(post)
+
+                                    getComments(commentList.size - 1, commentList) // 获取评论
+
+
+                                    commentLine!!.text = "${commentList.size} 条评论"
+
                                 }
                             }
 
-                            val commentStr = data.getString("comment")
-                            // 获取评论ID串
-                            val commentList = commentStr.split("-").subList(0, commentStr.split("-").size - 1)
-                            this.commentList.clear()
-
-                            // 写入历史浏览
-                            post.commentsNumbers = commentList.size
-                            History.newHistory(post)
-
-                            getComments(commentList.size - 1, commentList) // 获取评论
-
-
-                            commentLine!!.text = "${commentList.size} 条评论"
-
+                        } else {
+                            runOnUiThread {
+                                Toast.makeText(this, "获取内容出错", Toast.LENGTH_SHORT).show()
+                            }
                         }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
 
-            } else {
-                runOnUiThread {
-                    Toast.makeText(this, "获取内容出错", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
     }
 
@@ -752,6 +761,10 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             }
 
             holder.itemLayout.setOnClickListener {
+
+                if (User.staticUser == null) User.staticUser = User.load()
+                if (User.staticUser.studentNumber == null || User.staticUser.studentNumber.equals("")) return@setOnClickListener
+
                 if (comment.uid == User.staticUser.uid.toString()) {
                     val dialog = OptionDialog(this@PostDetailActivity, listOf("删除评论", "回复评论"))
                     dialog.setMessage("选择操作")

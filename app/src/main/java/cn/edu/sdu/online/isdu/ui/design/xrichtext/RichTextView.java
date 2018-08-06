@@ -308,6 +308,7 @@ public class RichTextView extends ScrollView {
                                 imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
                                         * bmp.getHeight() / bmp.getWidth();
                             }
+
                             final RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                                     LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
                             lp.bottomMargin = rtImageBottom;

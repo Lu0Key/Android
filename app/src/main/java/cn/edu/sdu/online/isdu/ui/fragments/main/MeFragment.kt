@@ -306,7 +306,13 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
 
                     if (EnvVariables.currentWeek <= 0)
                         EnvVariables.currentWeek = EnvVariables.calculateWeekIndex(System.currentTimeMillis())
-                    todoList = Schedule.localScheduleList[EnvVariables.currentWeek - 1][EnvVariables.getCurrentDay() - 1]
+                    todoList.addAll(Schedule.localScheduleList[EnvVariables.currentWeek - 1][EnvVariables.getCurrentDay() - 1])
+
+                    // 去掉本周不上的课
+                    for (schedule in todoList) {
+                        if (!schedule.repeatWeeks.contains(EnvVariables.currentWeek))
+                            todoList.remove(schedule)
+                    }
 
                     activity!!.runOnUiThread {
                         if (todoList.isEmpty()) {

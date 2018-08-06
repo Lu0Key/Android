@@ -129,7 +129,8 @@ class MePostsFragment : LazyLoadFragment(), PostViewable {
                                 post.time = obj.getString("time").toLong()
                                 post.content = obj.getString("info")
 
-                                list.add(post)
+                                if (!list.contains(post))
+                                    list.add(post)
                             }
 
                             activity!!.runOnUiThread {

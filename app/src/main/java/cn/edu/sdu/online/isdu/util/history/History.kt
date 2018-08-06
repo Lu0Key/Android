@@ -21,7 +21,7 @@ object History {
             historyList.remove(post)
             historyList.addFirst(post)
         }
-//        save()
+        save()
     }
 
     fun removeHistory(post: Post) {

@@ -2,9 +2,12 @@ package cn.edu.sdu.online.isdu.ui.design.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import cn.edu.sdu.online.isdu.R;
@@ -19,8 +22,9 @@ import cn.edu.sdu.online.isdu.R;
  ****************************************************
  */
 
-public class AlertDialog extends Dialog {
+public class AlertDialog extends AbstractDialog {
 
+    private Context context;
     private TextView txtTitle;
     private TextView txtMessage;
     private TextView btnPositive;
@@ -41,10 +45,12 @@ public class AlertDialog extends Dialog {
 
     public AlertDialog(@NonNull Context context) {
         super(context, R.style.DialogTheme);
+        this.context = context;
     }
 
     public AlertDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
+        this.context = context;
     }
 
     @Override

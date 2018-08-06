@@ -12,7 +12,7 @@ import cn.edu.sdu.online.isdu.R;
 import cn.edu.sdu.online.isdu.bean.Schedule;
 import cn.edu.sdu.online.isdu.util.ScheduleTime;
 
-public class TimeDialog extends Dialog {
+public class TimeDialog extends AbstractDialog {
 
     private Context mContext;
     private TimePicker timePicker;

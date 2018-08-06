@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
 import java.util.Currency;
 
@@ -46,6 +47,7 @@ public class NoScrollViewPager extends ViewPager {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.d("AAA", "onInterceptTouchEvent isScroll=" + isScroll);
         boolean flag = false;
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -86,12 +88,14 @@ public class NoScrollViewPager extends ViewPager {
 //                }
         }
         if (isScroll) {
-//            return super.onInterceptTouchEvent(ev);
-            if (!super.onInterceptTouchEvent(ev)) {
-                if (Math.abs(ev.getRawY() - lastY) < Math.abs(ev.getRawX() - lastX)) {
-                    return true;
-                } else return false;
-            } else return true;
+            return super.onInterceptTouchEvent(ev);
+//            if (!super.onInterceptTouchEvent(ev)) {
+//
+//                if (Math.abs(ev.getRawY() - lastY) < Math.abs(ev.getRawX() - lastX)) {
+//                    return true;
+//                } else return false;
+//
+//            } else return true;
         } else {
             return false;
         }
@@ -99,11 +103,24 @@ public class NoScrollViewPager extends ViewPager {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        Log.d("AAA", "onTouchEvent,isScroll=" + isScroll);
         if (isScroll) {
             return super.onTouchEvent(ev);
         } else {
             return true;
         }
+    }
+
+    @Override
+    public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
+        Log.d("AAA", "dispatchNestedFling");
+        return super.dispatchNestedFling(velocityX, velocityY, consumed);
+    }
+
+    @Override
+    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
+        Log.d("AAA", "onNestedFling");
+        return super.onNestedFling(target, velocityX, velocityY, consumed);
     }
 
     public void setScroll(boolean scroll) {

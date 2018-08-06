@@ -84,9 +84,16 @@ class MainActivity : SlideActivity(), View.OnClickListener {
         Permissions.requestPermission(this, Permissions.VIBRATE)
         Permissions.requestPermission(this, Permissions.INTERNET)
         Permissions.requestPermission(this, Permissions.REQUEST_INSTALL_PACKAGES)
+        Permissions.requestPermission(this, Permissions.REQUEST_SYSTEM_ALERT_WINDOW)
 
         initApplication()
 
+//        android.support.v7.app.AlertDialog.Builder(this, R.style.DialogTheme)
+//                .setTitle("TITLE")
+//                .setMessage("MESSAGE")
+//                .setPositiveButton("Pos", null)
+//                .setNegativeButton("Neg", null)
+//                .show()
 
         /* 获取实例 */
         magicIndicator = magic_indicator

@@ -482,7 +482,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
-        if (savedInstanceState?.getString("id") != null) {
+        if (savedInstanceState?.getInt("id") != null) {
             id = savedInstanceState.getInt("id")
         }
     }

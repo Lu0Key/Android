@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 
 import cn.edu.sdu.online.isdu.R
+import com.bumptech.glide.Glide
 
 private const val ARG_PARAM_IMG_SRC = "src"
 
@@ -29,7 +30,10 @@ class ImageFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_image, container, false)
         imageView = view.findViewById(R.id.image_view)
-        imageView!!.setImageResource(param1 ?: 0)
+        Glide.with(context!!)
+                .load(param1 ?: 0)
+                .into(imageView!!)
+//        imageView!!.setImageResource(param1 ?: 0)
         return view
     }
 
@@ -41,7 +45,6 @@ class ImageFragment : Fragment() {
          * @param param1 Parameter 1.
          * @return A new instance of fragment ImageFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: Int) =
                 ImageFragment().apply {

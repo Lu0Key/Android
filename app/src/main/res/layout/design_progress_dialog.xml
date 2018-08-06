@@ -2,27 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/blank_view"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#44000000"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#00000000"
     android:clickable="true"
     android:focusable="true">
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
+    <!--<View-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="1" />-->
 
 
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_weight="8"
-        android:layout_height="match_parent"
-        android:descendantFocusability="blocksDescendants">
+    <!--<RelativeLayout-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_weight="8"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:descendantFocusability="blocksDescendants">-->
 
         <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_centerInParent="true"
@@ -56,6 +56,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:text="正在加载..."
+                        android:layout_marginEnd="24dp"
                         android:textColor="@color/colorPrimaryText"/>
                 </LinearLayout>
 
@@ -88,12 +89,12 @@
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
-    </RelativeLayout>
+    <!--</RelativeLayout>-->
 
 
-    <View
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content" />
+    <!--<View-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:layout_height="wrap_content" />-->
 
 </LinearLayout>

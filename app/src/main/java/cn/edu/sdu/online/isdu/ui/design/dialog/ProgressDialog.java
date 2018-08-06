@@ -2,10 +2,12 @@ package cn.edu.sdu.online.isdu.ui.design.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -21,10 +23,11 @@ import cn.edu.sdu.online.isdu.R;
  ****************************************************
  */
 
-public class ProgressDialog extends Dialog {
+public class ProgressDialog extends AbstractDialog {
 
     private int progress = 0;
     private String message;
+    private Context context;
 
     private ProgressBar progressBar;
     private TextView btn;
@@ -39,6 +42,7 @@ public class ProgressDialog extends Dialog {
 
     public ProgressDialog(Context context, boolean isProgress) {
         super(context, R.style.DialogTheme);
+        this.context = context;
         this.isProgress = isProgress;
     }
 
@@ -91,4 +95,5 @@ public class ProgressDialog extends Dialog {
 
         if (txtMsg != null) txtMsg.setText(message);
     }
+
 }

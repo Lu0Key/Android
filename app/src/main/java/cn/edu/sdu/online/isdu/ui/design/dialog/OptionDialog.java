@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.DividerItemDecoration;
@@ -13,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import java.util.List;
@@ -30,7 +32,7 @@ import cn.edu.sdu.online.isdu.ui.design.ScheduleTable;
  ****************************************************
  */
 
-public class OptionDialog extends Dialog {
+public class OptionDialog extends AbstractDialog {
 
     private RecyclerView recyclerView;
     private TextView txtMsg;
@@ -156,6 +158,7 @@ public class OptionDialog extends Dialog {
         }
 
     }
+
 
     public void setOnItemSelectListener(OnItemSelectListener onItemSelectListener) {
         this.onItemSelectListener = onItemSelectListener;

@@ -18,7 +18,7 @@ import java.util.List;
 
 import cn.edu.sdu.online.isdu.R;
 
-public class WeekDialog extends Dialog {
+public class WeekDialog extends AbstractDialog {
     private Context mContext;
     private int startWeek;
     private int endWeek;
