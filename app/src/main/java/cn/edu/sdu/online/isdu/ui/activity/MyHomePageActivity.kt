@@ -32,6 +32,7 @@ import cn.edu.sdu.online.isdu.util.Logger
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.qmuiteam.qmui.util.QMUIStatusBarHelper
 import de.hdodenhof.circleimageview.CircleImageView
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_my_home_page.*
@@ -89,6 +90,9 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        QMUIStatusBarHelper.translucent(this)
+
         setContentView(R.layout.activity_my_home_page)
 
         id = intent.getIntExtra("id", User.load().uid)

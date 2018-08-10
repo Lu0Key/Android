@@ -32,7 +32,6 @@
                 android:fitsSystemWindows="true">
 
 
-
                 <!--背景图片-->
                 <ImageView
                     android:id="@+id/background_image"

@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
+
 import cn.edu.sdu.online.isdu.R;
 import cn.edu.sdu.online.isdu.util.Logger;
 
@@ -32,7 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        QMUIStatusBarHelper.setStatusBarDarkMode(this);
 
         Thread.setDefaultUncaughtExceptionHandler(this);
         prepareBroadcastReceiver();

@@ -18,8 +18,11 @@ import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
 import cn.edu.sdu.online.isdu.util.DateCalculate
 import cn.edu.sdu.online.isdu.util.FileUtil
+import cn.edu.sdu.online.isdu.util.ImageManager
+import cn.edu.sdu.online.isdu.util.PixelUtil
 import cn.edu.sdu.online.isdu.util.download.Download.activity
 import com.bumptech.glide.Glide
+import com.qmuiteam.qmui.layout.QMUIFrameLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import org.json.JSONObject
 
@@ -82,6 +85,9 @@ class PostItemAdapter(activity: Activity, dataList: List<Post>) :
         val view =
                 LayoutInflater.from(parent.context).inflate(
                         R.layout.post_item, parent, false)
+        view.findViewById<QMUIFrameLayout>(R.id.card_view).setRadiusAndShadow(
+                PixelUtil.dp2px(MyApplication.getContext(), 16),
+                PixelUtil.dp2px(MyApplication.getContext(), 12), 0.15f)
         return ViewHolder(v = view)
     }
 
