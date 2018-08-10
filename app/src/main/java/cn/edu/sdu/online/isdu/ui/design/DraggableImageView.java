@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
@@ -157,8 +158,8 @@ public class DraggableImageView extends ImageView {
                 curScale = mWidth / mImageWidth;
                 mHeight = curScale * mHeight;
                 dragMaxScale = 2 / curScale;
-                dragMinScale = 0.5f / curScale;
-        }
+                dragMinScale = 1f;
+            }
             if (mHeight > mScreenHeight) {
                 if (mWidth < mScreenWidth) {
                     mWidth = mScreenWidth;
@@ -166,7 +167,7 @@ public class DraggableImageView extends ImageView {
 
                     mHeight = curScale * mHeight;
                     dragMaxScale = 2 / curScale;
-                    dragMinScale = 0.5f / curScale;
+                    dragMinScale = 1f;
                 }
             }
 
@@ -198,7 +199,7 @@ public class DraggableImageView extends ImageView {
                 if (touchEventCountThread.touchCount == 0) {
                     postDelayed(touchEventCountThread, 300);
                     touchEventCountThread.flag = true;
-                } else if (touchEventCountThread.touchCount > 2) {
+                } else if (touchEventCountThread.touchCount >= 2) {
                     touchEventCountThread.touchCount = 0;
                     touchEventCountThread.pointFS.clear();
                     touchEventCountThread.flag = true;

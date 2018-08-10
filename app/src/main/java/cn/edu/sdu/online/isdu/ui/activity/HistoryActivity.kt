@@ -13,6 +13,7 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.interfaces.PostViewable
+import cn.edu.sdu.online.isdu.ui.adapter.PostItemAdapter
 import cn.edu.sdu.online.isdu.util.WeakReferences
 import cn.edu.sdu.online.isdu.util.history.History
 
@@ -24,7 +25,7 @@ import java.text.SimpleDateFormat
 
 class HistoryActivity : SlideActivity(), View.OnClickListener, PostViewable{
 
-    private var mAdapter: MyAdapter? = null
+    private var mAdapter: PostItemAdapter? = null
     private var recyclerView: RecyclerView? = null
     private var btnBack: ImageView? = null
     private var btnClear:TextView? = null
@@ -75,53 +76,8 @@ class HistoryActivity : SlideActivity(), View.OnClickListener, PostViewable{
     }
     private fun initRecyclerView() {
         recyclerView!!.layoutManager = LinearLayoutManager(this)
-        mAdapter = MyAdapter()
+        mAdapter = PostItemAdapter(this, History.historyList)
         recyclerView!!.adapter = mAdapter
-    }
-
-    inner class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = History.historyList[position]
-            holder.cardView.setOnClickListener {
-                WeakReferences.postViewableWeakReference = WeakReference(this@HistoryActivity)
-                startActivity(Intent(this@HistoryActivity, PostDetailActivity::class.java)
-                        .putExtra("id", item.postId)
-                        .putExtra("uid", item.uid)
-                        .putExtra("title", item.title)
-                        .putExtra("time", item.time)
-                        .putExtra("tag", TAG))
-            }
-            holder.titleView.text = item.title
-            holder.commentNumber.text = item.commentsNumbers.toString()
-            holder.content.text = item.content
-            holder.txtLike.text = item.likeNumber.toString()
-            holder.releaseTime.text = if (System.currentTimeMillis() - item.time < 60 * 1000)
-                "刚刚" else (if (System.currentTimeMillis() - item.time < 24 * 60 * 60 * 1000)
-                "${(System.currentTimeMillis() - item.time) / (60 * 60 * 1000)} 小时前" else (
-                    if (System.currentTimeMillis() - item.time < 48 * 60 * 60 * 1000) "昨天 ${SimpleDateFormat("HH:mm").format(item.time)}"
-                    else SimpleDateFormat("yyyy-MM-dd HH:mm").format(item.time)))
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view =
-                    LayoutInflater.from(parent.context).inflate(
-                            R.layout.post_item, parent, false)
-            return ViewHolder(v = view)
-        }
-
-        override fun getItemCount(): Int = History.historyList.size
-
-        inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-            val cardView: FrameLayout = v.findViewById(R.id.card_view)
-            val titleView: TextView = v.findViewById(R.id.title_view) // 标题
-            //            val contentLayout: LinearLayout = v.findViewById(R.id.content_layout) // 内容Layout
-//            val userName: TextView = v.findViewById(R.id.user_name) // 用户名
-            val commentNumber: TextView = v.findViewById(R.id.comments_number) // 评论数
-            val releaseTime: TextView = v.findViewById(R.id.release_time) // 发布时间
-            val content: TextView = v.findViewById(R.id.content)
-            val txtLike: TextView = v.findViewById(R.id.like_count)
-        }
     }
 
     companion object {

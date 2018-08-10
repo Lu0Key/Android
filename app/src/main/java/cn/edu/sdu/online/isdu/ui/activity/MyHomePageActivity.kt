@@ -10,11 +10,13 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.BaseActivity
+import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.app.ThreadPool
 import cn.edu.sdu.online.isdu.bean.User
@@ -90,16 +92,12 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         setContentView(R.layout.activity_my_home_page)
 
         id = intent.getIntExtra("id", User.load().uid)
-        user = User.load(id)
 
         initView()
         initFragments()
         initIndicator()
 
-        if (id != User.load().uid) setGuestView()
-
         loadUserInfo()
-        getUserLikes()
 
     }
 
@@ -281,6 +279,12 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun loadUserInfo() {
+        user = User.load(id)
+        if (id != User.load().uid) {
+            setGuestView()
+        } else {
+            setNotGuestView()
+        }
         NetworkAccess.cache(ServerInfo.getUserInfo(id.toString() + "", "id-nickname-sign-studentnumber-gender-avatar")) {
             success, cachePath ->
             if (success) {
@@ -329,6 +333,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 
             }
         }
+
+        getUserLikes()
     }
 
     /**
@@ -394,9 +400,32 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         myFollower!!.text="TA关注的人"
     }
 
+    private fun setNotGuestView() {
+        btnEditProfile!!.visibility = View.VISIBLE
+        btnFollow!!.visibility = View.GONE
+        followMe!!.text="关注我的人"
+        myFollower!!.text="我关注的人"
+    }
+
     override fun onResume() {
         super.onResume()
         loadUserInfo()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (id != intent!!.getIntExtra("id", User.load().uid)) {
+            id = intent.getIntExtra("id", User.load().uid)
+            loadUserInfo()
+
+            // 更新帖子和评论
+            (mFragments[0] as MePostsFragment).setUid(id)
+            (mFragments[1] as MeCommentFragment).setUid(id)
+            (mFragments[0] as MePostsFragment).removeAllItems()
+            (mFragments[1] as MeCommentFragment).removeAllItems()
+            (mFragments[0] as LazyLoadFragment).loadData()
+            (mFragments[1] as LazyLoadFragment).loadData()
+        }
     }
 
     private fun fillBackgroundImage(bmp: String?) {

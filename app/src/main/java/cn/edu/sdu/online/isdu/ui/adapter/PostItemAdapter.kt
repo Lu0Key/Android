@@ -47,7 +47,7 @@ class PostItemAdapter(activity: Activity, dataList: List<Post>) :
                         uNicknameMap[item.uid] = obj.getString("nickname")
                         uAvatarMap[item.uid] = obj.getString("avatar")
 
-                        activity!!.runOnUiThread {
+                        activity.runOnUiThread {
                             holder.txtNickname.text = uNicknameMap[item.uid]
                             Glide.with(MyApplication.getContext())
                                     .load(uAvatarMap[item.uid])
@@ -61,10 +61,10 @@ class PostItemAdapter(activity: Activity, dataList: List<Post>) :
 
         holder.cardView.setOnClickListener {
             activity.startActivity(Intent(activity, PostDetailActivity::class.java)
-                    .putExtra("id", item.postId)
-                    .putExtra("uid", item.uid)
-                    .putExtra("title", item.title)
-                    .putExtra("time", item.time))
+                    .putExtra("id", item.postId))
+//                    .putExtra("uid", item.uid)
+//                    .putExtra("title", item.title)
+//                    .putExtra("time", item.time))
         }
         holder.titleView.text = item.title
         holder.commentNumber.text = item.commentsNumbers.toString()

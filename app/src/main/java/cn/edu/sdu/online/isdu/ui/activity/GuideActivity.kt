@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
+import android.view.View
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.ui.fragments.GuideFinishFragment
@@ -39,7 +40,7 @@ class GuideActivity : BaseActivity() {
 
         // Initialize Fragments
         for (i in 0 until mImageResources.size) {
-            mFragments.add(ImageFragment.newInstance(mImageResources[i]))
+            mFragments.add(ImageFragment.newInstance(mImageResources[i], i))
         }
         mFragments.add(GuideFinishFragment())
 
@@ -55,6 +56,24 @@ class GuideActivity : BaseActivity() {
             mViewPager!!.currentItem = index
         }
 
+
+        mViewPager!!.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(p0: Int) {
+
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+            }
+
+            override fun onPageSelected(position: Int) {
+                if (position >= GUIDE_PAGES_COUNT - 1) {
+                    magicIndicator!!.visibility = View.INVISIBLE
+                } else {
+                    magicIndicator!!.visibility = View.VISIBLE
+                }
+            }
+        })
         magicIndicator!!.navigator = navigator
         ViewPagerHelper.bind(magicIndicator, mViewPager)
     }
@@ -75,5 +94,9 @@ class GuideActivity : BaseActivity() {
     }
 
     override fun unRegBroadcastReceiver() {
+    }
+
+    companion object {
+        const val GUIDE_PAGES_COUNT = 4
     }
 }

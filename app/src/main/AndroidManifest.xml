@@ -35,7 +35,7 @@
         <activity android:name=".ui.activity.EditProfileActivity" />
         <activity
             android:name=".ui.activity.MyHomePageActivity"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTask" />
         <activity android:name=".ui.activity.ScheduleActivity" />
 
         <!-- UCrop Activity -->
@@ -68,7 +68,8 @@
         <activity android:name=".ui.activity.SchoolBusTableActivity" />
         <activity android:name=".ui.activity.FeedbackActivity" />
         <activity android:name=".ui.activity.HistoryActivity" />
-        <activity android:name=".ui.activity.ViewImageActivity" />
+        <activity android:name=".ui.activity.ViewImageActivity"
+            android:launchMode="singleTask"/>
         <activity android:name=".ui.activity.SearchActivity" />
         <activity android:name=".ui.activity.SearchBookActivity" />
         <activity android:name=".ui.activity.MessageActivity"
@@ -77,7 +78,7 @@
         <activity android:name=".ui.activity.BindLibraryActivity" />
         <activity
             android:name=".ui.activity.DownloadActivity"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleTask" />
 
         <receiver android:name=".util.broadcast.DownloadBroadcastReceiver">
             <intent-filter>
@@ -92,15 +93,8 @@
         <activity android:name=".ui.activity.StudyRoomTableActivity" />
         <activity android:name=".ui.activity.CollectActivity" />
         <activity android:name=".ui.activity.NotFindPostActivity" />
-        <activity android:name=".ui.activity.PostDetailActivity">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+        <activity android:name=".ui.activity.PostDetailActivity"
+            android:launchMode="singleTask"/>
         <activity android:name=".ui.activity.LikeMeActivity" />
         <activity android:name=".ui.activity.MyLikeActivity" />
         <activity

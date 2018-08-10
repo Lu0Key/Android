@@ -99,6 +99,11 @@ class MeCommentFragment : LazyLoadFragment(), PostViewable {
         recyclerView!!.adapter = adapter
     }
 
+    public fun removeAllItems() {
+        dataList.clear()
+        adapter?.notifyDataSetChanged()
+    }
+
     override fun loadData() {
         NetworkAccess.buildRequest(ServerInfo.getMyComment10(uid.toString(),
                 if (dataList.size > 0) dataList[dataList.size - 1].postId - 1 else 0),

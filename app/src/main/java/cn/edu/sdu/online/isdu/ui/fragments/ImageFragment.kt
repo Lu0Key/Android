@@ -10,18 +10,22 @@ import android.view.ViewGroup
 import android.widget.ImageView
 
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.ui.activity.GuideActivity
 import com.bumptech.glide.Glide
 
 private const val ARG_PARAM_IMG_SRC = "src"
+private const val ARG_PARAM_INDEX = "index"
 
 class ImageFragment : Fragment() {
     private var param1: Int? = null
     private var imageView: ImageView? = null
+    private var index: Int? = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getInt(ARG_PARAM_IMG_SRC)
+            index = it.getInt(ARG_PARAM_INDEX)
         }
     }
 
@@ -33,6 +37,7 @@ class ImageFragment : Fragment() {
         Glide.with(context!!)
                 .load(param1 ?: 0)
                 .into(imageView!!)
+
 //        imageView!!.setImageResource(param1 ?: 0)
         return view
     }
@@ -46,10 +51,11 @@ class ImageFragment : Fragment() {
          * @return A new instance of fragment ImageFragment.
          */
         @JvmStatic
-        fun newInstance(param1: Int) =
+        fun newInstance(param1: Int, param2: Int) =
                 ImageFragment().apply {
                     arguments = Bundle().apply {
                         putInt(ARG_PARAM_IMG_SRC, param1)
+                        putInt(ARG_PARAM_INDEX, param2)
                     }
                 }
     }

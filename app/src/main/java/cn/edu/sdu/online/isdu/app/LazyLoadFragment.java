@@ -48,7 +48,7 @@ public abstract class LazyLoadFragment extends Fragment {
      *
      * 在数据加载完成之后需要手动调用{@link #publishData()}方法
      */
-    protected void loadData() {}
+    public void loadData() {}
 
     /**
      * 刷新已经加载完成的数据

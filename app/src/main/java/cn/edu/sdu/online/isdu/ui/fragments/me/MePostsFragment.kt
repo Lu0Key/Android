@@ -144,6 +144,11 @@ class MePostsFragment : LazyLoadFragment(), PostViewable {
                 })
     }
 
+    public fun removeAllItems() {
+        dataList.clear()
+        adapter?.notifyDataSetChanged()
+    }
+
     /**
      * 下拉刷新发布最新帖子信息
      */

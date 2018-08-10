@@ -3,6 +3,7 @@ package cn.edu.sdu.online.isdu.util.history
 import android.content.Context
 import android.util.Log
 import cn.edu.sdu.online.isdu.app.MyApplication
+import cn.edu.sdu.online.isdu.app.ThreadPool
 import cn.edu.sdu.online.isdu.bean.Post
 import com.alibaba.fastjson.JSON
 import java.util.*
@@ -41,9 +42,13 @@ object History {
     }
 
     private fun save() {
-        val editor = MyApplication.getContext().getSharedPreferences("history", Context.MODE_PRIVATE).edit()
-        editor.putString("json", JSON.toJSONString(historyList))
-        editor.apply()
+        ThreadPool.execute {
+            synchronized(historyList) {
+                val editor = MyApplication.getContext().getSharedPreferences("history", Context.MODE_PRIVATE).edit()
+                editor.putString("json", JSON.toJSONString(historyList))
+                editor.apply()
+            }
+        }
     }
 
     private fun load() {
