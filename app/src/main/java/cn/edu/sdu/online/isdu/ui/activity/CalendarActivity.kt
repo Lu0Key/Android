@@ -1,6 +1,7 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
@@ -39,9 +40,10 @@ class CalendarActivity : SlideActivity(), View.OnClickListener {
             }
         }
 
-//        Glide.with(this)
-//                .load(ServerInfo.calanderUrl)
-//                .into(imageView!!)
+        imageView!!.setOnClickListener {
+            startActivity(Intent(this@CalendarActivity, ViewImageActivity::class.java)
+                    .putExtra("url", ServerInfo.calanderUrl))
+        }
     }
 
     override fun onClick(v: View?) {

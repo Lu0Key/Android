@@ -47,7 +47,6 @@ public class NoScrollViewPager extends ViewPager {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Log.d("AAA", "onInterceptTouchEvent isScroll=" + isScroll);
         boolean flag = false;
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:

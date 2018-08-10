@@ -169,17 +169,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
         }
 
-        if (User.staticUser.studentNumber == null) {
-            // 未登录
-            operate_bar!!.visibility = View.GONE
-            btnOptions!!.visibility = View.INVISIBLE
-        } else if (User.staticUser.uid.toString() == post.uid) {
-            // 本用户的帖子
-            btnOptions!!.setOnClickListener(this)
-            btnOptions!!.visibility = View.VISIBLE
-        } else {
-            btnOptions!!.visibility = View.INVISIBLE
-        }
+
     }
 
     override fun onBackPressed() {
@@ -239,13 +229,13 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                     }
 
                     override fun initEvent() {
-                        getContentView().findViewById<View>(R.id.btn_delete).setOnClickListener {
+                        getContentView().findViewById<View>(R.id.btn_delete).setOnClickListener { _ ->
                             popupWindow.dismiss()
                             editArea!!.clearFocus()
                             val dialog = AlertDialog(this@PostDetailActivity)
                             dialog.setTitle("删除帖子")
                             dialog.setMessage("确定要删除帖子吗？该操作不可逆")
-                            dialog.setPositiveButton("删除") {
+                            dialog.setPositiveButton("删除") {_ ->
                                 val dialog1 = ProgressDialog(this@PostDetailActivity, false)
                                 dialog1.setMessage("正在删除")
                                 dialog1.setButton(null, null)
@@ -486,6 +476,21 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                 History.newHistory(post)
 
                                 runOnUiThread {
+
+                                    if (User.staticUser.studentNumber == null) {
+                                        // 未登录
+                                        operate_bar!!.visibility = View.GONE
+                                        btnOptions!!.visibility = View.INVISIBLE
+                                    } else if (User.staticUser.uid.toString() == post.uid) {
+                                        // 本用户的帖子
+                                        operate_bar!!.visibility = View.VISIBLE
+                                        btnOptions!!.setOnClickListener(this)
+                                        btnOptions!!.visibility = View.VISIBLE
+                                    } else {
+                                        btnOptions!!.visibility = View.INVISIBLE
+                                        operate_bar!!.visibility = View.VISIBLE
+                                    }
+
                                     txtTitle!!.text = post.title
                                     txtDate!!.text =
                                             "发表于 ${SimpleDateFormat("yyyy-MM-dd HH:mm").format(post.time)}"
@@ -517,6 +522,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
 
                                     commentLine!!.text = "${commentList.size} 条评论"
+
+                                    // 挪开空白View
+                                    blank_view.visibility = View.GONE
 
                                 }
                             }

@@ -6,12 +6,12 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
 public class ChildViewPager extends ViewPager {
 
     public ChildViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setLayerType(LAYER_TYPE_SOFTWARE, null);
     }
 
     private float mLastMotionX;
@@ -19,7 +19,6 @@ public class ChildViewPager extends ViewPager {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         final float x = ev.getX();
-
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 getParent().requestDisallowInterceptTouchEvent(true);
@@ -53,7 +52,6 @@ public class ChildViewPager extends ViewPager {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-
         return super.onInterceptTouchEvent(ev);
     }
 

@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 public class FatherViewPager extends ViewPager {
@@ -22,5 +24,19 @@ public class FatherViewPager extends ViewPager {
             return true;
         }
         return super.canScroll(v, checkV, dx, x, y);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        Log.d("Jzz", "FatherViewPager->dispatchTouchEvent ev=" + ev.getAction());
+        if (ev.getAction() == 3) return false;
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.d("Jzz", "FatherViewPager->onInterceptTouchEvent ev=" + ev.getAction());
+        if (ev.getAction() == 3) return false;
+        return super.onInterceptTouchEvent(ev);
     }
 }

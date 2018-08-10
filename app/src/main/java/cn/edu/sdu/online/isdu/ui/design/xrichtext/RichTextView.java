@@ -327,8 +327,9 @@ public class RichTextView extends ScrollView {
                                             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                                         }
                                         GlideApp.with(MyApplication.getContext()).load(bmp)
-                                                .placeholder(R.drawable.img_blank_image)
-                                                .error(R.drawable.img_load_fail)
+                                                .apply(RequestOptions.placeholderOf(R.drawable.img_blank_image))
+                                                .apply(RequestOptions.errorOf(R.drawable.img_load_fail))
+                                                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
                                                 .thumbnail(0.5f)
                                                 .into(imageView);
                                     }

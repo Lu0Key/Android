@@ -225,6 +225,7 @@ import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
+import cn.edu.sdu.online.isdu.ui.adapter.PostItemAdapter
 import cn.edu.sdu.online.isdu.util.Logger
 import okhttp3.Call
 import okhttp3.Callback
@@ -236,26 +237,6 @@ import java.text.SimpleDateFormat
 
 class SearchPostFragment : LazyLoadFragment(){
     private var recyclerView: RecyclerView? = null
-//    private var search : String? = null
-//    private var isLoading = false
-//    private var isLoadComplete = false
-//
-//
-//    private var lastSearchString = ""
-//    private var searchCall: Call? = null
-//    //private var isLoadComplete = false
-//
-//    fun setSearch(search: String?){
-//        this.search = search
-//        if(userVisibleHint && (isLoadComplete || search != lastSearchString)){
-//            if (searchCall != null && !searchCall!!.isCanceled) searchCall!!.cancel()
-//            isLoadComplete = false
-//
-//            lastSearchString = search!!
-//            loadData()
-//        }
-//    }
-//=======
     private var loadingLayout: View? = null
     private var blankView: View? = null
     private var dataList =ArrayList<Post>()
@@ -263,7 +244,7 @@ class SearchPostFragment : LazyLoadFragment(){
     private var isLoadComplete = false
     private var isLoading = false
 
-    private var adapter: MyAdapter ?= null
+    private var adapter: PostItemAdapter ?= null
     private var lastSearchString = ""
     private var searchCall: Call? =null
 
@@ -279,79 +260,9 @@ class SearchPostFragment : LazyLoadFragment(){
         loadingLayout = view.findViewById(R.id.loading_layout)
         blankView = view.findViewById(R.id.blank_view)
     }
-//<<<<<<< HEAD
-//
-//    override fun isLoadComplete(): Boolean = isLoadComplete && lastSearchString == search
-//
-//    override fun loadData() {
-//        super.loadData()
-//        if(search != null){
-//            isLoading = true
-////            onLoading()
-//            var url = ServerInfo.queryPost(search)
-//            searchCall = NetworkAccess.buildRequest(url, object : Callback {
-//                override fun onFailure(call: Call?, e: IOException?) {
-//                    activity!!.runOnUiThread {
-//                        Logger.log(e)
-//                        Toast.makeText(context, "网络错误", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//                override fun onResponse(call: Call?, response: Response?) {
-//                    val json = response?.body()?.string()
-//                    try {
-//                        Thread(Runnable {
-//                            synchronized(dataList) {
-//                                dataList.clear()
-//
-//                                    val jsonArray = JSONArray(JSONObject(json).getString("obj"))
-//                                    for (k in 0 until jsonArray.length()) {
-//                                        val obj = jsonArray.getJSONObject(k)
-//                                        val item = Post()
-//                                        item.postId = obj.getInt("id")
-//                                        item.uid = obj.getString("uid")
-//                                        item.time = obj.getString("time").toLong()
-//                                        item.title = obj.getString("title")
-//                                        item.content = obj.getString("info")
-//                                        item.likeNumber = obj.getInt("likeNumber")
-//                                        item.commentsNumbers = obj.getInt("commentNumber")
-////                                        item.isLiked = myLikeList.contains(item.uid.toString())
-//                                        dataList.add(item)
-//                                    }
-//                                    activity!!.runOnUiThread {
-//                                        isLoadComplete = true
-//                                        publishData()
-//                                    }
-//
-//                            }
-//                        }).start()
-//
-//                    } catch (e: Exception) {
-//                        Logger.log(e)
-//                        activity!!.runOnUiThread {
-//                            Toast.makeText(context, "网络错误\n服务器无响应", Toast.LENGTH_SHORT).show()
-//                        }
-//                    }
-//                    activity!!.runOnUiThread {
-//                        isLoadComplete = true
-//                        publishData()
-//                    }
-//                }
-//            })
-//        }
-//    }
-//
-//    override fun publishData() {
-//        if(adapter != null){
-//            adapter!!.notifyDataSetChanged()
-//        }
-//    }
-//    private fun initRecyclerView() {
-//        recyclerView!!.layoutManager = LinearLayoutManager(context)
-//        adapter = MyAdapter(dataList)
-//        recyclerView!!.adapter = adapter
-//=======
+
     private fun initRecyclerView(){
-        adapter = MyAdapter()
+        adapter = PostItemAdapter(activity!!, dataList)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = adapter
     }
@@ -432,7 +343,6 @@ class SearchPostFragment : LazyLoadFragment(){
 
     override fun publishData() {
         super.publishData()
-        Log.w("spf",dataList.size.toString())
         if(dataList.size != 0){
             recyclerView!!.visibility = View.VISIBLE
             blankView!!.visibility = View.GONE
@@ -444,78 +354,11 @@ class SearchPostFragment : LazyLoadFragment(){
         }
         adapter?.notifyDataSetChanged()
     }
+
     fun onLoading(){
         recyclerView!!.visibility = View.GONE
         blankView!!.visibility = View.GONE
         loadingLayout!!.visibility = View.VISIBLE
     }
-    inner class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>(){
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.post_item,parent,false)
-            return ViewHolder(view)
-        }
 
-        override fun getItemCount(): Int = dataList.size
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = dataList[position]
-//<<<<<<< HEAD
-//            holder.cardView.setOnClickListener {
-//                context!!.startActivity(Intent(context, PostDetailActivity::class.java)
-//                        .putExtra("id", item.postId)
-//                        .putExtra("uid", item.uid)
-//                        .putExtra("title", item.title)
-//                        .putExtra("time", item.time))
-//            }
-//            holder.titleView.text = item.title
-//            holder.commentNumber.text = item.commentsNumbers.toString()
-//            holder.content.text = item.content
-//            holder.txtLike.text = item.likeNumber.toString()
-//=======
-            holder.titleView.text = item.title
-            holder.commentsNumber.text = item.commentsNumbers.toString()
-            holder.content.text = item.content
-            holder.likeCount.text = item.likeNumber.toString()
-//>>>>>>> f67c12c91890e06e391a75d306f524940ad13063
-            holder.releaseTime.text = if (System.currentTimeMillis() - item.time < 60 * 1000)
-                "刚刚" else (if (System.currentTimeMillis() - item.time < 24 * 60 * 60 * 1000)
-                "${(System.currentTimeMillis() - item.time) / (60 * 60 * 1000)} 小时前" else (
-                    if (System.currentTimeMillis() - item.time < 48 * 60 * 60 * 1000) "昨天 ${SimpleDateFormat("HH:mm").format(item.time)}"
-                    else SimpleDateFormat("yyyy-MM-dd HH:mm").format(item.time)))
-//<<<<<<< HEAD
-//        }
-//
-//        inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-//            val cardView: FrameLayout = v.findViewById(R.id.card_view)
-//            val titleView: TextView = v.findViewById(R.id.title_view) // 标题
-//            //            val contentLayout: LinearLayout = v.findViewById(R.id.content_layout) // 内容Layout
-////            val userName: TextView = v.findViewById(R.id.user_name) // 用户名
-//            val commentNumber: TextView = v.findViewById(R.id.comments_number) // 评论数
-//            val releaseTime: TextView = v.findViewById(R.id.release_time) // 发布时间
-//            val content: TextView = v.findViewById(R.id.content)
-//            val txtLike: TextView = v.findViewById(R.id.like_count)
-//        }
-//=======
-            holder.cardView.setOnClickListener {
-                context!!.startActivity(Intent(context, PostDetailActivity::class.java)
-                        .putExtra("id", item.postId)
-                        .putExtra("uid", item.uid)
-                        .putExtra("title", item.title)
-                        .putExtra("time", item.time))
-            }
-        }
-
-//>>>>>>> f67c12c91890e06e391a75d306f524940ad13063
-
-        inner class ViewHolder(view: View):RecyclerView.ViewHolder(view){
-            var cardView : View = view.findViewById(R.id.card_view)
-            var titleFlag : TextView = view.findViewById(R.id.title_flag)
-            var titleView : TextView = view.findViewById(R.id.title_view)
-            var content : TextView = view.findViewById(R.id.content)
-            var userName : TextView = view.findViewById(R.id.user_name)
-            var likeCount : TextView = view.findViewById(R.id.like_count)
-            var commentsNumber : TextView = view.findViewById(R.id.comments_number)
-            var releaseTime : TextView = view.findViewById(R.id.release_time)
-        }
-    }
 }
