@@ -87,6 +87,8 @@ class EditProfileActivity : NormActivity() {
 
     private var progressDialog: ProgressDialog? = null
 
+    private var isAvatarChanged = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
@@ -137,11 +139,11 @@ class EditProfileActivity : NormActivity() {
             val dialog = AlertDialog(this)
             dialog.setTitle("退出")
             dialog.setMessage("确定要退出吗？所做的更改将不会保存。")
-            dialog.setPositiveButton("是") {
+            dialog.setPositiveButton("是") {_ ->
                 dialog.dismiss()
                 finish()
             }
-            dialog.setNegativeButton("否") {
+            dialog.setNegativeButton("否") {_ ->
                 dialog.dismiss()
             }
             dialog.show()
@@ -237,22 +239,29 @@ class EditProfileActivity : NormActivity() {
 
                 // 构建用户信息上传内容
                 val hashMap = HashMap<String, String>()
+                val paramsMap = HashMap<String, String>()
                 val userObj = JSONObject()
                 userObj.put("studentnumber", User.staticUser.studentNumber)
                 userObj.put("j_password", User.staticUser.passwordMD5)
                 userObj.put("nickname", editUserName!!.text.toString())
-                userObj.put("avatar", "${ServerInfo.avatarUrl}/head_${User.staticUser.uid}.jpg")
+
+                if (isAvatarChanged)
+                    paramsMap["avatar"] = "${ServerInfo.avatarUrl}/head_${User.staticUser.uid}_${System.currentTimeMillis()}.jpg"
+                else
+                    paramsMap["avatar"] = "nil"
+                userObj.put("avatar", paramsMap["avatar"])
+
                 userObj.put("sign", editIntroduction!!.text.toString())
 
                 hashMap["userInfo"] = userObj.toString()
 
-                post(ServerInfo.urlUpdate, hashMap)
+                post(ServerInfo.urlUpdate, hashMap, paramsMap)
             }
 
         }
     }
 
-    private fun post(actionUrl: String, params: HashMap<String, String>) {
+    private fun post(actionUrl: String, hashMap: HashMap<String, String>, paramsMap: HashMap<String, String>) {
         Thread(Runnable {
             try {
                 val BOUNDARY = "--------------et567z"
@@ -281,18 +290,16 @@ class EditProfileActivity : NormActivity() {
                 sb.append(BOUNDARY)
                 sb.append("\r\n")
                 sb.append("Content-Disposition: form-data; name=\"" + "userInfo" + "\"\r\n\r\n")
-                sb.append(params.get("userInfo"))
+                sb.append(hashMap.get("userInfo"))
                 sb.append("\r\n")
 
                 //上传图片部分
                 val outStream = DataOutputStream(conn.outputStream)
                 outStream.write(sb.toString().toByteArray())
-
-                Log.d("AAA", "FormData=$sb")
                 //发送表单字段数据
 
                 //调用自定义方法获取图片文件的byte数组
-                val content = ImageManager.convertBitmapToByteArray(finalBitmap)
+                val content = if (isAvatarChanged) ImageManager.convertBitmapToByteArray(finalBitmap) else ByteArray(1)
                 //再次设置报头信息
                 val split = StringBuilder()
                 split.append("--")
@@ -302,7 +309,7 @@ class EditProfileActivity : NormActivity() {
                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!非常重要
                 //此处将图片的name设置为file ,filename不做限制，不需要管
-                split.append("Content-Disposition: form-data;name=\"file\";filename=\"head_${User.staticUser.uid}.jpg\"\r\n")
+                split.append("Content-Disposition: form-data;name=\"file\";filename=\"${paramsMap["avatar"]}\"\r\n")
                 //这里的Content-Type非常重要，一定要是图片的格式，例如image/jpeg或者image/jpg
                 //服务器端对根据图片结尾进行判断图片格式到底是什么,因此务必保证这里类型正确
                 split.append("Content-Type: image/jpg\r\n\r\n")
@@ -321,7 +328,7 @@ class EditProfileActivity : NormActivity() {
                 val cah = conn.responseCode
 
                 // 为了不使用原先缓存，用Glide清除一下图片缓存
-                Glide.get(MyApplication.getContext()).clearDiskCache()
+//                Glide.get(MyApplication.getContext()).clearDiskCache()
                 runOnUiThread {
                     if (cah == 200) {
                         // 更新本地用户信息
@@ -330,9 +337,9 @@ class EditProfileActivity : NormActivity() {
                         Toast.makeText(this, "更新成功", Toast.LENGTH_SHORT).show()
                         finish()
                     } else if (cah == 400) {
-                        Toast.makeText(this, "发布失败(400)", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "更新失败(400)", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(this, "发布失败($cah)", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "更新失败($cah)", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -391,7 +398,11 @@ class EditProfileActivity : NormActivity() {
                 if (data != null) {
                     finalBitmap = BitmapFactory.decodeStream(
                             contentResolver.openInputStream(imageManager!!.destUri))
-                    avatar!!.setImageBitmap(finalBitmap)
+                    Glide.with(MyApplication.getContext())
+                            .load(finalBitmap)
+                            .into(avatar!!)
+                    isAvatarChanged = true
+//                    avatar!!.setImageBitmap(finalBitmap)
                 }
             }
             UCrop.RESULT_ERROR -> {

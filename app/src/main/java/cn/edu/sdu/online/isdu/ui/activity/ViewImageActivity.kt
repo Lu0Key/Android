@@ -82,16 +82,16 @@ class ViewImageActivity : NormActivity() {
                 when (itemName) {
                     "保存图片" -> {
                         dialog.dismiss()
-                        val file = File(Environment.getExternalStorageDirectory().toString() +
-                                "/iSDU/Image/" + System.currentTimeMillis() + ".jpg")
-
-                        if (!file.exists()) {
-                            if (!file.parentFile.exists()) file.parentFile.mkdirs()
-                            file.createNewFile()
-                        }
-                        val fos = FileOutputStream(file)
 
                         if (resId != 0) {
+                            val file = File(Environment.getExternalStorageDirectory().toString() +
+                                    "/iSDU/Image/" + System.currentTimeMillis() + ".jpg")
+
+                            if (!file.exists()) {
+                                if (!file.parentFile.exists()) file.parentFile.mkdirs()
+                                file.createNewFile()
+                            }
+                            val fos = FileOutputStream(file)
                             val bmp = BitmapFactory.decodeResource(resources, resId)
                             bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
                             fos.flush()
@@ -106,8 +106,16 @@ class ViewImageActivity : NormActivity() {
                                         /********************************************
                                          *
                                          ********************************************/
-                                        if (cachePath.toLowerCase().endsWith(".gif#") ||
-                                                cachePath.toLowerCase().endsWith(".gif")) {
+                                        if (ImageManager.isGif(cachePath)) {
+                                            val file = File(Environment.getExternalStorageDirectory().toString() +
+                                                    "/iSDU/Image/" + System.currentTimeMillis() + ".gif")
+
+                                            if (!file.exists()) {
+                                                if (!file.parentFile.exists()) file.parentFile.mkdirs()
+                                                file.createNewFile()
+                                            }
+                                            val fos = FileOutputStream(file)
+
                                             val fis = FileInputStream(File(cachePath))
                                             val bis = BufferedInputStream(fis)
                                             var byte = ByteArray(1024)
@@ -118,16 +126,30 @@ class ViewImageActivity : NormActivity() {
                                             }
                                             fis.close()
                                             bis.close()
+
+                                            runOnUiThread {
+                                                Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                            }
                                         } else {
+                                            val file = File(Environment.getExternalStorageDirectory().toString() +
+                                                    "/iSDU/Image/" + System.currentTimeMillis() + ".jpg")
+
+                                            if (!file.exists()) {
+                                                if (!file.parentFile.exists()) file.parentFile.mkdirs()
+                                                file.createNewFile()
+                                            }
+                                            val fos = FileOutputStream(file)
                                             val bmp = if (isString) ImageManager.convertStringToBitmap(FileUtil.getStringFromFile(cachePath)) else
                                                 BitmapFactory.decodeFile(cachePath)
                                             bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                                            fos.flush()
+                                            fos.close()
+
+                                            runOnUiThread {
+                                                Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                            }
                                         }
-                                        fos.flush()
-                                        fos.close()
-                                        runOnUiThread {
-                                            Toast.makeText(this, "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
-                                        }
+
                                     } else {
                                         runOnUiThread {
                                             Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
@@ -140,6 +162,14 @@ class ViewImageActivity : NormActivity() {
                                         /********************************************
                          dd                *
                                          ********************************************/
+                                        val file = File(Environment.getExternalStorageDirectory().toString() +
+                                                "/iSDU/Image/" + System.currentTimeMillis() + ".jpg")
+
+                                        if (!file.exists()) {
+                                            if (!file.parentFile.exists()) file.parentFile.mkdirs()
+                                            file.createNewFile()
+                                        }
+                                        val fos = FileOutputStream(file)
                                         val bmp = if (isString) ImageManager.convertStringToBitmap(FileUtil.getStringFromFile(cachePath)) else
                                             BitmapFactory.decodeFile(cachePath)
                                         bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
@@ -157,6 +187,14 @@ class ViewImageActivity : NormActivity() {
                             }
 
                         } else if (bmpStr != "") {
+                            val file = File(Environment.getExternalStorageDirectory().toString() +
+                                    "/iSDU/Image/" + System.currentTimeMillis() + ".jpg")
+
+                            if (!file.exists()) {
+                                if (!file.parentFile.exists()) file.parentFile.mkdirs()
+                                file.createNewFile()
+                            }
+                            val fos = FileOutputStream(file)
                             val bmp = ImageManager.convertStringToBitmap(bmpStr)
                             bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
                             fos.flush()
@@ -204,8 +242,7 @@ class ViewImageActivity : NormActivity() {
                             loadingLayout!!.visibility = View.GONE
                         }
                     } else {
-                        if (cachePath.toLowerCase().endsWith(".gif#") ||
-                                cachePath.toLowerCase().endsWith(".gif")) {
+                        if (ImageManager.isGif(cachePath)) {
                             runOnUiThread {
                                 Glide.with(MyApplication.getContext())
                                         .asGif()
@@ -243,8 +280,15 @@ class ViewImageActivity : NormActivity() {
             val bmp = ImageManager.convertStringToBitmap(bmpStr)
             draggableImageView!!.setImageBitmap(bmp)
         } else if (filePath != "") {
-            val bmp = BitmapFactory.decodeFile(filePath)
-            draggableImageView!!.setImageBitmap(bmp)
+            if (ImageManager.isGif(filePath)) {
+                Glide.with(MyApplication.getContext()).asGif().load(filePath)
+                        .into(draggableImageView!!)
+            } else {
+                Glide.with(MyApplication.getContext()).load(filePath)
+                        .into(draggableImageView!!)
+            }
+//            val bmp = BitmapFactory.decodeFile(filePath)
+//            draggableImageView!!.setImageBitmap(bmp)
         }
     }
 

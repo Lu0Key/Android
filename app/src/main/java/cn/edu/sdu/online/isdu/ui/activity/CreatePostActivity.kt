@@ -253,7 +253,7 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
                 if (hashMap.containsKey(data.imagePath)) {
                     data.imageName = hashMap[data.imagePath]
                 } else {
-                    if (data.imagePath.toLowerCase().endsWith(".gif")) {
+                    if (ImageManager.isGif(File(data.imagePath))) {
                         // GIF特判
                         data.imageName = User.staticUser.uid.toString() + "_" + System.nanoTime().toString() + ".gif"
                     } else {
@@ -347,7 +347,7 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
                 if (resultCode == Activity.RESULT_OK) {
                     imageManager.handleImage(data, this)
 
-                    if (imageManager.imagePath.toLowerCase().endsWith(".gif")) {
+                    if (ImageManager.isGif(File(imageManager.imagePath))) {
                         val target = object : ViewTarget<RichTextEditor, GifDrawable>(richEditText!!) {
                             override fun onResourceReady(resource: GifDrawable, transition: Transition<in GifDrawable>?) {
                                 richEditText!!.insertGif(resource, imageManager.imagePath)
@@ -397,10 +397,6 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
         }
     }
 
-    /***********************************
-     * 访问服务器
-     * 上传帖子
-     ***********************************/
 
     /**
      *
@@ -507,21 +503,7 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
 
     @Throws(IOException::class)
     private fun readFileImage(filePath: String): ByteArray {
-//        val bufferedInputStream = BufferedInputStream(
-//                FileInputStream(filePath))
-//        val len = bufferedInputStream.available()
-//
-//
-//
-//        var bytes: ByteArray? = ByteArray(len)
-//        val r = bufferedInputStream.read(bytes)
-//        if (len != r) {
-//            bytes = null
-//            throw IOException("读取文件不正确")
-//        }
-//        bufferedInputStream.close()
-//        return bytes!!
-        if (filePath.toLowerCase().endsWith(".gif")) {
+        if (ImageManager.isGif(File(filePath))) {
             return ImageManager.convertGifToByteArray(filePath)
         } else return ImageManager.convertBitmapToByteArray(BitmapFactory.decodeFile(filePath))
     }

@@ -2,6 +2,7 @@ package cn.edu.sdu.online.isdu.bean;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 
 import com.alibaba.fastjson.JSON;
 
@@ -23,6 +24,7 @@ public class Message {
     private String senderAvatar;
     private String time;
     private String content;
+    private int postId;
     private boolean isRead = false;
     private static List<OnMessageListener> listeners = new ArrayList<>();
 
@@ -50,8 +52,21 @@ public class Message {
         return isRead;
     }
 
+    public void setRead(boolean read) {
+        isRead = read;
+    }
+
     public void setRead(boolean read, Context context) {
         isRead = read;
+        msgList.remove(this);
+        int i;
+        for (i = 0; i < msgList.size(); i++) {
+            if (msgList.get(i).isRead != isRead) {
+                msgList.addLast(this);
+                break;
+            }
+        }
+        if (i == msgList.size()) msgList.addLast(this);
         saveMsgList(context);
     }
 
@@ -87,9 +102,17 @@ public class Message {
         this.time = time;
     }
 
+    public int getPostId() {
+        return postId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
+    }
+
     public static void loadMsgList(Context context) {
         msgList.clear();
-        SharedPreferences sp = context.getSharedPreferences("msg", Context.MODE_PRIVATE);
+        SharedPreferences sp = MyApplication.getContext().getSharedPreferences("msg", Context.MODE_PRIVATE);
         String str = sp.getString("json", "[]");
         try {
             msgList.addAll(JSON.parseArray(str, Message.class));
@@ -104,7 +127,7 @@ public class Message {
 
     public static void saveMsgList(Context context) {
         SharedPreferences.Editor editor =
-                context.getSharedPreferences("msg", Context.MODE_PRIVATE).edit();
+                MyApplication.getContext().getSharedPreferences("msg", Context.MODE_PRIVATE).edit();
         editor.putString("json", JSON.toJSONString(msgList));
         editor.apply();
         for (OnMessageListener listener : listeners) {
@@ -114,6 +137,8 @@ public class Message {
     }
 
     public static void newMsg(List<Message> msgList) {
+        if (Message.msgList == null || Message.msgList.size() == 0)
+            loadMsgList(MyApplication.getContext());
         for (Message msg : msgList) {
             if (Message.msgList.contains(msg)) {
                 Message.msgList.remove(msg);
@@ -122,6 +147,17 @@ public class Message {
         for (int i = 0; i < msgList.size(); i++) {
             Message.msgList.addFirst(msgList.get(i));
         }
+        saveMsgList(MyApplication.getContext());
+    }
+
+    public static int getUnreadCount() {
+        int count = 0;
+        if (msgList == null || msgList.size() == 0)
+            loadMsgList(MyApplication.getContext());
+        for (Message msg : msgList) {
+            if (!msg.isRead) count++;
+        }
+        return count;
     }
 
     @Override
@@ -129,15 +165,9 @@ public class Message {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Message message = (Message) o;
-        return Objects.equals(type, message.type) &&
+        return type.equals(message.type) &&
                 Objects.equals(senderId, message.senderId) &&
                 Objects.equals(content, message.content);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(type, senderId);
     }
 
     public interface OnMessageListener {

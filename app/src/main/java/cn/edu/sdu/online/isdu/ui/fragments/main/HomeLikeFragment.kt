@@ -12,6 +12,7 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.Post
+import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
@@ -43,7 +44,7 @@ class HomeLikeFragment : LazyLoadFragment() {
     private var dataList: MutableList<Post> = ArrayList()
 //    private var blankView: TextView? = null
 
-    private var lastValue = 0.0
+    private var lastId = 0
     private var needOffset = false
     private var loadComplete = false
 
@@ -87,7 +88,7 @@ class HomeLikeFragment : LazyLoadFragment() {
         pullRefreshLayout!!.setListener(object : SpringView.OnFreshListener {
             override fun onLoadmore() {
                 // 上拉加载更多
-                lastValue = if (dataList.isEmpty()) 0.0 else calculateValue(dataList[dataList.size - 1])
+                lastId = if (dataList.isEmpty()) 0 else dataList[dataList.size - 1].postId
                 needOffset = true
                 loadComplete = false
                 loadData()
@@ -95,7 +96,7 @@ class HomeLikeFragment : LazyLoadFragment() {
 
             override fun onRefresh() {
                 // 下拉刷新
-                lastValue = 0.0
+                lastId = 0
                 dataList.clear()
                 needOffset = false
                 loadComplete = false
@@ -105,15 +106,13 @@ class HomeLikeFragment : LazyLoadFragment() {
 
     }
 
-    private fun calculateValue(post: Post) : Double{
-        return 2 * post.likeNumber + post.commentsNumbers + 0.0001 * (post.time / 1000)
-    }
-
     override fun isLoadComplete(): Boolean = loadComplete
 
     override fun loadData() {
         if (loadComplete) return
-        NetworkAccess.cache(ServerInfo.getRecommend10(lastValue)) { success, cachePath ->
+        if (User.staticUser == null) User.staticUser = User.load()
+        if (User.staticUser.studentNumber == null) return
+        NetworkAccess.cache(ServerInfo.getLikePost(User.staticUser.uid.toString(), lastId)) { success, cachePath ->
             if (success) {
                 try {
                     val arr = JSONArray(JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj"))
@@ -131,7 +130,7 @@ class HomeLikeFragment : LazyLoadFragment() {
                         if (!dataList.contains(post))
                             dataList.add(post)
 
-                        lastValue = calculateValue(post)
+                        lastId = post.postId
                     }
                 } catch (e: Exception) {
                     Logger.log(e)

@@ -302,4 +302,26 @@ public class ImageManager {
         return convertStringToBitmap(getStringFromFile(filePath));
     }
 
+    public static boolean isGif(byte[] imgByte) {
+        return (imgByte.length >= 3) && imgByte[0] == (byte) 'G' &&
+                imgByte[1] == (byte) 'I' && imgByte[2] == (byte) 'F';
+    }
+
+    public static boolean isGif(File file) {
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            byte[] buf = new byte[3];
+            fis.read(buf);
+            fis.close();
+            return isGif(buf);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean isGif(String filePath) {
+        return isGif(new File(filePath));
+    }
+
 }

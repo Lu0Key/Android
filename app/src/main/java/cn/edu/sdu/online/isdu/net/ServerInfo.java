@@ -208,4 +208,8 @@ public class ServerInfo {
     public static String getFeedbackUrl() {
         return "http://" + ipAddr133 + ":8384/addFeedBack";
     }
+
+    public static String getLikePost(String uid, int startId) {
+        return "http://" + ipAddr133 + ":8384//post/getLikePostTen?userId=" + uid + "&startId=" + startId;
+    }
 }

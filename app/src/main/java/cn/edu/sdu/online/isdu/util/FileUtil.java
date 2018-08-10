@@ -12,9 +12,13 @@ import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -23,6 +27,73 @@ public class FileUtil {
 
     public static void init(Activity a) {
         activity = a;
+    }
+
+    /**
+     * 获取单个文件的MD5值！
+
+     * @param file
+     * @return
+     */
+
+    public static String getFileMD5(File file) {
+        if (!file.isFile()) {
+            return null;
+        }
+        MessageDigest digest = null;
+        FileInputStream in = null;
+        byte buffer[] = new byte[1024];
+        int len;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+            in = new FileInputStream(file);
+            while ((len = in.read(buffer, 0, 1024)) != -1) {
+                digest.update(buffer, 0, len);
+            }
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        BigInteger bigInt = new BigInteger(1, digest.digest());
+        return bigInt.toString(16);
+    }
+
+    public static String getMD5(InputStream in) {
+        if (in == null) {
+            return null;
+        }
+        MessageDigest digest = null;
+        byte buffer[] = new byte[1024];
+        int len;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+            while ((len = in.read(buffer, 0, 1024)) != -1) {
+                digest.update(buffer, 0, len);
+            }
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        BigInteger bigInt = new BigInteger(1, digest.digest());
+        return bigInt.toString(16);
+    }
+
+    public static String getMD5(byte[] bytes) {
+        if (bytes == null) return null;
+        MessageDigest digest = null;
+        byte buffer[] = new byte[1024];
+        int len;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+            digest.update(bytes, 0, bytes.length);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        BigInteger bigInt = new BigInteger(1, digest.digest());
+        return bigInt.toString(16);
     }
 
     public static String getStringFromFile(String filePath) {
@@ -121,8 +192,6 @@ public class FileUtil {
                 type = MIME_MapTable[i][1];
             }
         }
-
-        StringBuilder stringBuilder = new StringBuilder(type.substring(0, type.lastIndexOf('/') + 1));
 
         return type;
     }

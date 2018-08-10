@@ -34,6 +34,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,7 @@ import cn.edu.sdu.online.isdu.GlideRequests;
 import cn.edu.sdu.online.isdu.R;
 import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess;
+import cn.edu.sdu.online.isdu.util.ImageManager;
 import cn.edu.sdu.online.isdu.util.Logger;
 
 /**
@@ -250,7 +252,7 @@ public class RichTextView extends ScrollView {
                 @Override
                 public void onFinish(boolean success, final String cachePath) {
                     if (success) {
-                        if (cachePath.endsWith(".gif") || cachePath.endsWith(".gif#")) {
+                        if (ImageManager.isGif(new File(cachePath))) {
                             Drawable drawable = pl.droidsonroids.gif.GifDrawable.createFromPath(cachePath);
                             // Load as GIF
                             //调整imageView的高度，根据宽度等比获得高度
@@ -298,37 +300,40 @@ public class RichTextView extends ScrollView {
                         } else {
                             final Bitmap bmp = BitmapFactory.decodeFile(cachePath);
                             // Load as Bitmap
-//调整imageView的高度，根据宽度等比获得高度
-                            int imageHeight ; //解决连续加载多张图片导致后续图片都跟第一张高度相同的问题
-                            if (rtImageHeight > 0) {
-                                imageHeight = rtImageHeight;
-                            } else {
+                            if (bmp != null) {
+                                //调整imageView的高度，根据宽度等比获得高度
+                                int imageHeight ; //解决连续加载多张图片导致后续图片都跟第一张高度相同的问题
+                                if (rtImageHeight > 0) {
+                                    imageHeight = rtImageHeight;
+                                } else {
 //                                imageHeight = allLayout.getWidth() * resource.getHeight() / resource.getWidth();
-                                // 修正图片宽高
-                                imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
-                                        * bmp.getHeight() / bmp.getWidth();
-                            }
-
-                            final RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                                    LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
-                            lp.bottomMargin = rtImageBottom;
-
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    imageView.setLayoutParams(lp);
-
-                                    if (rtImageHeight > 0) {
-                                        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                    } else {
-                                        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                                    }
-                                    GlideApp.with(MyApplication.getContext()).load(bmp)
-                                            .placeholder(R.drawable.img_blank_image)
-                                            .error(R.drawable.img_load_fail)
-                                            .into(imageView);
+                                    // 修正图片宽高
+                                    imageHeight = (allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight())
+                                            * bmp.getHeight() / bmp.getWidth();
                                 }
-                            });
+
+                                final RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                                        LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
+                                lp.bottomMargin = rtImageBottom;
+
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        imageView.setLayoutParams(lp);
+
+                                        if (rtImageHeight > 0) {
+                                            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                        } else {
+                                            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                                        }
+                                        GlideApp.with(MyApplication.getContext()).load(bmp)
+                                                .placeholder(R.drawable.img_blank_image)
+                                                .error(R.drawable.img_load_fail)
+                                                .thumbnail(0.5f)
+                                                .into(imageView);
+                                    }
+                                });
+                            }
 
 //                            imageView.setImageBitmap(bmp);
                         }

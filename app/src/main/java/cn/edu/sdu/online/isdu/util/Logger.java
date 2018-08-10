@@ -20,7 +20,7 @@ public class Logger {
             try {
                 log.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
 
@@ -28,9 +28,10 @@ public class Logger {
             FileWriter fileWriter = new FileWriter(log);
             fileWriter.write("\n################################################\n");
             fileWriter.write(time + ":" + message);
+            fileWriter.flush();
             fileWriter.close();
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -44,7 +45,7 @@ public class Logger {
             try {
                 log.createNewFile();
             } catch (IOException e2) {
-                e2.printStackTrace();
+//                e2.printStackTrace();
             }
         }
 
@@ -54,10 +55,12 @@ public class Logger {
             fileWriter.write("################################################\n");
             fileWriter.write(time + ":");
             e.printStackTrace(printWriter);
+            printWriter.flush();
             printWriter.close();
+            fileWriter.flush();
             fileWriter.close();
         } catch (Exception e1) {
-            e1.printStackTrace();
+//            e1.printStackTrace();
         }
     }
 }

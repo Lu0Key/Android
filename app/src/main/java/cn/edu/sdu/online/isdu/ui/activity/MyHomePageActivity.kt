@@ -16,6 +16,7 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.app.ThreadPool
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
 import cn.edu.sdu.online.isdu.net.ServerInfo
@@ -280,7 +281,54 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun loadUserInfo() {
-        AccountOp.getUserInformation(id)
+        NetworkAccess.cache(ServerInfo.getUserInfo(id.toString() + "", "id-nickname-sign-studentnumber-gender-avatar")) {
+            success, cachePath ->
+            if (success) {
+                try {
+                    val json = FileUtil.getStringFromFile(cachePath)
+
+                    if (user == null) user = User()
+
+                    if (json != null && json.trim() != "") {
+                        try {
+
+                            val jsonObject = JSONObject(json)
+                            user!!.nickName = jsonObject.getString("nickname")
+                            user!!.selfIntroduce = jsonObject.getString("sign")
+                            user!!.studentNumber = jsonObject.getString("studentnumber")
+                            user!!.avatarUrl = jsonObject.getString("avatar")
+                            user!!.uid = jsonObject.getInt("id")
+                            user!!.gender = if (jsonObject.getString("gender") == "男") User.GENDER_MALE
+                            else (if (jsonObject.getString("gender") == "女") User.GENDER_FEMALE
+                            else User.GENDER_SECRET)
+                            user!!.save(this@MyHomePageActivity)
+
+                            runOnUiThread { publishUserInfo() }
+
+
+                        } catch (e: Exception) {
+                            Logger.log(e)
+//                        runOnUiThread {
+                            val dialog = AlertDialog(this@MyHomePageActivity)
+                            dialog.setTitle("错误")
+                            dialog.setMessage("未获取到数据")
+                            dialog.setCancelable(false)
+                            dialog.setCancelOnTouchOutside(false)
+                            dialog.setPositiveButton("返回") {
+                                dialog.dismiss()
+                                finish()
+                            }
+                            dialog.show()
+//                        }
+                        }
+                    }
+
+                } catch (e: Exception) {
+                    Logger.log(e)
+                }
+
+            }
+        }
     }
 
     /**
@@ -323,7 +371,6 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         if (user != null) {
             userName!!.text = user!!.nickName
             txtSign!!.text = "个人签名：${user!!.selfIntroduce}"
-//            val bmp = ImageManager.convertStringToBitmap(user!!.avatarString)
             val avatarUrl = user!!.avatarUrl
             if (avatarUrl != null && avatarUrl != "") {
                 fillBackgroundImage(avatarUrl)
@@ -447,16 +494,6 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 
 
             }
-//            else if (intent.action == ACTION_SYNC_USER_AVATAR) {
-//                if (intent.getStringExtra("cache_path") != null) {
-//                    user!!.avatarUrl = FileUtil.getStringFromFile(
-//                            intent.getStringExtra("cache_path"))
-//                    user!!.save(this@MyHomePageActivity)
-//                    publishUserInfo()
-//                } else {
-//                    publishUserInfo()
-//                }
-//            }
         }
     }
 

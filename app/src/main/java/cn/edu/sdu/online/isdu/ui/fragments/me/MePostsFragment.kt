@@ -17,6 +17,7 @@ import cn.edu.sdu.online.isdu.interfaces.PostViewable
 import cn.edu.sdu.online.isdu.net.ServerInfo
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
+import cn.edu.sdu.online.isdu.ui.adapter.PostItemAdapter
 import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.WeakReferences
 import com.liaoinstan.springview.widget.SpringView
@@ -43,7 +44,7 @@ import kotlin.collections.ArrayList
 class MePostsFragment : LazyLoadFragment(), PostViewable {
 
     private var recyclerView: RecyclerView? = null
-    private var adapter: MyAdapter? = null
+    private var adapter: PostItemAdapter? = null
     private var dataList: MutableList<Post> = ArrayList()
 
     private var pullRefreshLayout: SpringView? = null
@@ -90,7 +91,7 @@ class MePostsFragment : LazyLoadFragment(), PostViewable {
     private fun initRecyclerView() {
         recyclerView!!.layoutManager = LinearLayoutManager(context)
 
-        adapter = MyAdapter(dataList, context!!)
+        adapter = PostItemAdapter(activity!!, dataList)
         recyclerView!!.adapter = adapter
     }
 
@@ -187,54 +188,6 @@ class MePostsFragment : LazyLoadFragment(), PostViewable {
             }
         })
 
-    }
-
-
-    inner class MyAdapter(dataList: List<Post>?, context: Context) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
-
-        private val dataList = dataList
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = dataList!![position]
-            holder.cardView.setOnClickListener {
-                WeakReferences.postViewableWeakReference = WeakReference(this@MePostsFragment)
-                context!!.startActivity(Intent(context, PostDetailActivity::class.java)
-                        .putExtra("id", item.postId)
-                        .putExtra("uid", item.uid)
-                        .putExtra("title", item.title)
-                        .putExtra("time", item.time)
-                        .putExtra("tag", TAG))
-            }
-            holder.titleView.text = item.title
-            holder.commentNumber.text = item.commentsNumbers.toString()
-            holder.content.text = item.content
-            holder.txtLike.text = item.likeNumber.toString()
-            holder.releaseTime.text = if (System.currentTimeMillis() - item.time < 60 * 1000)
-                "刚刚" else (if (System.currentTimeMillis() - item.time < 24 * 60 * 60 * 1000)
-                    "${(System.currentTimeMillis() - item.time) / (60 * 60 * 1000)} 小时前" else (
-                    if (System.currentTimeMillis() - item.time < 48 * 60 * 60 * 1000) "昨天 ${SimpleDateFormat("HH:mm").format(item.time)}"
-                    else SimpleDateFormat("yyyy-MM-dd HH:mm").format(item.time)))
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view =
-                    LayoutInflater.from(parent.context).inflate(
-                            R.layout.post_item, parent, false)
-            return ViewHolder(v = view)
-        }
-
-        override fun getItemCount(): Int = dataList?.size ?: 0
-
-        inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-            val cardView: FrameLayout = v.findViewById(R.id.card_view)
-            val titleView: TextView = v.findViewById(R.id.title_view) // 标题
-//            val contentLayout: LinearLayout = v.findViewById(R.id.content_layout) // 内容Layout
-//            val userName: TextView = v.findViewById(R.id.user_name) // 用户名
-            val commentNumber: TextView = v.findViewById(R.id.comments_number) // 评论数
-            val releaseTime: TextView = v.findViewById(R.id.release_time) // 发布时间
-            val content: TextView = v.findViewById(R.id.content)
-            val txtLike: TextView = v.findViewById(R.id.like_count)
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

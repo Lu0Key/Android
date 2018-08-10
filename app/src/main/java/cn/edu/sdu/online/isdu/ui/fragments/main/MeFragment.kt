@@ -19,6 +19,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
+import cn.edu.sdu.online.isdu.bean.Message
 import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
@@ -39,6 +40,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_me.*
 import org.json.JSONException
 import org.json.JSONObject
+import q.rorbin.badgeview.Badge
 import q.rorbin.badgeview.QBadgeView
 import java.io.Serializable
 
@@ -89,6 +91,23 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
 
     private var broadcastReceiver: UserSyncBroadcastReceiver? = null
 
+    private var onMessageListener = Message.OnMessageListener {
+        val unReadNum = Message.getUnreadCount()
+        if (btnMsg != null) {
+            activity?.runOnUiThread {
+                QBadgeView(activity)
+                        .bindTarget(btnMsg)
+                        .hide(false)
+                QBadgeView(activity)
+                        .bindTarget(btnMsg)
+                        .setBadgeNumber(unReadNum)
+                        .setBadgeGravity(Gravity.TOP or Gravity.END)
+                        .setGravityOffset(16f, 4f, true)
+                        .setShowShadow(false)
+            }
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_me, container, false)
 
@@ -98,6 +117,9 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
         prepareBroadcastReceiver()
 
         loadUserInformation()
+
+        // 添加消息监听接口
+        Message.addOnMessageListener(onMessageListener)
         return view
     }
 
@@ -163,6 +185,15 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
         super.onResume()
         loadUserInformation()
         loadSchedule()
+        QBadgeView(activity)
+                .bindTarget(btnMsg)
+                .hide(false)
+        QBadgeView(activity)
+                .bindTarget(btnMsg)
+                .setBadgeNumber(Message.getUnreadCount())
+                .setBadgeGravity(Gravity.TOP or Gravity.END)
+                .setGravityOffset(16f, 4f, true)
+                .setShowShadow(false)
     }
 
     override fun onDestroy() {

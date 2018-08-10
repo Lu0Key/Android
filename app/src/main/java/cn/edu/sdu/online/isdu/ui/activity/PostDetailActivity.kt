@@ -88,6 +88,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var fatherCommentId = -1 // 父评论ID
     private var tag = ""
     private var commentList = LinkedList<PostComment>()
+    private var toUserId = "0"
 
     private var window: BasePopupWindow? = null // 右上角点击弹出窗口
 
@@ -193,6 +194,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 editArea!!.visibility = View.VISIBLE
                 operate_bar.visibility = View.GONE
                 fatherCommentId = -1 // 评论帖子，将父评论ID设为-1
+                toUserId = "0"
                 editText!!.requestFocus()
                 editText!!.hint = "评论帖子"
                 showSoftKeyboard()
@@ -203,10 +205,11 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                     Toast.makeText(this, "评论不能为空", Toast.LENGTH_SHORT).show()
                     return
                 }
-                val keys = arrayListOf("content", "userId", "postId", "fatherCommentId", "time")
+                if (User.staticUser == null) User.staticUser = User.load()
+                val keys = arrayListOf("content", "userId", "postId", "fatherCommentId", "time", "toUserId")
                 val values = arrayListOf(editText!!.text.toString(),
                         User.staticUser.uid.toString(), postId.toString(), fatherCommentId.toString(),
-                        System.currentTimeMillis().toString())
+                        System.currentTimeMillis().toString(), toUserId)
                 NetworkAccess.buildRequest(ServerInfo.postCommentUrl, keys, values, object : Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
                         Logger.log(e)
@@ -781,6 +784,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                     showSoftKeyboard()
                                     editText!!.hint = "回复：${comment.content}"
                                     fatherCommentId = comment.id
+                                    toUserId = comment.uid
                                 }
                                 dialog.dismiss()
                             }
@@ -799,6 +803,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                     showSoftKeyboard()
                                     editText!!.hint = "回复：${comment.content}"
                                     fatherCommentId = comment.id
+                                    toUserId = comment.uid
                                 }
                                 dialog.dismiss()
                             }

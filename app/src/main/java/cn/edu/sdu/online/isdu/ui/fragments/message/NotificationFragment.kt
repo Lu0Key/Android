@@ -17,6 +17,7 @@ import cn.edu.sdu.online.isdu.bean.Message
 import cn.edu.sdu.online.isdu.bean.News
 import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
 import cn.edu.sdu.online.isdu.ui.activity.NewsActivity
+import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
 import cn.edu.sdu.online.isdu.util.DateCalculate
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -97,10 +98,28 @@ class NotificationFragment : Fragment(){
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val msg = Message.msgList[position]
-            holder.itemLayout.setOnClickListener {
-                activity!!.startActivity(Intent(activity, MyHomePageActivity::class.java)
-                        .putExtra("id", msg.senderId.toInt()))
+            if (msg.type == "beLikeUser") {
+                holder.itemLayout.setOnClickListener {
+                    msg.setRead(true, context)
+                    notifyItemChanged(position)
+                    activity!!.startActivity(Intent(activity, MyHomePageActivity::class.java)
+                            .putExtra("id", msg.senderId.toInt()))
+                }
+            } else {
+                holder.itemLayout.setOnClickListener {
+                    msg.setRead(true, context)
+                    notifyItemChanged(position)
+                    activity!!.startActivity(Intent(activity, PostDetailActivity::class.java)
+                            .putExtra("id", msg.postId))
+                }
             }
+
+            if (msg.isRead) {
+                holder.content.setTextColor(context!!.resources.getColor(R.color.colorSecondaryText))
+            } else {
+                holder.content.setTextColor(context!!.resources.getColor(R.color.colorPrimaryText))
+            }
+
             holder.nickname.text = msg.senderNickname
             Glide.with(context!!).load(msg.senderAvatar)
                     .apply(RequestOptions.skipMemoryCacheOf(false))
