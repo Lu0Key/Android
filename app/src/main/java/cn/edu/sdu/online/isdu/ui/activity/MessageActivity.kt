@@ -79,7 +79,7 @@ class MessageActivity : SlideActivity(), View.OnClickListener , Serializable {
     }
 
     private fun initFragments() {
-        mViewPagerAdapter = MessageActivity.FragAdapter(supportFragmentManager, mFragments)
+        mViewPagerAdapter = FragAdapter(supportFragmentManager, mFragments)
         viewPager!!.adapter = mViewPagerAdapter
     }
 
@@ -113,9 +113,8 @@ class MessageActivity : SlideActivity(), View.OnClickListener , Serializable {
         ViewPagerHelper.bind(magicIndicator, viewPager)
     }
 
-    class FragAdapter(fm: FragmentManager, fragments: List<Fragment>) : FragmentPagerAdapter(fm) {
+    inner class FragAdapter(fm: FragmentManager, fragments: List<Fragment>) : FragmentPagerAdapter(fm) {
         private val mFragments = fragments
-        private val mDataList = listOf("通知", "聊天")// Indicator 数据
 
         override fun getItem(position: Int): Fragment = mFragments[position]
 

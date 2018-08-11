@@ -45,6 +45,7 @@ import java.util.concurrent.ExecutionException;
 
 import cn.edu.sdu.online.isdu.GlideApp;
 import cn.edu.sdu.online.isdu.R;
+import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.util.ImageManager;
 
 /**
@@ -456,8 +457,8 @@ public class RichTextEditor extends ScrollView {
 	public void addGifAtIndex(final int index, GifDrawable drawable, String path) {
 	    imagePaths.add(path);
         RelativeLayout imageLayout = createImageLayout();
-        DataImageView imageView = (DataImageView) imageLayout.findViewById(R.id.edit_imageView);
-        GlideApp.with(getContext()).asGif().load(path).centerCrop().into(imageView);
+        DataImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
+        GlideApp.with(MyApplication.getContext()).asGif().load(path).centerCrop().into(imageView);
         imageView.setAbsolutePath(path);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);//裁剪剧中
 
@@ -488,8 +489,8 @@ public class RichTextEditor extends ScrollView {
 	public void addImageViewAtIndex(final int index, Bitmap bmp, String imagePath) {
 		imagePaths.add(imagePath);
 		RelativeLayout imageLayout = createImageLayout();
-		DataImageView imageView = (DataImageView) imageLayout.findViewById(R.id.edit_imageView);
-		GlideApp.with(getContext()).load(imagePath).centerCrop().into(imageView);
+		DataImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
+		GlideApp.with(MyApplication.getContext()).load(imagePath).centerCrop().into(imageView);
 		imageView.setAbsolutePath(imagePath);
 		imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);//裁剪剧中
 
@@ -559,7 +560,7 @@ public class RichTextEditor extends ScrollView {
         lp.bottomMargin = rtImageBottom;
         imageView.setLayoutParams(lp);
 
-        GlideApp.with(getContext()).load(imagePath).centerCrop()
+        GlideApp.with(MyApplication.getContext()).load(imagePath).centerCrop()
                 .placeholder(R.drawable.img_load_fail).error(R.drawable.img_load_fail).into(imageView);
 
 		// onActivityResult无法触发动画，此处post处理

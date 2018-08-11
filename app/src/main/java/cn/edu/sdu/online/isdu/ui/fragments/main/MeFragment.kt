@@ -87,12 +87,14 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
     private var adapter: TodoAdapter? = null
     private var todoList: MutableList<Schedule> = ArrayList()
 
+    private var hasNewMsg = false // 是否有新消息
+
     private var personalInformationLayout: ConstraintLayout? = null // 个人信息入口，进入个人主页
 
     private var broadcastReceiver: UserSyncBroadcastReceiver? = null
 
     private var onMessageListener = Message.OnMessageListener {
-        val unReadNum = Message.getUnreadCount()
+        hasNewMsg = true
         if (btnMsg != null) {
             activity?.runOnUiThread {
                 QBadgeView(activity)
@@ -100,7 +102,6 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
                         .hide(false)
                 QBadgeView(activity)
                         .bindTarget(btnMsg)
-                        .setBadgeNumber(unReadNum)
                         .setBadgeGravity(Gravity.TOP or Gravity.END)
                         .setGravityOffset(16f, 4f, true)
                         .setShowShadow(false)
@@ -151,6 +152,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
             }
             btn_msg.id -> {
                 startActivity(Intent(activity, MessageActivity::class.java))
+                hasNewMsg = false
                 setMsgBadge(false)
             }
             btn_my_favorite.id -> {
@@ -185,15 +187,20 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
         super.onResume()
         loadUserInformation()
         loadSchedule()
-        QBadgeView(activity)
-                .bindTarget(btnMsg)
-                .hide(false)
-        QBadgeView(activity)
-                .bindTarget(btnMsg)
-                .setBadgeNumber(Message.getUnreadCount())
-                .setBadgeGravity(Gravity.TOP or Gravity.END)
-                .setGravityOffset(16f, 4f, true)
-                .setShowShadow(false)
+        if (hasNewMsg) {
+            QBadgeView(activity)
+                    .bindTarget(btnMsg)
+                    .hide(false)
+            QBadgeView(activity)
+                    .bindTarget(btnMsg)
+                    .setBadgeGravity(Gravity.TOP or Gravity.END)
+                    .setGravityOffset(16f, 4f, true)
+                    .setShowShadow(false)
+        } else {
+            QBadgeView(activity)
+                    .bindTarget(btnMsg)
+                    .hide(false)
+        }
     }
 
     override fun onDestroy() {

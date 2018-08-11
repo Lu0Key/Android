@@ -1,6 +1,7 @@
 package cn.edu.sdu.online.isdu.ui.fragments.message
 
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -100,25 +101,27 @@ class NotificationFragment : Fragment(){
             val msg = Message.msgList[position]
             if (msg.type == "beLikeUser") {
                 holder.itemLayout.setOnClickListener {
-                    msg.setRead(true, context)
-                    notifyItemChanged(position)
+//                    msg.setRead(true, context)
+//                    notifyItemChanged(position)
                     activity!!.startActivity(Intent(activity, MyHomePageActivity::class.java)
                             .putExtra("id", msg.senderId.toInt()))
                 }
             } else {
                 holder.itemLayout.setOnClickListener {
-                    msg.setRead(true, context)
-                    notifyItemChanged(position)
+//                    msg.setRead(true, context)
+//                    notifyItemChanged(position)
                     activity!!.startActivity(Intent(activity, PostDetailActivity::class.java)
                             .putExtra("id", msg.postId))
                 }
             }
 
-            if (msg.isRead) {
-                holder.content.setTextColor(context!!.resources.getColor(R.color.colorSecondaryText))
-            } else {
-                holder.content.setTextColor(context!!.resources.getColor(R.color.colorPrimaryText))
-            }
+//            if (msg.isRead) {
+//                holder.content.setTextColor(context!!.resources.getColor(R.color.colorSecondaryText))
+//            } else {
+//                holder.content.setTextColor(context!!.resources.getColor(R.color.colorPrimaryText))
+//            }
+
+            holder.content.setTextColor(context!!.resources.getColor(R.color.colorPrimaryText))
 
             holder.nickname.text = msg.senderNickname
             Glide.with(context!!).load(msg.senderAvatar)

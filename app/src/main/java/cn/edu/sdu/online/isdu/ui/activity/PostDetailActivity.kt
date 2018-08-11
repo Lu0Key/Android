@@ -495,8 +495,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                     txtDate!!.text =
                                             "发表于 ${SimpleDateFormat("yyyy-MM-dd HH:mm").format(post.time)}"
 
-//                            txtLike!!.text = likeCount.toString()
-
                                     txtContent!!.setData(editDataList)
 
                                     txtContent!!.setOnRtImageClickListener {imagePath ->

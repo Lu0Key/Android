@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
+import cn.edu.sdu.online.isdu.algorithm.Search
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.News
 import cn.edu.sdu.online.isdu.net.ServerInfo
@@ -20,7 +21,9 @@ import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import okhttp3.Call
 import org.json.JSONArray
+import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 
 /**
  ****************************************************
@@ -36,7 +39,7 @@ class SearchNewsFragment : LazyLoadFragment() {
 
     private var dataList: MutableList<MutableList<News>> = ArrayList()
 
-    val list: MutableList<News> = ArrayList()
+    val list: MutableList<News> = LinkedList()
 
     private var adapter: MyAdapter? = null
     private var loadingLayout: View? = null
@@ -55,10 +58,10 @@ class SearchNewsFragment : LazyLoadFragment() {
         val view = inflater.inflate(R.layout.fragment_search_news, container, false)
 
         dataList.clear()
-        dataList.add(ArrayList())
-        dataList.add(ArrayList())
-        dataList.add(ArrayList())
-        dataList.add(ArrayList())
+        dataList.add(LinkedList())
+        dataList.add(LinkedList())
+        dataList.add(LinkedList())
+        dataList.add(LinkedList())
 
         initView(view)
         initRecyclerView()
@@ -84,50 +87,12 @@ class SearchNewsFragment : LazyLoadFragment() {
 
     override fun isLoadComplete(): Boolean = isLoadComplete && lastSearchString == search
 
-    /*
-    override fun loadData() {
-        super.loadData()
-        if(search!=null){
-            val pattern = Pattern.compile(search, Pattern.CASE_INSENSITIVE)
-            onLoading()
-            dataList.clear()
-            try {
-                for(j in 0 until section.size) {
-                    val cachePath = "ews_api_index.php.site=" + section[j]
-                    val jsonArray = JSONArray(FileUtil.getStringFromFile(Environment.getExternalStorageDirectory().toString() + "/iSDU/cache/" + cachePath))
-                    for (i in 0 until jsonArray.length()) {
-                        val jsonObj = jsonArray.getJSONObject(i)
-                        val title = jsonObj.getString("title")
-                        val matcher1 = pattern.matcher(title)
-                        //val matcher2 = pattern.matcher(jsonObj.getString("block"))
-                        if(matcher1.find()){
-                            val news = News()
-                            news.title = title
-                            news.date = jsonObj.getString("date")
-                            news.source = jsonObj.getString("block")
-                            news.section = sectionName[j]
-                            news.url = ServerInfo.getNewsUrl(j, i)
-                            dataList.add(news)
-                        }
-                    }
-                }
-                Log.d("news",dataList.size.toString())
-            } catch (e: Exception) {
-                Logger.log(e)
-            }
-            activity!!.runOnUiThread {
-                isLoadComplete = true
-                publishData()
-            }
-        }
-    }*/
-
     override fun loadData() {
         dataList.clear()
-        dataList.add(ArrayList())
-        dataList.add(ArrayList())
-        dataList.add(ArrayList())
-        dataList.add(ArrayList())
+        dataList.add(LinkedList())
+        dataList.add(LinkedList())
+        dataList.add(LinkedList())
+        dataList.add(LinkedList())
         pullData(0)
     }
 
@@ -137,7 +102,7 @@ class SearchNewsFragment : LazyLoadFragment() {
             return
         }
         if (search == null) return
-        val pattern = Pattern.compile(search, Pattern.CASE_INSENSITIVE)
+//        val pattern = Pattern.compile(search, Pattern.CASE_INSENSITIVE)
         searchCall = NetworkAccess.cache(ServerInfo.getNewsUrl(index)) { success, cachePath ->
             if (success) {
                 try {
@@ -150,9 +115,11 @@ class SearchNewsFragment : LazyLoadFragment() {
                             val jsonObj = jsonArray.getJSONObject(i)
 
                             val title = jsonObj.getString("title")
-                            val matcher1 = pattern.matcher(title)
-                            //val matcher2 = pattern.matcher(jsonObj.getString("block"))
-                            if(matcher1.find()){
+//                            val matcher1 = pattern.matcher(title)
+
+                            val proximity = Search.calculateProximity(title, search)
+
+                            if (proximity > 0) {
                                 val news = News()
                                 news.title = title
                                 news.date = jsonObj.getString("date")

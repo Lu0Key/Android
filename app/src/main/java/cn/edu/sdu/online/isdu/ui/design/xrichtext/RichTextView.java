@@ -286,11 +286,10 @@ public class RichTextView extends ScrollView {
                                     }
 
                                     Glide.with(MyApplication.getContext()).asGif().load(cachePath)
-//                                            .placeholder(R.drawable.img_blank_image)
                                             .apply(RequestOptions.placeholderOf(R.drawable.img_blank_image))
                                             .apply(RequestOptions.errorOf(R.drawable.img_load_fail))
-                                            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
-//                                            .error(R.drawable.img_load_fail)
+                                            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                                            .apply(RequestOptions.skipMemoryCacheOf(false))
                                             .into(imageView);
 
                                     zhanweiBmp.recycle();
@@ -329,7 +328,8 @@ public class RichTextView extends ScrollView {
                                         GlideApp.with(MyApplication.getContext()).load(bmp)
                                                 .apply(RequestOptions.placeholderOf(R.drawable.img_blank_image))
                                                 .apply(RequestOptions.errorOf(R.drawable.img_load_fail))
-                                                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
+                                                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                                                .apply(RequestOptions.skipMemoryCacheOf(false))
                                                 .thumbnail(0.5f)
                                                 .into(imageView);
                                     }
