@@ -40,7 +40,7 @@ class GradeActivity : SlideActivity() , View.OnClickListener {
     private val mDataList = listOf("本学期成绩", "历年成绩")
     private var magicIndicator: MagicIndicator? = null // Magic Indicator
     private var viewPager: ViewPager? = null // ViewPager
-    private val mFragments = listOf(GradeDetailFragment(), PastGradeDetailFragment()) // Fragment 数组
+    private val mFragments = listOf(GradeDetailFragment(), PastGradeDetailFragment()) // AppFragment 数组
     private var mViewPagerAdapter: GradeActivity.FragAdapter? = null // ViewPager适配器
     private var btnBack : ImageView ?= null
     private var progressDialog : ProgressDialog? = null

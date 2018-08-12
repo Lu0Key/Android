@@ -66,7 +66,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var viewPager: NoScrollViewPager? = null
     private val mDataList = listOf("帖子", "评论"/*, "关注"*/) // Indicator 数据
     private val mFragments: List<Fragment> = listOf(MePostsFragment(),
-            MeCommentFragment()/*, MePostsFragment()*/) // Fragment 数组
+            MeCommentFragment()/*, MePostsFragment()*/) // AppFragment 数组
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
 
     private var collapsingToolbar: CollapsingToolbarLayout? = null

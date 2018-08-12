@@ -3,12 +3,12 @@ package cn.edu.sdu.online.isdu.app;
 import android.app.Application;
 import android.content.Context;
 
-import com.youngfeng.snake.Snake;
 
 import org.litepal.LitePal;
 
 import java.lang.ref.WeakReference;
 
+import cn.edu.sdu.online.isdu.ui.design.snake.Snake;
 import cn.edu.sdu.online.isdu.util.Settings;
 import cn.edu.sdu.online.isdu.util.download.Download;
 

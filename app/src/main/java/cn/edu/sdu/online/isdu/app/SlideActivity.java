@@ -4,17 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SlidingPaneLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.youngfeng.snake.Snake;
-import com.youngfeng.snake.annotations.EnableDragToClose;
-
-import java.lang.reflect.Field;
 
 import cn.edu.sdu.online.isdu.R;
+import cn.edu.sdu.online.isdu.ui.design.snake.Snake;
+import cn.edu.sdu.online.isdu.ui.design.snake.annotations.EnableDragToClose;
 
 @SuppressLint("Registered")
 @EnableDragToClose

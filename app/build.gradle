@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -22,6 +24,17 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    buildToolsVersion '28.0.1'
+    packagingOptions {
+        exclude 'lib/mips/librsjni.so'
+        exclude 'lib/armeabi-v7a/librsjni.so'
+        exclude 'lib/arm64-v8a/librsjni.so'
+        exclude 'lib/x86/librsjni.so'
+        exclude 'lib/mips/libRSSupport.so'
+        exclude 'lib/armeabi-v7a/libRSSupport.so'
+        exclude 'lib/arm64-v8a/libRSSupport.so'
+        exclude 'lib/x86/libRSSupport.so'
     }
 }
 allprojects {
@@ -56,9 +69,9 @@ dependencies {
     }
     implementation 'com.alibaba:fastjson:1.2.47'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
-    implementation 'com.youngfeng.android:snake:0.3.0'
-    annotationProcessor 'com.youngfeng.android:snake-compiler:0.3.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+    //    implementation 'com.youngfeng.android:snake:0.3.0'
+//    annotationProcessor 'com.youngfeng.android:snake-compiler:0.3.0'
+    kapt 'com.github.bumptech.glide:compiler:4.7.1'
     implementation 'top.zibin:Luban:1.1.8'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
     implementation 'com.qmuiteam:qmui:1.1.3'

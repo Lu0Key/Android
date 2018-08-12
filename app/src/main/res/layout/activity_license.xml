@@ -39,11 +39,11 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <com.youngfeng.snake.view.SnakeWebView
+    <cn.edu.sdu.online.isdu.ui.design.snake.view.SnakeWebView
         android:id="@+id/web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.youngfeng.snake.view.SnakeWebView>
+    </cn.edu.sdu.online.isdu.ui.design.snake.view.SnakeWebView>
 
 </LinearLayout>

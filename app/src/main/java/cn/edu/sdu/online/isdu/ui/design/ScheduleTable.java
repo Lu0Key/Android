@@ -348,6 +348,7 @@ public class ScheduleTable extends View {
                     marginTopBottom + primaryTextSize, mWordPaint);
             canvas.drawText(weekDaysInChs[i], leftColumnSize + rectWidth * i + getInsideLeftSize(weekDaysInChs[i], rectWidth) - offsetX,
                     topRowSize - marginTopBottom, mWordPaint);
+            mWordPaint.setFakeBoldText(false);
         }
     }
 
