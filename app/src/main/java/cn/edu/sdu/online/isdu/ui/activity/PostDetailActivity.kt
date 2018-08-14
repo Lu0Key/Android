@@ -8,6 +8,8 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.SpannableString
+import android.text.Spanned
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -19,6 +21,7 @@ import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.app.ThreadPool
+import cn.edu.sdu.online.isdu.bean.CommentUser
 import cn.edu.sdu.online.isdu.bean.PostComment
 import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.bean.User
@@ -40,6 +43,8 @@ import cn.edu.sdu.online.isdu.util.history.History
 import com.alibaba.fastjson.JSON
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.qmuiteam.qmui.span.QMUITouchableSpan
+import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_post_detail.*
 import kotlinx.android.synthetic.main.edit_area.*
@@ -77,9 +82,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
     private var commentRecyclerView: RecyclerView? = null
     private var commentAdapter: MyAdapter? = null
-//    private var postCommentList = ArrayList<PostComment>()
-    private var userIdMap: HashMap<String, String> = HashMap()
-    private var userNicknameMap: HashMap<String, String> = HashMap()
+////    private var postCommentList = ArrayList<PostComment>()
+//    private var userIdMap: HashMap<String, String> = HashMap()
+//    private var userNicknameMap: HashMap<String, String> = HashMap()
 
     private var isLike = false // 是否点赞
     private var showCollectToast = false  // 是否显示已经收藏
@@ -518,7 +523,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
                                     getComments(commentList.size - 1, commentList) // 获取评论
 
-
                                     commentLine!!.text = "${commentList.size} 条评论"
 
                                     // 挪开空白View
@@ -598,29 +602,11 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         })
     }
 
-    private fun requestUserInfoMap(uid: String) {
-        NetworkAccess.cache(ServerInfo.getUserInfo(uid, "nickname"), "nickname") {success, cachePath ->
-            if (success) {
-                userNicknameMap[uid] = cachePath
-            }
-            runOnUiThread {
-                commentAdapter?.notifyDataSetChanged()
-            }
-        }
-        NetworkAccess.cache(ServerInfo.getUserInfo(uid, "avatar"), "avatar") {success, cachePath ->
-            if (success) {
-                userIdMap[uid] = cachePath
-            }
-            runOnUiThread {
-                commentAdapter?.notifyDataSetChanged()
-            }
-        }
-    }
 
     /**
      * 获取帖子内容
      */
-    private fun getCommentContent(id: String): String {
+    private fun getCommentContent(id: String): JSONObject {
         val client = OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
@@ -632,7 +618,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 .post(formBody)
                 .build()
         val response = client.newCall(request).execute()
-        return JSONObject(response?.body()?.string()).getJSONObject("obj").getString("content")
+
+        return JSONObject(response?.body()?.string()).getJSONObject("obj")
     }
 
     /**
@@ -663,11 +650,23 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                     comment.content = obj.getString("content")
                     comment.uid = obj.getString("userId")
 
-                    if (!userIdMap.containsKey(comment.uid)) {
-                        userIdMap.put(comment.uid, "")
-                        userNicknameMap.put(comment.uid, "")
-                        requestUserInfoMap(comment.uid)
+                    val theUser = obj.getJSONObject("theUser")
+                    comment.theUser = CommentUser(theUser.getInt("userId"),
+                            theUser.getString("nickName"),
+                            theUser.getString("avatar"))
+
+                    if (comment.fatherId != -1) {
+                        val fatherUser = obj.getJSONObject("fatherUser")
+                        comment.fatheruser = CommentUser(fatherUser.getInt("userId"),
+                                fatherUser.getString("nickName"),
+                                fatherUser.getString("avatar"))
                     }
+
+//                    if (!userIdMap.containsKey(comment.uid)) {
+//                        userIdMap.put(comment.uid, "")
+//                        userNicknameMap.put(comment.uid, "")
+//                        requestUserInfoMap(comment.uid)
+//                    }
 
                     if (!commentList.contains(comment)) commentList.add(comment) // 防止重复添加Comment
                     // 也可以使用线程锁（（那就别用OKHTTP了））
@@ -683,7 +682,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             }
         })
     }
-
 
     private fun deleteComment(comment: PostComment) {
         NetworkAccess.buildRequest(ServerInfo.deleteComment, "id", comment.id.toString(), object : Callback {
@@ -736,18 +734,30 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 if (comment.fatherId != -1) {
                     // 获取父评论的内容
                     try {
-                        val fatherCommentContent = getCommentContent(comment.fatherId.toString())
+                        val commentJsonObj = getCommentContent(comment.fatherId.toString())
+                        val fatherCommentContent = commentJsonObj.getString("content")
+                        val userName = comment.fatheruser.nickName
+
+                        val sp = SpannableString(userName)
+                        sp.setSpan(object : QMUITouchableSpan(
+                                0xFF717EDB.toInt(), 0xFF717EDB.toInt(),
+                                0x00000000, 0x11000000
+                        ) {
+                            override fun onSpanClick(widget: View?) {
+                                startActivity(Intent(this@PostDetailActivity, MyHomePageActivity::class.java)
+                                        .putExtra("id", comment.fatheruser.userId))
+                            }
+                        }, 0, userName.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+
                         runOnUiThread {
-                            holder.txtReply.text = "回复：$fatherCommentContent"
+                            holder.txtReply.text = "$sp: $fatherCommentContent"
                         }
                     } catch (e: Exception) {
-
                     }
                 }
-                val bmp = FileUtil.getStringFromFile(userIdMap[comment.uid])
+                val bmp = comment.theUser.avatar
                 runOnUiThread {
                     if (bmp != null && bmp != "")
-//                        holder.circleImageView.setImageBitmap(bmp)
                         Glide.with(MyApplication.getContext())
                                 .load(bmp)
                                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
@@ -755,7 +765,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 }
             }
 
-            holder.txtNickname.text = FileUtil.getStringFromFile(userNicknameMap[comment.uid])
+            holder.txtNickname.text = comment.theUser.nickName
 
             holder.txtTime.text = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA).format(comment.time)
             holder.txtContent.text = comment.content
@@ -770,9 +780,19 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             }
 
             holder.itemLayout.setOnClickListener {
+                btnComment!!.callOnClick()
+                showSoftKeyboard()
+                editText!!.hint = "回复：${comment.content}"
+                fatherCommentId = comment.id
+                toUserId = comment.uid
+            }
+
+            holder.itemLayout.setOnLongClickListener {
 
                 if (User.staticUser == null) User.staticUser = User.load()
-                if (User.staticUser.studentNumber == null || User.staticUser.studentNumber.equals("")) return@setOnClickListener
+                if (User.staticUser.studentNumber == null || User.staticUser.studentNumber.equals("")) {
+                    return@setOnLongClickListener false
+                }
 
                 if (comment.uid == User.staticUser.uid.toString()) {
                     val dialog = OptionDialog(this@PostDetailActivity, listOf("删除评论", "回复评论"))
@@ -817,11 +837,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                     }
                     dialog.show()
                 }
-
-            }
-
-            holder.itemLayout.setOnLongClickListener {
-                holder.itemLayout.callOnClick()
                 true
             }
 
@@ -833,7 +848,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             val txtNickname = view.findViewById<TextView>(R.id.txt_nickname)
             val txtTime = view.findViewById<TextView>(R.id.txt_time)
             val txtContent = view.findViewById<TextView>(R.id.txt_content)
-            val txtReply = view.findViewById<TextView>(R.id.reply_comment)
+            val txtReply = view.findViewById<QMUISpanTouchFixTextView>(R.id.reply_comment)
         }
     }
 

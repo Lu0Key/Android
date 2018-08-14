@@ -93,6 +93,8 @@ class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
                 val simplePagerTitleView = ColorTransitionPagerTitleView(p0!!)
                 simplePagerTitleView.normalColor = 0xFF808080.toInt()
                 simplePagerTitleView.selectedColor = 0xFF131313.toInt()
+//                simplePagerTitleView.normalColor = 0xFF808080.toInt()
+//                simplePagerTitleView.selectedColor = 0xFFFFFFFF.toInt()
                 simplePagerTitleView.text = mDataList[p1]
                 simplePagerTitleView.textSize = 18f
                 simplePagerTitleView.setOnClickListener { viewPager?.currentItem = p1 }
@@ -106,6 +108,7 @@ class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
                 linePagerIndicator.mode = LinePagerIndicator.MODE_WRAP_CONTENT
                 linePagerIndicator.lineWidth = UIUtil.dip2px(context, 10.0).toFloat()
                 linePagerIndicator.setColors(0xFF717DEB.toInt())
+//                linePagerIndicator.setColors(0xFFFFFFFF.toInt())
                 return linePagerIndicator
             }
         }

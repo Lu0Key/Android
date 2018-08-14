@@ -46,7 +46,7 @@
     </LinearLayout>
 
     <!--回复的评论-->
-    <TextView
+    <com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView
         android:id="@+id/reply_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
         android:ellipsize="end"
         android:padding="4dp"
         android:background="@color/colorThemeGrey"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
     <TextView
         android:id="@+id/txt_content"

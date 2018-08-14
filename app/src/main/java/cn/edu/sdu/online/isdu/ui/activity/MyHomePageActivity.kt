@@ -85,6 +85,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     private var txtSign: TextView? = null // 个人签名
     private var btnFollow: TextView? = null // 关注按钮
 
+    private var prevAvatarUrl = ""
+
     private var user: User? = null
     private var id: Int = -1
 
@@ -382,9 +384,10 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
             userName!!.text = user!!.nickName
             txtSign!!.text = "个人签名：${user!!.selfIntroduce}"
             val avatarUrl = user!!.avatarUrl
-            if (avatarUrl != null && avatarUrl != "") {
+            if (avatarUrl != null && avatarUrl != "" && avatarUrl != prevAvatarUrl) {
                 fillBackgroundImage(avatarUrl)
                 fillAvatarImage(avatarUrl)
+                prevAvatarUrl = avatarUrl
             }
         }
     }

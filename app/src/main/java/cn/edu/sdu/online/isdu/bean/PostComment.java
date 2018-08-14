@@ -10,6 +10,8 @@ public class PostComment {
     private String uid;
     private String content;
     private int postId;
+    private CommentUser theUser;
+    private CommentUser fatheruser;
 
     public PostComment() {
         super();
@@ -70,6 +72,22 @@ public class PostComment {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public CommentUser getTheUser() {
+        return theUser;
+    }
+
+    public void setTheUser(CommentUser theUser) {
+        this.theUser = theUser;
+    }
+
+    public CommentUser getFatheruser() {
+        return fatheruser;
+    }
+
+    public void setFatheruser(CommentUser fatheruser) {
+        this.fatheruser = fatheruser;
     }
 
     @Override
