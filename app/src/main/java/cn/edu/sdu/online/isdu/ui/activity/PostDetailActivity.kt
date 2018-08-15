@@ -720,6 +720,10 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.post_comment_item,
                     parent, false)
+            view.findViewById<QMUISpanTouchFixTextView>(R.id.reply_comment)
+                    .setMovementMethodDefault()
+            view.findViewById<QMUISpanTouchFixTextView>(R.id.reply_comment)
+                    .setNeedForceEventToParent(true)
             return ViewHolder(view)
         }
 
@@ -738,7 +742,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         val fatherCommentContent = commentJsonObj.getString("content")
                         val userName = comment.fatheruser.nickName
 
-                        val sp = SpannableString(userName)
+                        val sp = SpannableString("$userName: $fatherCommentContent")
                         sp.setSpan(object : QMUITouchableSpan(
                                 0xFF717EDB.toInt(), 0xFF717EDB.toInt(),
                                 0x00000000, 0x11000000
@@ -750,7 +754,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         }, 0, userName.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
 
                         runOnUiThread {
-                            holder.txtReply.text = "$sp: $fatherCommentContent"
+                            holder.txtReply.setText(sp)
                         }
                     } catch (e: Exception) {
                     }

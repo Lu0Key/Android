@@ -212,4 +212,8 @@ public class ServerInfo {
     public static String getLikePost(String uid, int startId) {
         return "http://" + ipAddr133 + ":8384//post/getLikePostTen?userId=" + uid + "&startId=" + startId;
     }
+
+    public static String getPostIntroduction(int postId) {
+        return "http://" + ipAddr133 + ":8384/post/getPostIntroduction?postId=" + postId;
+    }
 }
