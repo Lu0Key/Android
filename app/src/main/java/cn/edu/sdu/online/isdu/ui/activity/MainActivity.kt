@@ -23,6 +23,7 @@ import android.support.v4.view.ViewPager
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView
 import android.view.LayoutInflater
 import android.widget.*
+import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.BuildConfig
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.Message
@@ -54,7 +55,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigat
 * #下载服务
 ****************************************************
 */
-class MainActivity : SlideActivity(), View.OnClickListener {
+class MainActivity : BaseActivity(), View.OnClickListener {
 
     private var fragments: MutableList<Fragment> = ArrayList() // Fragment列表
 //    private var fragmentTags = listOf("HomeFragment", "NewsFragment", "MeFragment") // AppFragment Tag
@@ -74,9 +75,9 @@ class MainActivity : SlideActivity(), View.OnClickListener {
 
         // 检查是否初次加载
         val sp = getSharedPreferences("app", Context.MODE_PRIVATE)
-        if (!sp.getBoolean("first_load_${BuildConfig.VERSION_NAME}", false)) {
+        if (!sp.getBoolean("first_load_${BuildConfig.SPLASH_VERSION}", false)) {
             val editor = sp.edit()
-            editor.putBoolean("first_load_${BuildConfig.VERSION_NAME}", true)
+            editor.putBoolean("first_load_${BuildConfig.SPLASH_VERSION}", true)
             editor.apply()
             startActivity(Intent(this, GuideActivity::class.java))
         }

@@ -5,19 +5,27 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.r0adkll.slidr.Slidr;
+import com.r0adkll.slidr.model.SlidrConfig;
+
 import cn.edu.sdu.online.isdu.R;
 import cn.edu.sdu.online.isdu.ui.design.snake.Snake;
 import cn.edu.sdu.online.isdu.ui.design.snake.annotations.EnableDragToClose;
 
-@SuppressLint("Registered")
-@EnableDragToClose
 public class SlideActivity extends NormActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Snake.host(this);
+        SlidrConfig config = new SlidrConfig.Builder()
+                .scrimColor(0x000000)
+                .scrimStartAlpha(0.8f)
+                .edge(true)
+                .edgeSize(0.125f)
+                .velocityThreshold(1600)
+                .build();
+        Slidr.attach(this, config);
         overridePendingTransition(R.anim.snake_slide_in_right, R.anim.snake_slide_out_left);
     }
 

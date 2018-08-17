@@ -55,10 +55,11 @@
                 android:id="@+id/circle_image_view"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:src="@mipmap/ic_launcher"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/colorWhite"/>
 
             <TextView
                 android:id="@+id/btn_edit_avatar"
@@ -109,13 +110,12 @@
                         android:layout_weight="4"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="User Name"
                         android:paddingTop="8dp"
                         android:paddingBottom="8dp"
                         android:textSize="16sp"
+                        android:maxLength="20"
                         android:layout_gravity="center_vertical"
-                        android:background="@color/colorWhite"
-                        android:singleLine="true"/>
+                        android:background="@color/colorWhite" />
                 </LinearLayout>
                 <View
                     android:layout_width="match_parent"
@@ -329,7 +329,7 @@
                         android:layout_weight="4"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="我是谁？我在哪？"
+                        android:maxLength="50"
                         android:paddingTop="8dp"
                         android:paddingBottom="8dp"
                         android:textSize="16sp"
