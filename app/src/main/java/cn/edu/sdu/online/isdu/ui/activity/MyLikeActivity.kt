@@ -175,7 +175,8 @@ class MyLikeActivity : SlideActivity() {
                         .putExtra("id", item.uid))
             }
 
-            if (User.staticUser == null || User.staticUser.studentNumber == null) {
+//            if (User.staticUser == null || User.staticUser.studentNumber == null) {
+            if (!User.isLogin()) {
                 holder.btnFollow.visibility = View.INVISIBLE
             } else {
                 if (item.uid.toString() == User.staticUser.uid.toString()) {

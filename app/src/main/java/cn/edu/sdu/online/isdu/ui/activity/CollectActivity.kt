@@ -41,8 +41,9 @@ class CollectActivity : SlideActivity(), PostViewable {
 
         // 判断登录
         Thread(Runnable {
-            if (User.staticUser == null) User.staticUser = User.load()
-            if (User.staticUser.studentNumber == null) {
+//            if (User.staticUser == null) User.staticUser = User.load()
+//            if (User.staticUser.studentNumber == null) {
+            if (!User.isLogin()) {
                 val dialog = AlertDialog(this)
                 dialog.setTitle("未登录")
                 dialog.setMessage("请登录后重试")
@@ -90,8 +91,9 @@ class CollectActivity : SlideActivity(), PostViewable {
     }
 
     private fun getData() {
-        if (User.staticUser == null) User.staticUser = User.load()
-        if (User.staticUser.studentNumber == null) return
+//        if (User.staticUser == null) User.staticUser = User.load()
+//        if (User.staticUser.studentNumber == null) return
+        if (!User.isLogin()) return
         NetworkAccess.cache(ServerInfo.getCollectList + "?userId=" + User.staticUser.uid) {success, cachePath ->
             if (success) {
                 try {

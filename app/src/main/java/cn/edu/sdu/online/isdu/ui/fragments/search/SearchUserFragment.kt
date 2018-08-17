@@ -201,8 +201,9 @@ class SearchUserFragment : LazyLoadFragment() {
             holder.btnFollow.visibility = View.INVISIBLE
 
             holder.btnFollow.setOnClickListener {
-                if (User.staticUser == null || User.staticUser.studentNumber == null) {
+//                if (User.staticUser == null || User.staticUser.studentNumber == null) {
 
+                if (!User.isLogin()) {
                 } else {
                     Thread(Runnable {
                         try {

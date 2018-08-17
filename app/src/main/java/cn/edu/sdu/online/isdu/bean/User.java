@@ -43,7 +43,7 @@ public class User extends LitePalSupport {
     private String major; // 专业
     private String depart; // 学院
     private int uid; // ID号，非学号
-    private Boolean Bind; //是否绑定校园卡
+    private Boolean bind; //是否绑定校园卡
 
     public static User staticUser; // 全局用户实例
 
@@ -202,14 +202,6 @@ public class User extends LitePalSupport {
         this.name = name;
     }
 
-//    public String getAvatarString() {
-//        return avatarString;
-//    }
-//
-//    public void setAvatarString(String avatarString) {
-//        this.avatarString = avatarString;
-//    }
-
     public String getSelfIntroduce() {
         return selfIntroduce;
     }
@@ -250,12 +242,23 @@ public class User extends LitePalSupport {
         this.uid = uid;
     }
 
-    
     public Boolean getBind() {
-        return Bind;
+        return bind;
     }
 
     public void setBind(Boolean bind) {
-        Bind = bind;
+        this.bind = bind;
+    }
+
+    /**
+     * 是否登录
+     *
+     * @return 已经登录为true
+     */
+    public static boolean isLogin() {
+        if (staticUser == null) {
+            staticUser = load();
+        }
+        return staticUser.studentNumber != null;
     }
 }

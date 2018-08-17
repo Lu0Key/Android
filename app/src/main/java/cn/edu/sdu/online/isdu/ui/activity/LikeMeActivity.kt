@@ -83,7 +83,7 @@ class LikeMeActivity : SlideActivity() {
                             }
 
                             var myLikeList: List<String> = ArrayList()
-                            if (User.staticUser == null || User.staticUser.studentNumber == null) {
+                            if (!User.isLogin()) {
 
                             } else {
                                 // 获取我的关注列表
@@ -181,7 +181,7 @@ class LikeMeActivity : SlideActivity() {
                         .putExtra("id", item.uid))
             }
 
-            if (User.staticUser == null || User.staticUser.studentNumber == null) {
+            if (!User.isLogin()) {
                 holder.btnFollow.visibility = View.INVISIBLE
             } else {
                 if (item.uid.toString() == User.staticUser.uid.toString()) {

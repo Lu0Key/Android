@@ -56,8 +56,8 @@ class MyBookFragment : Fragment(), View.OnClickListener {
     private var progressDialog : ProgressDialog ?=  null
     private var rebAll: TextView? = null
     private var unBind: TextView? = null
-    private var loading_layout: TextView? = null
-    private var yf = SimpleDateFormat("yyyy-MM-dd")
+    private var loadingLayout: TextView? = null
+    private var yf = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
     private var firstLoad = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -68,7 +68,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
         noBook!!.visibility = View.GONE
         netWorkError!!.visibility = View.GONE
         unBind!!.visibility = View.GONE
-        loading_layout!!.visibility = View.VISIBLE
+        loadingLayout!!.visibility = View.VISIBLE
 
         initRecyclerView()
         return (view)
@@ -81,7 +81,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
         searchBar = view.findViewById(R.id.search_bar)
         rebAll = view.findViewById(R.id.reb_all)
         unBind = view.findViewById(R.id.unbind)
-        loading_layout = view.findViewById(R.id.loading_layout)
+        loadingLayout = view.findViewById(R.id.loading_layout)
 
         searchBar!!.setOnClickListener(this)
         rebAll!!.setOnClickListener(this)
@@ -89,14 +89,14 @@ class MyBookFragment : Fragment(), View.OnClickListener {
     }
 
     private fun checkState(){
-        if (User.staticUser == null) User.staticUser = User.load()
-        if (User.staticUser.studentNumber == null) {
+//        if (User.staticUser == null) User.staticUser = User.load()
+        if (!User.isLogin()) {
             login()
-        }
-        if(User.staticUser.studentNumber != null){
+        } else {
             checkIsBind()
         }
     }
+
     private fun login(){
         val dialog = AlertDialog(activity!!)
         dialog.setTitle("无数据")
@@ -113,13 +113,12 @@ class MyBookFragment : Fragment(), View.OnClickListener {
             noBook!!.visibility = View.GONE
             netWorkError!!.visibility = View.GONE
             unBind!!.visibility = View.VISIBLE
-            loading_layout!!.visibility = View.GONE
+            loadingLayout!!.visibility = View.GONE
         }
         dialog.show()
-        Log.w("cs","dialog")
     }
+
     private fun checkIsBind(){
-        Log.w("cs",ServerInfo.getLibraryInfoUrl(User.staticUser.uid.toString()))
         NetworkAccess.buildRequest(ServerInfo.getLibraryInfoUrl(User.staticUser.uid.toString()),
                 object : Callback {
                     override fun onFailure(call: Call?, e: IOException?){
@@ -129,7 +128,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                             noBook!!.visibility = View.GONE
                             netWorkError!!.visibility = View.VISIBLE
                             unBind!!.visibility = View.GONE
-                            loading_layout!!.visibility = View.GONE
+                            loadingLayout!!.visibility = View.GONE
                         }
                     }
                     override fun onResponse(call: Call?, response: Response?){
@@ -146,7 +145,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                                     noBook!!.visibility = View.GONE
                                     netWorkError!!.visibility = View.GONE
                                     unBind!!.visibility = View.VISIBLE
-                                    loading_layout!!.visibility = View.GONE
+                                    loadingLayout!!.visibility = View.GONE
                                 }
                             }else{
                                 User.staticUser.bind = true
@@ -158,6 +157,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                     }
                 })
     }
+
     private fun bind(){
         val dialog = AlertDialog(activity!!)
         dialog.setTitle("无数据")
@@ -181,8 +181,9 @@ class MyBookFragment : Fragment(), View.OnClickListener {
             firstLoad = false
             checkState()
         }else{
-            if (User.staticUser == null) User.staticUser = User.load()
-            if(User.staticUser.studentNumber != null){
+//            if (User.staticUser == null) User.staticUser = User.load()
+//            if(User.staticUser.studentNumber != null){
+            if (User.isLogin()) {
                 if(User.staticUser.bind == true){
                     initData()
                 }else{
@@ -191,18 +192,19 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                     netWorkError!!.visibility = View.GONE
                     unBind!!.visibility = View.VISIBLE
                     rebAll!!.visibility = View.GONE
-                    loading_layout!!.visibility = View.GONE
+                    loadingLayout!!.visibility = View.GONE
                 }
-            }else{
+            } else {
                 recyclerView!!.visibility = View.GONE
                 noBook!!.visibility = View.GONE
                 netWorkError!!.visibility = View.GONE
                 unBind!!.visibility = View.VISIBLE
                 rebAll!!.visibility = View.GONE
-                loading_layout!!.visibility = View.GONE
+                loadingLayout!!.visibility = View.GONE
             }
         }
     }
+
     override fun onClick(v: View?) {
         when(v!!.id){
             search_bar.id->{
@@ -253,7 +255,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
             netWorkError!!.visibility = View.GONE
             noBook!!.visibility = View.GONE
             unBind!!.visibility = View.GONE
-            loading_layout!!.visibility = View.VISIBLE
+            loadingLayout!!.visibility = View.VISIBLE
         }
         Log.w("mbf",ServerInfo.getBookListUrl(User.staticUser.uid.toString()))
         NetworkAccess.buildRequest(ServerInfo.getBookListUrl(User.staticUser.uid.toString()),
@@ -265,7 +267,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                             netWorkError!!.visibility = View.VISIBLE
                             noBook!!.visibility = View.GONE
                             unBind!!.visibility = View.GONE
-                            loading_layout!!.visibility = View.GONE
+                            loadingLayout!!.visibility = View.GONE
                         }
                     }
                     override fun onResponse(call: Call?, response: Response?){
@@ -279,7 +281,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                                     netWorkError!!.visibility = View.GONE
                                     unBind!!.visibility = View.GONE
                                     noBook!!.visibility = View.VISIBLE
-                                    loading_layout!!.visibility = View.GONE
+                                    loadingLayout!!.visibility = View.GONE
                                 }
                             }else if(json.getInt("code")==2){
                                 activity!!.runOnUiThread{
@@ -320,7 +322,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                                     netWorkError!!.visibility = View.GONE
                                     noBook!!.visibility = View.GONE
                                     unBind!!.visibility = View.GONE
-                                    loading_layout!!.visibility = View.GONE
+                                    loadingLayout!!.visibility = View.GONE
                                     adapter!!.notifyDataSetChanged()
                                 }
                             }
@@ -330,6 +332,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                     }
                 })
     }
+
     /**
      * 初始化RecyclerView
      */
@@ -342,7 +345,6 @@ class MyBookFragment : Fragment(), View.OnClickListener {
         //progressDialog!!.setButton(null,null)
         //progressDialog!!.show()
     }
-
 
     /**
      * recyclerView容器类

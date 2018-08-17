@@ -291,9 +291,11 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
         btnAbout!!.setOnItemClickListener(this)
         btnLicense!!.setOnItemClickListener(this)
 
-        if (User.staticUser == null) User.staticUser = User.load()
-        if (User.staticUser.studentNumber == null ||
-                User.staticUser.studentNumber == "") btnLogout!!.visibility = View.GONE
+//        if (User.staticUser == null) User.staticUser = User.load()
+//        if (User.staticUser.studentNumber == null ||
+//                User.staticUser.studentNumber == "")
+        if (!User.isLogin())
+            btnLogout!!.visibility = View.GONE
     }
 
     override fun prepareBroadcastReceiver() {

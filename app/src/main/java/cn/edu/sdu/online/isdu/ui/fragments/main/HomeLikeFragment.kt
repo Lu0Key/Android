@@ -110,8 +110,9 @@ class HomeLikeFragment : LazyLoadFragment() {
 
     override fun loadData() {
         if (loadComplete) return
-        if (User.staticUser == null) User.staticUser = User.load()
-        if (User.staticUser.studentNumber == null) return
+//        if (User.staticUser == null) User.staticUser = User.load()
+//        if (User.staticUser.studentNumber == null) return
+        if (!User.isLogin()) return
         NetworkAccess.cache(ServerInfo.getLikePost(User.staticUser.uid.toString(), lastId)) { success, cachePath ->
             if (success) {
                 try {

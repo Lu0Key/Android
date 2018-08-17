@@ -65,8 +65,9 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_schedule)
 
-        if (User.staticUser == null) User.staticUser = User.load()
-        if (User.staticUser.studentNumber == null) {
+//        if (User.staticUser == null) User.staticUser = User.load()
+//        if (User.staticUser.studentNumber == null) {
+        if (!User.isLogin()) {
             val dialog = AlertDialog(this)
             dialog.setTitle("无数据")
             dialog.setMessage("请登录后重试")

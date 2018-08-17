@@ -151,34 +151,38 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      * 获取是否关注
      */
     private fun getLiked() {
-        if (User.staticUser == null || User.staticUser.studentNumber == null) User.staticUser = User.load()
-        NetworkAccess.buildRequest(ServerInfo.getMyLike(User.staticUser.uid.toString()), object : Callback {
-            override fun onFailure(call: Call?, e: IOException?) {
-                Logger.log(e)
-            }
-
-            override fun onResponse(call: Call?, response: Response?) {
-                try {
-                    val str = JSONObject(response?.body()?.string()).getString("obj")
-                    val list = str.split("-")
-                    if (list.contains(id.toString())) {
-                        runOnUiThread {
-                            btnFollow!!.text = "已关注"
-                            btnFollow!!.setTextColor(0xFF717EDB.toInt())
-                            btnFollow!!.setBackgroundResource(R.drawable.purple_stroke_rect_colorchanged)
-                        }
-                    } else {
-                        runOnUiThread {
-                            btnFollow!!.text = "关注"
-                            btnFollow!!.setTextColor(0xFF808080.toInt())
-                            btnFollow!!.setBackgroundResource(R.drawable.text_button_background)
-                        }
-                    }
-                } catch (e: Exception) {
+        if (!User.isLogin()) {
+            btnFollow!!.visibility = View.GONE
+        } else {
+            btnFollow!!.visibility = View.VISIBLE
+            NetworkAccess.buildRequest(ServerInfo.getMyLike(User.staticUser.uid.toString()), object : Callback {
+                override fun onFailure(call: Call?, e: IOException?) {
                     Logger.log(e)
                 }
-            }
-        })
+
+                override fun onResponse(call: Call?, response: Response?) {
+                    try {
+                        val str = JSONObject(response?.body()?.string()).getString("obj")
+                        val list = str.split("-")
+                        if (list.contains(id.toString())) {
+                            runOnUiThread {
+                                btnFollow!!.text = "已关注"
+                                btnFollow!!.setTextColor(0xFF717EDB.toInt())
+                                btnFollow!!.setBackgroundResource(R.drawable.purple_stroke_rect_colorchanged)
+                            }
+                        } else {
+                            runOnUiThread {
+                                btnFollow!!.text = "关注"
+                                btnFollow!!.setTextColor(0xFF808080.toInt())
+                                btnFollow!!.setBackgroundResource(R.drawable.text_button_background)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Logger.log(e)
+                    }
+                }
+            })
+        }
     }
 
     private fun initView() {
@@ -397,8 +401,9 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      */
     private fun setGuestView() {
         btnEditProfile!!.visibility = View.GONE
-        if (User.staticUser == null ||
-                User.staticUser.studentNumber == null) {
+//        if (User.staticUser == null ||
+//                User.staticUser.studentNumber == null) {
+        if (!User.isLogin()) {
             btnFollow!!.visibility = View.GONE
         } else {
             btnFollow!!.visibility = View.VISIBLE
@@ -417,6 +422,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         loadUserInfo()
+        window.decorView.invalidate()
     }
 
     override fun onNewIntent(intent: Intent?) {

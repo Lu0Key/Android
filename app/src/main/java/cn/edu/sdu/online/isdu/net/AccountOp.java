@@ -145,44 +145,6 @@ public class AccountOp {
         }
     }
 
-    /**
-     * 同步他人用户
-     */
-    public static void getUserInformation(final int id) {
-        NetworkAccess.cache(ServerInfo.getUserInfo(id + "", "id-nickname-sign-studentnumber-gender-avatar"),
-                new NetworkAccess.OnCacheFinishListener() {
-            @Override
-            public void onFinish(boolean success, String cachePath) {
-                if (success) {
-                    try {
-                        String json = FileUtil.getStringFromFile(cachePath);
-                        Intent intent = new Intent(ACTION_SYNC_USER_INFO)
-                                .putExtra("id", id)
-                                .putExtra("json", json);
-                        localBroadcastManager.sendBroadcast(intent);
-                    } catch (Exception e) {
-                        Logger.log(e);
-                    }
-                }
-            }
-        });
-
-    }
-
-    public static void getUserAvatar(final int id) {
-        NetworkAccess.cache(ServerInfo.getUserInfo(id + "", "avatar"), "avatar", new NetworkAccess.OnCacheFinishListener() {
-            @Override
-            public void onFinish(boolean success, String cachePath) {
-                if (success) {
-                    Intent intent = new Intent(ACTION_SYNC_USER_AVATAR)
-                            .putExtra("id", id)
-                            .putExtra("cache_path", cachePath);
-                    localBroadcastManager.sendBroadcast(intent);
-                }
-            }
-        });
-    }
-
     public static void logout(Context context) {
         SharedPreferences.Editor editor =
                 context.getSharedPreferences("login_cache", Context.MODE_PRIVATE).edit();

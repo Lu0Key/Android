@@ -325,28 +325,29 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         .putExtra("id", post.uid.toInt()))
             }
             btn_like.id -> {
-                if (User.staticUser != null &&
-                        User.staticUser.studentNumber != null)
-                NetworkAccess.buildRequest(ServerInfo.likePost + "?postId=$postId&userId=${User.staticUser.uid}",
-                        object : Callback {
-                            override fun onFailure(call: Call?, e: IOException?) {
-                                Logger.log(e)
-                                runOnUiThread {
-                                    Toast.makeText(this@PostDetailActivity, "点赞失败", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-
-                            override fun onResponse(call: Call?, response: Response?) {
-                                try {
-                                    runOnUiThread {
-                                        isLike = !isLike
-                                        getLikeNumber()
-                                    }
-                                } catch (e: Exception) {
+//                if (User.staticUser != null &&
+//                        User.staticUser.studentNumber != null)
+                if (User.isLogin())
+                    NetworkAccess.buildRequest(ServerInfo.likePost + "?postId=$postId&userId=${User.staticUser.uid}",
+                            object : Callback {
+                                override fun onFailure(call: Call?, e: IOException?) {
                                     Logger.log(e)
+                                    runOnUiThread {
+                                        Toast.makeText(this@PostDetailActivity, "点赞失败", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
-                            }
-                        })
+
+                                override fun onResponse(call: Call?, response: Response?) {
+                                    try {
+                                        runOnUiThread {
+                                            isLike = !isLike
+                                            getLikeNumber()
+                                        }
+                                    } catch (e: Exception) {
+                                        Logger.log(e)
+                                    }
+                                }
+                            })
             }
             btn_collect.id -> {
                 showCollectToast = true
@@ -482,7 +483,8 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
                                 runOnUiThread {
 
-                                    if (User.staticUser.studentNumber == null) {
+//                                    if (User.staticUser.studentNumber == null) {
+                                    if (!User.isLogin()) {
                                         // 未登录
                                         operate_bar!!.visibility = View.GONE
                                         btnOptions!!.visibility = View.INVISIBLE
@@ -793,8 +795,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
             holder.itemLayout.setOnLongClickListener {
 
-                if (User.staticUser == null) User.staticUser = User.load()
-                if (User.staticUser.studentNumber == null || User.staticUser.studentNumber.equals("")) {
+//                if (User.staticUser == null) User.staticUser = User.load()
+//                if (User.staticUser.studentNumber == null || User.staticUser.studentNumber.equals("")) {
+                if (!User.isLogin()) {
                     return@setOnLongClickListener false
                 }
 

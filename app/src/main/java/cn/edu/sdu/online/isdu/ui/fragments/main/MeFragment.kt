@@ -165,7 +165,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
 
             }
             personal_information_layout.id -> {
-                if (User.staticUser.studentNumber != null && User.staticUser.studentNumber != "") {
+                if (User.isLogin()) {
                     startActivity(Intent(activity, MyHomePageActivity::class.java))
                 } else {
                     startActivity(Intent(activity, LoginActivity::class.java))
@@ -287,8 +287,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
      * 加载用户信息
      */
     private fun loadUserInformation() {
-        if (User.staticUser == null) User.staticUser = User.load()
-        if (User.staticUser.studentNumber != null && User.staticUser.studentNumber != "") {
+        if (User.isLogin()) {
             // 加载登录后信息
             val user = User.staticUser
 //            circleImageView?.setImageBitmap(ImageManager.convertStringToBitmap(user.avatarString))
@@ -333,8 +332,9 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
      * 加载今日安排
      */
     private fun loadSchedule() {
-        if (User.staticUser == null) User.staticUser = User.load()
-        if (User.staticUser.studentNumber != null)
+//        if (User.staticUser == null) User.staticUser = User.load()
+//        if (User.staticUser.studentNumber != null)
+        if (User.isLogin())
         NetworkAccess.cache(ServerInfo.getScheduleUrl(User.staticUser.uid)) { success, cachePath ->
             if (success) {
                 val jsonString = FileUtil.getStringFromFile(cachePath)

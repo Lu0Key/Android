@@ -245,8 +245,9 @@ public class Schedule implements Parcelable {
     }
 
     public static void loadFromNet(final Context context) {
-        if (User.staticUser == null) User.staticUser = User.load();
-        if (User.staticUser.getStudentNumber() != null)
+//        if (User.staticUser == null) User.staticUser = User.load();
+//        if (User.staticUser.getStudentNumber() != null)
+        if (User.isLogin())
             NetworkAccess.cache(ServerInfo.getScheduleUrl(User.staticUser.getUid()),
                     new NetworkAccess.OnCacheFinishListener() {
                         @Override

@@ -92,8 +92,9 @@ class CreatePostActivity : NormActivity(), View.OnClickListener {
         dialog!!.setCancelable(false)
 
 
-        if (User.staticUser == null) User.staticUser = User.load()
-        if (User.staticUser.studentNumber == null) {
+//        if (User.staticUser == null) User.staticUser = User.load()
+//        if (User.staticUser.studentNumber == null) {
+        if (!User.isLogin()) {
             val dialog = AlertDialog(this)
             dialog.setTitle("未登录")
             dialog.setMessage("请登录后重试")
