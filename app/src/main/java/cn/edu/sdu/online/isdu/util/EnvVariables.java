@@ -23,14 +23,15 @@ import okhttp3.Response;
 import static java.util.Calendar.DAY_OF_WEEK;
 
 public class EnvVariables {
-
+    public static final long DEFAULT_FIRST_WEEK_TIME_MILLIS = 1536508800000L;
     public static int startWeek = 1;
     public static int endWeek = 20;
     public static int currentWeek = -1;
 
     public static boolean lessonDelay = false; // 是否按照夏季作息推迟上课
 
-    public static long firstWeekTimeMillis = 0;
+    public static long firstWeekTimeMillis = DEFAULT_FIRST_WEEK_TIME_MILLIS;
+
 
     public static void init(final Context context) {
         SharedPreferences sp = context.getSharedPreferences("env_variables", Context.MODE_PRIVATE);
@@ -51,7 +52,7 @@ public class EnvVariables {
                     Logger.log(e);
                     startWeek = 1;
                     endWeek = 20;
-                    firstWeekTimeMillis = 1536508800000L; // 加载默认值
+                    firstWeekTimeMillis = DEFAULT_FIRST_WEEK_TIME_MILLIS; // 加载默认值
                     save(context);
                 }
 
@@ -72,7 +73,7 @@ public class EnvVariables {
         } else {
             startWeek = sp.getInt("start_week", 1);
             endWeek = sp.getInt("end_week", 20);
-            firstWeekTimeMillis = sp.getLong("first_week_time_millis", 1536508800000L);
+            firstWeekTimeMillis = sp.getLong("first_week_time_millis", DEFAULT_FIRST_WEEK_TIME_MILLIS);
 
             currentWeek = calculateWeekIndex(System.currentTimeMillis());
         }
@@ -88,7 +89,7 @@ public class EnvVariables {
         } else {
             editor.putInt("start_week", 1);
             editor.putInt("end_week", 20);
-            editor.putLong("first_week_time_millis", 1536508800000L);
+            editor.putLong("first_week_time_millis", DEFAULT_FIRST_WEEK_TIME_MILLIS);
         }
         editor.apply();
     }

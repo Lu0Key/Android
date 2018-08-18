@@ -135,7 +135,6 @@ public class Post {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(postId);
     }
 }

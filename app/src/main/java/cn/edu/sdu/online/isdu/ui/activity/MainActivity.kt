@@ -20,6 +20,7 @@ import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
+import android.util.Log
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView
 import android.view.LayoutInflater
 import android.widget.*
@@ -72,6 +73,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Log.d("Jzz", DateCalculate.getTimeMillis(2018,9,10).toString())
 
         // 检查是否初次加载
         val sp = getSharedPreferences("app", Context.MODE_PRIVATE)

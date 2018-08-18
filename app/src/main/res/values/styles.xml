@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="SplashTheme" parent="AppTheme">
+    <style name="SplashTheme" parent="QMUI.Compat.NoActionBar">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>

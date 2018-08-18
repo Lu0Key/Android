@@ -261,12 +261,16 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
                                             exam.getString("courseName")
                                     )
 
-                                    val schedule = item.toSchedule()
-                                    schedule.repeatWeeks.add(item.week)
+                                    if (EnvVariables.firstWeekTimeMillis >
+                                            DateCalculate.getTimeMillis(item.date)) {
+                                        // 考试在起始周之前，不添加
+                                    } else {
+                                        val schedule = item.toSchedule()
+                                        schedule.repeatWeeks.add(item.week)
 
-                                    Log.d("AAA", "WEEK=${item.week} DAY=${item.day}")
+                                        totalList!![item.week - 1][item.day - 1].add(schedule)
+                                    }
 
-                                    totalList!![item.week - 1][item.day - 1].add(schedule)
                                 }
 
                             }

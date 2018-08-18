@@ -130,7 +130,7 @@ class MePostsFragment : LazyLoadFragment(), PostViewable {
                                 post.time = obj.getString("time").toLong()
                                 post.content = obj.getString("info")
 
-                                if (!list.contains(post))
+                                if (!dataList.contains(post))
                                     list.add(post)
                             }
 
@@ -144,22 +144,9 @@ class MePostsFragment : LazyLoadFragment(), PostViewable {
                 })
     }
 
-    public fun removeAllItems() {
+    fun removeAllItems() {
         dataList.clear()
         adapter?.notifyDataSetChanged()
-    }
-
-    /**
-     * 下拉刷新发布最新帖子信息
-     */
-    private fun publishNewData(list: List<Post>) {
-        if (list.isEmpty()) {
-
-        } else {
-            dataList.clear()
-            dataList.addAll(list)
-            adapter!!.notifyDataSetChanged()
-        }
     }
 
     private fun publishLoadData(list: List<Post>) {
@@ -171,10 +158,6 @@ class MePostsFragment : LazyLoadFragment(), PostViewable {
         }
     }
 
-    override fun publishData() {
-        super.publishData()
-    }
-
     /**
      * 初始化下拉刷新
      */
@@ -182,8 +165,8 @@ class MePostsFragment : LazyLoadFragment(), PostViewable {
         // 下拉刷新监听器
         pullRefreshLayout!!.setListener(object : SpringView.OnFreshListener {
             override fun onLoadmore() {
-                loadData()
                 needOffset = true
+                loadData()
             }
 
             override fun onRefresh() {

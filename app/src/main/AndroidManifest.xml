@@ -16,32 +16,33 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:largeHeap="true"
         tools:replace="android:allowBackup">
-
-        <activity android:name=".ui.activity.MainActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/SplashTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.EditProfileActivity"
+        <activity
+            android:name=".ui.activity.EditProfileActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.MyHomePageActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.ScheduleActivity"
+        <activity
+            android:name=".ui.activity.ScheduleActivity"
             android:screenOrientation="portrait" />
 
         <!-- UCrop Activity -->
@@ -60,52 +61,72 @@
                 android:resource="@xml/file_path" />
         </provider>
 
-        <activity android:name=".ui.activity.LibraryActivity"
+        <activity
+            android:name=".ui.activity.LibraryActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.SchoolBusActivity"
+        <activity
+            android:name=".ui.activity.SchoolBusActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.CalendarActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.ExamActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.StudyRoomActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.GradeActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.CloudActivity"
+        <activity
+            android:name=".ui.activity.CalendarActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.SettingsActivity"
+        <activity
+            android:name=".ui.activity.ExamActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.LoginActivity"
+        <activity
+            android:name=".ui.activity.StudyRoomActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.ScheduleDetailActivity"
+        <activity
+            android:name=".ui.activity.GradeActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.CreateScheduleActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.SchoolBusTableActivity"
+        <activity
+            android:name=".ui.activity.CloudActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.FeedbackActivity"
+        <activity
+            android:name=".ui.activity.SettingsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.HistoryActivity"
+        <activity
+            android:name=".ui.activity.LoginActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.ViewImageActivity"
+        <activity
+            android:name=".ui.activity.ScheduleDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.CreateScheduleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.SchoolBusTableActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.FeedbackActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.HistoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.ViewImageActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.SearchActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.SearchBookActivity"
+        <activity
+            android:name=".ui.activity.SearchActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.MessageActivity"
+        <activity
+            android:name=".ui.activity.SearchBookActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.MessageActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.NewsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.BindLibraryActivity"
+        <activity
+            android:name=".ui.activity.NewsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.BindLibraryActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.DownloadActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <receiver android:name=".util.broadcast.DownloadBroadcastReceiver">
             <intent-filter>
@@ -116,37 +137,54 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.activity.CreatePostActivity"
+        <activity
+            android:name=".ui.activity.CreatePostActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.StudyRoomTableActivity"
+        <activity
+            android:name=".ui.activity.StudyRoomTableActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.CollectActivity"
+        <activity
+            android:name=".ui.activity.CollectActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.NotFindPostActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.PostDetailActivity"
+        <activity
+            android:name=".ui.activity.NotFindPostActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.PostDetailActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.LikeMeActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.MyLikeActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.activity.LikeMeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.MyLikeActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.GuideActivity"
-            android:theme="@style/GuidePageTheme"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/GuidePageTheme" />
 
         <service
             android:name=".service.MessageService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ui.activity.AboutActivity"
+        <activity
+            android:name=".ui.activity.AboutActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.ClaimActivity"
+        <activity
+            android:name=".ui.activity.ClaimActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.LicenseActivity"
+        <activity
+            android:name=".ui.activity.LicenseActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.activity.TestActivity">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
     </application>
 
 </manifest>

@@ -22,8 +22,10 @@ public class SlideActivity extends NormActivity {
                 .scrimColor(0x000000)
                 .scrimStartAlpha(0.8f)
                 .edge(true)
-                .edgeSize(0.125f)
-                .velocityThreshold(1600)
+                .edgeSize(0.1f)
+                .velocityThreshold(2400)
+                .distanceThreshold(0.1f)
+                .sensitivity(1.0f)
                 .build();
         Slidr.attach(this, config);
         overridePendingTransition(R.anim.snake_slide_in_right, R.anim.snake_slide_out_left);
