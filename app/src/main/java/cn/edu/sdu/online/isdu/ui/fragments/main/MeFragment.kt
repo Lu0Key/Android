@@ -165,10 +165,15 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
 
             }
             personal_information_layout.id -> {
-                if (User.isLogin()) {
-                    startActivity(Intent(activity, MyHomePageActivity::class.java))
-                } else {
-                    startActivity(Intent(activity, LoginActivity::class.java))
+                try {
+                    Logger.log("User login = ${User.isLogin()}")
+                    if (User.isLogin()) {
+                        startActivity(Intent(activity, MyHomePageActivity::class.java))
+                    } else {
+                        startActivity(Intent(activity, LoginActivity::class.java))
+                    }
+                } catch (e: Exception) {
+                    Logger.log(e)
                 }
             }
             today_schedule.id -> {
@@ -335,7 +340,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
 //        if (User.staticUser == null) User.staticUser = User.load()
 //        if (User.staticUser.studentNumber != null)
         if (User.isLogin())
-        NetworkAccess.cache(ServerInfo.getScheduleUrl(User.staticUser.uid)) { success, cachePath ->
+            NetworkAccess.cache(ServerInfo.getScheduleUrl(User.staticUser.uid)) { success, cachePath ->
             if (success) {
                 val jsonString = FileUtil.getStringFromFile(cachePath)
                 try {
@@ -344,6 +349,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
 
                     if (EnvVariables.currentWeek <= 0)
                         EnvVariables.currentWeek = EnvVariables.calculateWeekIndex(System.currentTimeMillis())
+                    todoList.clear()
                     todoList.addAll(Schedule.localScheduleList[EnvVariables.currentWeek - 1][EnvVariables.getCurrentDay() - 1])
 
                     // 去掉本周不上的课

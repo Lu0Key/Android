@@ -786,11 +786,13 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             }
 
             holder.itemLayout.setOnClickListener {
-                btnComment!!.callOnClick()
-                showSoftKeyboard()
-                editText!!.hint = "回复：${comment.content}"
-                fatherCommentId = comment.id
-                toUserId = comment.uid
+                if (User.isLogin()) {
+                    btnComment!!.callOnClick()
+                    showSoftKeyboard()
+                    editText!!.hint = "回复：${comment.content}"
+                    fatherCommentId = comment.id
+                    toUserId = comment.uid
+                }
             }
 
             holder.itemLayout.setOnLongClickListener {

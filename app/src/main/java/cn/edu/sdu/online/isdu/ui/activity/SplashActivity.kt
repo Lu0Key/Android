@@ -16,6 +16,7 @@ import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.util.*
 import cn.edu.sdu.online.isdu.util.download.Download
+import com.qmuiteam.qmui.util.QMUIStatusBarHelper
 import kotlinx.android.synthetic.main.activity_splash.*
 
 /**
@@ -42,17 +43,11 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-
         decorateWindow()
-
 
         showSplash()
 
-
     }
-
-
-
 
 
     private fun showSplash() {
@@ -72,24 +67,32 @@ class SplashActivity : AppCompatActivity() {
         if (handler != null && splashHandler != null) {
             handler!!.postDelayed(splashHandler, PAGE_SHOW_TIME_MILLIS)
         }
+        decorateWindow()
     }
 
+
     private fun decorateWindow() {
-        val decorView = window.decorView
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-        } else {
-            decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
-        }
+        QMUIStatusBarHelper.translucent(this)
+//        val decorView = window.decorView
+//        setTheme(R.style.SplashTheme)
+//        try {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+//                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+//            } else {
+//                decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                        or View.SYSTEM_UI_FLAG_FULLSCREEN)
+//            }
+//        } catch (e: Exception) {
+//
+//        }
     }
 
     inner class SplashHandler : Runnable {

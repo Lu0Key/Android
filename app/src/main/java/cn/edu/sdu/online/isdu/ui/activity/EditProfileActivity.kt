@@ -290,7 +290,7 @@ class EditProfileActivity : NormActivity() {
                 sb.append(BOUNDARY)
                 sb.append("\r\n")
                 sb.append("Content-Disposition: form-data; name=\"" + "userInfo" + "\"\r\n\r\n")
-                sb.append(hashMap.get("userInfo"))
+                sb.append(hashMap["userInfo"])
                 sb.append("\r\n")
 
                 //上传图片部分
@@ -299,7 +299,8 @@ class EditProfileActivity : NormActivity() {
                 //发送表单字段数据
 
                 //调用自定义方法获取图片文件的byte数组
-                val content = if (isAvatarChanged) ImageManager.convertBitmapToByteArray(finalBitmap) else ByteArray(1)
+                val content = if (isAvatarChanged)
+                    ImageManager.convertBitmapToByteArray(finalBitmap) else ByteArray(1)
                 //再次设置报头信息
                 val split = StringBuilder()
                 split.append("--")

@@ -591,7 +591,7 @@ public class ScheduleTable extends View {
                             StringBuilder finalS = new StringBuilder(str.get(2).get(str.get(2).size() - 1));
                             finalS.deleteCharAt(finalS.length() - 1);
                             finalS.append("..");
-                            str.get(2).remove(str.get(1).size() - 1);
+                            str.get(2).remove(str.get(2).size() - 1);
                             str.get(2).add(finalS.toString());
                         }
                     }

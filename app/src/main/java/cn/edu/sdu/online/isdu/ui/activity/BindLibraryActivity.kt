@@ -20,8 +20,8 @@ import java.io.IOException
 class BindLibraryActivity : SlideActivity(), View.OnClickListener {
 
     private var btnBack: ImageView? = null
-    private var txtCardNumber: TextInputEditText? = null
-    private var txtPassword: TextInputEditText? = null
+    private var txtCardNumber: EditText? = null
+    private var txtPassword: EditText? = null
     private var btnBind: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -7,8 +7,10 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.View
+import android.widget.Button
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.BaseActivity
+import cn.edu.sdu.online.isdu.ui.design.button.JzzButton
 import cn.edu.sdu.online.isdu.ui.fragments.GuideFinishFragment
 import cn.edu.sdu.online.isdu.ui.fragments.ImageFragment
 import kotlinx.android.synthetic.main.activity_guide.*
@@ -23,12 +25,17 @@ class GuideActivity : BaseActivity() {
     private val mImageResources = listOf(R.drawable.img_guide_0, R.drawable.img_guide_1,
             R.drawable.img_guide_2, R.drawable.img_guide_3)
     private val mFragments: MutableList<Fragment> = ArrayList()
+    private var btnIn: JzzButton? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_guide)
 
         decorateWindow()
+
+        btnIn = btn_in
+        btnIn!!.visibility = View.GONE
+        btnIn!!.setOnClickListener { finish() }
 
         initView()
         initIndicator()
@@ -42,7 +49,7 @@ class GuideActivity : BaseActivity() {
         for (i in 0 until mImageResources.size) {
             mFragments.add(ImageFragment.newInstance(mImageResources[i], i))
         }
-        mFragments.add(GuideFinishFragment())
+//        mFragments.add(GuideFinishFragment())
 
         mViewPager!!.adapter = FragAdapter(supportFragmentManager)
 
@@ -69,8 +76,10 @@ class GuideActivity : BaseActivity() {
             override fun onPageSelected(position: Int) {
                 if (position >= GUIDE_PAGES_COUNT - 1) {
                     magicIndicator!!.visibility = View.INVISIBLE
+                    btnIn!!.visibility = View.VISIBLE
                 } else {
                     magicIndicator!!.visibility = View.VISIBLE
+                    btnIn!!.visibility = View.GONE
                 }
             }
         })

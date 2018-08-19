@@ -3,6 +3,7 @@ package cn.edu.sdu.online.isdu.ui.activity
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
+import android.support.design.widget.TextInputLayout
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -27,14 +28,13 @@ import java.io.IOException
 class LoginActivity : SlideActivity(), View.OnClickListener {
 
     private var btnBack: ImageView? = null
-    private var txtStudentNumber: TextInputEditText? = null
-    private var txtPassword: TextInputEditText? = null
+    private var txtStudentNumber: EditText? = null
+    private var txtPassword: EditText? = null
     private var btnLogin: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
         initView()
     }
 

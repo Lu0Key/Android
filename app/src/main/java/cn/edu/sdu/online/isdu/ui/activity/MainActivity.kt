@@ -73,7 +73,9 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.d("Jzz", DateCalculate.getTimeMillis(2018,9,10).toString())
+
+        // 搞定某些系统上状态栏不显示的BUG
+
 
         // 检查是否初次加载
         val sp = getSharedPreferences("app", Context.MODE_PRIVATE)
@@ -85,10 +87,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         }
 
         // 请求关键权限
-        Permissions.requestPermission(this, Permissions.VIBRATE)
-        Permissions.requestPermission(this, Permissions.INTERNET)
-        Permissions.requestPermission(this, Permissions.REQUEST_INSTALL_PACKAGES)
-        Permissions.requestPermission(this, Permissions.REQUEST_SYSTEM_ALERT_WINDOW)
+        Permissions.requestAllPermissions(this)
 
         initApplication()
 

@@ -271,9 +271,13 @@ public class SnakeHackLayout extends FrameLayout {
 
         if(getChildCount() > 0) {
             View contentView = getChildAt(0);
-            contentView.layout(mContentViewLeft, mContentViewTop,
-                    mContentViewLeft + contentView.getMeasuredWidth(),
-                    mContentViewTop + contentView.getMeasuredHeight());
+            try {
+                contentView.layout(mContentViewLeft, mContentViewTop,
+                        mContentViewLeft + contentView.getMeasuredWidth(),
+                        mContentViewTop + contentView.getMeasuredHeight());
+            } catch (Exception e) {
+                cn.edu.sdu.online.isdu.util.Logger.log(e);
+            }
         }
 
         isInLayout = false;

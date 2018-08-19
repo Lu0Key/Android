@@ -38,6 +38,8 @@ public abstract class BaseActivity extends AppCompatActivity
 
         Thread.setDefaultUncaughtExceptionHandler(this);
         prepareBroadcastReceiver();
+
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
 
     @Override

@@ -38,35 +38,55 @@
         android:orientation="vertical"
         android:layout_margin="16dp">
 
-        <android.support.design.widget.TextInputLayout
+        <!--<android.support.design.widget.TextInputLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_margin="8dp">-->
+
+            <!--<android.support.design.widget.TextInputEditText-->
+                <!--android:id="@+id/student_number"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:hint="学号"-->
+                <!--android:letterSpacing="0.1"-->
+                <!--android:textSize="18sp"-->
+                <!--android:inputType="number"/>-->
+        <!--</android.support.design.widget.TextInputLayout>-->
+
+        <EditText
+            android:id="@+id/student_number"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp">
+            android:layout_height="wrap_content"
+            android:hint="学号"
+            android:letterSpacing="0.1"
+            android:layout_margin="8dp"
+            android:textSize="18sp"
+            android:inputType="number"/>
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/student_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="学号"
-                android:letterSpacing="0.1"
-                android:textSize="18sp"
-                android:inputType="number"/>
-        </android.support.design.widget.TextInputLayout>
+        <!--<android.support.design.widget.TextInputLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_margin="8dp">-->
 
-        <android.support.design.widget.TextInputLayout
+            <!--<android.support.design.widget.TextInputEditText-->
+                <!--android:id="@+id/password"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:hint="教务密码"-->
+                <!--android:inputType="textPassword"-->
+                <!--android:letterSpacing="0.1"-->
+                <!--android:textSize="18sp"/>-->
+        <!--</android.support.design.widget.TextInputLayout>-->
+
+        <EditText
+            android:id="@+id/password"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="教务密码"
-                android:inputType="textPassword"
-                android:letterSpacing="0.1"
-                android:textSize="18sp"/>
-        </android.support.design.widget.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:hint="教务密码"
+            android:letterSpacing="0.1"
+            android:layout_margin="8dp"
+            android:textSize="18sp"
+            android:inputType="textPassword"/>
     </LinearLayout>
 
     <Button
