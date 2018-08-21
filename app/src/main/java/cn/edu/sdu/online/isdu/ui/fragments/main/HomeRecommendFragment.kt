@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
+import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
@@ -92,7 +94,7 @@ class HomeRecommendFragment : LazyLoadFragment() {
         pullRefreshLayout!!.setListener(object : SpringView.OnFreshListener {
             override fun onLoadmore() {
                 // 上拉加载更多
-                lastValue = if (dataList.isEmpty()) 0.0 else calculateValue(dataList[dataList.size - 1])
+//                lastValue = if (dataList.isEmpty()) 0.0 else calculateValue(dataList[dataList.size - 1])
                 needOffset = true
                 loadComplete = false
                 loadData()
@@ -110,9 +112,28 @@ class HomeRecommendFragment : LazyLoadFragment() {
 
     }
 
-    private fun calculateValue(post: Post) : Double{
-        return post.likeNumber + 2.0 * post.commentsNumbers + (post.time % 100000000000 / 1000000) +
-                (post.time % 100000) / 100000
+    private fun calculateValue(post: Post) : Double {
+//        return post.likeNumber.toDouble() + 2.0 * post.commentsNumbers.toDouble() +
+//                (post.time.toDouble() % 100000000000.0 / 1000000.0) +
+//                (post.time.toDouble() % 100000.0) / 100000.0
+        return getValueHot(post.likeNumber, post.commentsNumbers, post.time.toString())
+    }
+
+    private fun getValueHot(likeNUmber: Int, commentNumber: Int, time: String): Double {
+        val times = BigInteger(time)
+
+        var timePart = times.mod(BigInteger.valueOf(100000000000L))
+
+        timePart = timePart.divide(BigInteger.valueOf(1000000L))
+
+        val intPart = 100000 * (likeNUmber + 2 * commentNumber) + Integer.valueOf(timePart.toString())
+
+        timePart = times.remainder(BigInteger.valueOf(100000L))
+
+        val miniPart = java.lang.Double.valueOf(timePart.toString()) / 100000
+
+        println(intPart + miniPart)
+        return intPart + miniPart
     }
 
     override fun loadData() {
@@ -131,11 +152,19 @@ class HomeRecommendFragment : LazyLoadFragment() {
                         post.title = obj.getString("title")
                         post.likeNumber = obj.getInt("likeNumber")
                         post.content = obj.getString("info")
+                        post.value = obj.getDouble("value")
 
                         if (!dataList.contains(post))
                             dataList.add(post)
 
-                        lastValue = calculateValue(post)
+//                        if (lastValue - 0.0001 < 0) {
+//                            lastValue = calculateValue(post)
+//                        } else {
+//                            lastValue = Math.min(lastValue, calculateValue(post))
+//                        }
+
+                        lastValue = post.value
+                        Log.d("Jzz", "lastValue = $lastValue")
                     }
                 } catch (e: Exception) {
                     Logger.log(e)
@@ -153,6 +182,7 @@ class HomeRecommendFragment : LazyLoadFragment() {
             }
         }
     }
+
 /*
     inner class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 

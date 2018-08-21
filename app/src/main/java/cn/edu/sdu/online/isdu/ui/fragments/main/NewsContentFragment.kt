@@ -2,15 +2,12 @@ package cn.edu.sdu.online.isdu.ui.fragments.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.News
@@ -19,7 +16,7 @@ import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.NewsActivity
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
-import cn.edu.sdu.online.isdu.util.download.DownloadItem
+import cn.edu.sdu.online.isdu.util.download.IDownloadItem
 import org.json.JSONArray
 
 class NewsContentFragment : LazyLoadFragment() {
@@ -118,7 +115,7 @@ class NewsContentFragment : LazyLoadFragment() {
 
             if (news.source == "办公文件") {
                 holder.itemLayout.setOnClickListener {
-                    DownloadItem(news.originUrl).startDownload()
+                    IDownloadItem(news.originUrl).startDownload()
                 }
             } else {
                 holder.itemLayout.setOnClickListener {

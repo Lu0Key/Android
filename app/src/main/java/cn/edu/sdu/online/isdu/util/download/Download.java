@@ -1,13 +1,8 @@
 package cn.edu.sdu.online.isdu.util.download;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,14 +11,10 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import cn.edu.sdu.online.isdu.R;
-import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.ui.activity.DownloadActivity;
 import cn.edu.sdu.online.isdu.util.FileUtil;
 import cn.edu.sdu.online.isdu.util.Logger;
@@ -31,12 +22,12 @@ import cn.edu.sdu.online.isdu.util.NotificationUtil;
 import cn.edu.sdu.online.isdu.util.Settings;
 import cn.edu.sdu.online.isdu.util.broadcast.DownloadBroadcastReceiver;
 
-import static cn.edu.sdu.online.isdu.util.download.DownloadItem.TYPE_CANCELED;
-import static cn.edu.sdu.online.isdu.util.download.DownloadItem.TYPE_DOWNLOADING;
-import static cn.edu.sdu.online.isdu.util.download.DownloadItem.TYPE_FAILED;
-import static cn.edu.sdu.online.isdu.util.download.DownloadItem.TYPE_NEW_INSTANCE;
-import static cn.edu.sdu.online.isdu.util.download.DownloadItem.TYPE_PAUSED;
-import static cn.edu.sdu.online.isdu.util.download.DownloadItem.TYPE_SUCCESS;
+import static cn.edu.sdu.online.isdu.util.download.IDownloadItem.TYPE_CANCELED;
+import static cn.edu.sdu.online.isdu.util.download.IDownloadItem.TYPE_DOWNLOADING;
+import static cn.edu.sdu.online.isdu.util.download.IDownloadItem.TYPE_FAILED;
+import static cn.edu.sdu.online.isdu.util.download.IDownloadItem.TYPE_NEW_INSTANCE;
+import static cn.edu.sdu.online.isdu.util.download.IDownloadItem.TYPE_PAUSED;
+import static cn.edu.sdu.online.isdu.util.download.IDownloadItem.TYPE_SUCCESS;
 
 public class Download {
 
@@ -52,7 +43,7 @@ public class Download {
      *
      * 按照下载任务在队列中的位置获取NotifyID
      */
-    public static List<DownloadItem> downloadList = new ArrayList<>();
+    public static List<IDownloadItem> downloadList = new ArrayList<>();
 
     /**
      * 全局初始化操作，用来加载本地下载列表
@@ -80,7 +71,7 @@ public class Download {
                 JSONArray jsonArray = new JSONArray(json);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject obj = jsonArray.getJSONObject(i);
-                    DownloadItem downloadItem = new DownloadItem();
+                    IDownloadItem downloadItem = new IDownloadItem();
 
                     downloadItem.setDownloadUrl(obj.getString("download_url"));
                     downloadItem.setFileName(obj.getString("file_name"));
@@ -146,7 +137,7 @@ public class Download {
      * @param notifyId 指定的NotifyID
      * @return 对应的下载任务
      */
-    public static DownloadItem get(int notifyId) {
+    public static IDownloadItem get(int notifyId) {
         return downloadList.get(notifyId - ID_ADD);
     }
 
@@ -155,7 +146,7 @@ public class Download {
      *
      * @param downloadItem 待添加的下载项
      */
-    public static void add(DownloadItem downloadItem) {
+    public static void add(IDownloadItem downloadItem) {
         downloadList.add(downloadItem);
         setNotifyId();
         save();
@@ -207,7 +198,7 @@ public class Download {
         }
     }
 
-    public static void buildNotification(DownloadItem downloadItem) {
+    public static void buildNotification(IDownloadItem downloadItem) {
         switch (downloadItem.getStatus()) {
             case TYPE_NEW_INSTANCE:
                 NotificationUtil.cancel(downloadItem.getNotifyId());

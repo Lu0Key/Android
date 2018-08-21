@@ -11,12 +11,12 @@ import android.widget.ProgressBar
 import android.widget.TextView
 
 import cn.edu.sdu.online.isdu.R
-import cn.edu.sdu.online.isdu.interfaces.DownloadListener
+import cn.edu.sdu.online.isdu.interfaces.IDownloadListener
 import cn.edu.sdu.online.isdu.ui.activity.DownloadActivity
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.util.Settings
 import cn.edu.sdu.online.isdu.util.download.Download
-import cn.edu.sdu.online.isdu.util.download.DownloadItem
+import cn.edu.sdu.online.isdu.util.download.IDownloadItem
 import java.io.File
 
 /**
@@ -54,8 +54,8 @@ class DownloadingFragment : Fragment() {
 
         btnStartAll!!.setOnClickListener {
             for (item in Download.getDownloadingIdList()) {
-                if (Download.get(item).status != DownloadItem.TYPE_DOWNLOADING
-                        || Download.get(item).status != DownloadItem.TYPE_NEW_INSTANCE) {
+                if (Download.get(item).status != IDownloadItem.TYPE_DOWNLOADING
+                        || Download.get(item).status != IDownloadItem.TYPE_NEW_INSTANCE) {
                     Download.get(item).startDownload()
                 }
             }
@@ -64,8 +64,8 @@ class DownloadingFragment : Fragment() {
 
         btnPauseAll!!.setOnClickListener {
             for (item in Download.getDownloadingIdList()) {
-                if (Download.get(item).status == DownloadItem.TYPE_DOWNLOADING
-                        || Download.get(item).status == DownloadItem.TYPE_NEW_INSTANCE)
+                if (Download.get(item).status == IDownloadItem.TYPE_DOWNLOADING
+                        || Download.get(item).status == IDownloadItem.TYPE_NEW_INSTANCE)
                     Download.get(item).pauseDownload()
             }
             adapter.notifyDataSetChanged()
@@ -87,7 +87,7 @@ class DownloadingFragment : Fragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = Download.get(Download.getDownloadingIdList()[position])
 
-            item.setExternalListener(object : DownloadListener {
+            item.setExternalListener(object : IDownloadListener {
                 override fun onProgress(progress: Int) {
                     activity?.runOnUiThread {
                         holder.btnStartPause.text = "暂停下载"
@@ -209,7 +209,7 @@ class DownloadingFragment : Fragment() {
             holder.txtProgress.text = "${item.progress}%"
 
             when (item.status) {
-                DownloadItem.TYPE_PAUSED -> {
+                IDownloadItem.TYPE_PAUSED -> {
                     holder.btnStartPause.text = "开始下载"
                     holder.btnStartPause.setOnClickListener {
                         item.startDownload()
@@ -223,7 +223,7 @@ class DownloadingFragment : Fragment() {
                     holder.btnCancel.visibility = View.VISIBLE
                     holder.btnClear.visibility = View.GONE
                 }
-                DownloadItem.TYPE_DOWNLOADING -> {
+                IDownloadItem.TYPE_DOWNLOADING -> {
                     holder.btnStartPause.text = "暂停下载"
                     holder.btnStartPause.setOnClickListener {
                         item.pauseDownload()
@@ -235,7 +235,7 @@ class DownloadingFragment : Fragment() {
                     holder.btnCancel.visibility = View.VISIBLE
                     holder.btnClear.visibility = View.GONE
                 }
-                DownloadItem.TYPE_CANCELED -> {
+                IDownloadItem.TYPE_CANCELED -> {
                     holder.btnStartPause.text = "重新下载"
                     holder.btnStartPause.setOnClickListener {
                         item.startDownload()
@@ -249,7 +249,7 @@ class DownloadingFragment : Fragment() {
                     holder.btnCancel.visibility = View.GONE
                     holder.btnClear.visibility = View.VISIBLE
                 }
-                DownloadItem.TYPE_FAILED -> {
+                IDownloadItem.TYPE_FAILED -> {
                     holder.btnStartPause.text = "重试"
                     holder.btnStartPause.setOnClickListener {
                         item.startDownload()
@@ -263,14 +263,14 @@ class DownloadingFragment : Fragment() {
                     holder.btnCancel.visibility = View.VISIBLE
                     holder.btnClear.visibility = View.GONE
                 }
-                DownloadItem.TYPE_SUCCESS -> {
+                IDownloadItem.TYPE_SUCCESS -> {
                     holder.txtStatus.text = "下载成功，点击打开"
                     holder.txtProgress.visibility = View.GONE
                     holder.progressBar.visibility = View.GONE
                     holder.itemLayout.setOnClickListener {
                     }
                 }
-                DownloadItem.TYPE_NEW_INSTANCE -> {
+                IDownloadItem.TYPE_NEW_INSTANCE -> {
                     holder.btnStartPause.text = "暂停下载"
                     holder.btnStartPause.setOnClickListener {
                         item.pauseDownload()

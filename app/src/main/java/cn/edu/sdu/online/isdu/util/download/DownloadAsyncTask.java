@@ -1,19 +1,14 @@
 package cn.edu.sdu.online.isdu.util.download;
 
 import android.os.AsyncTask;
-import android.os.Looper;
-import android.util.Log;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.concurrent.TimeUnit;
 
-import cn.edu.sdu.online.isdu.interfaces.DownloadListener;
-import cn.edu.sdu.online.isdu.util.Logger;
+import cn.edu.sdu.online.isdu.interfaces.IDownloadListener;
 import cn.edu.sdu.online.isdu.util.Settings;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -21,12 +16,12 @@ import okhttp3.Response;
 
 public class DownloadAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 
-    private DownloadListener listener;
+    private IDownloadListener listener;
 
     private boolean isCanceled = false;
     private boolean isPaused = false;
 
-    public DownloadAsyncTask(DownloadListener listener) {
+    public DownloadAsyncTask(IDownloadListener listener) {
         this.listener = listener;
     }
 
@@ -34,16 +29,16 @@ public class DownloadAsyncTask extends AsyncTask<Integer, Integer, Integer> {
     protected void onPostExecute(Integer integer) {
         if (listener != null)
             switch (integer) {
-                case DownloadItem.TYPE_SUCCESS:
+                case IDownloadItem.TYPE_SUCCESS:
                     listener.onSuccess();
                     break;
-                case DownloadItem.TYPE_FAILED:
+                case IDownloadItem.TYPE_FAILED:
                     listener.onFailed();
                     break;
-                case DownloadItem.TYPE_CANCELED:
+                case IDownloadItem.TYPE_CANCELED:
                     listener.onCanceled();
                     break;
-                case DownloadItem.TYPE_PAUSED:
+                case IDownloadItem.TYPE_PAUSED:
                     listener.onPaused();
                     break;
             }
@@ -76,7 +71,7 @@ public class DownloadAsyncTask extends AsyncTask<Integer, Integer, Integer> {
             long downloadedLength = 0;
 
             if (contentLength == 0) {
-                return DownloadItem.TYPE_FAILED;
+                return IDownloadItem.TYPE_FAILED;
             }
 
             if (!downloadFile.exists()) {
@@ -85,7 +80,7 @@ public class DownloadAsyncTask extends AsyncTask<Integer, Integer, Integer> {
             } else {
                 downloadedLength = downloadFile.length();
                 if (downloadedLength == contentLength) {
-                    return DownloadItem.TYPE_SUCCESS;
+                    return IDownloadItem.TYPE_SUCCESS;
                 }
             }
 
@@ -108,7 +103,7 @@ public class DownloadAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 
                 is = response.body().byteStream();
                 if (is == null) {
-                    return DownloadItem.TYPE_FAILED;
+                    return IDownloadItem.TYPE_FAILED;
                 } else {
                     randomAccessFile.seek(downloadedLength);
 
@@ -117,9 +112,9 @@ public class DownloadAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 
                     while((len = is.read(b)) != -1) {
                         if (isPaused) {
-                            return DownloadItem.TYPE_PAUSED;
+                            return IDownloadItem.TYPE_PAUSED;
                         } else if (isCanceled) {
-                            return DownloadItem.TYPE_CANCELED;
+                            return IDownloadItem.TYPE_CANCELED;
                         } else {
                             randomAccessFile.write(b, 0, len);
                             downloadedLength += len;
@@ -130,12 +125,12 @@ public class DownloadAsyncTask extends AsyncTask<Integer, Integer, Integer> {
                 }
 
                 response.body().close();
-                return DownloadItem.TYPE_SUCCESS;
+                return IDownloadItem.TYPE_SUCCESS;
             }
         } catch (Exception e) {
             e.printStackTrace();
             if (listener != null) listener.onFailed();
-            return DownloadItem.TYPE_FAILED;
+            return IDownloadItem.TYPE_FAILED;
         } finally {
             try {
                 if (is != null) is.close();
@@ -144,7 +139,7 @@ public class DownloadAsyncTask extends AsyncTask<Integer, Integer, Integer> {
                 e.printStackTrace();
             }
         }
-        return DownloadItem.TYPE_FAILED;
+        return IDownloadItem.TYPE_FAILED;
     }
 
 

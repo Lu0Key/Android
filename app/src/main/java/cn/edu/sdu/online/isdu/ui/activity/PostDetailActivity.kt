@@ -756,7 +756,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                         }, 0, userName.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
 
                         runOnUiThread {
-                            holder.txtReply.setText(sp)
+                            holder.txtReply.text = sp
                         }
                     } catch (e: Exception) {
                     }
@@ -849,6 +849,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 true
             }
 
+            holder.txtPostOwner.visibility = if (comment.uid == post.uid) View.VISIBLE else View.GONE
         }
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -858,6 +859,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             val txtTime = view.findViewById<TextView>(R.id.txt_time)
             val txtContent = view.findViewById<TextView>(R.id.txt_content)
             val txtReply = view.findViewById<QMUISpanTouchFixTextView>(R.id.reply_comment)
+            val txtPostOwner = view.findViewById<TextView>(R.id.txt_post_owner)
         }
     }
 

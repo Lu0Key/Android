@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -22,7 +21,7 @@ import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.Settings
-import cn.edu.sdu.online.isdu.util.download.DownloadItem
+import cn.edu.sdu.online.isdu.util.download.IDownloadItem
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -204,7 +203,7 @@ class SettingsActivity : SlideActivity(), View.OnClickListener, WideButton.OnIte
                                     dialog.setTitle("检测到新版本")
                                     dialog.setMessage("新版本 ${obj.getString("versionName")}\n${obj.getString("versionDescription")}")
                                     dialog.setPositiveButton("更新") {
-                                        DownloadItem(obj.getString("downloadUrl")).startDownload()
+                                        IDownloadItem(obj.getString("downloadUrl")).startDownload()
                                         dialog.dismiss()
                                     }
                                     dialog.setNegativeButton("取消") {

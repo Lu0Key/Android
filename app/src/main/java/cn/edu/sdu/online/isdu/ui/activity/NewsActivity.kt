@@ -1,9 +1,7 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 import android.graphics.Typeface
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -18,8 +16,7 @@ import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.PixelUtil
-import cn.edu.sdu.online.isdu.util.download.DownloadItem
-import kotlinx.android.synthetic.main.fragment_grade_detail.*
+import cn.edu.sdu.online.isdu.util.download.IDownloadItem
 
 /**
  ****************************************************
@@ -132,7 +129,7 @@ class NewsActivity : SlideActivity() {
         textView.setTextColor((0xFF131313).toInt())
         textView.setOnClickListener {
             Toast.makeText(this, "开始下载 $name", Toast.LENGTH_SHORT).show()
-            val item = DownloadItem(url)
+            val item = IDownloadItem(url)
             item.fileName = name
             item.startDownload()
         }

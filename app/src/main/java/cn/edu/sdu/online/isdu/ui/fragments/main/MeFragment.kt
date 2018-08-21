@@ -43,6 +43,7 @@ import org.json.JSONObject
 import q.rorbin.badgeview.Badge
 import q.rorbin.badgeview.QBadgeView
 import java.io.Serializable
+import java.util.*
 
 /**
  ****************************************************
@@ -85,7 +86,7 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
     /* TodoList */
     private var recyclerView: RecyclerView? = null
     private var adapter: TodoAdapter? = null
-    private var todoList: MutableList<Schedule> = ArrayList()
+    private var todoList: MutableList<Schedule> = LinkedList()
 
     private var hasNewMsg = false // 是否有新消息
 
@@ -350,7 +351,21 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
                     if (EnvVariables.currentWeek <= 0)
                         EnvVariables.currentWeek = EnvVariables.calculateWeekIndex(System.currentTimeMillis())
                     todoList.clear()
-                    todoList.addAll(Schedule.localScheduleList[EnvVariables.currentWeek - 1][EnvVariables.getCurrentDay() - 1])
+
+                    // 去重
+                    for (schedule in Schedule.localScheduleList[EnvVariables.currentWeek - 1][EnvVariables.getCurrentDay() - 1]) {
+                        if (!todoList.contains(schedule)) todoList.add(schedule)
+                    }
+//                    todoList.addAll(Schedule.localScheduleList[EnvVariables.currentWeek - 1][EnvVariables.getCurrentDay() - 1])
+
+                    // 排序
+                    for (i in 0 until todoList.size - 1) {
+                        for (j in i + 1 until todoList.size) {
+                            if (todoList[i].startTime.laterThan(todoList[j].startTime)) {
+                                todoList[i].swap(todoList[j])
+                            }
+                        }
+                    }
 
                     // 去掉本周不上的课
                     for (schedule in todoList) {

@@ -72,6 +72,8 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     protected void decorateWindow() {
+        if (getSupportActionBar() != null)
+            getSupportActionBar().hide();
         View decorView = getWindow().getDecorView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |

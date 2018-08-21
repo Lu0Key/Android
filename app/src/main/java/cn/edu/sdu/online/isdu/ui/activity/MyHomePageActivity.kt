@@ -115,7 +115,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
             btn_back.id -> {
                 finish()
             }
-            background_image.id, circle_image_view.id -> {
+            background_image.id -> {
                 startActivity(Intent(this, ViewImageActivity::class.java)
                         .putExtra("url", user?.avatarUrl))
 //                        .putExtra("url", ServerInfo.getUserInfo(user?.uid.toString(), "avatar"))
@@ -231,7 +231,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
 
         btnBack!!.setOnClickListener(this)
         btnEditProfile!!.setOnClickListener(this)
-        circleImageView!!.setOnClickListener(this)
+//        circleImageView!!.setOnClickListener(this)
         backgroundImage!!.setOnClickListener(this)
         btnFollow!!.setOnClickListener(this)
 
@@ -404,6 +404,10 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      * 隐藏设置、修改信息的按钮
      */
     private fun setGuestView() {
+        circleImageView!!.setOnClickListener {
+            startActivity(Intent(this, ViewImageActivity::class.java)
+                    .putExtra("url", user?.avatarUrl))
+        }
         btnEditProfile!!.visibility = View.GONE
 //        if (User.staticUser == null ||
 //                User.staticUser.studentNumber == null) {
@@ -418,6 +422,9 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun setNotGuestView() {
+        circleImageView!!.setOnClickListener {
+            startActivity(Intent(this, EditProfileActivity::class.java))
+        }
         btnEditProfile!!.visibility = View.VISIBLE
         btnFollow!!.visibility = View.GONE
         followMe!!.text="关注我的人"

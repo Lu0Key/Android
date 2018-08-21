@@ -1,6 +1,6 @@
 package cn.edu.sdu.online.isdu.interfaces;
 
-public interface DownloadListener {
+public interface IDownloadListener {
 
     void onProgress(int progress);
 

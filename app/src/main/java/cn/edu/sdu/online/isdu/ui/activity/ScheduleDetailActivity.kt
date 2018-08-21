@@ -12,6 +12,10 @@ class ScheduleDetailActivity : SlideActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_schedule_detail)
+        
+        btn_back.setOnClickListener {
+        	finish()
+        }
 
         txt_name.text = intent.getStringExtra("name")
         txt_location.text = intent.getStringExtra("location")

@@ -26,6 +26,7 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.ViewTarget
 import com.bumptech.glide.request.transition.Transition
+import com.github.chrisbanes.photoview.PhotoView
 import kotlinx.android.synthetic.main.activity_view_image.*
 import java.io.BufferedInputStream
 import java.io.File
@@ -44,10 +45,11 @@ import java.io.FileOutputStream
 
 class ViewImageActivity : NormActivity() {
 
-    private var draggableImageView: DraggableImageView? = null
+//    private var draggableImageView: DraggableImageView? = null
     private var progressBar: ProgressBar? = null
     private var textView: TextView? = null
     private var loadingLayout: LinearLayout? = null
+    private var draggableImageView: PhotoView? = null
 
     var resId: Int = 0
     var url: String = ""
@@ -63,18 +65,26 @@ class ViewImageActivity : NormActivity() {
         decorateWindow()
 
         draggableImageView = image_view
+//        photoView = image_view
         progressBar = progress_bar
         textView = text
         loadingLayout = loading_layout
 
         loadingLayout!!.visibility = View.GONE
 
-        draggableImageView!!.setOnClickListener(DraggableImageView.OnClickListener {
+        draggableImageView!!.minimumScale = 0.8f
+        draggableImageView!!.setOnClickListener {
             finish()
-        })
+        }
 
-        draggableImageView!!.setOnLongClickListener(DraggableImageView.OnLongClickListener {
+        draggableImageView!!.setOnLongClickListener {
             Phone.vibrate(this, Phone.VibrateType.Once)
+            return@setOnLongClickListener true
+        }
+
+        draggableImageView!!.setOnLongClickListener {
+            Phone.vibrate(this, Phone.VibrateType.Once)
+
             val dialog = OptionDialog(this, listOf("保存图片", "取消"))
             dialog.setCancelOnTouchOutside(true)
             dialog.setMessage("图片")
@@ -160,7 +170,7 @@ class ViewImageActivity : NormActivity() {
                                 NetworkAccess.cache(url, cacheKey) { success, cachePath ->
                                     if (success) {
                                         /********************************************
-                         dd                *
+                                        dd                *
                                          ********************************************/
                                         val file = File(Environment.getExternalStorageDirectory().toString() +
                                                 "/iSDU/Image/" + System.currentTimeMillis() + ".jpg")
@@ -219,7 +229,9 @@ class ViewImageActivity : NormActivity() {
                 }
             }
             dialog.show()
-        })
+
+            return@setOnLongClickListener true
+        }
 
         resId = intent.getIntExtra("res_id", 0)
         url = if (intent.getStringExtra("url") == null) "" else intent.getStringExtra("url")
@@ -252,7 +264,7 @@ class ViewImageActivity : NormActivity() {
                                 loadingLayout!!.visibility = View.GONE
                             }
                         } else {
-                            val target = object : ViewTarget<DraggableImageView, Drawable>(draggableImageView!!) {
+                            val target = object : ViewTarget<PhotoView, Drawable>(draggableImageView!!) {
                                 override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
                                     this.view.setImageBitmap((resource as BitmapDrawable).bitmap)
                                 }

@@ -7,6 +7,8 @@ import android.os.Parcelable;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
+import cn.edu.sdu.online.isdu.interfaces.IWrapper;
+
 /**
  ****************************************************
  * @author zsj
@@ -19,7 +21,7 @@ import java.text.SimpleDateFormat;
  ****************************************************
  */
 
-public class ScheduleTime implements Parcelable {
+public class ScheduleTime implements Parcelable, IWrapper {
 
     private int hour;
     private int minute;
@@ -107,5 +109,21 @@ public class ScheduleTime implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(hour);
         dest.writeInt(minute);
+    }
+
+    @Override
+    public void set(IWrapper a) {
+        if (a instanceof ScheduleTime) {
+            setMinute(((ScheduleTime) a).minute);
+            setHour(((ScheduleTime) a).hour);
+        }
+    }
+
+    @Override
+    public void swap(IWrapper a) {
+        ScheduleTime temp = new ScheduleTime();
+        temp.set(a);
+        a.set(this);
+        this.set(temp);
     }
 }

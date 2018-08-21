@@ -1,31 +1,13 @@
 package cn.edu.sdu.online.isdu.util.download;
 
-import android.app.Application;
-import android.app.Notification;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.litepal.crud.LitePalSupport;
 
 import java.io.File;
-import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
-import cn.edu.sdu.online.isdu.app.MyApplication;
-import cn.edu.sdu.online.isdu.interfaces.DownloadListener;
-import cn.edu.sdu.online.isdu.interfaces.DownloadOperation;
-import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog;
+import cn.edu.sdu.online.isdu.interfaces.IDownloadListener;
+import cn.edu.sdu.online.isdu.interfaces.IDownloadOperation;
 import cn.edu.sdu.online.isdu.util.FileUtil;
-import cn.edu.sdu.online.isdu.util.Logger;
 import cn.edu.sdu.online.isdu.util.NotificationUtil;
 import cn.edu.sdu.online.isdu.util.Settings;
 
@@ -41,7 +23,7 @@ import cn.edu.sdu.online.isdu.util.Settings;
  ****************************************************
  */
 
-public class DownloadItem extends LitePalSupport implements DownloadOperation {
+public class IDownloadItem extends LitePalSupport implements IDownloadOperation {
     /* 下载任务状态 */
     public static final int TYPE_SUCCESS = 0;
     public static final int TYPE_FAILED = 1;
@@ -63,7 +45,7 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
     private DownloadAsyncTask downloadAsyncTask;
     public FileLengthDetector fileLengthDetector;
 
-    public DownloadListener downloadListener = new DownloadListener() {
+    public IDownloadListener IDownloadListener = new IDownloadListener() {
         @Override
         public void onProgress(int progress) {
             setStatus(TYPE_DOWNLOADING);
@@ -71,7 +53,7 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
             Download.save();
             if (externalListener != null)
                 externalListener.onProgress(progress);
-            Download.buildNotification(DownloadItem.this);
+            Download.buildNotification(IDownloadItem.this);
         }
 
         @Override
@@ -80,7 +62,7 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
             Download.save();
             if (externalListener != null)
                 externalListener.onSuccess();
-            Download.buildNotification(DownloadItem.this);
+            Download.buildNotification(IDownloadItem.this);
 
             if (fileLengthDetector != null)
                 fileLengthDetector.stop();
@@ -93,7 +75,7 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
             Download.save();
             if (externalListener != null)
                 externalListener.onFailed();
-            Download.buildNotification(DownloadItem.this);
+            Download.buildNotification(IDownloadItem.this);
 
             if (fileLengthDetector != null)
                 fileLengthDetector.stop();
@@ -106,7 +88,7 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
             Download.save();
             if (externalListener != null)
                 externalListener.onPaused();
-            Download.buildNotification(DownloadItem.this);
+            Download.buildNotification(IDownloadItem.this);
 
             if (fileLengthDetector != null)
                 fileLengthDetector.stop();
@@ -119,7 +101,7 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
             Download.save();
             if (externalListener != null)
                 externalListener.onCanceled();
-            Download.buildNotification(DownloadItem.this);
+            Download.buildNotification(IDownloadItem.this);
 
             if (fileLengthDetector != null)
                 fileLengthDetector.stop();
@@ -127,13 +109,13 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
         }
     };
 
-    private DownloadListener externalListener;
+    private IDownloadListener externalListener;
 
-    public DownloadItem(String downloadUrl) {
+    public IDownloadItem(String downloadUrl) {
         setDownloadUrl(downloadUrl);
     }
 
-    public DownloadItem() {
+    public IDownloadItem() {
     }
 
     public int getNotifyId() {
@@ -177,7 +159,7 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
         this.progress = progress;
     }
 
-    public void setExternalListener(DownloadListener externalListener) {
+    public void setExternalListener(IDownloadListener externalListener) {
         this.externalListener = externalListener;
     }
 
@@ -216,7 +198,7 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
             downloadAsyncTask = null;
         }
         setStatus(TYPE_NEW_INSTANCE);
-        downloadAsyncTask = new DownloadAsyncTask(downloadListener);
+        downloadAsyncTask = new DownloadAsyncTask(IDownloadListener);
         downloadAsyncTask.execute(notifyId);
 
         fileLengthDetector = new FileLengthDetector(Settings.DEFAULT_DOWNLOAD_LOCATION + getFileName());
@@ -255,9 +237,9 @@ public class DownloadItem extends LitePalSupport implements DownloadOperation {
 
     @Override
     public boolean equals(Object obj) {
-        return obj != null && (obj instanceof DownloadItem) &&
-                (((DownloadItem) obj).downloadUrl.equals(this.downloadUrl)) &&
-                (((DownloadItem) obj).fileName.equals(this.fileName));
+        return obj != null && (obj instanceof IDownloadItem) &&
+                (((IDownloadItem) obj).downloadUrl.equals(this.downloadUrl)) &&
+                (((IDownloadItem) obj).fileName.equals(this.fileName));
     }
 
 }

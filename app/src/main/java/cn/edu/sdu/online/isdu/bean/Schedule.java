@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import cn.edu.sdu.online.isdu.interfaces.IWrapper;
 import cn.edu.sdu.online.isdu.net.ServerInfo;
 import cn.edu.sdu.online.isdu.net.pack.NetworkAccess;
 import cn.edu.sdu.online.isdu.util.EnvVariables;
@@ -36,7 +38,7 @@ import okhttp3.Response;
  ****************************************************
  */
 
-public class Schedule implements Parcelable {
+public class Schedule implements Parcelable, IWrapper {
 
     public static final int[] defaultScheduleColor = new int[] {
         0xFFFF7F66, 0xFFFFCC66, 0xFF66E6FF, 0xFF7F66FF, 0xFFFF2970, 0xFF00EB9C
@@ -48,8 +50,8 @@ public class Schedule implements Parcelable {
 
     private String scheduleName; // 事件名称
     private String scheduleLocation; // 事件地点
-    private ScheduleTime startTime; // 事件开始时间
-    private ScheduleTime endTime; // 事件结束时间
+    private ScheduleTime startTime = new ScheduleTime(); // 事件开始时间
+    private ScheduleTime endTime = new ScheduleTime(); // 事件结束时间
     private RepeatType repeatType; // 重复类型
     private int scheduleColor = 0xFF717DEB; // 日程背景颜色
     private int scheduleTextColor = 0xFFFFFFFF; // 日程文字颜色
@@ -437,4 +439,40 @@ public class Schedule implements Parcelable {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Schedule schedule = (Schedule) o;
+        return Objects.equals(scheduleName, schedule.scheduleName) &&
+                Objects.equals(scheduleLocation, schedule.scheduleLocation);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(scheduleName, scheduleLocation);
+    }
+
+    @Override
+    public void set(IWrapper a) {
+        if (a instanceof Schedule) {
+            setScheduleTextColor(((Schedule) a).scheduleTextColor);
+            setScheduleColor(((Schedule) a).scheduleColor);
+            getRepeatWeeks().addAll(((Schedule) a).repeatWeeks);
+            setRepeatType(((Schedule) a).repeatType);
+            setScheduleLocation(((Schedule) a).scheduleLocation);
+            setScheduleName(((Schedule) a).scheduleName);
+            getStartTime().set(((Schedule) a).startTime);
+            getEndTime().set(((Schedule) a).endTime);
+        }
+    }
+
+    @Override
+    public void swap(IWrapper a) {
+        Schedule temp = new Schedule();
+        temp.set(a);
+        a.set(this);
+        this.set(temp);
+    }
 }

@@ -3,13 +3,8 @@ package cn.edu.sdu.online.isdu.util.broadcast;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
-import java.util.List;
-
-import cn.edu.sdu.online.isdu.util.NotificationUtil;
 import cn.edu.sdu.online.isdu.util.download.Download;
-import cn.edu.sdu.online.isdu.util.download.DownloadItem;
 
 public class DownloadBroadcastReceiver extends BroadcastReceiver {
 

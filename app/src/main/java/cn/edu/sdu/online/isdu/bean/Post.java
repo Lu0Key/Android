@@ -24,6 +24,7 @@ public class Post {
     private String content; // 具体内容
     private int likeNumber;
     private int collectNumber;
+    private double value;
 
     public Post() {}
 
@@ -32,18 +33,6 @@ public class Post {
         this.content = content;
     }
 
-    public Post(int postId, int type, String titleFlag, String title, String uid, int commentsNumbers, Long time, String content, int likeNumber, int collectNumber) {
-        this.postId = postId;
-        this.type = type;
-        this.titleFlag = titleFlag;
-        this.title = title;
-        this.uid = uid;
-        this.commentsNumbers = commentsNumbers;
-        this.time = time;
-        this.content = content;
-        this.likeNumber = likeNumber;
-        this.collectNumber = collectNumber;
-    }
 
     public int getPostId() {
         return postId;
@@ -123,6 +112,14 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
     }
 
     @Override

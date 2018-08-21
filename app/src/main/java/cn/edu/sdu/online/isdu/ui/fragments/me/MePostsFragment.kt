@@ -129,6 +129,7 @@ class MePostsFragment : LazyLoadFragment(), PostViewable {
                                 post.title = obj.getString("title")
                                 post.time = obj.getString("time").toLong()
                                 post.content = obj.getString("info")
+                                post.value = obj.getDouble("value")
 
                                 if (!dataList.contains(post))
                                     list.add(post)
