@@ -86,8 +86,8 @@ class PostItemAdapter(activity: Activity, dataList: List<Post>) :
                 LayoutInflater.from(parent.context).inflate(
                         R.layout.post_item, parent, false)
         view.findViewById<QMUIFrameLayout>(R.id.card_view).setRadiusAndShadow(
-                PixelUtil.dp2px(MyApplication.getContext(), 16),
-                PixelUtil.dp2px(MyApplication.getContext(), 12), 0.15f)
+                PixelUtil.dp2px(MyApplication.getContext(), 8),
+                PixelUtil.dp2px(MyApplication.getContext(), 8), 0.1f)
         return ViewHolder(v = view)
     }
 

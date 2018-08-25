@@ -1,16 +1,12 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.SpannableString
 import android.text.Spanned
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -34,13 +30,10 @@ import cn.edu.sdu.online.isdu.ui.design.popupwindow.BasePopupWindow
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextEditor
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextView
 import cn.edu.sdu.online.isdu.util.FileUtil
-import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.WeakReferences
 import com.bumptech.glide.Glide
-import cn.edu.sdu.online.isdu.util.database.DAOHistory
-import cn.edu.sdu.online.isdu.util.history.History
-import com.alibaba.fastjson.JSON
+import cn.edu.sdu.online.isdu.util.history.HistoryRecord
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.qmuiteam.qmui.span.QMUITouchableSpan
@@ -52,7 +45,6 @@ import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
-import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -116,11 +108,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
         //写数据库纪录浏览
         post.postId = postId
-//        post.uid = uid
-//        post.title = title
-//        post.time = time
-//        History.newHistory(post)
-
 
         getPostData()
         getIsCollect()
@@ -409,7 +396,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 runOnUiThread {
                     txtLike!!.text = "点赞 0 次"
                     post.likeNumber = 0
-                    History.newHistory(post)
+                    HistoryRecord.newHistory(post)
                 }
             }
 
@@ -430,7 +417,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 //                        btnLike!!.setImageResource(if (isLike) R.drawable.ic_like_yes else R.drawable.ic_like_no)
 
                         post.likeNumber = strInt
-                        History.newHistory(post)
+                        HistoryRecord.newHistory(post)
                     }
                 } catch (e: Exception) {
                     Logger.log(e)
@@ -479,7 +466,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                 }
 
                                 // 写入浏览记录
-                                History.newHistory(post)
+                                post.onScan()
 
                                 runOnUiThread {
 
@@ -521,14 +508,11 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
                                     // 写入历史浏览
                                     post.commentsNumbers = commentList.size
-                                    History.newHistory(post)
+                                    HistoryRecord.newHistory(post)
 
                                     getComments(commentList.size - 1, commentList) // 获取评论
 
                                     commentLine!!.text = "${commentList.size} 条评论"
-
-                                    // 挪开空白View
-                                    blank_view.visibility = View.GONE
 
                                 }
                             }

@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBOHistory extends SQLiteOpenHelper {
     private Context context;
     private static int VERSION=1;
-    private static  final String DB_name ="History.db";
+    private static  final String DB_name ="HistoryRecord.db";
     private static  final String table_name ="tb_history";
     public static final String Creat_DB="CREATE TABLE tb_history("+
             "id integer primary key autoincrement,"+

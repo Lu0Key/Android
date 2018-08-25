@@ -4,9 +4,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import cn.edu.sdu.online.isdu.util.Logger;
+import cn.edu.sdu.online.isdu.util.history.HistoryRecord;
 
 /**
  ****************************************************
@@ -18,10 +20,10 @@ import cn.edu.sdu.online.isdu.util.Logger;
  ****************************************************
  */
 
-public class News {
+public class News extends AbstractNews {
 
-    private String title; // 新闻标题
-    private String briefContent; // 新闻内容摘要
+//    private String title; // 新闻标题
+//    private String briefContent; // 新闻内容摘要
     private String newsContent; // 新闻完整内容
     private String date; // 新闻日期
     private String source; // 新闻来源或类别
@@ -36,19 +38,19 @@ public class News {
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 
     public String getBriefContent() {
-        return briefContent;
+        return mContent;
     }
 
     public void setBriefContent(String briefContent) {
-        this.briefContent = briefContent;
+        this.mContent = briefContent;
     }
 
     public String getDate() {
@@ -57,6 +59,17 @@ public class News {
 
     public void setDate(String date) {
         this.date = date;
+        if (date != null && !date.trim().equals("")) {
+            String y = date.substring(0, 4);
+            String m = date.substring(5, 7);
+            String d = date.substring(8);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Integer.parseInt(y), Integer.parseInt(m), Integer.parseInt(d),
+                    0, 0, 0);
+            mTime = calendar.getTimeInMillis();
+        }
+
     }
 
     public String getSource() {
@@ -120,8 +133,8 @@ public class News {
         try {
             JSONObject jsonObject = new JSONObject(json);
             news.section = jsonObject.getString("site");
-            news.title = jsonObject.getString("title");
-            news.date = jsonObject.getString("date");
+            news.mTitle = jsonObject.getString("title");
+            news.setDate(jsonObject.getString("date"));
             news.newsContent = jsonObject.getString("content");
             news.originUrl = jsonObject.getString("url");
             if (jsonObject.getJSONArray("attachment") != null &&
@@ -141,5 +154,15 @@ public class News {
             Logger.log(e);
         }
         return news;
+    }
+
+    @Override
+    public void onCollect() {
+
+    }
+
+    @Override
+    public void onScan() {
+        HistoryRecord.INSTANCE.newHistory(this);
     }
 }

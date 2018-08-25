@@ -2,6 +2,9 @@ package cn.edu.sdu.online.isdu.bean;
 
 import java.util.Objects;
 
+import cn.edu.sdu.online.isdu.interfaces.Collectible;
+import cn.edu.sdu.online.isdu.util.history.HistoryRecord;
+
 /**
  ****************************************************
  * @author zsj
@@ -12,16 +15,16 @@ import java.util.Objects;
  ****************************************************
  */
 
-public class Post {
+public class Post extends AbstractPost {
 
     private int postId; // 帖子ID
     private int type; // 论坛内容类型
     private String titleFlag;
-    private String title;
-    private String uid;
+//    private String title;
+//    private String uid;
     private int commentsNumbers;
-    private Long time;
-    private String content; // 具体内容
+//    private Long time;
+//    private String content; // 具体内容
     private int likeNumber;
     private int collectNumber;
     private double value;
@@ -30,7 +33,8 @@ public class Post {
 
     public Post(int type, String content) {
         this.type = type;
-        this.content = content;
+//        this.content = content;
+        this.mContent = content;
     }
 
 
@@ -67,19 +71,19 @@ public class Post {
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 
     public String getUid() {
-        return uid;
+        return mUserId + "";
     }
 
     public void setUid(String uid) {
-        this.uid = uid;
+        this.mUserId = Integer.parseInt(uid);
     }
 
     public int getCommentsNumbers() {
@@ -91,11 +95,11 @@ public class Post {
     }
 
     public Long getTime() {
-        return time;
+        return mTime;
     }
 
     public void setTime(Long time) {
-        this.time = time;
+        this.mTime = time;
     }
 
     public int getType() {
@@ -107,11 +111,11 @@ public class Post {
     }
 
     public String getContent() {
-        return content;
+        return mContent;
     }
 
     public void setContent(String content) {
-        this.content = content;
+        this.mContent = content;
     }
 
     public double getValue() {
@@ -133,5 +137,15 @@ public class Post {
     @Override
     public int hashCode() {
         return Objects.hash(postId);
+    }
+
+    @Override
+    public void onCollect() {
+
+    }
+
+    @Override
+    public void onScan() {
+        HistoryRecord.INSTANCE.newHistory(this);
     }
 }

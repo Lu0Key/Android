@@ -44,6 +44,7 @@ import q.rorbin.badgeview.Badge
 import q.rorbin.badgeview.QBadgeView
 import java.io.Serializable
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  ****************************************************
@@ -368,9 +369,12 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
                     }
 
                     // 去掉本周不上的课
-                    for (schedule in todoList) {
-                        if (!schedule.repeatWeeks.contains(EnvVariables.currentWeek))
-                            todoList.remove(schedule)
+                    val copyTodoList: MutableList<Schedule> = ArrayList()
+                    copyTodoList.addAll(todoList)
+                    todoList.clear()
+                    for (schedule in copyTodoList) {
+                        if (schedule.repeatWeeks.contains(EnvVariables.currentWeek))
+                            todoList.add(schedule)
                     }
 
                     activity!!.runOnUiThread {

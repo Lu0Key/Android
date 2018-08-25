@@ -247,11 +247,4 @@
         layout="@layout/edit_area"
         android:visibility="gone"/>
 
-    <ImageView
-        android:id="@+id/blank_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/post_blank_img"
-        android:layout_marginTop="55dp"/>
-
 </android.support.constraint.ConstraintLayout>
