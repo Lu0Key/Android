@@ -14,8 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
-        android:visibility="invisible"/>
+        android:layout_marginTop="8dp"/>
 
     <ImageView
         android:layout_width="match_parent"
@@ -24,8 +23,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         tools:layout_editor_absoluteX="16dp"
-        android:scaleType="fitXY"
-        android:visibility="invisible"/>
+        android:scaleType="fitXY"/>
 
     <ImageView
         android:id="@+id/img_1"
@@ -36,8 +34,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.311"
-        android:visibility="invisible" />
+        app:layout_constraintVertical_bias="0.311" />
 
 
     <ImageView
@@ -48,8 +45,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible"/>
-    
+        app:layout_constraintTop_toTopOf="parent"/>
+
 
 </android.support.constraint.ConstraintLayout>
