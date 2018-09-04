@@ -8,10 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,31 +18,20 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 //import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.load.Option;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import cn.edu.sdu.online.isdu.GlideApp;
-import cn.edu.sdu.online.isdu.GlideRequest;
-import cn.edu.sdu.online.isdu.GlideRequests;
 import cn.edu.sdu.online.isdu.R;
 import cn.edu.sdu.online.isdu.app.MyApplication;
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess;
+import cn.edu.sdu.online.isdu.net.NetworkAccess;
 import cn.edu.sdu.online.isdu.util.ImageManager;
 import cn.edu.sdu.online.isdu.util.Logger;
 

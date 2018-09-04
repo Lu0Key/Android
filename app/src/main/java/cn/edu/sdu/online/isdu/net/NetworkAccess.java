@@ -1,16 +1,13 @@
-package cn.edu.sdu.online.isdu.net.pack;
+package cn.edu.sdu.online.isdu.net;
 
 
-import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cn.edu.sdu.online.isdu.app.MyApplication;
-import cn.edu.sdu.online.isdu.net.ServerInfo;
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo;
 import cn.edu.sdu.online.isdu.util.Logger;
 import okhttp3.Call;
 import okhttp3.Callback;

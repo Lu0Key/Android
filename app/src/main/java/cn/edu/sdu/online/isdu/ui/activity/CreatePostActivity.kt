@@ -5,25 +5,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
-import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.NormActivity
-import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextEditor
@@ -34,18 +27,12 @@ import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.gif.GifBitmapProvider
 import com.bumptech.glide.load.resource.gif.GifDrawable
-import com.bumptech.glide.load.resource.gif.GifDrawableEncoder
-import com.bumptech.glide.load.resource.gif.GifDrawableResource
-import com.bumptech.glide.load.resource.transcode.GifDrawableBytesTranscoder
 import com.bumptech.glide.request.target.ViewTarget
 import com.bumptech.glide.request.transition.Transition
 
-import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_create_post.*
 import kotlinx.android.synthetic.main.edit_operation_bar.*
-import okhttp3.*
 import top.zibin.luban.Luban
 import top.zibin.luban.OnCompressListener
 import java.io.*
@@ -53,7 +40,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 import kotlin.collections.HashMap
-import kotlin.collections.LinkedHashMap
 
 /**
  ****************************************************

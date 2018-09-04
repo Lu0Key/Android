@@ -7,13 +7,9 @@ import android.view.View
 import android.widget.*
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.bean.User
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
-import cn.edu.sdu.online.isdu.ui.design.button.WideButton
-import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.util.Logger
-import cn.edu.sdu.online.isdu.util.Settings
 import kotlinx.android.synthetic.main.activity_feedback.*
 import okhttp3.Call
 import okhttp3.Callback

@@ -12,8 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.SearchActivity
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper

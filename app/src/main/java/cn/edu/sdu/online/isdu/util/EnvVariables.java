@@ -2,18 +2,14 @@ package cn.edu.sdu.online.isdu.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import cn.edu.sdu.online.isdu.net.ServerInfo;
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;

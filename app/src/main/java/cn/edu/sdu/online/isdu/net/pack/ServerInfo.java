@@ -1,4 +1,4 @@
-package cn.edu.sdu.online.isdu.net;
+package cn.edu.sdu.online.isdu.net.pack;
 
 /**
  ****************************************************

@@ -16,8 +16,8 @@ import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.ThreadPool
 import cn.edu.sdu.online.isdu.bean.PostComment
 import cn.edu.sdu.online.isdu.interfaces.PostViewable
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
 import cn.edu.sdu.online.isdu.util.DateCalculate
@@ -35,7 +35,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.lang.ref.WeakReference
-import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 

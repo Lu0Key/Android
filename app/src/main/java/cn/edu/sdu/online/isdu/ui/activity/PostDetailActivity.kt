@@ -21,8 +21,8 @@ import cn.edu.sdu.online.isdu.bean.CommentUser
 import cn.edu.sdu.online.isdu.bean.PostComment
 import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.bean.User
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
@@ -533,7 +533,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
      * 获取发帖用户的信息
      */
     private fun getUserData(id: String) {
-        NetworkAccess.cache(ServerInfo.getUserInfo(id, "nickname"), "nickname") {success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getUserInfo(id, "nickname"), "nickname") { success, cachePath ->
             if (success) {
                 val obj = FileUtil.getStringFromFile(cachePath)
                 runOnUiThread { txtNickname!!.text = obj }
@@ -545,7 +545,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
             }
         }
 
-        NetworkAccess.cache(ServerInfo.getUserInfo(id, "avatar"), "avatar") {success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getUserInfo(id, "avatar"), "avatar") { success, cachePath ->
             if (success) {
                 val obj = FileUtil.getStringFromFile(cachePath)
 //                val bmp = ImageManager.convertStringToBitmap(obj)

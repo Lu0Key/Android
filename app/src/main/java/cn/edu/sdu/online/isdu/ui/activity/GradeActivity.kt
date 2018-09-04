@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.ImageView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.ui.fragments.GradeDetailFragment
 import cn.edu.sdu.online.isdu.ui.fragments.PastGradeDetailFragment

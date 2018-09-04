@@ -3,26 +3,16 @@ package cn.edu.sdu.online.isdu.net;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.JsonReader;
-import android.util.Log;
-import android.widget.Toast;
 
 
-import com.alibaba.fastjson.JSON;
-
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.litepal.LitePal;
 
 import java.io.IOException;
-import java.util.List;
 
 import cn.edu.sdu.online.isdu.app.MyApplication;
 import cn.edu.sdu.online.isdu.bean.User;
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess;
-import cn.edu.sdu.online.isdu.util.FileUtil;
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo;
 import cn.edu.sdu.online.isdu.util.Logger;
 import okhttp3.Call;
 import okhttp3.Callback;

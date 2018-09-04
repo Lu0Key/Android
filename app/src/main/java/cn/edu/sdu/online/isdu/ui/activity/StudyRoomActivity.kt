@@ -13,18 +13,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.button.RadioImageButton
 import cn.edu.sdu.online.isdu.ui.design.dialog.WeekDialog
 import cn.edu.sdu.online.isdu.util.DateCalculate
 import cn.edu.sdu.online.isdu.util.EnvVariables
-import cn.edu.sdu.online.isdu.util.Logger
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import org.json.JSONArray
-import java.io.IOException
 
 /**
  ****************************************************

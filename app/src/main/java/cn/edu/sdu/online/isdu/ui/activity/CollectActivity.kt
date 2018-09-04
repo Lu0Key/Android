@@ -1,7 +1,6 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 import android.content.Intent
-import android.net.Network
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,8 +14,8 @@ import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.Collect
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.interfaces.PostViewable
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.WeakReferences
@@ -94,7 +93,7 @@ class CollectActivity : SlideActivity(), PostViewable {
 //        if (User.staticUser == null) User.staticUser = User.load()
 //        if (User.staticUser.studentNumber == null) return
         if (!User.isLogin()) return
-        NetworkAccess.cache(ServerInfo.getCollectList + "?userId=" + User.staticUser.uid) {success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getCollectList + "?userId=" + User.staticUser.uid) { success, cachePath ->
             if (success) {
                 try {
                     val jsonStr = JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj")

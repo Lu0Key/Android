@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,11 +17,10 @@ import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.app.ThreadPool
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.viewpager.NoScrollViewPager
 import cn.edu.sdu.online.isdu.ui.fragments.me.MeCommentFragment
@@ -355,7 +353,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
      * 获取关注和被关注的数量
      */
     private fun getUserLikes() {
-        NetworkAccess.cache(ServerInfo.getLikeMe(id.toString())) {success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getLikeMe(id.toString())) { success, cachePath ->
             if (success) {
                 try {
                     val str = JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj")
@@ -369,7 +367,7 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
                 } catch (e: Exception) {}
             }
         }
-        NetworkAccess.cache(ServerInfo.getMyLike(id.toString())) {success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getMyLike(id.toString())) { success, cachePath ->
             if (success) {
                 try {
                     val str = JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj")

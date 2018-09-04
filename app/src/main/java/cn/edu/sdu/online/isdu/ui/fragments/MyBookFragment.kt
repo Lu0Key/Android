@@ -16,8 +16,8 @@ import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Book
 import cn.edu.sdu.online.isdu.bean.User
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.BindLibraryActivity
 import cn.edu.sdu.online.isdu.ui.activity.LoginActivity
 import cn.edu.sdu.online.isdu.ui.activity.SearchBookActivity
@@ -28,9 +28,7 @@ import kotlinx.android.synthetic.main.fragment_my_book.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import org.json.JSONArray
 import org.json.JSONObject
-import org.w3c.dom.Text
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -211,7 +209,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                 startActivity(Intent(activity!!,SearchBookActivity::class.java))
             }
             reb_all.id -> {
-                Log.w("mbf",ServerInfo.renewBookUrl(User.staticUser.uid))
+                Log.w("mbf", ServerInfo.renewBookUrl(User.staticUser.uid))
                 NetworkAccess.buildRequest(ServerInfo.renewBookUrl(User.staticUser.uid),
                         object : Callback{
                             override fun onFailure(call: Call?, e: IOException?) {
@@ -257,7 +255,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
             unBind!!.visibility = View.GONE
             loadingLayout!!.visibility = View.VISIBLE
         }
-        Log.w("mbf",ServerInfo.getBookListUrl(User.staticUser.uid.toString()))
+        Log.w("mbf", ServerInfo.getBookListUrl(User.staticUser.uid.toString()))
         NetworkAccess.buildRequest(ServerInfo.getBookListUrl(User.staticUser.uid.toString()),
                 object : Callback {
                     override fun onFailure(call: Call?, e: IOException?){
@@ -370,7 +368,7 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                 holder.renew.visibility = View.GONE
             }
             holder.renew.setOnClickListener {
-                Log.w("mbf",ServerInfo.renewOneBookUrl(User.staticUser.uid , book.id , book.checkCode))
+                Log.w("mbf", ServerInfo.renewOneBookUrl(User.staticUser.uid , book.id , book.checkCode))
                 NetworkAccess.buildRequest(ServerInfo.renewOneBookUrl(User.staticUser.uid , book.id , book.checkCode),
                         object : Callback{
                             override fun onFailure(call: Call?, e: IOException?) {

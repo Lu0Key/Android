@@ -14,8 +14,8 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Grade
 import cn.edu.sdu.online.isdu.bean.User
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.MyLinearLayoutManager
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog

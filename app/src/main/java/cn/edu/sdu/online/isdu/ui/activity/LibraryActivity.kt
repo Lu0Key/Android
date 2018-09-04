@@ -1,7 +1,6 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -11,14 +10,9 @@ import android.view.View
 import android.widget.ImageView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.bean.User
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
-import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.ui.fragments.LibrarySeatFragment
 import cn.edu.sdu.online.isdu.ui.fragments.MyBookFragment
-import cn.edu.sdu.online.isdu.util.Logger
 import kotlinx.android.synthetic.main.activity_library.*
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -29,10 +23,6 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
-import okhttp3.Call
-import okhttp3.Response
-import java.io.IOException
-import javax.security.auth.callback.Callback
 
 /**
  ****************************************************

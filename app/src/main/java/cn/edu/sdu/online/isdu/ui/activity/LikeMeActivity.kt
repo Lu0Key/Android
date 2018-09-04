@@ -1,7 +1,6 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -12,21 +11,18 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
-import cn.edu.sdu.online.isdu.util.FileUtil
-import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_like_me.*
-import kotlinx.android.synthetic.main.fragment_me.*
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
 import org.json.JSONObject
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class LikeMeActivity : SlideActivity() {
@@ -44,6 +40,12 @@ class LikeMeActivity : SlideActivity() {
         setContentView(R.layout.activity_like_me)
 
         uid = intent.getStringExtra("uid") ?: ""
+
+        if (User.isLogin() && User.staticUser.uid.toString() == uid) {
+            title_text.text = "关注我的人"
+        } else {
+            title_text.text = "关注TA的人"
+        }
 
         dialog = ProgressDialog(this, false)
         dialog!!.setMessage("正在加载")
@@ -70,12 +72,16 @@ class LikeMeActivity : SlideActivity() {
 
     private fun getUserList() {
         dialog!!.show()
-        NetworkAccess.cache(ServerInfo.getLikeMe(uid)) {success, cachePath ->
-            if (success) {
+        NetworkAccess.buildRequest(ServerInfo.getLikeMe(uid), object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Logger.log(e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
                 try {
                     Thread(Runnable {
-                        synchronized(dataList) {
-                            val str = JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj")
+                        synchronized(idList) {
+                            val str = JSONObject(response.body()?.string()).getString("obj")
                             val ids = str.split("-")
                             idList.clear()
                             for (id in ids) {
@@ -130,14 +136,23 @@ class LikeMeActivity : SlideActivity() {
                                 dataList.add(user)
                             }
 
-                            runOnUiThread {
-                                adapter?.notifyDataSetChanged()
-                                dialog?.dismiss()
+                            if (recyclerView!!.isComputingLayout) {
+                                while (recyclerView!!.isComputingLayout) {
+                                    Thread.sleep(100)
+                                }
+                                runOnUiThread {
+                                    adapter?.notifyDataSetChanged()
+                                    dialog?.dismiss()
+                                }
+                            } else {
+                                runOnUiThread {
+                                    adapter?.notifyDataSetChanged()
+                                    dialog?.dismiss()
+                                }
                             }
+
                         }
-
                     }).start()
-
                 } catch (e: Exception) {
                     Logger.log(e)
                     runOnUiThread {
@@ -145,7 +160,7 @@ class LikeMeActivity : SlideActivity() {
                     }
                 }
             }
-        }
+        })
     }
 
     inner class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>() {

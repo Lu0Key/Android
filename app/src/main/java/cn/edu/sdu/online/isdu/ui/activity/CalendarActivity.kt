@@ -2,15 +2,13 @@ package cn.edu.sdu.online.isdu.ui.activity
 
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.SlideActivity
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions

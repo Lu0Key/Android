@@ -11,8 +11,8 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.News
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.NewsActivity
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger

@@ -12,7 +12,7 @@ import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.News
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.PixelUtil
@@ -85,7 +85,7 @@ class NewsActivity : SlideActivity() {
      * 获取新闻完整内容
      */
     private fun fetchNews() {
-        NetworkAccess.cache(newsUrl) {success, cachePath ->
+        NetworkAccess.cache(newsUrl) { success, cachePath ->
                 if (success) {
                     news = News.loadFromString(FileUtil.getStringFromFile(cachePath))
                     runOnUiThread { publish() }

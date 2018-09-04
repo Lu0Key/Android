@@ -1,27 +1,22 @@
 package cn.edu.sdu.online.isdu.ui.fragments.main
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.Post
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
-import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.adapter.PostItemAdapter
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
 import com.liaoinstan.springview.widget.SpringView
 import org.json.JSONArray
 import org.json.JSONObject
-import java.text.SimpleDateFormat
 
 /**
  ****************************************************

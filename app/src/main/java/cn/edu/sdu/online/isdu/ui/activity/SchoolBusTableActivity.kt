@@ -12,8 +12,8 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.Bus
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.Logger
 import kotlinx.android.synthetic.main.activity_school_bus_table.*

@@ -4,16 +4,13 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import android.widget.Toast
 import cn.edu.sdu.online.isdu.bean.Message
-import cn.edu.sdu.online.isdu.net.ServerInfo
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
 import cn.edu.sdu.online.isdu.ui.activity.MessageActivity
-import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.NotificationUtil
 import com.alibaba.fastjson.JSON
 import okhttp3.*
 import org.json.JSONObject
-import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class MessageService : Service() {

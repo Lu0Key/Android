@@ -14,8 +14,8 @@
 //import cn.edu.sdu.online.isdu.R
 //import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 //import cn.edu.sdu.online.isdu.bean.Post
-//import cn.edu.sdu.online.isdu.net.ServerInfo
-//import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+//import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+//import cn.edu.sdu.online.isdu.net.NetworkAccess
 //import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
 //import cn.edu.sdu.online.isdu.util.Logger
 //import okhttp3.Call
@@ -209,7 +209,6 @@
 //如果哪位好心人愿意告诉我为什么之前的不能用我会很感激的（
 package cn.edu.sdu.online.isdu.ui.fragments.search
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -217,14 +216,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.Post
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
-import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.adapter.PostItemAdapter
 import cn.edu.sdu.online.isdu.util.Logger
 import okhttp3.Call
@@ -233,7 +230,6 @@ import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
-import java.text.SimpleDateFormat
 
 class SearchPostFragment : LazyLoadFragment(){
     private var recyclerView: RecyclerView? = null
@@ -284,7 +280,7 @@ class SearchPostFragment : LazyLoadFragment(){
         isLoading = true
         if(search != null){
             onLoading()
-            var url =ServerInfo.queryPost(search)
+            var url = ServerInfo.queryPost(search)
             searchCall = NetworkAccess.buildRequest(url,
                     object : Callback{
                         override fun onFailure(call: Call?, e: IOException?) {

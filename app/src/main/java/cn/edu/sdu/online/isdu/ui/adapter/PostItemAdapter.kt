@@ -2,7 +2,6 @@ package cn.edu.sdu.online.isdu.ui.adapter
 
 import android.app.Activity
 import android.content.Intent
-import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -12,25 +11,21 @@ import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.bean.Post
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
 import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
 import cn.edu.sdu.online.isdu.util.DateCalculate
 import cn.edu.sdu.online.isdu.util.FileUtil
-import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.PixelUtil
-import cn.edu.sdu.online.isdu.util.download.Download.activity
 import com.bumptech.glide.Glide
 import com.qmuiteam.qmui.layout.QMUIFrameLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import org.json.JSONObject
 
-class PostItemAdapter(activity: Activity, dataList: List<Post>) :
+class PostItemAdapter(private val activity: Activity, private val dataList: List<Post>) :
         RecyclerView.Adapter<PostItemAdapter.ViewHolder>() {
 
-    private val activity = activity
-    private val dataList: List<Post> = dataList
     private val uNicknameMap = HashMap<String, String>()
     private val uAvatarMap = HashMap<String, String>()
 

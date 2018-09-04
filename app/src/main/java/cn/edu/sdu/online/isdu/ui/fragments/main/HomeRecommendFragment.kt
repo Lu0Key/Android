@@ -1,37 +1,23 @@
 package cn.edu.sdu.online.isdu.ui.fragments.main
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
-import cn.edu.sdu.online.isdu.app.MyApplication
-import cn.edu.sdu.online.isdu.app.ThreadPool
 import cn.edu.sdu.online.isdu.bean.Post
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
-import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
-import cn.edu.sdu.online.isdu.ui.activity.PostDetailActivity
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.adapter.PostItemAdapter
-import cn.edu.sdu.online.isdu.util.DateCalculate
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
-import com.bumptech.glide.Glide
 import com.liaoinstan.springview.widget.SpringView
-import de.hdodenhof.circleimageview.CircleImageView
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import java.math.BigInteger
-import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 /**
@@ -138,7 +124,7 @@ class HomeRecommendFragment : LazyLoadFragment() {
 
     override fun loadData() {
         if (isLoadComplete) return
-        NetworkAccess.cache(ServerInfo.getRecommend10(lastValue)) {success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getRecommend10(lastValue)) { success, cachePath ->
             if (success) {
                 try {
                     val arr = JSONArray(JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj"))
@@ -164,7 +150,7 @@ class HomeRecommendFragment : LazyLoadFragment() {
 //                        }
 
                         lastValue = post.value
-                        Log.d("Jzz", "lastValue = $lastValue")
+//                        Log.d("Jzz", "lastValue = $lastValue")
                     }
                 } catch (e: Exception) {
                     Logger.log(e)

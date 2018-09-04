@@ -2,31 +2,25 @@ package cn.edu.sdu.online.isdu.bean;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import cn.edu.sdu.online.isdu.interfaces.IWrapper;
-import cn.edu.sdu.online.isdu.net.ServerInfo;
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess;
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo;
+import cn.edu.sdu.online.isdu.net.NetworkAccess;
 import cn.edu.sdu.online.isdu.util.EnvVariables;
 import cn.edu.sdu.online.isdu.util.FileUtil;
 import cn.edu.sdu.online.isdu.util.Logger;
 import cn.edu.sdu.online.isdu.util.ScheduleTime;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 /**
  ****************************************************

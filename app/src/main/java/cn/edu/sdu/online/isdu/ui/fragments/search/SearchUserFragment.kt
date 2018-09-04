@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,10 +12,9 @@ import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.User
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.MyHomePageActivity
-import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -24,7 +22,6 @@ import com.bumptech.glide.request.RequestOptions
 import de.hdodenhof.circleimageview.CircleImageView
 import okhttp3.*
 import org.json.JSONArray
-import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 

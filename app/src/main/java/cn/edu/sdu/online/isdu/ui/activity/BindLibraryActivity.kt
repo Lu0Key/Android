@@ -1,15 +1,14 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
 import android.os.Bundle
-import android.support.design.widget.TextInputEditText
 import android.util.Log
 import android.view.View
 import android.widget.*
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.util.Logger
 import okhttp3.Call
 import okhttp3.Callback

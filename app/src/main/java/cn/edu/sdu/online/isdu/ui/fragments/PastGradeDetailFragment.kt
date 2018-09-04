@@ -1,7 +1,6 @@
 package cn.edu.sdu.online.isdu.ui.fragments
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -12,13 +11,11 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.Grade
-import kotlinx.android.synthetic.main.design_custom_number_picker.*
 import kotlinx.android.synthetic.main.fragment_past_grade_detail.*
-import android.view.KeyEvent.KEYCODE_BACK
 import android.widget.*
 import cn.edu.sdu.online.isdu.bean.User
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
+import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.MyLinearLayoutManager
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger

@@ -1,6 +1,5 @@
 package cn.edu.sdu.online.isdu.ui.activity
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,14 +7,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.os.Build
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.support.v4.content.ContextCompat
-import android.util.Log
-import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -23,15 +17,12 @@ import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.NormActivity
-import cn.edu.sdu.online.isdu.app.SlideActivity
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.AccountOp
-import cn.edu.sdu.online.isdu.net.ServerInfo
-import cn.edu.sdu.online.isdu.net.pack.NetworkAccess
+import cn.edu.sdu.online.isdu.net.pack.ServerInfo
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.OptionDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
-import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.ImageManager
 import cn.edu.sdu.online.isdu.util.Logger
 import cn.edu.sdu.online.isdu.util.Permissions
@@ -42,16 +33,9 @@ import com.bumptech.glide.request.target.ViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.yalantis.ucrop.UCrop
 import de.hdodenhof.circleimageview.CircleImageView
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
-import okhttp3.Response
 import org.json.JSONObject
-import top.zibin.luban.Luban
-import top.zibin.luban.OnCompressListener
 import java.io.DataOutputStream
 import java.io.File
-import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
