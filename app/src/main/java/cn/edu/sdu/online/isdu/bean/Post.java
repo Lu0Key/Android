@@ -28,6 +28,7 @@ public class Post extends AbstractPost {
     private int likeNumber;
     private int collectNumber;
     private double value;
+    private String tag;
 
     public Post() {}
 
@@ -37,6 +38,13 @@ public class Post extends AbstractPost {
         this.mContent = content;
     }
 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
     public int getPostId() {
         return postId;

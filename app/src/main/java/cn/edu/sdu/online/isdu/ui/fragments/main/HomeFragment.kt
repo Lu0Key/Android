@@ -43,7 +43,7 @@ class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
     private var magicIndicator: MagicIndicator? = null // Magic Indicator
     private var viewPager: ViewPager? = null // ViewPager
 
-    private val mDataList = listOf("推荐", "关注", "校内相关") // Indicator 数据
+    private val mDataList = listOf("实时", "推荐", "精品") // Indicator 数据
     private val mFragments = listOf(HomeRecommendFragment(),
             HomeLikeFragment(), HomeSchoolFragment()) // AppFragment 数组
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器

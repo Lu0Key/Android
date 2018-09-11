@@ -21,6 +21,7 @@ import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.ScheduleTable
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.util.*
+import kotlinx.android.synthetic.main.activity_schedule.*
 import org.json.JSONObject
 
 /**
@@ -101,6 +102,8 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         btnBack = findViewById(R.id.btn_back)
         btnAdd = findViewById(R.id.btn_add)
 
+        ic_indicator.setOnClickListener(this)
+
         txtCurrentWeek!!.setOnClickListener(this)
         btnBack!!.setOnClickListener(this)
         btnAdd!!.setOnClickListener(this)
@@ -129,6 +132,9 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
             }
             R.id.btn_add -> {
                 startActivity(Intent(this, CreateScheduleActivity::class.java))
+            }
+            R.id.ic_indicator -> {
+                txt_current_week.callOnClick()
             }
         }
     }

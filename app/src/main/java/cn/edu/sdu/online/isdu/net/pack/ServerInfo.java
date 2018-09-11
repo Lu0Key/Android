@@ -216,4 +216,8 @@ public class ServerInfo {
     public static String getPostIntroduction(int postId) {
         return "http://" + ipAddr133 + ":8384/post/getPostIntroduction?postId=" + postId;
     }
+
+    public static String getUserVerification(String uid) {
+        return url + "user/verification?id=" + uid;
+    }
 }

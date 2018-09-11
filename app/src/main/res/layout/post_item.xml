@@ -69,7 +69,6 @@
                 android:id="@+id/title_flag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="置顶"
                 android:textSize="10sp"
                 android:textColor="@color/colorWhite"
                 android:visibility="gone"
