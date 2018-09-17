@@ -245,18 +245,15 @@ public class Schedule implements Parcelable, IWrapper {
 //        if (User.staticUser.getStudentNumber() != null)
         if (User.isLogin())
             NetworkAccess.cache(ServerInfo.getScheduleUrl(User.staticUser.getUid()),
-                    new NetworkAccess.OnCacheFinishListener() {
-                        @Override
-                        public void onFinish(boolean success, String cachePath) {
-                            if (success) {
-                                String jsonString = FileUtil.getStringFromFile(cachePath);
-                                try {
-                                    localScheduleList = loadCourse(new JSONObject(jsonString).getJSONArray("obj"));
-                                } catch (JSONException e) {
-                                    Logger.log(e);
-                                }
-                                save(context);
+                    (success, cachePath) -> {
+                        if (success) {
+                            String jsonString = FileUtil.getStringFromFile(cachePath);
+                            try {
+                                localScheduleList = loadCourse(new JSONObject(jsonString).getJSONArray("obj"));
+                            } catch (JSONException e) {
+                                Logger.log(e);
                             }
+                            save(context);
                         }
                     });
     }
