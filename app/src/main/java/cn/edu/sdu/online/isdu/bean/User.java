@@ -251,6 +251,14 @@ public class User extends LitePalSupport {
         this.bind = bind;
     }
 
+    public int getUserVerification() {
+        return userVerification;
+    }
+
+    public void setUserVerification(int userVerification) {
+        this.userVerification = userVerification;
+    }
+
     /**
      * 是否登录
      *
@@ -263,11 +271,4 @@ public class User extends LitePalSupport {
         return staticUser.studentNumber != null;
     }
 
-    public int getUserVerification() {
-        return userVerification;
-    }
-
-    public void setUserVerification(int userVerification) {
-        this.userVerification = userVerification;
-    }
 }

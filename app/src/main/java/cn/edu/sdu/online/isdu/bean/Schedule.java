@@ -396,15 +396,15 @@ public class Schedule implements Parcelable, IWrapper {
                     return new ScheduleTime(13, 30);
             case 4:
                 if (EnvVariables.lessonDelay)
-                    return new ScheduleTime(16, 10);
+                    return new ScheduleTime(16, 00);
                 else
                     return new ScheduleTime(15, 40);
             case 5:
             default:
                 if (EnvVariables.lessonDelay)
-                    return new ScheduleTime(18, 30);
-                else
                     return new ScheduleTime(19, 0);
+                else
+                    return new ScheduleTime(18, 30);
         }
     }
 
@@ -421,15 +421,15 @@ public class Schedule implements Parcelable, IWrapper {
                     return new ScheduleTime(15, 20);
             case 4:
                 if (EnvVariables.lessonDelay)
-                    return new ScheduleTime(18, 0);
+                    return new ScheduleTime(17, 50);
                 else
                     return new ScheduleTime(17, 30);
             case 5:
             default:
                 if (EnvVariables.lessonDelay)
-                    return new ScheduleTime(20, 20);
-                else
                     return new ScheduleTime(20, 50);
+                else
+                    return new ScheduleTime(20, 20);
         }
     }
 
@@ -439,7 +439,9 @@ public class Schedule implements Parcelable, IWrapper {
         if (o == null || getClass() != o.getClass()) return false;
         Schedule schedule = (Schedule) o;
         return Objects.equals(scheduleName, schedule.scheduleName) &&
-                Objects.equals(scheduleLocation, schedule.scheduleLocation);
+                Objects.equals(scheduleLocation, schedule.scheduleLocation) &&
+                Objects.equals(startTime, schedule.startTime) &&
+                Objects.equals(endTime, schedule.endTime);
     }
 
     @Override

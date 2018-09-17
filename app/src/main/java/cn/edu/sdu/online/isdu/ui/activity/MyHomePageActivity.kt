@@ -10,9 +10,11 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.BaseActivity
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
@@ -347,6 +349,8 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
         }
 
         getUserLikes()
+
+        getUserVerification()
     }
 
     /**
@@ -483,6 +487,29 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     }
 
     fun getAppBar(): AppBarLayout = appBarLayout!!
+
+    /**
+     * 用户权限标识
+     */
+    private fun getUserVerification() {
+        NetworkAccess.buildRequest(ServerInfo.getUserVerification(id.toString()), object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Logger.log(e)
+                Toast.makeText(this@MyHomePageActivity, "网络错误", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val resp = response.body()!!.string()
+                var v = 0
+                try {
+                    v = resp.toInt()
+                } catch (e: Exception) {
+
+                }
+                
+            }
+        })
+    }
 
     /**
      * 自定义ViewPager适配器类
