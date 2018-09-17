@@ -29,6 +29,7 @@ import cn.edu.sdu.online.isdu.ui.fragments.me.MeCommentFragment
 import cn.edu.sdu.online.isdu.ui.fragments.me.MePostsFragment
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
+import cn.edu.sdu.online.isdu.util.UserVerification
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -487,6 +488,31 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     }
 
     fun getAppBar(): AppBarLayout = appBarLayout!!
+
+    private fun getUserVerification() {
+        NetworkAccess.buildRequest(ServerInfo.getUserVerification(id.toString()),
+                object : Callback {
+                    override fun onFailure(call: Call?, e: IOException?) {
+                        Logger.log(e)
+                        Toast.makeText(this@MyHomePageActivity, "网络错误", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onResponse(call: Call?, response: Response?) {
+                        val resp = response!!.body()?.string()
+                        var v = 0
+                        try {
+                            v = resp!!.toInt()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+
+                        // 加载用户标示
+                        runOnUiThread {
+                            UserVerification.setCards(verification_container, v)
+                        }
+                    }
+                })
+    }
 
     /**
      * 用户权限标识

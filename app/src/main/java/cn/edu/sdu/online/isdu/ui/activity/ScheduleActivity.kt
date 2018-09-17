@@ -60,8 +60,9 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_schedule)
 
-//        if (User.staticUser == null) User.staticUser = User.load()
-//        if (User.staticUser.studentNumber == null) {
+    }
+
+    private fun init() {
         if (!User.isLogin()) {
             val dialog = AlertDialog(this)
             dialog.setTitle("无数据")
@@ -92,6 +93,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         EnvVariables.init(this)
+        init()
     }
 
     private fun initView() {

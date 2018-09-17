@@ -31,6 +31,7 @@ import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextEditor
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextView
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
+import cn.edu.sdu.online.isdu.util.UserVerification
 import cn.edu.sdu.online.isdu.util.WeakReferences
 import com.bumptech.glide.Glide
 import cn.edu.sdu.online.isdu.util.history.HistoryRecord
@@ -219,8 +220,12 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                     override fun initView() {
 
                     }
-
                     override fun initEvent() {
+                        getContentView().findViewById<View>(R.id.btn_report).setOnClickListener {
+                            popupWindow.dismiss()
+                            editArea!!.clearFocus()
+                        }
+
                         getContentView().findViewById<View>(R.id.btn_delete).setOnClickListener { _ ->
                             popupWindow.dismiss()
                             editArea!!.clearFocus()
@@ -234,47 +239,49 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                 dialog1.setCancelable(false)
                                 dialog1.show()
                                 dialog.dismiss()
-                                NetworkAccess.buildRequest(ServerInfo.deletePost, "id", postId.toString(),
-                                        object : Callback {
-                                            override fun onFailure(call: Call?, e: IOException?) {
-                                                Logger.log(e)
-                                                runOnUiThread {
-                                                    dialog1.dismiss()
-                                                    Toast.makeText(this@PostDetailActivity,
-                                                            "网络错误，删除失败", Toast.LENGTH_SHORT).show()
-                                                }
-                                            }
-
-                                            override fun onResponse(call: Call?, response: Response?) {
-                                                runOnUiThread {
-                                                    dialog1.dismiss()
-                                                }
-                                                try {
-                                                    val str = response?.body()?.string()
-                                                    if (str != null && str.contains("success")) {
-                                                        runOnUiThread {
-                                                            Toast.makeText(this@PostDetailActivity,
-                                                                    "删除成功", Toast.LENGTH_SHORT).show()
-
-                                                            WeakReferences.postViewableWeakReference?.get()?.removeItem(postId)
-
-                                                            finish()
-                                                        }
-                                                    } else {
-                                                        runOnUiThread {
-                                                            Toast.makeText(this@PostDetailActivity,
-                                                                    "删除失败", Toast.LENGTH_SHORT).show()
-                                                        }
-                                                    }
-                                                } catch (e: Exception) {
+                                if (User.isLogin()) {
+                                    NetworkAccess.buildRequest(ServerInfo.deletePost, listOf("id", "op_id"), listOf(postId.toString(), User.staticUser.uid.toString()),
+                                            object : Callback {
+                                                override fun onFailure(call: Call?, e: IOException?) {
                                                     Logger.log(e)
                                                     runOnUiThread {
-                                                        Toast.makeText(this@PostDetailActivity,
-                                                                "网络错误，删除失败", Toast.LENGTH_SHORT).show()
+                                                        dialog1.dismiss()
+                                                        Toast.makeText(this@PostDetailActivity, "删除失败", Toast.LENGTH_SHORT).show()
                                                     }
                                                 }
-                                            }
-                                        })
+
+                                                override fun onResponse(call: Call?, response: Response?) {
+                                                    runOnUiThread {
+                                                        dialog1.dismiss()
+                                                    }
+                                                    try {
+                                                        val str = response?.body()?.string()
+                                                        if (str != null && str.contains("success")) {
+                                                            runOnUiThread {
+                                                                Toast.makeText(this@PostDetailActivity,
+                                                                        "删除成功", Toast.LENGTH_SHORT).show()
+
+                                                                WeakReferences.postViewableWeakReference?.get()?.removeItem(postId)
+
+                                                                finish()
+                                                            }
+                                                        } else {
+                                                            runOnUiThread {
+                                                                Toast.makeText(this@PostDetailActivity,
+                                                                        "删除失败", Toast.LENGTH_SHORT).show()
+                                                            }
+                                                        }
+                                                    } catch (e: Exception) {
+                                                        Logger.log(e)
+                                                        runOnUiThread {
+                                                            Toast.makeText(this@PostDetailActivity,
+                                                                    "网络错误，删除失败", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    }
+                                                }
+                                            })
+                                }
+
                             }
 
                             dialog.setNegativeButton("取消") {
@@ -448,6 +455,28 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
                                 getUserData(post.uid)
 
+                                // 获取是否为管理员
+                                var isAdmin = false
+                                if (User.isLogin()) {
+                                    val client = OkHttpClient.Builder()
+                                            .connectTimeout(10, TimeUnit.SECONDS)
+                                            .writeTimeout(10, TimeUnit.SECONDS)
+                                            .readTimeout(10, TimeUnit.SECONDS)
+                                            .build()
+                                    val request = Request.Builder()
+                                            .url(ServerInfo.getUserVerification(User.staticUser.uid.toString()))
+                                            .get()
+                                            .build()
+                                    val response = client.newCall(request).execute()
+
+                                    var value = 0
+                                    try {
+                                        value = response.body()!!.string().toInt()
+                                        isAdmin = ((value and 0x01) == 0x01)
+                                    } catch (e: Exception) {}
+                                }
+
+
                                 getLikeNumber()
 
                                 for (i in 0 until content.length()) {
@@ -477,6 +506,11 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                         btnOptions!!.visibility = View.INVISIBLE
                                     } else if (User.staticUser.uid.toString() == post.uid) {
                                         // 本用户的帖子
+                                        operate_bar!!.visibility = View.VISIBLE
+                                        btnOptions!!.setOnClickListener(this)
+                                        btnOptions!!.visibility = View.VISIBLE
+                                    } else if (isAdmin) {
+                                        // 管理员身份浏览
                                         operate_bar!!.visibility = View.VISIBLE
                                         btnOptions!!.setOnClickListener(this)
                                         btnOptions!!.visibility = View.VISIBLE
