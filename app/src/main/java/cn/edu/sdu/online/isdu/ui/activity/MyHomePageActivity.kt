@@ -517,25 +517,25 @@ class MyHomePageActivity : SlideActivity(), View.OnClickListener {
     /**
      * 用户权限标识
      */
-    private fun getUserVerification() {
-        NetworkAccess.buildRequest(ServerInfo.getUserVerification(id.toString()), object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Logger.log(e)
-                Toast.makeText(this@MyHomePageActivity, "网络错误", Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val resp = response.body()!!.string()
-                var v = 0
-                try {
-                    v = resp.toInt()
-                } catch (e: Exception) {
-
-                }
-                
-            }
-        })
-    }
+//    private fun getUserVerification() {
+//        NetworkAccess.buildRequest(ServerInfo.getUserVerification(id.toString()), object : Callback {
+//            override fun onFailure(call: Call, e: IOException) {
+//                Logger.log(e)
+//                Toast.makeText(this@MyHomePageActivity, "网络错误", Toast.LENGTH_SHORT).show()
+//            }
+//
+//            override fun onResponse(call: Call, response: Response) {
+//                val resp = response.body()!!.string()
+//                var v = 0
+//                try {
+//                    v = resp.toInt()
+//                } catch (e: Exception) {
+//
+//                }
+//
+//            }
+//        })
+//    }
 
     /**
      * 自定义ViewPager适配器类
