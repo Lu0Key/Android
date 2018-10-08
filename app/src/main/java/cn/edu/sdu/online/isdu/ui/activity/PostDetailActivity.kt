@@ -476,7 +476,6 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                     } catch (e: Exception) {}
                                 }
 
-
                                 getLikeNumber()
 
                                 for (i in 0 until content.length()) {
