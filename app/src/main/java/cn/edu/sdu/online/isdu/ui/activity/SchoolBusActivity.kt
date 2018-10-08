@@ -26,7 +26,7 @@ class SchoolBusActivity : SlideActivity() , View.OnClickListener{
     private var workdayBtn : Button ?= null
     private var non_workdayBtn : Button ?= null
     private var backBtn : ImageView ?= null
-    private var searchNum : Int = 1
+    private var searchNum : Int = 0
     private var fromP : Int = 0
     private var toP : Int = 0
     private val xqBtn : Array<SchoolImageButton?> = arrayOfNulls(10)
