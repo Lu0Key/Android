@@ -521,7 +521,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
                                     txtTitle!!.text = post.title
                                     txtDate!!.text =
-                                            "发表于 ${SimpleDateFormat("yyyy-MM-dd HH:mm").format(post.time)}"
+                                            "发表于 ${SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA).format(post.time)}"
 
                                     txtContent!!.setData(editDataList)
 

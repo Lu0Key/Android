@@ -13,6 +13,7 @@ public class ServerInfo {
 
     public static final String ipAddr = "202.194.15.132";
     public static final String ipAddr133 = "202.194.15.133";
+//    public static final String ipAddr133 = "192.168.1.111";
     public static final int port = 8384;
     public static final String url = "http://" + ipAddr + ":" + port + "/";
     public static final String envVarUrl = "http://" + ipAddr + ":8380/env_variables.html";
@@ -199,8 +200,9 @@ public class ServerInfo {
         return "http://" + ipAddr133 + ":8384/user/getComment10?userId=" + uid + "&startId=" + startId;
     }
 
-    public static String getRecommend10(double startValue) {
-        return "http://" + ipAddr133 + ":8384/post/getRecommendTen?startValue=" + startValue;
+    public static String getRecommend10(int startValue) {
+//        return "http://" + ipAddr133 + ":8384/post/getRecommendTen?startValue=" + startValue;
+        return "http://" + ipAddr133 + ":8384/post/getSyncPostTen?startId=" + startValue;
     }
 
     public static final String buildInfo = "http://" + ipAddr + ":8380/isdu/build/config.html";
@@ -219,5 +221,9 @@ public class ServerInfo {
 
     public static String getUserVerification(String uid) {
         return url + "user/verification?id=" + uid;
+    }
+
+    public static String getSyncPostTen(int startId) {
+        return "http://" + ipAddr133 + ":8384/post/getSyncPostTen?startId=" + startId;
     }
 }
