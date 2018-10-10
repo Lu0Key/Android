@@ -3,7 +3,9 @@ package cn.edu.sdu.online.isdu.util;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
@@ -46,35 +48,22 @@ public class Permissions {
     public static void requestAllPermissions(final Activity activity) {
         if (!checkAllPermissions(activity)) {
             if (Build.BRAND.toLowerCase().contains("huawei")) {
-//                final AlertDialog dialog = new AlertDialog(activity);
-//                dialog.setTitle("权限请求");
-//                dialog.setMessage("i山大APP需要手机部分权限，华为手机用户需要手动进入设置给予权限。");
-//                dialog.setPositiveButton("进入设置", new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        HuaweiCompat.goHuaWeiSetting(activity);
-//                        dialog.dismiss();
-//                    }
-//                });
-//                dialog.setNegativeButton("取消", new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        dialog.dismiss();
-//                    }
-//                });
-//                dialog.show();
-                new android.app.AlertDialog.Builder(activity)
-                        .setTitle("权限请求")
-                        .setMessage("i山大APP需要手机部分权限，华为手机用户需要手动进入设置给予权限。")
-                        .setPositiveButton("进入设置", (dialogInterface, i) -> {
-                            HuaweiCompat.goHuaWeiSetting(activity);
-                            dialogInterface.dismiss();
-                        })
-                        .setNegativeButton("取消", (dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-                        })
-                        .show();
-
+                SharedPreferences sharedPreferences =
+                        activity.getSharedPreferences("hw", Context.MODE_PRIVATE);
+                if (!sharedPreferences.getBoolean("asked", false)) {
+                    sharedPreferences.edit().putBoolean("asked", true).apply();
+                    new android.app.AlertDialog.Builder(activity)
+                            .setTitle("权限请求")
+                            .setMessage("i山大APP需要手机部分权限，华为手机用户需要手动进入设置给予权限。")
+                            .setPositiveButton("进入设置", (dialogInterface, i) -> {
+                                HuaweiCompat.goHuaWeiSetting(activity);
+                                dialogInterface.dismiss();
+                            })
+                            .setNegativeButton("取消", (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                            })
+                            .show();
+                }
             } else {
                 ActivityCompat.requestPermissions(activity, permissions, 3);
             }

@@ -44,6 +44,7 @@ public class User extends LitePalSupport {
     private String depart; // 学院
     private int uid; // ID号，非学号
     private Boolean bind; //是否绑定校园卡
+    private transient int userVerification = 0;
 
     public static User staticUser; // 全局用户实例
 
@@ -250,6 +251,14 @@ public class User extends LitePalSupport {
         this.bind = bind;
     }
 
+    public int getUserVerification() {
+        return userVerification;
+    }
+
+    public void setUserVerification(int userVerification) {
+        this.userVerification = userVerification;
+    }
+
     /**
      * 是否登录
      *
@@ -261,4 +270,5 @@ public class User extends LitePalSupport {
         }
         return staticUser.studentNumber != null;
     }
+
 }

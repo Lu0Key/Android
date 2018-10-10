@@ -21,6 +21,7 @@ import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.ScheduleTable
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.util.*
+import kotlinx.android.synthetic.main.activity_schedule.*
 import org.json.JSONObject
 
 /**
@@ -59,8 +60,9 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_schedule)
 
-//        if (User.staticUser == null) User.staticUser = User.load()
-//        if (User.staticUser.studentNumber == null) {
+    }
+
+    private fun init() {
         if (!User.isLogin()) {
             val dialog = AlertDialog(this)
             dialog.setTitle("无数据")
@@ -91,6 +93,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         EnvVariables.init(this)
+        init()
     }
 
     private fun initView() {
@@ -100,6 +103,8 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         icIndicator = findViewById(R.id.ic_indicator)
         btnBack = findViewById(R.id.btn_back)
         btnAdd = findViewById(R.id.btn_add)
+
+        ic_indicator.setOnClickListener(this)
 
         txtCurrentWeek!!.setOnClickListener(this)
         btnBack!!.setOnClickListener(this)
@@ -129,6 +134,9 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
             }
             R.id.btn_add -> {
                 startActivity(Intent(this, CreateScheduleActivity::class.java))
+            }
+            R.id.ic_indicator -> {
+                txt_current_week.callOnClick()
             }
         }
     }
