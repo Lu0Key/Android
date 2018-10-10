@@ -10,11 +10,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.bean.LibrarySeat
 import cn.edu.sdu.online.isdu.net.pack.ServerInfo
 import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.design.button.LibraryRadioImageButton
+import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.util.Logger
 import okhttp3.Call
@@ -39,7 +41,9 @@ class LibrarySeatFragment : Fragment() {
     private var recyclerView: RecyclerView ?= null
     private var adapter: LibrarySeatFragment.MyAdapter? = null
     private val dataList: MutableList<LibrarySeat> = java.util.ArrayList()
-    private val libraries = listOf("zxwl", "zxjz", "hjl", "btq", "qfsfg", "xls")
+    private val libraries = listOf("zxwl", "zxjz", "hjl", "btq", "qfsgx", "xls")
+    private var alertDialog : AlertDialog ?= null
+
 
     private var dialog: ProgressDialog? = null
 
@@ -94,8 +98,21 @@ class LibrarySeatFragment : Fragment() {
                 object : Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
                         Logger.log(e)
+
+                        alertDialog = AlertDialog(context!!)
+                        alertDialog!!.setTitle("抱歉")
+                        alertDialog!!.setMessage("教务出现问题，该图书馆余座无法查询")
+                        alertDialog!!.setPositiveButton("确定") {
+                            activity?.runOnUiThread {
+                                alertDialog!!.dismiss()
+                            }
+                        }
+                        alertDialog!!.setCancelable(false)
+                        alertDialog!!.setCancelOnTouchOutside(false)
+
                         activity?.runOnUiThread {
                             dialog?.dismiss()
+                            alertDialog!!.show()
                             dataList.clear()
                             adapter?.notifyDataSetChanged()
                         }
@@ -103,10 +120,30 @@ class LibrarySeatFragment : Fragment() {
 
                     override fun onResponse(call: Call?, response: Response?) {
                         activity?.runOnUiThread {
+
                             dialog?.dismiss()
                         }
                         try {
+
+
                             val jsonArray = JSONArray(response?.body()?.string())
+
+                            if (response == null || response?.body()?.toString() == "" || jsonArray.toString() == "") {
+                                alertDialog = AlertDialog(context!!)
+                                alertDialog!!.setTitle("抱歉")
+                                alertDialog!!.setMessage("教务出现问题，该图书馆余座无法查询")
+                                alertDialog!!.setPositiveButton("确定") {
+                                    activity?.runOnUiThread {
+                                        alertDialog!!.dismiss()
+                                    }
+                                }
+                                alertDialog!!.setCancelable(false)
+                                alertDialog!!.setCancelOnTouchOutside(false)
+                                activity?.runOnUiThread {
+                                    alertDialog!!.show()
+                                }
+
+                            }
 
                             dataList.clear()
 
