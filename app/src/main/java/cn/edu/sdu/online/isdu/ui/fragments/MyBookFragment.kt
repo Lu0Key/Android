@@ -209,6 +209,12 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                 startActivity(Intent(activity!!,SearchBookActivity::class.java))
             }
             reb_all.id -> {
+
+                if (noBook!!.visibility == View.VISIBLE) {
+                    Toast.makeText(context, "您还没有借阅任何图书", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
                 Log.w("mbf", ServerInfo.renewBookUrl(User.staticUser.uid))
                 NetworkAccess.buildRequest(ServerInfo.renewBookUrl(User.staticUser.uid),
                         object : Callback{
