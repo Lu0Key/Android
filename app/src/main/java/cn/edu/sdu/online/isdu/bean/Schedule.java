@@ -50,6 +50,7 @@ public class Schedule implements Parcelable, IWrapper {
     private int scheduleColor = 0xFF717DEB; // 日程背景颜色
     private int scheduleTextColor = 0xFFFFFFFF; // 日程文字颜色
     private List<Integer> repeatWeeks = new ArrayList<>();
+    private int courseOrder;
 
     public Schedule() {}
 
@@ -61,6 +62,15 @@ public class Schedule implements Parcelable, IWrapper {
         this.repeatType = repeatType;
     }
 
+    public Schedule(String scheduleName, String scheduleLocation, ScheduleTime startTime, ScheduleTime endTime, RepeatType repeatType, int courseOrder) {
+        this.scheduleName = scheduleName;
+        this.scheduleLocation = scheduleLocation;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.repeatType = repeatType;
+        this.courseOrder = courseOrder;
+    }
+
     protected Schedule(Parcel in) {
         scheduleName = in.readString();
         scheduleLocation = in.readString();
@@ -68,6 +78,7 @@ public class Schedule implements Parcelable, IWrapper {
         endTime = in.readParcelable(ScheduleTime.class.getClassLoader());
         scheduleColor = in.readInt();
         scheduleTextColor = in.readInt();
+        courseOrder = in.readInt();
     }
 
     public static final Creator<Schedule> CREATOR = new Creator<Schedule>() {
@@ -146,6 +157,14 @@ public class Schedule implements Parcelable, IWrapper {
         this.repeatWeeks = repeatWeeks;
     }
 
+    public int getCourseOrder() {
+        return courseOrder;
+    }
+
+    public void setCourseOrder(int courseOrder) {
+        this.courseOrder = courseOrder;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -159,6 +178,7 @@ public class Schedule implements Parcelable, IWrapper {
         dest.writeInt(scheduleTextColor);
         dest.writeParcelable(startTime, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
         dest.writeParcelable(endTime, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+        dest.writeInt(courseOrder);
     }
 
     /**
@@ -339,7 +359,7 @@ public class Schedule implements Parcelable, IWrapper {
                 String location = obj.getString("room");
 
                 Schedule schedule = new Schedule(courseName, location, getCourseStartTime(courseOrder),
-                        getCourseEndTime(courseOrder), RepeatType.WEEKLY);
+                        getCourseEndTime(courseOrder), RepeatType.WEEKLY, courseOrder);
 
                 // 确定日程颜色
                 boolean flag = false;
@@ -458,6 +478,7 @@ public class Schedule implements Parcelable, IWrapper {
             setScheduleName(((Schedule) a).scheduleName);
             getStartTime().set(((Schedule) a).startTime);
             getEndTime().set(((Schedule) a).endTime);
+            setCourseOrder(((Schedule) a).courseOrder);
         }
     }
 

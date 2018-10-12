@@ -18,5 +18,6 @@ class AboutActivity : SlideActivity() {
         btn_claim.setOnClickListener {
             startActivity(Intent(this, ClaimActivity::class.java))
         }
+        btn_back.setOnClickListener { finish() }
     }
 }

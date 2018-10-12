@@ -142,7 +142,7 @@ public class ServerInfo {
     }
 
     public static String getPost(int id) {
-        return "http://" + ipAddr133 + ":8384/post/detail/?id=" + id;
+        return "http://" + ipAddr133 + ":8384/post/detail?id=" + id;
     }
 
     public static final String deletePost = "http://" + ipAddr133 + ":8384/post/delete";
