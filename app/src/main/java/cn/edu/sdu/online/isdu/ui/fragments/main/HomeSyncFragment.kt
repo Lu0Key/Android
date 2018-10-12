@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.Post
+import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.pack.ServerInfo
 import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.adapter.PostItemAdapter
@@ -24,12 +25,12 @@ import org.json.JSONObject
  * Last Modifier: ZSJ
  * Last Modify Time: 2018/7/25
  *
- * 主页校内相关碎片
- * 一般为###管理员###发布的与学校相关的内容
+ * 主页关注碎片
+ * 内容为关注的用户的帖子
  ****************************************************
  */
 
-class HomeSchoolFragment : LazyLoadFragment() {
+class HomeSyncFragment : LazyLoadFragment() {
 
     private var recyclerView: RecyclerView? = null
     private var adapter: PostItemAdapter? = null
@@ -38,7 +39,7 @@ class HomeSchoolFragment : LazyLoadFragment() {
     private var dataList: MutableList<Post> = ArrayList()
 //    private var blankView: TextView? = null
 
-    private var lastValue = 0
+    private var lastId = 0
     private var needOffset = false
     private var loadComplete = false
 
@@ -82,7 +83,7 @@ class HomeSchoolFragment : LazyLoadFragment() {
         pullRefreshLayout!!.setListener(object : SpringView.OnFreshListener {
             override fun onLoadmore() {
                 // 上拉加载更多
-                lastValue = if (dataList.isEmpty()) 0 else dataList[dataList.size - 1].postId
+                lastId = if (dataList.isEmpty()) 0 else dataList[dataList.size - 1].postId
                 needOffset = true
                 loadComplete = false
                 loadData()
@@ -90,7 +91,7 @@ class HomeSchoolFragment : LazyLoadFragment() {
 
             override fun onRefresh() {
                 // 下拉刷新
-                lastValue = 0
+                lastId = 0
                 dataList.clear()
                 needOffset = false
                 loadComplete = false
@@ -100,9 +101,14 @@ class HomeSchoolFragment : LazyLoadFragment() {
 
     }
 
+    override fun isLoadComplete(): Boolean = loadComplete
+
     override fun loadData() {
         if (loadComplete) return
-        NetworkAccess.cache(ServerInfo.getSchoolAboutList(lastValue)) { success, cachePath ->
+//        if (User.staticUser == null) User.staticUser = User.load()
+//        if (User.staticUser.studentNumber == null) return
+        if (!User.isLogin()) return
+        NetworkAccess.cache(ServerInfo.getSyncPostTen(lastId)) { success, cachePath ->
             if (success) {
                 try {
                     val arr = JSONArray(JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj"))
@@ -116,11 +122,12 @@ class HomeSchoolFragment : LazyLoadFragment() {
                         post.title = obj.getString("title")
                         post.likeNumber = obj.getInt("likeNumber")
                         post.content = obj.getString("info")
+                        post.tag = obj.getString("tag")
 
                         if (!dataList.contains(post))
                             dataList.add(post)
 
-                        lastValue = post.postId
+                        lastId = post.postId
                     }
                 } catch (e: Exception) {
                     Logger.log(e)

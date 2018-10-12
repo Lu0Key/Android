@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.bean.Post
-import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.pack.ServerInfo
 import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.adapter.PostItemAdapter
@@ -25,12 +24,12 @@ import org.json.JSONObject
  * Last Modifier: ZSJ
  * Last Modify Time: 2018/7/25
  *
- * 主页关注碎片
- * 内容为关注的用户的帖子
+ * 主页校内相关碎片
+ * 一般为###管理员###发布的与学校相关的内容
  ****************************************************
  */
 
-class HomeLikeFragment : LazyLoadFragment() {
+class HomeExcellentFragment : LazyLoadFragment() {
 
     private var recyclerView: RecyclerView? = null
     private var adapter: PostItemAdapter? = null
@@ -39,7 +38,7 @@ class HomeLikeFragment : LazyLoadFragment() {
     private var dataList: MutableList<Post> = ArrayList()
 //    private var blankView: TextView? = null
 
-    private var lastId = 0
+    private var lastValue = 0
     private var needOffset = false
     private var loadComplete = false
 
@@ -83,7 +82,7 @@ class HomeLikeFragment : LazyLoadFragment() {
         pullRefreshLayout!!.setListener(object : SpringView.OnFreshListener {
             override fun onLoadmore() {
                 // 上拉加载更多
-                lastId = if (dataList.isEmpty()) 0 else dataList[dataList.size - 1].postId
+                lastValue = if (dataList.isEmpty()) 0 else dataList[dataList.size - 1].postId
                 needOffset = true
                 loadComplete = false
                 loadData()
@@ -91,7 +90,7 @@ class HomeLikeFragment : LazyLoadFragment() {
 
             override fun onRefresh() {
                 // 下拉刷新
-                lastId = 0
+                lastValue = 0
                 dataList.clear()
                 needOffset = false
                 loadComplete = false
@@ -101,14 +100,9 @@ class HomeLikeFragment : LazyLoadFragment() {
 
     }
 
-    override fun isLoadComplete(): Boolean = loadComplete
-
     override fun loadData() {
         if (loadComplete) return
-//        if (User.staticUser == null) User.staticUser = User.load()
-//        if (User.staticUser.studentNumber == null) return
-        if (!User.isLogin()) return
-        NetworkAccess.cache(ServerInfo.getLikePost(User.staticUser.uid.toString(), lastId)) { success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getTagedPostTen(lastValue)) { success, cachePath ->
             if (success) {
                 try {
                     val arr = JSONArray(JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj"))
@@ -122,11 +116,12 @@ class HomeLikeFragment : LazyLoadFragment() {
                         post.title = obj.getString("title")
                         post.likeNumber = obj.getInt("likeNumber")
                         post.content = obj.getString("info")
+                        post.tag = obj.getString("tag")
 
                         if (!dataList.contains(post))
                             dataList.add(post)
 
-                        lastId = post.postId
+                        lastValue = post.postId
                     }
                 } catch (e: Exception) {
                     Logger.log(e)

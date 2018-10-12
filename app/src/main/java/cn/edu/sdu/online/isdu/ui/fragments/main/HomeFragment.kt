@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.*
-import android.widget.LinearLayout
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.ui.activity.CreatePostActivity
@@ -44,8 +43,8 @@ class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
     private var viewPager: ViewPager? = null // ViewPager
 
     private val mDataList = listOf("实时", "推荐", "精品") // Indicator 数据
-    private val mFragments = listOf(HomeRecommendFragment(),
-            HomeLikeFragment(), HomeSchoolFragment()) // AppFragment 数组
+    private val mFragments = listOf(HomeSyncFragment(),
+            HomeRecommendFragment(), HomeExcellentFragment()) // AppFragment 数组
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -76,7 +76,7 @@ class PostItemAdapter(private val activity: Activity, private val dataList: List
         }
 
         // 添加帖子标识
-        if (item.tag != null) {
+        if (item.tag != null && item.tag != "") {
             holder.tag.visibility = View.VISIBLE
             holder.tag.text = item.tag
         } else {

@@ -11,10 +11,10 @@ package cn.edu.sdu.online.isdu.net.pack;
 
 public class ServerInfo {
 
-    public static final String ipAddr = "202.194.15.132";
-    public static final String ipAddr133 = "202.194.15.133";
+    private static final String ipAddr = "202.194.15.132";
+    private static final String ipAddr133 = "202.194.15.133";
 //    public static final String ipAddr133 = "192.168.1.111";
-    public static final int port = 8384;
+    private static final int port = 8384;
     public static final String url = "http://" + ipAddr + ":" + port + "/";
     public static final String envVarUrl = "http://" + ipAddr + ":8380/env_variables.html";
 
@@ -28,19 +28,19 @@ public class ServerInfo {
 
     public static final String deleteComment = "http://" + ipAddr133 + ":8384/comment/delete";
 
-    public static final String getLikeNumber(int postId) {
+    public static String getLikeNumber(int postId) {
         return "http://" + ipAddr133 + ":8384/post/getLike?postId=" + postId;
     }
     public static final String likePost = "http://" + ipAddr133 + ":8384/post/like/";
-    public static final String getIsLike(int postId, String uid) {
+    public static String getIsLike(int postId, String uid) {
         return "http://" + ipAddr133 + ":8384/post/isLike?postId=" + postId + "&userId=" + uid;
     }
     public static final String collectPost = "http://" + ipAddr133 + ":8384/post/collect";
-    public static final String getIsCollect(int postId, String uid) {
+    public static String getIsCollect(int postId, String uid) {
         return "http://" + ipAddr133 + ":8384/post/isCollect?postId=" + postId + "&userId=" + uid;
     }
 
-    public static final String getUrlLogin(String num, String pwd) {
+    public static String getUrlLogin(String num, String pwd) {
         return url + "/user/signIn?j_username=" + num + "&j_password=" + pwd;
     }
     public static String searchUser(String studentNumber){
@@ -81,7 +81,6 @@ public class ServerInfo {
      *
      * @param index 版块ID
      * @param id 所处位置的ID
-     * @return
      */
     public static String getNewsUrl(int index, int id) {
         String site;
@@ -117,7 +116,7 @@ public class ServerInfo {
     }
 
     public static String getScheduleUrl(int id) {
-        return url + "/academic/table?id=" + id;
+        return url + "academic/table?id=" + id;
 
     }
 
@@ -150,19 +149,19 @@ public class ServerInfo {
     public static String getLibraryInfoUrl(String id){
         return url + "library/info?id=" + id;
     }
-    public static final String getBindUrl(String uid,String cardNumber, String pwd) {
+    public static String getBindUrl(String uid,String cardNumber, String pwd) {
         return url + "library/bind?id=" + uid + "&cardNumber=" + cardNumber + "&password=" + pwd;
     }
-    public static final String getBookListUrl(String uid) {
+    public static String getBookListUrl(String uid) {
         return url + "library/borrowed?id=" + uid ;
     }
-    public static final String searchBookUrl(String bookName){
+    public static String searchBookUrl(String bookName){
         return url + "library/search?name=" + bookName ;
     }
-    public static final String renewBookUrl(int uid){
+    public static String renewBookUrl(int uid){
         return url + "library/renew?id=" + uid ;
     }
-    public static final String renewOneBookUrl(int uid,String bookId,String checkCode){
+    public static String renewOneBookUrl(int uid, String bookId, String checkCode){
         return url + "library/renewOne?id=" + uid + "&bookId="+ bookId + "&verifyId=" + checkCode;
     }
 
@@ -201,8 +200,8 @@ public class ServerInfo {
     }
 
     public static String getRecommend10(int startValue) {
-//        return "http://" + ipAddr133 + ":8384/post/getRecommendTen?startValue=" + startValue;
-        return "http://" + ipAddr133 + ":8384/post/getSyncPostTen?startId=" + startValue;
+        return "http://" + ipAddr133 + ":8384/post/getRecommendTen?startValue=" + startValue;
+//        return "http://" + ipAddr133 + ":8384/post/getSyncPostTen?startId=" + startValue;
     }
 
     public static final String buildInfo = "http://" + ipAddr + ":8380/isdu/build/config.html";
@@ -225,5 +224,9 @@ public class ServerInfo {
 
     public static String getSyncPostTen(int startId) {
         return "http://" + ipAddr133 + ":8384/post/getSyncPostTen?startId=" + startId;
+    }
+
+    public static String getTagedPostTen(int startId) {
+        return "http://" + ipAddr133 + ":8384/post/getTagedPost?startId=" + startId;
     }
 }

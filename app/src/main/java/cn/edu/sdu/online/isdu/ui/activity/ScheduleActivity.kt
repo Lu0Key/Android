@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -225,6 +226,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
             if (success) {
                 val jsonString = FileUtil.getStringFromFile(cachePath)
                 try {
+//                    Log.d("Jzz", "Url=${ServerInfo.getScheduleUrl(User.staticUser.uid)}\nContent=$jsonString")
                     val courseArray = JSONObject(jsonString).getJSONArray("obj")
                     totalList = Schedule.loadCourse(courseArray)
                     // 加载考试信息
@@ -327,7 +329,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun hideWeekSelect() {
-        val px = PixelUtil.dp2px(this, 60)
+//        val px = PixelUtil.dp2px(this, 60)
         val animator = ObjectAnimator.ofFloat(scheduleTable!!, "translationY",
                 scheduleTable!!.translationY, 0f)
         animator.duration = 100
@@ -344,8 +346,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         animator.start()
     }
 
-    class MyAdapter(dataList: List<SelectableWeekIndex>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
-        private val dataList = dataList
+    class MyAdapter(private val dataList: List<SelectableWeekIndex>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
         private var onWeekSelectListener: OnWeekSelectListener? = null
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
