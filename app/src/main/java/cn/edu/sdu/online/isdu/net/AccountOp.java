@@ -117,6 +117,7 @@ public class AccountOp {
                 User.staticUser.setMajor(jsonObject.getString("major"));
                 User.staticUser.setDepart(jsonObject.getString("depart"));
                 User.staticUser.setUid(jsonObject.getInt("id"));
+                User.staticUser.setUserVerification(jsonObject.getInt("verification"));
 
                 User.staticUser.save(MyApplication.getContext());
                 User.staticUser.loginCache(MyApplication.getContext());

@@ -229,4 +229,8 @@ public class ServerInfo {
     public static String getTagedPostTen(int startId) {
         return "http://" + ipAddr133 + ":8384/post/getTagedPost?startId=" + startId;
     }
+
+    public static String setPostTag(int postId, String tag, String userId) {
+        return "http://" + ipAddr133 + ":8384/post/setPostTag?postId=" + postId + "&tag=" + tag + "&userId=" + userId;
+    }
 }

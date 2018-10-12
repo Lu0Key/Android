@@ -219,12 +219,15 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                 window = object : BasePopupWindow(this, R.layout.popup_post_detail,
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
                     override fun initView() {
-
+                        if ((User.staticUser.userVerification and 0x01) != 0x01) {
+                            getContentView().findViewById<View>(R.id.btn_allow_excellent).visibility = View.GONE
+                        }
                     }
                     override fun initEvent() {
-                        getContentView().findViewById<View>(R.id.btn_report).setOnClickListener {
+                        getContentView().findViewById<View>(R.id.btn_allow_excellent).setOnClickListener {
                             popupWindow.dismiss()
                             editArea!!.clearFocus()
+                            setPostTag()
                         }
 
                         getContentView().findViewById<View>(R.id.btn_delete).setOnClickListener { _ ->
@@ -457,26 +460,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                 getUserData(post.uid)
 
                                 // 获取是否为管理员
-                                var isAdmin = false
-                                if (User.isLogin()) {
-                                    val client = OkHttpClient.Builder()
-                                            .connectTimeout(10, TimeUnit.SECONDS)
-                                            .writeTimeout(10, TimeUnit.SECONDS)
-                                            .readTimeout(10, TimeUnit.SECONDS)
-                                            .build()
-                                    val request = Request.Builder()
-                                            .url(ServerInfo.getUserVerification(User.staticUser.uid.toString()))
-                                            .get()
-                                            .build()
-                                    val response = client.newCall(request).execute()
-
-                                    var value = 0
-                                    try {
-                                        value = response.body()!!.string().toInt()
-                                        isAdmin = ((value and 0x01) == 0x01)
-                                    } catch (e: Exception) {}
-                                }
-
+                                val isAdmin = (User.staticUser.userVerification and 0x01) == 0x01
                                 getLikeNumber()
 
                                 for (i in 0 until content.length()) {
@@ -704,35 +688,73 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun deleteComment(comment: PostComment) {
-        NetworkAccess.buildRequest(ServerInfo.deleteComment, "id", comment.id.toString(), object : Callback {
-            override fun onFailure(call: Call?, e: IOException?) {
-                Logger.log(e)
-                runOnUiThread {
-                    Toast.makeText(this@PostDetailActivity, "删除失败", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onResponse(call: Call?, response: Response?) {
-                try {
-                    val obj = JSONObject(response?.body()?.string())
-                    if (obj.getString("status") == "success") {
-                        runOnUiThread {
-                            Toast.makeText(this@PostDetailActivity, "删除成功", Toast.LENGTH_SHORT).show()
-                            getPostData()
-                        }
-                    } else {
-                        runOnUiThread {
-                            Toast.makeText(this@PostDetailActivity, "删除失败", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                } catch (e: Exception) {
+        if (User.isLogin()) {
+            NetworkAccess.buildRequest(ServerInfo.deleteComment, listOf("id", "userId"),
+                    listOf(comment.id.toString(), User.staticUser.uid.toString()), object : Callback {
+                override fun onFailure(call: Call?, e: IOException?) {
                     Logger.log(e)
                     runOnUiThread {
                         Toast.makeText(this@PostDetailActivity, "删除失败", Toast.LENGTH_SHORT).show()
                     }
                 }
-            }
-        })
+
+                override fun onResponse(call: Call?, response: Response?) {
+                    try {
+                        val obj = JSONObject(response?.body()?.string())
+                        if (obj.getString("status") == "success") {
+                            runOnUiThread {
+                                Toast.makeText(this@PostDetailActivity, "删除成功", Toast.LENGTH_SHORT).show()
+                                getPostData()
+                            }
+                        } else {
+                            runOnUiThread {
+                                Toast.makeText(this@PostDetailActivity, "删除失败", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Logger.log(e)
+                        runOnUiThread {
+                            Toast.makeText(this@PostDetailActivity, "删除失败", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    private fun setPostTag() {
+        if (User.isLogin()) {
+            NetworkAccess.buildRequest(ServerInfo.setPostTag(postId, "精", User.staticUser.uid.toString()),
+                    object : Callback {
+                        override fun onFailure(call: Call, e: IOException) {
+                            Logger.log(e)
+                            runOnUiThread {
+                                Toast.makeText(this@PostDetailActivity, "操作失败", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        override fun onResponse(call: Call, response: Response) {
+                            try {
+                                val obj = JSONObject(response.body()?.string())
+                                if (obj.getString("status") == "success") {
+                                    runOnUiThread {
+                                        Toast.makeText(this@PostDetailActivity, "操作成功", Toast.LENGTH_SHORT).show()
+                                        getPostData()
+                                    }
+                                } else {
+                                    runOnUiThread {
+                                        Toast.makeText(this@PostDetailActivity, "操作失败", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                Logger.log(e)
+                                runOnUiThread {
+                                    Toast.makeText(this@PostDetailActivity, "操作失败", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    })
+        }
     }
 
     inner class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
