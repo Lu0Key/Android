@@ -140,7 +140,7 @@ class HomeRecommendFragment : LazyLoadFragment() {
                         post.likeNumber = obj.getInt("likeNumber")
                         post.content = obj.getString("info")
                         post.value = obj.getDouble("value")
-                        post.tag = obj.getString("tag")
+                        post.tag = if (obj.has("tag")) obj.getString("tag") else ""
 
                         if (!dataList.contains(post))
                             dataList.add(post)

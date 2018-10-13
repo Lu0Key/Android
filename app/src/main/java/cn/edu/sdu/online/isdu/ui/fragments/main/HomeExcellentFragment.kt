@@ -116,7 +116,7 @@ class HomeExcellentFragment : LazyLoadFragment() {
                         post.title = obj.getString("title")
                         post.likeNumber = obj.getInt("likeNumber")
                         post.content = obj.getString("info")
-                        post.tag = obj.getString("tag")
+                        post.tag = if (obj.has("tag")) obj.getString("tag") else ""
 
                         if (!dataList.contains(post))
                             dataList.add(post)
