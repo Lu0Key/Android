@@ -61,7 +61,7 @@ class HomeExcellentFragment : LazyLoadFragment() {
 //        blankView = view.findViewById(R.id.blank_view)
 
 //        updateBar!!.translationY = -100f
-//        blankView!!.visibility = View.GONE
+//        blankView!!.visibility  = View.GONE
     }
 
     /**

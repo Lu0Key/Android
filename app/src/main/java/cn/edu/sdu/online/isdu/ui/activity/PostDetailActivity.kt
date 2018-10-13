@@ -30,10 +30,7 @@ import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
 import cn.edu.sdu.online.isdu.ui.design.popupwindow.BasePopupWindow
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextEditor
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextView
-import cn.edu.sdu.online.isdu.util.FileUtil
-import cn.edu.sdu.online.isdu.util.Logger
-import cn.edu.sdu.online.isdu.util.UserVerification
-import cn.edu.sdu.online.isdu.util.WeakReferences
+import cn.edu.sdu.online.isdu.util.*
 import com.bumptech.glide.Glide
 import cn.edu.sdu.online.isdu.util.history.HistoryRecord
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -42,6 +39,7 @@ import com.qmuiteam.qmui.span.QMUITouchableSpan
 import com.qmuiteam.qmui.widget.textview.QMUISpanTouchFixTextView
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_post_detail.*
+import kotlinx.android.synthetic.main.activity_view_image.view.*
 import kotlinx.android.synthetic.main.edit_area.*
 import okhttp3.*
 import org.json.JSONArray
@@ -63,6 +61,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
     private var posterLayout: View? = null
     private var btnOptions: View? = null
     private var txtLike: TextView? = null
+    private var txtFlag: TextView? = null
 
     private var btnComment: View? = null
     private var btnLike: ImageView? = null
@@ -137,6 +136,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         commentLine = comment_line
         commentRecyclerView = comment_recycler_view
         txtLike = like_count
+        txtFlag = title_flag
 
         btn_back.setOnClickListener { finish() }
 
@@ -221,13 +221,19 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                     override fun initView() {
                         if ((User.staticUser.userVerification and 0x01) != 0x01) {
                             getContentView().findViewById<View>(R.id.btn_allow_excellent).visibility = View.GONE
+                        } else {
+                            if (post.tag == "精") {
+                                getContentView().findViewById<TextView>(R.id.btn_allow_excellent).text = "取消加精"
+                            } else {
+                                getContentView().findViewById<TextView>(R.id.btn_allow_excellent).text = "加精"
+                            }
                         }
                     }
                     override fun initEvent() {
                         getContentView().findViewById<View>(R.id.btn_allow_excellent).setOnClickListener {
                             popupWindow.dismiss()
                             editArea!!.clearFocus()
-                            setPostTag()
+                            setPostTag(if (post.tag == "精") "" else "精")
                         }
 
                         getContentView().findViewById<View>(R.id.btn_delete).setOnClickListener { _ ->
@@ -244,7 +250,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                 dialog1.show()
                                 dialog.dismiss()
                                 if (User.isLogin()) {
-                                    NetworkAccess.buildRequest(ServerInfo.deletePost, listOf("id", "op_id"), listOf(postId.toString(), User.staticUser.uid.toString()),
+                                    NetworkAccess.buildRequest(ServerInfo.deletePost, listOf("postId", "userId"), listOf(postId.toString(), User.staticUser.uid.toString()),
                                             object : Callback {
                                                 override fun onFailure(call: Call?, e: IOException?) {
                                                     Logger.log(e)
@@ -456,6 +462,7 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
                                 post.title = data.getString("title")
                                 post.time = data.getString("time").toLong()
                                 post.uid = data.getString("userId")
+                                post.tag = if (data.has("tag")) data.getString("tag") else ""
 
                                 getUserData(post.uid)
 
@@ -505,7 +512,12 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
 
                                     txtTitle!!.text = post.title
                                     txtDate!!.text =
-                                            "发表于 ${SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA).format(post.time)}"
+                                            "发表于 ${DateCalculate.getExpressionDate(post.time)}"
+
+                                    if (post.tag != null && post.tag.isNotEmpty()) {
+                                        txtFlag!!.visibility = View.VISIBLE
+                                        txtFlag!!.text = post.tag
+                                    }
 
                                     txtContent!!.setData(editDataList)
 
@@ -722,9 +734,9 @@ class PostDetailActivity : SlideActivity(), View.OnClickListener {
         }
     }
 
-    private fun setPostTag() {
+    private fun setPostTag(tag: String) {
         if (User.isLogin()) {
-            NetworkAccess.buildRequest(ServerInfo.setPostTag(postId, "精", User.staticUser.uid.toString()),
+            NetworkAccess.buildRequest(ServerInfo.setPostTag(postId, tag, User.staticUser.uid.toString()),
                     object : Callback {
                         override fun onFailure(call: Call, e: IOException) {
                             Logger.log(e)
