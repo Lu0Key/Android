@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cn.edu.sdu.online.isdu.ui.activity.ScheduleActivity">
+    tools:context="cn.edu.sdu.online.isdu.ui.activity.CourseTableActivity">
 
 
     <LinearLayout
@@ -69,7 +69,7 @@
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp"
                 android:src="@drawable/ic_action_add"
-                android:visibility="invisible" />
+                android:visibility="visible" />
 
         </LinearLayout>
 
@@ -106,16 +106,10 @@
             android:layout_width="match_parent"
             android:layout_height="55dp" />
 
-        <!--<cn.edu.sdu.online.isdu.ui.design.ScheduleTable-->
-            <!--android:id="@+id/schedule_table"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"/>-->
         <cn.edu.sdu.online.isdu.ui.design.CourseTable
             android:id="@+id/schedule_table"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </cn.edu.sdu.online.isdu.ui.design.CourseTable>
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
 

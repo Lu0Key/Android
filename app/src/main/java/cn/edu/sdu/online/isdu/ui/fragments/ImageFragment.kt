@@ -13,10 +13,10 @@ import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.ui.activity.GuideActivity
 import com.bumptech.glide.Glide
 
-private const val ARG_PARAM_IMG_SRC = "src"
-private const val ARG_PARAM_INDEX = "index"
-
 class ImageFragment : Fragment() {
+    private val ARG_PARAM_IMG_SRC = "src"
+    private val ARG_PARAM_INDEX = "index"
+
     private var param1: Int? = null
     private var imageView: ImageView? = null
     private var index: Int? = 0

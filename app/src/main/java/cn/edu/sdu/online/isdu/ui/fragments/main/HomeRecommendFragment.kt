@@ -125,7 +125,7 @@ class HomeRecommendFragment : LazyLoadFragment() {
 
     override fun loadData() {
         if (isLoadComplete) return
-        NetworkAccess.cache(ServerInfo.getSyncPostTen(lastValue)) { success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getRecommend10(lastValue)) { success, cachePath ->
             if (success) {
                 try {
                     val arr = JSONArray(JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj"))
@@ -140,6 +140,7 @@ class HomeRecommendFragment : LazyLoadFragment() {
                         post.likeNumber = obj.getInt("likeNumber")
                         post.content = obj.getString("info")
                         post.value = obj.getDouble("value")
+                        post.tag = if (obj.has("tag")) obj.getString("tag") else ""
 
                         if (!dataList.contains(post))
                             dataList.add(post)

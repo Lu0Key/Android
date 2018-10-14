@@ -29,7 +29,7 @@ import org.json.JSONObject
  ****************************************************
  */
 
-class HomeSchoolFragment : LazyLoadFragment() {
+class HomeExcellentFragment : LazyLoadFragment() {
 
     private var recyclerView: RecyclerView? = null
     private var adapter: PostItemAdapter? = null
@@ -61,7 +61,7 @@ class HomeSchoolFragment : LazyLoadFragment() {
 //        blankView = view.findViewById(R.id.blank_view)
 
 //        updateBar!!.translationY = -100f
-//        blankView!!.visibility = View.GONE
+//        blankView!!.visibility  = View.GONE
     }
 
     /**
@@ -102,7 +102,7 @@ class HomeSchoolFragment : LazyLoadFragment() {
 
     override fun loadData() {
         if (loadComplete) return
-        NetworkAccess.cache(ServerInfo.getSchoolAboutList(lastValue)) { success, cachePath ->
+        NetworkAccess.cache(ServerInfo.getTagedPostTen(lastValue)) { success, cachePath ->
             if (success) {
                 try {
                     val arr = JSONArray(JSONObject(FileUtil.getStringFromFile(cachePath)).getString("obj"))
@@ -116,6 +116,7 @@ class HomeSchoolFragment : LazyLoadFragment() {
                         post.title = obj.getString("title")
                         post.likeNumber = obj.getInt("likeNumber")
                         post.content = obj.getString("info")
+                        post.tag = if (obj.has("tag")) obj.getString("tag") else ""
 
                         if (!dataList.contains(post))
                             dataList.add(post)
