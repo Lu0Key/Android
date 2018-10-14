@@ -150,7 +150,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.PostDetailActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.LikeMeActivity"

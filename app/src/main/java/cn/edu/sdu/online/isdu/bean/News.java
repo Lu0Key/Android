@@ -163,6 +163,6 @@ public class News extends AbstractNews {
 
     @Override
     public void onScan() {
-        HistoryRecord.INSTANCE.newHistory(this);
+//        HistoryRecord.INSTANCE.newHistory(this);
     }
 }

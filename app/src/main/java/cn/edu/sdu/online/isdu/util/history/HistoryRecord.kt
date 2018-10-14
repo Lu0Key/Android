@@ -4,6 +4,7 @@ import android.content.Context
 import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.ThreadPool
 import cn.edu.sdu.online.isdu.bean.AbstractCollectible
+import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.interfaces.Collectible
 import com.alibaba.fastjson.JSON
 import java.util.*
@@ -51,13 +52,13 @@ object HistoryRecord {
         }
     }
 
-    private fun load() {
+    fun load() {
         val sp = MyApplication.getContext().getSharedPreferences("history", Context.MODE_PRIVATE)
         val str = sp.getString("json", "")
         if (str != "") {
-            for (item in JSON.parseArray(str, AbstractCollectible::class.java))
+            for (item in JSON.parseArray(str, Post::class.java))
                 newHistory(item)
-//            historySet.addAll(historyList)
+            historySet.addAll(historyList)
         }
     }
 
