@@ -308,7 +308,7 @@ class SearchPostFragment : LazyLoadFragment(){
                                             post.title = obj.getString("title")
                                             post.time = obj.getString("time").toLong()
                                             post.content = obj.getString("info")
-                                            post.tag = obj.getString("tag")
+                                            post.tag = if (obj.has("tag")) obj.getString("tag") else ""
                                             dataList.add(post)
                                         }
                                     }
