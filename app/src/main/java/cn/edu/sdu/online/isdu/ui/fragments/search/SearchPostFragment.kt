@@ -268,7 +268,6 @@ class SearchPostFragment : LazyLoadFragment(){
             if(searchCall !=null&& !searchCall!!.isCanceled)
                 searchCall!!.cancel()
             isLoadComplete = false
-            Log.w("ss",isLoadComplete.toString())
             lastSearchString = search
             loadData()
         }
@@ -276,11 +275,10 @@ class SearchPostFragment : LazyLoadFragment(){
 
     override fun loadData() {
         super.loadData()
-        Log.w("spf","loadData")
         isLoading = true
         if(search != null){
             onLoading()
-            var url = ServerInfo.queryPost(search)
+            val url = ServerInfo.queryPost(search)
             searchCall = NetworkAccess.buildRequest(url,
                     object : Callback{
                         override fun onFailure(call: Call?, e: IOException?) {
@@ -310,6 +308,7 @@ class SearchPostFragment : LazyLoadFragment(){
                                             post.title = obj.getString("title")
                                             post.time = obj.getString("time").toLong()
                                             post.content = obj.getString("info")
+                                            post.tag = if (obj.has("tag")) obj.getString("tag") else ""
                                             dataList.add(post)
                                         }
                                     }
@@ -330,7 +329,6 @@ class SearchPostFragment : LazyLoadFragment(){
             )
         }
 
-//>>>>>>> f67c12c91890e06e391a75d306f524940ad13063
     }
 
     override fun isLoadComplete(): Boolean {

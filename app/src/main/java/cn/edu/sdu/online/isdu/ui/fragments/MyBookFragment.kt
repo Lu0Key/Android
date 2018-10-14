@@ -87,7 +87,6 @@ class MyBookFragment : Fragment(), View.OnClickListener {
     }
 
     private fun checkState(){
-//        if (User.staticUser == null) User.staticUser = User.load()
         if (!User.isLogin()) {
             login()
         } else {
@@ -173,23 +172,20 @@ class MyBookFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onResume() {
-        Log.w("mbf","onResume")
         super.onResume()
         if(firstLoad){
             firstLoad = false
             checkState()
         }else{
-//            if (User.staticUser == null) User.staticUser = User.load()
-//            if(User.staticUser.studentNumber != null){
             if (User.isLogin()) {
-                if(User.staticUser.bind == true){
+                if (User.staticUser.bind == true){
                     initData()
-                }else{
+                } else {
                     recyclerView!!.visibility = View.GONE
                     noBook!!.visibility = View.GONE
                     netWorkError!!.visibility = View.GONE
                     unBind!!.visibility = View.VISIBLE
-                    rebAll!!.visibility = View.GONE
+                    rebAll!!.visibility = View.VISIBLE
                     loadingLayout!!.visibility = View.GONE
                 }
             } else {
@@ -209,7 +205,11 @@ class MyBookFragment : Fragment(), View.OnClickListener {
                 startActivity(Intent(activity!!,SearchBookActivity::class.java))
             }
             reb_all.id -> {
-                Log.w("mbf", ServerInfo.renewBookUrl(User.staticUser.uid))
+                if (noBook!!.visibility == View.VISIBLE) {
+                    Toast.makeText(context, "您还没有借阅任何图书", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
                 NetworkAccess.buildRequest(ServerInfo.renewBookUrl(User.staticUser.uid),
                         object : Callback{
                             override fun onFailure(call: Call?, e: IOException?) {
@@ -347,9 +347,8 @@ class MyBookFragment : Fragment(), View.OnClickListener {
     /**
      * recyclerView容器类
      */
-    internal inner class MyAdapter(dataList: List<Book>, context: Context) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+    internal inner class MyAdapter(dataList: List<Book>, private val context: Context) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
-        private val context = context
         private val dataList = dataList
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -364,11 +363,12 @@ class MyBookFragment : Fragment(), View.OnClickListener {
             holder.backDate.text = book.backDate
             holder.remainDays.text = book.remainDays.toString()
             holder.borrowTimes.text = book.borrowTimes.toString()
-            if(book.borrowTimes == 0){
-                holder.renew.visibility = View.GONE
-            }
+//            if(book.borrowTimes == 0){
+//                holder.renew.visibility = View.GONE
+//            } else {
+//                holder.renew.visibility = View.VISIBLE
+//            }
             holder.renew.setOnClickListener {
-                Log.w("mbf", ServerInfo.renewOneBookUrl(User.staticUser.uid , book.id , book.checkCode))
                 NetworkAccess.buildRequest(ServerInfo.renewOneBookUrl(User.staticUser.uid , book.id , book.checkCode),
                         object : Callback{
                             override fun onFailure(call: Call?, e: IOException?) {

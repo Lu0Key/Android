@@ -20,6 +20,7 @@ public class DateCalculate {
     public static String Cal(long week, long day){
         String date = "";
         nowMill = EnvVariables.firstWeekTimeMillis;
+
         nowMill += (week - 1) * 7 * 24 * 60 * 60 * 1000;
         nowMill += (day - 1) * 24 * 60 * 60 * 1000;
         Calendar calendar = Calendar.getInstance();

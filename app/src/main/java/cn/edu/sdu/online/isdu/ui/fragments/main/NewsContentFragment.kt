@@ -111,23 +111,26 @@ class NewsContentFragment : LazyLoadFragment() {
         override fun getItemCount(): Int = mDataList.size
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val news = mDataList[position]
+            try {
+                val news = mDataList[position]
 
-            if (news.source == "办公文件") {
-                holder.itemLayout.setOnClickListener {
-                    IDownloadItem(news.originUrl).startDownload()
+                if (news.source == "办公文件") {
+                    holder.itemLayout.setOnClickListener {
+                        IDownloadItem(news.originUrl).startDownload()
+                    }
+                } else {
+                    holder.itemLayout.setOnClickListener {
+                        activity!!.startActivity(Intent(activity, NewsActivity::class.java)
+                                .putExtra("section", sectionName[index])
+                                .putExtra("url", news.url))
+                    }
                 }
-            } else {
-                holder.itemLayout.setOnClickListener {
-                    activity!!.startActivity(Intent(activity, NewsActivity::class.java)
-                            .putExtra("section", sectionName[index])
-                            .putExtra("url", news.url))
-                }
-            }
 
-            holder.newsDate.text = news.date
-            holder.newsSource.text = news.source
-            holder.newsTitle.text = news.title
+                holder.newsDate.text = news.date
+                holder.newsSource.text = news.source
+                holder.newsTitle.text = news.title
+            } catch (e: Exception) {}
+
         }
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

@@ -103,6 +103,6 @@ class SplashActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val PAGE_SHOW_TIME_MILLIS = 2000L // 展示TimeOut
+        const val PAGE_SHOW_TIME_MILLIS = 200L // 展示TimeOut
     }
 }

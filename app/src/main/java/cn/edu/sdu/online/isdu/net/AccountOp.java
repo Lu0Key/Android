@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 
 import org.json.JSONObject;
@@ -97,14 +98,14 @@ public class AccountOp {
     public static void syncUserInformation(JSONObject jsonObject) {
         try {
             if (jsonObject.isNull("status") || !jsonObject.getString("status").equals("failed")) {
+                JSONObject userObj = jsonObject.getJSONObject("user");
+                User.staticUser.setStudentNumber(userObj.getString("studentnumber"));
+                User.staticUser.setPasswordMD5(userObj.getString("j_password"));
+                User.staticUser.setNickName(userObj.getString("nickname"));
+                User.staticUser.setName(userObj.getString("name"));
+                User.staticUser.setAvatarUrl(userObj.getString("avatar"));
 
-                User.staticUser.setStudentNumber(jsonObject.getString("studentnumber"));
-                User.staticUser.setPasswordMD5(jsonObject.getString("j_password"));
-                User.staticUser.setNickName(jsonObject.getString("nickname"));
-                User.staticUser.setName(jsonObject.getString("name"));
-                User.staticUser.setAvatarUrl(jsonObject.getString("avatar"));
-
-                String genderString = jsonObject.getString("gender");
+                String genderString = userObj.getString("gender");
                 if (genderString.equals("男")) {
                     User.staticUser.setGender(User.GENDER_MALE);
                 } else if (genderString.equals("女")) {
@@ -113,10 +114,11 @@ public class AccountOp {
                     User.staticUser.setGender(User.GENDER_SECRET);
                 }
 
-                User.staticUser.setSelfIntroduce(jsonObject.getString("sign"));
-                User.staticUser.setMajor(jsonObject.getString("major"));
-                User.staticUser.setDepart(jsonObject.getString("depart"));
-                User.staticUser.setUid(jsonObject.getInt("id"));
+                User.staticUser.setSelfIntroduce(userObj.getString("sign"));
+                User.staticUser.setMajor(userObj.getString("major"));
+                User.staticUser.setDepart(userObj.getString("depart"));
+                User.staticUser.setUid(userObj.getInt("id"));
+                User.staticUser.setUserVerification(userObj.getInt("verification"));
 
                 User.staticUser.save(MyApplication.getContext());
                 User.staticUser.loginCache(MyApplication.getContext());

@@ -72,6 +72,17 @@
         <attr name="pressedTextColor" />
     </declare-styleable>
 
+    <attr name="cardColor" format="color|reference" />
+    <declare-styleable name="ScheduleBack">
+        <attr name="cardColor" />
+    </declare-styleable>
+
+    <declare-styleable name="ScheduleCard">
+        <attr name="cardText" format="string|reference" />
+        <attr name="currentWeek" format="boolean" />
+        <attr name="cardColor" />
+    </declare-styleable>
+
     <!-- Declare custom theme attributes that allow changing which styles are
          used for button bars depending on the API level.
          ?android:attr/buttonBarStyle is new as of API 11 so this is

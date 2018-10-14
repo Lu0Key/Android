@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,9 +19,11 @@ import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.net.pack.ServerInfo
 import cn.edu.sdu.online.isdu.net.NetworkAccess
+import cn.edu.sdu.online.isdu.ui.design.CourseTable
 import cn.edu.sdu.online.isdu.ui.design.ScheduleTable
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
 import cn.edu.sdu.online.isdu.util.*
+import kotlinx.android.synthetic.main.activity_schedule.*
 import org.json.JSONObject
 
 /**
@@ -35,7 +38,8 @@ import org.json.JSONObject
 
 class ScheduleActivity : SlideActivity(), View.OnClickListener {
 
-    private var scheduleTable: ScheduleTable? = null
+//    private var scheduleTable: ScheduleTable? = null
+    private var scheduleTable: CourseTable? = null
     private var totalWeeks = 20
     private var currentWeek = 1
 
@@ -59,8 +63,9 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_schedule)
 
-//        if (User.staticUser == null) User.staticUser = User.load()
-//        if (User.staticUser.studentNumber == null) {
+    }
+
+    private fun init() {
         if (!User.isLogin()) {
             val dialog = AlertDialog(this)
             dialog.setTitle("无数据")
@@ -91,6 +96,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         EnvVariables.init(this)
+        init()
     }
 
     private fun initView() {
@@ -100,6 +106,8 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         icIndicator = findViewById(R.id.ic_indicator)
         btnBack = findViewById(R.id.btn_back)
         btnAdd = findViewById(R.id.btn_add)
+
+        ic_indicator.setOnClickListener(this)
 
         txtCurrentWeek!!.setOnClickListener(this)
         btnBack!!.setOnClickListener(this)
@@ -111,6 +119,14 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         setCurrentWeek(currentWeek)
 
         initRecyclerView()
+    }
+
+    override fun onBackPressed() {
+        if (scheduleTable != null && scheduleTable!!.onBackPressed()) {
+
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onClick(v: View?) {
@@ -129,6 +145,9 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
             }
             R.id.btn_add -> {
                 startActivity(Intent(this, CreateScheduleActivity::class.java))
+            }
+            R.id.ic_indicator -> {
+                txt_current_week.callOnClick()
             }
         }
     }
@@ -160,21 +179,21 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
     private fun initSchedule() {
         initScheduleData()
 
-        scheduleTable!!.setOnItemClickListener {
-            schedule ->
-            val sb = StringBuilder()
-            for (i in schedule!!.repeatWeeks)
-                sb.append("$i,")
-
-            val intent = Intent(this@ScheduleActivity, ScheduleDetailActivity::class.java)
-            intent.putExtra("name", schedule.scheduleName)
-                    .putExtra("location", schedule.scheduleLocation)
-                    .putExtra("color", schedule.scheduleColor)
-                    .putExtra("start_time", schedule.startTime.toString())
-                    .putExtra("end_time", schedule.endTime.toString())
-                    .putExtra("repeat_weeks", sb.toString())
-            startActivity(intent)
-        }
+//        scheduleTable!!.setOnItemClickListener {
+//            schedule ->
+//            val sb = StringBuilder()
+//            for (i in schedule!!.repeatWeeks)
+//                sb.append("$i,")
+//
+//            val intent = Intent(this@ScheduleActivity, ScheduleDetailActivity::class.java)
+//            intent.putExtra("name", schedule.scheduleName)
+//                    .putExtra("location", schedule.scheduleLocation)
+//                    .putExtra("color", schedule.scheduleColor)
+//                    .putExtra("start_time", schedule.startTime.toString())
+//                    .putExtra("end_time", schedule.endTime.toString())
+//                    .putExtra("repeat_weeks", sb.toString())
+//            startActivity(intent)
+//        }
         if (totalList!!.isNotEmpty())
             scheduleTable!!.setScheduleList(totalList!![currentWeek - 1])
     }
@@ -207,6 +226,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
             if (success) {
                 val jsonString = FileUtil.getStringFromFile(cachePath)
                 try {
+//                    Log.d("Jzz", "Url=${ServerInfo.getScheduleUrl(User.staticUser.uid)}\nContent=$jsonString")
                     val courseArray = JSONObject(jsonString).getJSONArray("obj")
                     totalList = Schedule.loadCourse(courseArray)
                     // 加载考试信息
@@ -309,7 +329,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
     }
 
     private fun hideWeekSelect() {
-        val px = PixelUtil.dp2px(this, 60)
+//        val px = PixelUtil.dp2px(this, 60)
         val animator = ObjectAnimator.ofFloat(scheduleTable!!, "translationY",
                 scheduleTable!!.translationY, 0f)
         animator.duration = 100
@@ -326,8 +346,7 @@ class ScheduleActivity : SlideActivity(), View.OnClickListener {
         animator.start()
     }
 
-    class MyAdapter(dataList: List<SelectableWeekIndex>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
-        private val dataList = dataList
+    class MyAdapter(private val dataList: List<SelectableWeekIndex>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
         private var onWeekSelectListener: OnWeekSelectListener? = null
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

@@ -74,6 +74,14 @@ class PostItemAdapter(private val activity: Activity, private val dataList: List
             activity.startActivity(Intent(activity, MyHomePageActivity::class.java)
                     .putExtra("id", item.uid.toInt()))
         }
+
+        // 添加帖子标识
+        if (item.tag != null && item.tag != "") {
+            holder.tag.visibility = View.VISIBLE
+            holder.tag.text = item.tag
+        } else {
+            holder.tag.visibility = View.GONE
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -102,5 +110,6 @@ class PostItemAdapter(private val activity: Activity, private val dataList: List
         // 新增：用户信息区域
         val circleImageView: CircleImageView = v.findViewById(R.id.circle_image_view)
         val txtNickname: TextView = v.findViewById(R.id.txt_nickname)
+        val tag: TextView = v.findViewById(R.id.title_flag)
     }
 }

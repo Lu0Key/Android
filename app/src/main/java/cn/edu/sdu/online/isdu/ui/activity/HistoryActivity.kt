@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.SlideActivity
+import cn.edu.sdu.online.isdu.bean.Post
 import cn.edu.sdu.online.isdu.interfaces.PostViewable
 import cn.edu.sdu.online.isdu.ui.adapter.PostItemAdapter
 import cn.edu.sdu.online.isdu.util.history.HistoryRecord
@@ -28,7 +29,6 @@ class HistoryActivity : SlideActivity(), View.OnClickListener, PostViewable{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
         initView()
-        initData()
         blankView!!.visibility = if (HistoryRecord.historyList.isEmpty()) View.VISIBLE else View.GONE
         initRecyclerView()
     }
@@ -64,16 +64,18 @@ class HistoryActivity : SlideActivity(), View.OnClickListener, PostViewable{
             }
         }
     }
-    private fun initData(){
-//        dataList=dao_history!!.history
-    }
+
     private fun initRecyclerView() {
+        HistoryRecord.load()
         recyclerView!!.layoutManager = LinearLayoutManager(this)
-//        mAdapter = PostItemAdapter(this, HistoryRecord.historyList)
-//        recyclerView!!.adapter = mAdapter
+        mAdapter = PostItemAdapter(this, HistoryRecord.historyList as List<Post>)
+        recyclerView!!.adapter = mAdapter
+
+        if (mAdapter!!.itemCount != 0) {
+            blankView!!.visibility = View.GONE
+        } else {
+            blankView!!.visibility = View.VISIBLE
+        }
     }
 
-    companion object {
-        val TAG = "HistoryActivity"
-    }
 }

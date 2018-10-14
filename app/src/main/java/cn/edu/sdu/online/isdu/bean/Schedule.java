@@ -50,6 +50,7 @@ public class Schedule implements Parcelable, IWrapper {
     private int scheduleColor = 0xFF717DEB; // 日程背景颜色
     private int scheduleTextColor = 0xFFFFFFFF; // 日程文字颜色
     private List<Integer> repeatWeeks = new ArrayList<>();
+    private int courseOrder;
 
     public Schedule() {}
 
@@ -61,6 +62,15 @@ public class Schedule implements Parcelable, IWrapper {
         this.repeatType = repeatType;
     }
 
+    public Schedule(String scheduleName, String scheduleLocation, ScheduleTime startTime, ScheduleTime endTime, RepeatType repeatType, int courseOrder) {
+        this.scheduleName = scheduleName;
+        this.scheduleLocation = scheduleLocation;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.repeatType = repeatType;
+        this.courseOrder = courseOrder;
+    }
+
     protected Schedule(Parcel in) {
         scheduleName = in.readString();
         scheduleLocation = in.readString();
@@ -68,6 +78,7 @@ public class Schedule implements Parcelable, IWrapper {
         endTime = in.readParcelable(ScheduleTime.class.getClassLoader());
         scheduleColor = in.readInt();
         scheduleTextColor = in.readInt();
+        courseOrder = in.readInt();
     }
 
     public static final Creator<Schedule> CREATOR = new Creator<Schedule>() {
@@ -146,6 +157,14 @@ public class Schedule implements Parcelable, IWrapper {
         this.repeatWeeks = repeatWeeks;
     }
 
+    public int getCourseOrder() {
+        return courseOrder;
+    }
+
+    public void setCourseOrder(int courseOrder) {
+        this.courseOrder = courseOrder;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -159,6 +178,7 @@ public class Schedule implements Parcelable, IWrapper {
         dest.writeInt(scheduleTextColor);
         dest.writeParcelable(startTime, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
         dest.writeParcelable(endTime, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+        dest.writeInt(courseOrder);
     }
 
     /**
@@ -245,18 +265,15 @@ public class Schedule implements Parcelable, IWrapper {
 //        if (User.staticUser.getStudentNumber() != null)
         if (User.isLogin())
             NetworkAccess.cache(ServerInfo.getScheduleUrl(User.staticUser.getUid()),
-                    new NetworkAccess.OnCacheFinishListener() {
-                        @Override
-                        public void onFinish(boolean success, String cachePath) {
-                            if (success) {
-                                String jsonString = FileUtil.getStringFromFile(cachePath);
-                                try {
-                                    localScheduleList = loadCourse(new JSONObject(jsonString).getJSONArray("obj"));
-                                } catch (JSONException e) {
-                                    Logger.log(e);
-                                }
-                                save(context);
+                    (success, cachePath) -> {
+                        if (success) {
+                            String jsonString = FileUtil.getStringFromFile(cachePath);
+                            try {
+                                localScheduleList = loadCourse(new JSONObject(jsonString).getJSONArray("obj"));
+                            } catch (JSONException e) {
+                                Logger.log(e);
                             }
+                            save(context);
                         }
                     });
     }
@@ -342,7 +359,7 @@ public class Schedule implements Parcelable, IWrapper {
                 String location = obj.getString("room");
 
                 Schedule schedule = new Schedule(courseName, location, getCourseStartTime(courseOrder),
-                        getCourseEndTime(courseOrder), RepeatType.WEEKLY);
+                        getCourseEndTime(courseOrder), RepeatType.WEEKLY, courseOrder);
 
                 // 确定日程颜色
                 boolean flag = false;
@@ -396,15 +413,15 @@ public class Schedule implements Parcelable, IWrapper {
                     return new ScheduleTime(13, 30);
             case 4:
                 if (EnvVariables.lessonDelay)
-                    return new ScheduleTime(16, 10);
+                    return new ScheduleTime(16, 00);
                 else
                     return new ScheduleTime(15, 40);
             case 5:
             default:
                 if (EnvVariables.lessonDelay)
-                    return new ScheduleTime(18, 30);
-                else
                     return new ScheduleTime(19, 0);
+                else
+                    return new ScheduleTime(18, 30);
         }
     }
 
@@ -421,15 +438,15 @@ public class Schedule implements Parcelable, IWrapper {
                     return new ScheduleTime(15, 20);
             case 4:
                 if (EnvVariables.lessonDelay)
-                    return new ScheduleTime(18, 0);
+                    return new ScheduleTime(17, 50);
                 else
                     return new ScheduleTime(17, 30);
             case 5:
             default:
                 if (EnvVariables.lessonDelay)
-                    return new ScheduleTime(20, 20);
-                else
                     return new ScheduleTime(20, 50);
+                else
+                    return new ScheduleTime(20, 20);
         }
     }
 
@@ -439,7 +456,9 @@ public class Schedule implements Parcelable, IWrapper {
         if (o == null || getClass() != o.getClass()) return false;
         Schedule schedule = (Schedule) o;
         return Objects.equals(scheduleName, schedule.scheduleName) &&
-                Objects.equals(scheduleLocation, schedule.scheduleLocation);
+                Objects.equals(scheduleLocation, schedule.scheduleLocation) &&
+                Objects.equals(startTime, schedule.startTime) &&
+                Objects.equals(endTime, schedule.endTime);
     }
 
     @Override
@@ -459,6 +478,7 @@ public class Schedule implements Parcelable, IWrapper {
             setScheduleName(((Schedule) a).scheduleName);
             getStartTime().set(((Schedule) a).startTime);
             getEndTime().set(((Schedule) a).endTime);
+            setCourseOrder(((Schedule) a).courseOrder);
         }
     }
 

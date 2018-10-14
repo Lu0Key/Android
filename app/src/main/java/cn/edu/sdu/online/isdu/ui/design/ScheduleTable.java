@@ -36,6 +36,11 @@ import cn.edu.sdu.online.isdu.util.ScheduleTime;
  */
 
 public class ScheduleTable extends View {
+    private final int DEF_LEFT_COL_SIZE = 120;
+    private final int DEF_TOP_ROW_SIZE = 150;
+
+    private final float MIN_SCALE = 1f;
+    private final float MAX_SCALE = 3f;
 
     private String[] weekDaysInChs = {"一", "二", "三", "四", "五", "六", "日"};
     private String[] weekDaysInEng = {"Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat.", "Sun."};
@@ -45,8 +50,8 @@ public class ScheduleTable extends View {
     private int backgroundColor = 0xFFF2F2F2; // View背景颜色
     private int invalidColor = 0xFFDCDCDC; // 非当前周的卡片背景颜色
     private int invalidTextColor = 0xFF7D7D7D; // 非当前周的卡片字体颜色
-    private int leftColumnSize = 120; // 左侧栏的宽度
-    private int topRowSize = 150; // 顶栏宽度
+    private int leftColumnSize = DEF_LEFT_COL_SIZE; // 左侧栏的宽度
+    private int topRowSize = DEF_TOP_ROW_SIZE; // 顶栏宽度
     private int rectWidth; // 卡片宽度
     private int rectHeight; // 卡片高度
     private Paint mPaint = new Paint();
@@ -71,6 +76,8 @@ public class ScheduleTable extends View {
     private int minWidth = 0;
     private int minHeight = 0;
     private boolean showTimeLine = true; // 显示时间轴
+
+    private float scale = MIN_SCALE; // 缩放倍数
 
     private OnItemClickListener onItemClickListener;
     private List<OrdinateSchedule> ordinateSchedules = new ArrayList<>();
@@ -110,11 +117,15 @@ public class ScheduleTable extends View {
         rectHeight = totalRows != 0 ? (mHeight - topRowSize) / totalRows : mHeight;
 
         // 获取实际高度和宽度
-        minWidth = (int) (rectWidth * 7 / 5.2);
-        minHeight = (int) (minWidth);
+//        minWidth = (int) (rectWidth * 7 / 5.2);
+        minWidth = (int) (rectWidth * scale);
+        minHeight = minWidth;
 
         rectWidth = Math.max(minWidth, rectWidth);
         rectHeight = Math.max(minHeight, rectHeight);
+
+//        rectWidth = (int) (rectWidth * scale);
+//        rectHeight = (int) (realHeight * scale);
 
         realWidth = rectWidth * 7;
         realHeight = totalRows != 0 ? rectHeight * totalRows : mHeight;
@@ -139,6 +150,7 @@ public class ScheduleTable extends View {
         drawRectAtLeftTop(canvas);
 
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -357,7 +369,7 @@ public class ScheduleTable extends View {
         int currentTimeHour = startTime.getHour();
         mWordPaint.setColor(0xFF131313);
         mWordPaint.setTextSize(leftColumnTextSize);
-        int marginTopBottom = (topRowSize - 2 * primaryTextSize - 20) / 2;
+        int marginTopBottom;
         marginTopBottom = (rectHeight - 2 * leftColumnTextSize - 15) / 2;
         for (int i = 0; i <= (endTime.getHour() - startTime.getHour() - breakTimeHourDuration); i++) {
             mPaint.setColor(backgroundColor);

@@ -31,7 +31,7 @@ public class EnvVariables {
 
     public static void init(final Context context) {
         SharedPreferences sp = context.getSharedPreferences("env_variables", Context.MODE_PRIVATE);
-        if (sp.getInt("start_week", 0) == 0) {
+//        if (sp.getInt("start_week", 0) == 0) {
             // 未进行信息同步
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS)
@@ -49,6 +49,7 @@ public class EnvVariables {
                     startWeek = 1;
                     endWeek = 20;
                     firstWeekTimeMillis = DEFAULT_FIRST_WEEK_TIME_MILLIS; // 加载默认值
+                    lessonDelay = false;
                     save(context);
                 }
 
@@ -60,19 +61,20 @@ public class EnvVariables {
                         endWeek = jsonObject.getInt("end_week");
                         firstWeekTimeMillis = jsonObject.getLong("first_week_time_millis");
                         currentWeek = calculateWeekIndex(System.currentTimeMillis());
+                        lessonDelay = jsonObject.getInt("lessonDelay") == 1;
                         save(context);
                     } catch (Exception e) {
                         Logger.log(e);
                     }
                 }
             });
-        } else {
-            startWeek = sp.getInt("start_week", 1);
-            endWeek = sp.getInt("end_week", 20);
-            firstWeekTimeMillis = sp.getLong("first_week_time_millis", DEFAULT_FIRST_WEEK_TIME_MILLIS);
-
-            currentWeek = calculateWeekIndex(System.currentTimeMillis());
-        }
+//        } else {
+//            startWeek = sp.getInt("start_week", 1);
+//            endWeek = sp.getInt("end_week", 20);
+//            firstWeekTimeMillis = sp.getLong("first_week_time_millis", DEFAULT_FIRST_WEEK_TIME_MILLIS);
+//
+//            currentWeek = calculateWeekIndex(System.currentTimeMillis());
+//        }
     }
 
     private static void save(Context context) {
@@ -82,10 +84,12 @@ public class EnvVariables {
             editor.putInt("start_week", startWeek);
             editor.putInt("end_week", endWeek);
             editor.putLong("first_week_time_millis", firstWeekTimeMillis);
+            editor.putBoolean("lessonDelay", lessonDelay);
         } else {
             editor.putInt("start_week", 1);
             editor.putInt("end_week", 20);
             editor.putLong("first_week_time_millis", DEFAULT_FIRST_WEEK_TIME_MILLIS);
+            editor.putBoolean("lessonDelay", false);
         }
         editor.apply();
     }

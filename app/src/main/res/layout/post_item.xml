@@ -61,7 +61,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="4dp">
 
             <!--内容标志-->
@@ -69,12 +69,12 @@
                 android:id="@+id/title_flag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="置顶"
                 android:textSize="10sp"
                 android:textColor="@color/colorWhite"
                 android:visibility="gone"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/red_rect"
+                android:layout_marginRight="4dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:paddingTop="2dp"
@@ -86,6 +86,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimaryText"
                 android:textSize="20sp"
+                android:layout_marginLeft="4dp"
                 android:layout_gravity="center_vertical"/>
         </LinearLayout>
 
