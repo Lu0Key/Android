@@ -3,6 +3,8 @@ package cn.edu.sdu.online.isdu.util;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -19,8 +21,11 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+
+import cn.edu.sdu.online.isdu.app.MyApplication;
 
 public class FileUtil {
     private static Activity activity;
@@ -134,14 +139,23 @@ public class FileUtil {
     public static void openFiles(String filesPath) {
         Uri uri = getFileUri(filesPath);
         Intent intent = new Intent();
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(Intent.ACTION_VIEW);
         //添加这一句表示对目标应用临时授权该Uri所代表的文件
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        int flag = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | flag);
 
         String type = getMIMEType(filesPath);
 
         intent.setDataAndType(uri, type);
+
+        List<ResolveInfo> resolveInfoList = MyApplication.getContext().getPackageManager()
+                .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+
+        for (ResolveInfo info : resolveInfoList) {
+            MyApplication.getContext().grantUriPermission(info.activityInfo.packageName,
+                    uri, flag);
+        }
+
         if (!type.equals("*/*")) {
             try {
                 activity.startActivity(intent);
@@ -151,6 +165,7 @@ public class FileUtil {
         } else {
             activity.startActivity(showOpenTypeDialog(filesPath));
         }
+//        activity.startActivity(OpenFileUtil.openFile(filesPath));
     }
 
     //显示打开方式
@@ -175,14 +190,13 @@ public class FileUtil {
      */
     public static String getMIMEType(String filePath) {
         String type = "*/*";
-        String fName = filePath;
 
-        int dotIndex = fName.lastIndexOf(".");
+        int dotIndex = filePath.lastIndexOf(".");
         if (dotIndex < 0) {
             return type;
         }
 
-        String end = fName.substring(dotIndex, fName.length()).toLowerCase();
+        String end = filePath.substring(dotIndex, filePath.length()).toLowerCase();
         if (end.equals("") ) {
             return type;
         }

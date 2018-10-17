@@ -21,10 +21,11 @@ import com.bumptech.glide.request.target.ViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.github.chrisbanes.photoview.PhotoView
 import kotlinx.android.synthetic.main.activity_view_image.*
-import java.io.BufferedInputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.*
 
 /**
  ****************************************************
@@ -104,6 +105,66 @@ class ViewImageActivity : NormActivity() {
                             }
                         } else if (url != "") {
                             if (cacheKey == "") {
+                                NetworkAccess.buildRequest(url, object : Callback {
+                                    override fun onFailure(call: Call, e: IOException) {
+                                        runOnUiThread {
+                                            Toast.makeText(this@ViewImageActivity, "网络错误", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+
+                                    override fun onResponse(call: Call, response: Response) {
+                                        val byteArray = response.body()?.bytes()
+                                        /********************************************
+                                         *
+                                         ********************************************/
+                                        if (ImageManager.isGif(byteArray)) {
+                                            val file = File(Environment.getExternalStorageDirectory().toString() +
+                                                    "/iSDU/Image/" + System.currentTimeMillis() + ".gif")
+
+                                            if (!file.exists()) {
+                                                if (!file.parentFile.exists()) file.parentFile.mkdirs()
+                                                file.createNewFile()
+                                            }
+                                            val fos = FileOutputStream(file)
+
+//                                            val fis = FileInputStream(byteArray)
+                                            val bis = BufferedInputStream(byteArray!!.inputStream())
+                                            var byte = ByteArray(1024)
+                                            var len = bis.read(byte)
+                                            while (len > 0) {
+                                                fos.write(byte, 0, len)
+                                                len = bis.read(byte)
+                                            }
+//                                            fis.close()
+                                            bis.close()
+
+                                            runOnUiThread {
+                                                Toast.makeText(this@ViewImageActivity,
+                                                        "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                            }
+                                        } else {
+                                            val file = File(Environment.getExternalStorageDirectory().toString() +
+                                                    "/iSDU/Image/" + System.currentTimeMillis() + ".jpg")
+
+                                            if (!file.exists()) {
+                                                if (!file.parentFile.exists()) file.parentFile.mkdirs()
+                                                file.createNewFile()
+                                            }
+                                            val fos = FileOutputStream(file)
+                                            val bmp = if (isString) ImageManager.convertStringToBitmap(byteArray!!.toString()) else
+                                                BitmapFactory.decodeByteArray(byteArray, 0, byteArray!!.size)
+                                            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                                            fos.flush()
+                                            fos.close()
+
+                                            runOnUiThread {
+                                                Toast.makeText(this@ViewImageActivity,
+                                                        "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    }
+                                })
+                                /*
                                 NetworkAccess.cache(url) { success, cachePath ->
                                     if (success) {
                                         /********************************************
@@ -159,7 +220,41 @@ class ViewImageActivity : NormActivity() {
                                         }
                                     }
                                 }
+                                */
                             } else {
+                                NetworkAccess.buildRequest(url, object : Callback {
+                                    override fun onFailure(call: Call, e: IOException) {
+                                        runOnUiThread {
+                                            Toast.makeText(this@ViewImageActivity, "网络错误", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+
+                                    override fun onResponse(call: Call, response: Response) {
+                                        val jsonObject = JSONObject(response.body()!!.string())
+                                        val str = jsonObject.getString(cacheKey)
+                                        /********************************************
+                                        dd                *
+                                         ********************************************/
+                                        val file = File(Environment.getExternalStorageDirectory().toString() +
+                                                "/iSDU/Image/" + System.currentTimeMillis() + ".jpg")
+
+                                        if (!file.exists()) {
+                                            if (!file.parentFile.exists()) file.parentFile.mkdirs()
+                                            file.createNewFile()
+                                        }
+                                        val fos = FileOutputStream(file)
+                                        val bmp = if (isString) ImageManager.convertStringToBitmap(str) else
+                                            BitmapFactory.decodeByteArray(str.toByteArray(), 0, str.toByteArray().size)
+                                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                                        fos.flush()
+                                        fos.close()
+                                        runOnUiThread {
+                                            Toast.makeText(this@ViewImageActivity,
+                                                    "成功保存至 /sdcard/iSDU/Image/" + file.name, Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                })
+                                /*
                                 NetworkAccess.cache(url, cacheKey) { success, cachePath ->
                                     if (success) {
                                         /********************************************
@@ -187,6 +282,7 @@ class ViewImageActivity : NormActivity() {
                                         }
                                     }
                                 }
+                                */
                             }
 
                         } else if (bmpStr != "") {

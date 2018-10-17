@@ -55,21 +55,23 @@ class NewsContentFragment : LazyLoadFragment() {
                 try {
                     val jsonArray = JSONArray(FileUtil.getStringFromFile(cachePath))
 
-                    dataList.clear()
+                    synchronized(dataList) {
+                        dataList.clear()
 
-                    for (i in 0 until jsonArray.length()) {
-                        val jsonObj = jsonArray.getJSONObject(i)
-                        val news = News()
-                        news.title = jsonObj.getString("title")
-                        news.date = jsonObj.getString("date")
-                        news.source = jsonObj.getString("block")
-                        news.originUrl = jsonObj.getString("url")
-                        news.url = ServerInfo.getNewsUrl(index, i)
-                        dataList.add(news)
-                    }
+                        for (i in 0 until jsonArray.length()) {
+                            val jsonObj = jsonArray.getJSONObject(i)
+                            val news = News()
+                            news.title = jsonObj.getString("title")
+                            news.date = jsonObj.getString("date")
+                            news.source = jsonObj.getString("block")
+                            news.originUrl = jsonObj.getString("url")
+                            news.url = ServerInfo.getNewsUrl(index, i)
+                            dataList.add(news)
+                        }
 
-                    activity?.runOnUiThread {
-                        publishData()
+                        activity?.runOnUiThread {
+                            publishData()
+                        }
                     }
 
                 } catch (e: Exception) {
@@ -139,6 +141,8 @@ class NewsContentFragment : LazyLoadFragment() {
             var newsSource: TextView = view.findViewById(R.id.news_source)
             var newsDate: TextView = view.findViewById(R.id.news_date)
         }
+
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
