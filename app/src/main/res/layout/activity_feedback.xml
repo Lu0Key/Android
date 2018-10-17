@@ -87,7 +87,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:textColor="@color/colorPrimaryText"
-                android:text="*以下为选填，留下您的联系方式有助于我们更快地练习到您并帮您解决问题"/>
+                android:text="*以下为选填，留下您的联系方式有助于我们更快地联系到您并帮您解决问题"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
