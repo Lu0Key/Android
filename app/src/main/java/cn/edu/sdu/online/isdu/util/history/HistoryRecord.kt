@@ -1,6 +1,7 @@
 package cn.edu.sdu.online.isdu.util.history
 
 import android.content.Context
+import android.util.Log
 import cn.edu.sdu.online.isdu.app.MyApplication
 import cn.edu.sdu.online.isdu.app.ThreadPool
 import cn.edu.sdu.online.isdu.bean.AbstractCollectible

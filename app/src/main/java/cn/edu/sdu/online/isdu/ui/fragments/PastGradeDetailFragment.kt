@@ -1,6 +1,7 @@
 package cn.edu.sdu.online.isdu.ui.fragments
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -110,7 +111,7 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
         view!!.requestFocus()
         view!!.setOnKeyListener { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_BACK && event.action === KeyEvent.ACTION_UP) {
-                if (popupWindow != null && popupWindow!!.isShowing()) {
+                if (popupWindow != null && popupWindow!!.isShowing) {
                     popupWindow!!.dismiss()
                     true//当fragment消费了点击事件后，返回true，activity中的点击事件就不会执行了
                 }
@@ -130,29 +131,33 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
 
                 // 填充布局并设置弹出窗体的宽,高
                 popupWindow = PopupWindow(pickerView,
-                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 // 设置弹出窗体可点击
-                popupWindow!!.setFocusable(true)
+                popupWindow!!.isFocusable = true
                 // 设置弹出窗体动画效果
-                popupWindow!!.setAnimationStyle(R.style.AnimBottom)
+                popupWindow!!.animationStyle = R.style.AnimBottom
                 // 触屏位置如果在选择框外面则销毁弹出框
-                popupWindow!!.setOutsideTouchable(true)
+                popupWindow!!.isOutsideTouchable = true
                 // 设置弹出窗体的背景
                 popupWindow!!.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
                 popupWindow!!.showAtLocation(pickerView,
                         Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 0)
 
                 // 设置背景透明度
-                val lp = activity!!.window.attributes
-                lp.alpha = 0.5f
-                activity!!.window.attributes = lp
+//                val lp = activity!!.window.attributes
+//                lp.alpha = 0.5f
+//                activity!!.window.attributes = lp
 
                 // 添加窗口关闭事件
                 popupWindow!!.setOnDismissListener(PopupWindow.OnDismissListener {
-                    val lp = activity!!.window.attributes
-                    lp.alpha = 1f
-                    activity!!.window.attributes = lp
+//                    val lp = activity!!.window.attributes
+//                    lp.alpha = 1f
+//                    activity!!.window.attributes = lp
                 })
+
+                popupWindow!!.contentView.findViewById<View>(R.id.blank_view).setOnClickListener {
+                    popupWindow!!.dismiss()
+                }
             }
             btnConfirm!!.id->{
                 currentTerm = numberPicker!!.value
@@ -186,9 +191,9 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
         numberPicker!!.displayedValues = term
         numberPicker!!.maxValue = 7
         numberPicker!!.minValue = 0
-        numberPicker!!.setFocusable(false)
-        numberPicker!!.setFocusableInTouchMode(false)
-        numberPicker!!.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS)
+        numberPicker!!.isFocusable = false
+        numberPicker!!.isFocusableInTouchMode = false
+        numberPicker!!.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
 
         btnConfirm!!.setOnClickListener(this)
         btnCancel!!.setOnClickListener(this)
@@ -214,10 +219,8 @@ class PastGradeDetailFragment : Fragment() , View.OnClickListener {
         }
     }
 
-    inner class MyAdapter(dataList: List<Grade>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+    inner class MyAdapter(private val dataList: List<Grade>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
-
-        private val dataList = dataList
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val grade = dataList[position]
