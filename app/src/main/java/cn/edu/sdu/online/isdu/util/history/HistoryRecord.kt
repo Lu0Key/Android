@@ -17,14 +17,16 @@ object HistoryRecord {
 
     fun newHistory(collectible: AbstractCollectible) {
 //        load()
-        if (!historySet.contains(collectible)) {
-            historyList.addFirst(collectible)
-            historySet.add(collectible)
-        } else {
-            historyList.remove(collectible)
-            historyList.addFirst(collectible)
+        if (!collectible.getmTitle().isNullOrEmpty()) {
+            if (!historySet.contains(collectible)) {
+                historyList.addFirst(collectible)
+                historySet.add(collectible)
+            } else {
+                historyList.remove(collectible)
+                historyList.addFirst(collectible)
+            }
+            save()
         }
-        save()
     }
 
     fun removeHistory(collectible: AbstractCollectible) {
@@ -57,8 +59,11 @@ object HistoryRecord {
         val sp = MyApplication.getContext().getSharedPreferences("history", Context.MODE_PRIVATE)
         val str = sp.getString("json", "")
         if (str != "") {
-            for (item in JSON.parseArray(str, Post::class.java))
-                newHistory(item)
+            for (item in JSON.parseArray(str, Post::class.java)) {
+                if (item.postId != 0 && item.title != null) {
+                    newHistory(item)
+                }
+            }
             historySet.addAll(historyList)
         }
     }
