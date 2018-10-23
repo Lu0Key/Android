@@ -415,7 +415,7 @@ public class Schedule implements Parcelable, IWrapper {
                 if (EnvVariables.lessonDelay)
                     return new ScheduleTime(16, 00);
                 else
-                    return new ScheduleTime(15, 40);
+                    return new ScheduleTime(15, 30);
             case 5:
             default:
                 if (EnvVariables.lessonDelay)
@@ -440,7 +440,7 @@ public class Schedule implements Parcelable, IWrapper {
                 if (EnvVariables.lessonDelay)
                     return new ScheduleTime(17, 50);
                 else
-                    return new ScheduleTime(17, 30);
+                    return new ScheduleTime(17, 20);
             case 5:
             default:
                 if (EnvVariables.lessonDelay)
