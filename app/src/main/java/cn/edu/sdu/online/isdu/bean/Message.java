@@ -136,9 +136,9 @@ public class Message {
         }
     }
 
-    public static void newMsg(List<Message> msgList) {
+    public static void newMsg(List<Message> msgList, Context context) {
         if (Message.msgList == null || Message.msgList.size() == 0)
-            loadMsgList(MyApplication.getContext());
+            loadMsgList(context);
         for (Message msg : msgList) {
             if (Message.msgList.contains(msg)) {
                 Message.msgList.remove(msg);
@@ -147,7 +147,7 @@ public class Message {
         for (int i = 0; i < msgList.size(); i++) {
             Message.msgList.addFirst(msgList.get(i));
         }
-        saveMsgList(MyApplication.getContext());
+        saveMsgList(context);
     }
 
     public static int getUnreadCount() {

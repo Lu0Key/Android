@@ -210,16 +210,16 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
     }
 
     fun setMsgBadge(show: Boolean) {
-        if (show) {
-            QBadgeView(context)
-                    .setBadgeGravity(Gravity.TOP or Gravity.END)
-                    .bindTarget(btnMsg).isShowShadow = false
-        } else {
-            QBadgeView(context)
-                    .setBadgeGravity(Gravity.TOP or Gravity.END)
-                    .bindTarget(btnMsg)
-                    .hide(false)
-        }
+//        if (show) {
+//            QBadgeView(context)
+//                    .setBadgeGravity(Gravity.TOP or Gravity.END)
+//                    .bindTarget(btnMsg).isShowShadow = false
+//        } else {
+//            QBadgeView(context)
+//                    .setBadgeGravity(Gravity.TOP or Gravity.END)
+//                    .bindTarget(btnMsg)
+//                    .hide(false)
+//        }
     }
 
     /**
