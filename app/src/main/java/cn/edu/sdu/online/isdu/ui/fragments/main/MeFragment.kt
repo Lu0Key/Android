@@ -1,5 +1,6 @@
 package cn.edu.sdu.online.isdu.ui.fragments.main
 
+import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -25,9 +26,11 @@ import cn.edu.sdu.online.isdu.net.pack.ServerInfo
 import cn.edu.sdu.online.isdu.net.NetworkAccess
 import cn.edu.sdu.online.isdu.ui.activity.*
 import cn.edu.sdu.online.isdu.ui.design.button.ImageButton
+import cn.edu.sdu.online.isdu.ui.widget.ScheduleListService
 import cn.edu.sdu.online.isdu.util.EnvVariables
 import cn.edu.sdu.online.isdu.util.FileUtil
 import cn.edu.sdu.online.isdu.util.Logger
+import com.alibaba.fastjson.JSON
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -382,6 +385,13 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
                         adapter!!.notifyDataSetChanged()
                     }
 
+                    // 储存到本地并通知小部件更新
+                    context!!.getSharedPreferences("schedule", Context.MODE_PRIVATE)
+                            .edit()
+                            .putString("schedule", JSON.toJSONString(todoList))
+                            .apply()
+
+                    context!!.sendBroadcast(Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE))
                 } catch (e: JSONException) {
                     Logger.log(e)
                 }

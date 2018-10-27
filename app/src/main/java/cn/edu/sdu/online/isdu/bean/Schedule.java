@@ -387,7 +387,8 @@ public class Schedule implements Parcelable, IWrapper {
                 }
 
                 for (int j = startWeek; j <= endWeek; j++) {
-                    list.get(j - 1).get(weekDay - 1).add(schedule);
+//                    if (schedule.repeatWeeks.contains(j))
+                        list.get(j - 1).get(weekDay - 1).add(schedule);
                 }
 
             } catch (JSONException e) {
@@ -472,6 +473,8 @@ public class Schedule implements Parcelable, IWrapper {
         if (a instanceof Schedule) {
             setScheduleTextColor(((Schedule) a).scheduleTextColor);
             setScheduleColor(((Schedule) a).scheduleColor);
+
+            getRepeatWeeks().clear();
             getRepeatWeeks().addAll(((Schedule) a).repeatWeeks);
             setRepeatType(((Schedule) a).repeatType);
             setScheduleLocation(((Schedule) a).scheduleLocation);
@@ -488,5 +491,16 @@ public class Schedule implements Parcelable, IWrapper {
         temp.set(a);
         a.set(this);
         this.set(temp);
+    }
+
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "scheduleName='" + scheduleName + '\'' +
+                ", scheduleLocation='" + scheduleLocation + '\'' +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", courseOrder=" + courseOrder +
+                '}';
     }
 }
