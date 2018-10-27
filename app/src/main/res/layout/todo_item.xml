@@ -2,16 +2,17 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="#fff">
 
     <!--序号-->
     <TextView
         android:id="@+id/todo_index"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
         android:textColor="@color/colorAccent"
         android:textSize="24sp"
+        android:gravity="center"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"/>
@@ -28,7 +29,6 @@
             android:id="@+id/todo_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="劳动社会学"
             android:textColor="@color/colorPrimaryText"
             android:textSize="18sp"
             android:layout_marginStart="8dp"
@@ -52,7 +52,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorSecondaryText"
-                android:text="8:00~09:50"
                 android:layout_gravity="center_vertical"/>
 
             <ImageView
@@ -68,8 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorSecondaryText"
-                android:layout_gravity="center_vertical"
-                android:text="公教楼101"/>
+                android:layout_gravity="center_vertical"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
