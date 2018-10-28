@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">i山大</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <dimen name="smallest_text_size">12sp</dimen>
+    <string name="add_widget">Add widget</string>
 
 </resources>
