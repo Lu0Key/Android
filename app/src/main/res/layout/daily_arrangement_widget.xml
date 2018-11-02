@@ -15,17 +15,21 @@
         android:padding="8dp"
         android:background="@color/colorWhite"/>
 
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="test"
-        android:textColor="#000"/>
-
     <ListView
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </ListView>
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="今日无安排 :P"
+        android:textSize="20sp"
+        android:visibility="visible"
+        android:textColor="@color/colorPurpleDark"
+        android:gravity="center"/>
+
 </LinearLayout>

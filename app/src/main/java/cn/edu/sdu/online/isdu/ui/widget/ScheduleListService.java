@@ -58,7 +58,7 @@ public class ScheduleListService extends RemoteViewsService {
         @Override
         public RemoteViews getViewAt(int position) {
             RemoteViews views = new RemoteViews(mContext.getPackageName(),
-                    R.layout.todo_item);
+                        R.layout.todo_item);
 
             Schedule schedule = mList.get(position);
             views.setTextViewText(R.id.todo_index, position + 1 + "");
@@ -69,7 +69,6 @@ public class ScheduleListService extends RemoteViewsService {
 
             views.setEmptyView(R.layout.todo_item, R.layout.todo_item);
 
-//            Log.d("Jzz", "GetViewAt"+position + " " + schedule.toString());
             return views;
         }
 
@@ -80,7 +79,7 @@ public class ScheduleListService extends RemoteViewsService {
 
         @Override
         public int getViewTypeCount() {
-            return 0;
+            return 1;
         }
 
         @Override
@@ -92,5 +91,7 @@ public class ScheduleListService extends RemoteViewsService {
         public boolean hasStableIds() {
             return true;
         }
+
+
     }
 }
