@@ -23,26 +23,30 @@ public class ScheduleListService extends RemoteViewsService {
     }
 
     public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
+        private Intent mIntent;
         private Context mContext;
         private List<Schedule> mList = new ArrayList<>();
 
         ListRemoteViewsFactory(Context context, Intent intent) {
             mContext = context;
+            mIntent = intent;
         }
 
         @Override
         public void onCreate() {
-            String str = mContext.getSharedPreferences("schedule", MODE_PRIVATE)
-                    .getString("schedule", "[]");
+            String str = mContext.getSharedPreferences("widget_todo_list", MODE_PRIVATE)
+                    .getString("json", "[]");
             mList.addAll(JSON.parseArray(str, Schedule.class));
+//            mList.addAll(DailyArrangementWidget.Companion.getTodoList());
         }
 
         @Override
         public void onDataSetChanged() {
             mList.clear();
-            String str = mContext.getSharedPreferences("schedule", MODE_PRIVATE)
-                    .getString("schedule", "[]");
+            String str = mContext.getSharedPreferences("widget_todo_list", MODE_PRIVATE)
+                    .getString("json", "[]");
             mList.addAll(JSON.parseArray(str, Schedule.class));
+//            mList.addAll(DailyArrangementWidget.Companion.getTodoList());
         }
 
         @Override

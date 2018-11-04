@@ -336,8 +336,6 @@ class MeFragment : Fragment(), View.OnClickListener, Serializable {
      * 加载今日安排
      */
     private fun loadSchedule() {
-//        if (User.staticUser == null) User.staticUser = User.load()
-//        if (User.staticUser.studentNumber != null)
         if (User.isLogin())
             NetworkAccess.cache(ServerInfo.getScheduleUrl(User.staticUser.uid)) { success, cachePath ->
             if (success) {
