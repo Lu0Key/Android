@@ -41,7 +41,7 @@
                 android:background="@color/colorWhite"
                 android:singleLine="true"
                 android:maxLines="1"
-                android:hint="搜索帖子/资讯/用户"
+                android:hint="搜索帖子/生活/资讯/用户"
                 android:textSize="14sp"
                 android:textColor="@color/colorSecondaryText"
                 android:padding="8dp"/>

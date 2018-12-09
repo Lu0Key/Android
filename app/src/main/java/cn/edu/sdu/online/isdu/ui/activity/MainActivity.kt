@@ -28,8 +28,10 @@ import cn.edu.sdu.online.isdu.bean.Message
 import cn.edu.sdu.online.isdu.bean.Schedule
 import cn.edu.sdu.online.isdu.bean.User
 import cn.edu.sdu.online.isdu.service.MessageService
+import cn.edu.sdu.online.isdu.ui.fragments.main.LifeFragment
 import cn.edu.sdu.online.isdu.util.*
 import cn.edu.sdu.online.isdu.util.download.Download
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
@@ -55,10 +57,10 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 
     private var fragments: MutableList<Fragment> = ArrayList() // Fragment列表
 //    private var fragmentTags = listOf("HomeFragment", "NewsFragment", "MeFragment") // AppFragment Tag
-    private val imgRes = listOf(R.drawable.home_selected, R.drawable.news_selected, R.drawable.me_selected)
-    private val imgBackRes = listOf(R.drawable.home_back, R.drawable.news_back, R.drawable.me_back)
+    private val imgRes = listOf(R.drawable.home_selected,  R.drawable.copy_selected,R.drawable.news_selected,R.drawable.me_selected)
+    private val imgBackRes = listOf(R.drawable.home_back,  R.drawable.copy_selected,R.drawable.news_back,R.drawable.me_back)
 
-    private var mDataList = listOf("主页", "资讯", "个人中心")
+    private var mDataList = listOf("主页", "不知道是啥","资讯", "个人中心")
 
     /////////////////////整体滑动布局/////////////////////////
     private var magicIndicator: MagicIndicator? = null // 指引器
@@ -105,8 +107,8 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         startService(Intent(this, MessageService::class.java)
                 .putExtra("uid", User.staticUser.uid.toString()))
         Message.addOnMessageListener {
-            if (fragments.size == 3) {
-                (fragments[2] as MeFragment).setMsgBadge(true)
+            if (fragments.size == 4) {
+                (fragments[3] as MeFragment).setMsgBadge(true)
             }
         }
     }
@@ -114,6 +116,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         EnvVariables.init(this)
+        //QMUIDialog.CheckBoxMessageDialogBuilder(this).setMessage("").show()
     }
 
     /**
@@ -142,6 +145,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     private fun initFragment() {
         if (fragments.isEmpty()) {
             fragments.add(HomeFragment())
+            fragments.add(LifeFragment())
             fragments.add(NewsFragment())
             fragments.add(MeFragment())
         }

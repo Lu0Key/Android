@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.TextView
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.AlphaActivity
+import cn.edu.sdu.online.isdu.ui.fragments.search.SearchLifeFragment
 import cn.edu.sdu.online.isdu.ui.fragments.search.SearchNewsFragment
 import cn.edu.sdu.online.isdu.ui.fragments.search.SearchPostFragment
 import cn.edu.sdu.online.isdu.ui.fragments.search.SearchUserFragment
@@ -45,8 +46,8 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
     private var viewPager: ViewPager? = null
     private var magicIndicator: MagicIndicator? = null
     private var mViewPagerAdapter: FragAdapter? = null
-    private val mDataList = listOf("帖子", "资讯", "用户")
-    private val mFragments = listOf(SearchPostFragment(), SearchNewsFragment(), SearchUserFragment())
+    private val mDataList = listOf("帖子", "生活","资讯", "用户")
+    private val mFragments = listOf(SearchPostFragment(), SearchLifeFragment(),SearchNewsFragment(), SearchUserFragment())
 
     private var lastSearchString = "" // 上一次搜索
 
@@ -66,7 +67,7 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
         viewPager = view_pager
         magicIndicator = magic_indicator
 
-        viewPager!!.offscreenPageLimit = 3
+        viewPager!!.offscreenPageLimit = 4
 
         btnBack!!.setOnClickListener(this)
         btnSearch!!.setOnClickListener(this)
@@ -90,8 +91,9 @@ class SearchActivity : AlphaActivity(), View.OnClickListener {
                 if (editSearch!!.text.toString() != "" && lastSearchString != editSearch!!.text.toString()){
                     lastSearchString = editSearch!!.text.toString()
                     (mFragments[0] as SearchPostFragment).setSearch(editSearch!!.text.toString())
-                    (mFragments[1] as SearchNewsFragment).setSearch(editSearch!!.text.toString())
-                    (mFragments[2] as SearchUserFragment).setSearch(editSearch!!.text.toString())
+                    (mFragments[1] as SearchLifeFragment).setSearch(editSearch!!.text.toString())
+                    (mFragments[2] as SearchNewsFragment).setSearch(editSearch!!.text.toString())
+                    (mFragments[3] as SearchUserFragment).setSearch(editSearch!!.text.toString())
                 }
             }
         }

@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.*
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import cn.edu.sdu.online.isdu.R
 import cn.edu.sdu.online.isdu.app.LazyLoadFragment
 import cn.edu.sdu.online.isdu.ui.activity.*
@@ -26,15 +28,17 @@ import java.io.Serializable
 
 /**
  ****************************************************
- * @author zsj
- * Last Modifier: ZSJ
- * Last Modify Time: 2018/5/25
+ * @author lk
+ * Last Modifier: lk
+ * Last Modify Time: 2018/12/02
  *
- * 主页论坛碎片
+ * 二手市场和寻物招领碎片
+ * 这页问题不大了
+ *
  ****************************************************
  */
 
-class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
+class LifeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
 
     private var searchBar: View? = null // 搜索框
     private var askBar: View? = null // 提问框
@@ -42,18 +46,20 @@ class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
     private var magicIndicator: MagicIndicator? = null // Magic Indicator
     private var viewPager: ViewPager? = null // ViewPager
 
-    private val mDataList = listOf("实时", "推荐", "表白") // Indicator 数据
-    private val mFragments = listOf(HomeSyncFragment(),
-            HomeRecommendFragment(), HomeConfessionFragment()) // AppFragment 数组
+    private val mDataList = listOf("寻物招领", "二手市场") // Indicator 数据
+    private val mFragments = listOf(LifeLostAndFoundFragment(),
+            LifeDealFragment()) // AppFragment 数组
     private var mViewPagerAdapter: FragAdapter? = null // ViewPager适配器
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
 
+        val view = inflater.inflate(R.layout.fragment_life, container, false)
         initView(view)
         initFragments()
         initIndicator()
         return view
+
+
     }
 
     /**
@@ -99,7 +105,6 @@ class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
                 }
 
                 builder.show()
-
             }
         }
     }
@@ -167,6 +172,6 @@ class HomeFragment : LazyLoadFragment(), Serializable, View.OnClickListener {
     }
 
     companion object {
-        val TAG = "HomeFragment"
+        val TAG = "LifeFragment"
     }
 }

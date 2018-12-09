@@ -34,6 +34,9 @@ class CollectibleItemAdapter(private var dataList: List<AbstractCollectible>) :
             AbstractCollectible.TYPE_NEWS -> {
                 setAs("news", vh)
             }
+            AbstractCollectible.TYPE_LIFE -> {
+                setAs("life", vh)
+            }
         }
 
         vh.content.text = item.getmContent()

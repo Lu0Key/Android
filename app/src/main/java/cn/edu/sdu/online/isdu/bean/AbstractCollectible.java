@@ -5,9 +5,13 @@ import cn.edu.sdu.online.isdu.interfaces.Collectible;
 public abstract class AbstractCollectible implements Collectible {
     public static final int TYPE_POST = 0;
     public static final int TYPE_NEWS = 1;
+    public static final int TYPE_LIFE = 2;
 
     String mTitle;
     String mContent;
+    String mCampus;
+    String mLifePostClass;
+    String mLostClass;
     long mTime;
     int mUserId;
 
@@ -35,6 +39,12 @@ public abstract class AbstractCollectible implements Collectible {
 
     public void setmContent(String mContent) {
         this.mContent = mContent;
+    }
+
+    public String getmCampus(){ return mCampus;}
+
+    public void setmCampus(String mCampus) {
+        this.mCampus = mCampus;
     }
 
     public long getmTime() {
