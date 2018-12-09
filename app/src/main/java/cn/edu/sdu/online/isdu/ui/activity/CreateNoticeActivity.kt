@@ -1,43 +1,23 @@
 package cn.edu.sdu.online.isdu.ui.activity;
 
-
-
 import android.content.Context
-
 import android.content.Intent
-
 import android.content.pm.PackageManager
-
 import android.os.Bundle
-
 import android.support.v4.app.ActivityCompat
-
 import android.support.v4.content.ContextCompat
-
 import android.view.View
-
 import android.widget.EditText
-
 import android.widget.TextView
-
 import android.widget.Toast
-
 import cn.edu.sdu.online.isdu.R
-
 import cn.edu.sdu.online.isdu.app.NormActivity
-
 import cn.edu.sdu.online.isdu.bean.User
-
 import cn.edu.sdu.online.isdu.ui.design.dialog.AlertDialog
-
 import cn.edu.sdu.online.isdu.ui.design.dialog.ProgressDialog
-
 import cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextEditor
-
 import cn.edu.sdu.online.isdu.util.ImageManager
-
 import cn.edu.sdu.online.isdu.util.Permissions
-
 import com.alibaba.fastjson.JSON
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog
 import kotlinx.android.synthetic.main.activity_create_notice.*
@@ -72,7 +52,6 @@ class CreateNoticeActivity : NormActivity(), View.OnClickListener{
         dialog!!.setMessage("正在上传")
         dialog!!.setButton(null, null)
         dialog!!.setCancelable(false)
-
 
 
 

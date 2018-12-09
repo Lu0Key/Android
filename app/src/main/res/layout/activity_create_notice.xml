@@ -124,11 +124,8 @@
 
 
         <LinearLayout
-
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
-
             android:orientation="horizontal">
 
 
@@ -156,33 +153,21 @@
                 android:textSize="18sp" />
 
             <ImageView
-
                 android:id="@+id/btn_college_cho"
-
                 android:layout_width="40dp"
-
                 android:layout_height="40dp"
-
                 android:layout_weight="1"
-
                 android:paddingTop="10dp"
-
                 android:paddingBottom="10dp"
-
                 android:src="@drawable/ic_forward"
-
                 android:clickable="true"
-
                 android:focusable="true"
-
                 android:onClick="college"
-
                 android:layout_gravity="center_vertical"/>
 
 
 
         </LinearLayout>
-
     </ScrollView>
 
 
@@ -223,6 +208,7 @@
                 android:background="@color/colorWhite"
                 android:textColor="@color/colorPrimaryText"
                 android:textSize="18sp" />
+
 
             <ImageView
                 android:id="@+id/btn_thing_cho"
@@ -328,59 +314,40 @@
 
 
     <ScrollView
-
         android:layout_width="match_parent"
-
         android:layout_height="wrap_content">
 
 
 
         <LinearLayout
-
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
-
             android:orientation="vertical">
 
 
 
             <TextView
-
                 android:layout_width="wrap_content"
-
                 android:layout_height="wrap_content"
-
                 android:layout_marginStart="16dp"
-
                 android:layout_marginTop="8dp"
-
                 android:text="详细描述（重要信息请打码，必填）："
-
                 android:textSize="18sp" />
 
 
 
             <cn.edu.sdu.online.isdu.ui.design.xrichtext.RichTextEditor
-
                 android:id="@+id/rich_edit_dis"
-
                 android:layout_width="match_parent"
-
                 android:layout_height="0dp"
-
                 android:layout_weight="1"
-
                 app:rt_editor_image_bottom="10"
-
                 app:rt_editor_text_init_hint="请填写描述"
-
                 app:rt_editor_text_size="16"/>
 
 
 
         </LinearLayout>
-
     </ScrollView>
 
 
